@@ -1,0 +1,34 @@
+function love.conf(t)
+    t.identity = nil
+    t.version = "0.9.0"
+    t.console = false
+    t.modules.audio = true
+    t.modules.event = true
+    t.modules.graphics = true
+    t.modules.image = true
+    t.modules.joystick = false
+    t.modules.keyboard = true
+    t.modules.math = true
+    t.modules.mouse = true
+    t.modules.physics = false
+    t.modules.sound = true
+    t.modules.system = true  
+    t.modules.timer = true
+    t.modules.window = true
+    t.window.title = "RPG tactics Demo"
+    t.window.icon = nil
+    t.window.width = 1920
+    t.window.height = 1080
+    t.window.minwidth = 1280
+    t.window.minheight = 960
+    t.window.borderless = false
+    t.window.resizable = false
+    t.window.fullscreen = false
+    t.window.fullscreentype = "normal"
+    t.window.vsync = true
+    t.window.fsaa = 8
+    t.window.display = 1
+    t.window.highdpi = false
+    t.window.srgb = false
+    t.screen = t.screen or t.window
+end

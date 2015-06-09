@@ -1,0 +1,1 @@
+/home/alexyecu/.local/share/love/lveditor/level1.lua

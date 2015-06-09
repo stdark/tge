@@ -1,0 +1,19 @@
+#!/bin/bash
+rm inv_db.lua
+odt2txt inv_to_db.ods --output=inv.txt --width=-1
+sed '/./!d' inv.txt > temp.txt
+sed '1,13d' temp.txt > temp2.txt
+sed 's/$/,/g' temp2.txt > temp3.txt
+sed '1~13s/^/{/g' temp3.txt > temp4.txt
+sed '13~13s/.$//' temp4.txt > temp5.txt
+sed '13~13s/$/},/g' temp5.txt > temp6.txt
+sed -i -e '1 s/^/inventory_ttx={\n/;' temp6.txt
+sed -i -e '1 s/^/function inventory_load ()\n/;' temp6.txt
+sed '$s/.$//' temp6.txt > temp7.txt
+sed -i '$ a \}\' temp7.txt
+sed -i '$ a \end\' temp7.txt
+cp temp7.txt inventory.lua
+rm inv.txt temp.txt temp2.txt temp3.txt temp4.txt temp5.txt temp6.txt temp7.txt
+cp /home/alexyecu/workspace/love2d/game/data/inventory.lua /home/alexyecu/workspace/love2d/gametools/inventory.lua.back
+cp /home/alexyecu/workspace/love2d/gametools/inventory.lua /home/alexyecu/workspace/love2d/game/data/inventory.lua
+exit 0
