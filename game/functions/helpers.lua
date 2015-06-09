@@ -28,7 +28,7 @@ function helpers.passCheck (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value <= 0 and not helpers.cursorAtMob (x,y) and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) and not helpers.cursorAtClosedDoor(x,y) then
+	if helpers.insideMap(x,y) and height_value <= 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) and not helpers.cursorAtClosedDoor(x,y) then
 		return true
 	else
 		return false
@@ -1667,7 +1667,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].spellbook=tmpclass2.spellbook;
 	chars_mobs_npcs[i].warbook = tmpclass2.warbook;
 	chars_mobs_npcs[i].protectionmode = "none";
-	chars_mobs_npcs[i].trick = "none";
+	chars_mobs_npcs[i].stealth = 0;
 	for h=1,#tmpclass2["hitzones"] do
 		for k=1,#tmpclass2["hitzones"][h] do
 			if tmpclass2["hitzones"][h][k] == "rh" then
@@ -3611,7 +3611,6 @@ end;
 function helpers.protectionOff (index)
 	if not helpers.mobCanDefendHimself (index) then
 		chars_mobs_npcs[index].protectionmode = "none";
-		chars_mobs_npcs[index].trick = "none";
 	end;
 end;
 
@@ -4193,36 +4192,37 @@ function helpers.castReady (drive)
 end;
 
 function helpers.ifTrickIsCastable () --FIXME not completed
+	local time_check = true; --FIXME
 	local stamina_check = false;
 	local recovery_check = false;
 	local weapon_check = false;
 
-	if chars_mobs_npcs[current_mob].st >= tricks.tricks_tips[missle_type].stamina then
+	if global.status ~= "mindgame" or  (global.status == "mindgame" and trick_tips[missle_type].mindgame) then
+		mindgame_check = true;
+	end;
+	if chars_mobs_npcs[current_mob].st >= trick_tips[missle_type].stamina then
 		stamina_check = true;
 	end;
-	
-	if chars_mobs_npcs[current_mob].rt >= tricks.tricks_tips[missle_type].recovery then
+	if chars_mobs_npcs[current_mob].rt >= trick_tips[missle_type].recovery then
 		recovery_check = true;
 	end;
-	
-	local _tipskill = tricks.tricks_tips[missle_type].skill;
+	local _missle_name = tricks.alltricks[_page][_circle];
+	local _tipskill = tricks.trick_tips[_missle_name].weapon_skill;
 
 	if _tipskill == "unarmed" and chars_mobs_npcs[current_mob]["equipment"].rh == 0 and chars_mobs_npcs[current_mob]["equipment"].lh == 0 then
 		weapon_check = true;
-	elseif (_tipskill == "sword" or _tipskill == "axe" or _tipskill == "crushing" or _tipskill == "flagpole" or _tipskill == "staff" or _tipskill == "dagger") and chars_mobs_npcs[current_mob]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].class == _tipskill then
+	elseif (_tipskill == "sword" or _tipskill == "axe" or _tipskill == "crushing" or _tipskill == "flagpole" or _tipskill == "staff" or _tipskill == "dagger") and chars_mobs_npcs[current_mob]["equipment"].rh > 0 then
 		weapon_check = true;
-	elseif (_tipskill == "bow" or _tipskill == "crossbow" or _tipskill == "firearms" or _tipskill == "blaster") and chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and chars_mobs_npcs[current_mob]["equipment"].ammo > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class == _tipskill then
+	elseif (_tipskill == "bow" or _tipskill == "crossbow" or _tipskill == "firearms" or _tipskill == "blaster") and chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
 		weapon_check = true;
-	elseif _tipskill == "throwing" and chars_mobs_npcs[current_mob]["equipment"].ammo > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class == _tipskill then
+	elseif _tipskill == "throwing" and chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
 		weapon_check = true;
 	end;
-	if weapon_check and mana_check and recovery_check then
+	if weapon_check and time_check and mana_check and recovery_check then
 		helpers.trickReady ();
 		return true;
 	end;
-	
 	helpers.castFailed ();
-	
 	return false;
 end;
 

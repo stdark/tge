@@ -2644,7 +2644,7 @@ function damage.ifBattleEnds()
 	end;
 	if endbattle then -- end of the battle, counting of exp
 		local tmpchars = chars_around;
-		lets_a_battle_finishes ();
+		letaBattleFinishes ();
 		local quater_exp = tmpexp/chars^2;
 		local sum_of_tmpexpdmg = 0;
 		local sum_of_tmpexplost = 0;
@@ -4958,7 +4958,7 @@ function damage.deadNow (index)
 	end;
 	if endbattle == 1 then -- end of the battle, counting of exp
 		local tmpchars = chars_around;
-		lets_a_battle_finishes ();
+		letaBattleFinishes ();
 		local quater_exp = tmpexp/chars^2;
 		local sum_of_tmpexpdmg = 0;
 		local sum_of_tmpexplost = 0;
@@ -5451,7 +5451,7 @@ function damage.setProtectionMode ()
 	damage.SPminus(current_mob,_minus);
 	damage.RTminus(current_mob,_minus);
 	helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.takenprotectionpose[chars_mobs_npcs[current_mob].gender]);
-	restore_rt();
+	restoreRT();
 end;
 
 function damage.setSelfBuff ()

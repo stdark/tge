@@ -132,7 +132,7 @@ function ai.behavior()
 				and chars_mobs_npcs[j].status == 1
 				and chars_mobs_npcs[j].invisibility == 0
 				and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].x][chars_mobs_npcs[j].y] == 0 
-				and chars_mobs_npcs[j].invisibility == 0 and not helpers.ifStealthed(current_mob,j)
+				and chars_mobs_npcs[j].invisibility == 0 and chars_mobs_npcs[j].stealth == 0
 				then
 					table.insert(mob_detects_enemies, j)
 				end;	
@@ -216,7 +216,7 @@ function ai.behavior()
 				and chars_mobs_npcs[j].status == 1
 				and chars_mobs_npcs[j].invisibility == 0
 				and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].x][chars_mobs_npcs[j].y] == 0 
-				and chars_mobs_npcs[j].invisibility == 0 and not helpers.ifStealthed(current_mob,j)
+				and chars_mobs_npcs[j].invisibility == 0 and chars_mobs_npcs[j].stealth == 0
 				then
 					table.insert(mob_detects_enemies, j)
 				end;	
@@ -284,7 +284,7 @@ function ai.behavior()
 				and chars_mobs_npcs[l].y == rings[1][i].y
 				and chars_mobs_npcs[l].status == 1
 				and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[l].x][chars_mobs_npcs[l].y] == 0
-				and chars_mobs_npcs[l].invisibility == 0 and not helpers.ifStealthed(current_mob,l)
+				and chars_mobs_npcs[l].invisibility == 0 and chars_mobs_npcs[j].stealth == 0
 				then
 					table.insert(mob_detects_enemies, l)
 				end;
@@ -296,7 +296,7 @@ function ai.behavior()
 				and l ~= current_mob
 				and chars_mobs_npcs[l].status == 1
 				and math.ceil(math.sqrt((chars_mobs_npcs[l].x-chars_mobs_npcs[current_mob].x)^2+(chars_mobs_npcs[l].y-chars_mobs_npcs[current_mob].y)^2)) <= mob_range
-				and chars_mobs_npcs[l].invisibility == 0 and not helpers.ifStealthed(current_mob,l)
+				and chars_mobs_npcs[l].invisibility == 0 and chars_mobs_npcs[j].stealth == 0
 				then
 					ai_world_x = chars_mobs_npcs[l].x;
 					ai_world_y = chars_mobs_npcs[l].y;
@@ -504,26 +504,7 @@ function ai.friendOrFoe (watcher,index)
 	end;
 	return true;
 end;
---[[
-function ai.enemyWatchesYou ()
-	for my=1, map_h do
-		for mx=1, map_w do	
-			if darkness[chars_mobs_npcs[current_mob].party][my][mx] == 0 then
-				for i = 1, #chars_mobs_npcs do
-					for j = 1, #chars_mobs_npcs do	
-						if chars_mobs_npcs[i].status > 0 and chars_mobs_npcs[i].blind_dur == 0 and chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].control == "ai" and chars_mobs_npcs[i].charm == 0 and ai.fractionRelations (j,i) < 0 and chars_mobs_npcs[j].y == mx and chars_mobs_npcs[j].x == my and chars_mobs_npcs[j].status > 0 then -- split by fractions!
-							--print("AI: enemy spotted!","mob №",i,chars_mobs_npcs[i].x,"X",chars_mobs_npcs[i].y,"char №",j,my,"X",mx);
-							ai.sendCall(i,false,true,false);
-							return true;
-						end;
-					end;
-				end;
-			end;
-		end;
-	end;
-	return false;
-end;
-]]
+
 function ai.enemyWatchesYou ()
 	for index=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[index].control == "player" and chars_mobs_npcs[index].invisibility == 0 and chars_mobs_npcs[index].stealth == 0 then --FIXME: scouting
@@ -540,9 +521,27 @@ function ai.enemyWatchesYou ()
 	return false;
 end;
 
+function ai.enemyWatchesTheMobNum () --for stealth
+	local counter = 0;
+	local value = 0;
+	for i = 1, #chars_mobs_npcs do
+		if chars_mobs_npcs[i].ai ~= "building" and chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].dangerai == "agr" 
+		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 
+		and ai.fractionRelations (i,index) 
+		and chars_mobs_npcs[i].blind_dur == 0 and chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 and (chars_mobs_npcs[i].reye == 1 or chars_mobs_npcs[i].leye == 1) then
+			local value = 2+chars_mobs_npcs[i].num_spothidden*chars_mobs_npcs[i].lvl_spothidden;
+			if helpers.blindedWithLight (current_mob,chars_mobs_npcs[i].x,chars_mobs_npcs[i].y) then
+				value = math.ceil(value*2);
+			end;
+			counter = counter + value;
+		end;
+	end;
+	return counter;
+end;
+
 function ai.enemyWatchesTheMob (index)
 	for i = 1, #chars_mobs_npcs do
-		if darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 and chars_mobs_npcs[i].status > 0 and ai.fractionRelations (i,index) > 0 and chars_mobs_npcs[index].x == mx and chars_mobs_npcs[index].x == my 
+		if darkness[chars_mobs_npcs[index].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 and chars_mobs_npcs[i].status > 0 and ai.fractionRelations (i,index) > 0 and chars_mobs_npcs[index].x == mx and chars_mobs_npcs[index].x == my 
 		and chars_mobs_npcs[index].blind_dur == 0 and chars_mobs_npcs[index].sleep == 0 and chars_mobs_npcs[index].stone == 0 then
 			return true;
 		end;

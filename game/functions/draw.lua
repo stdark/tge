@@ -2786,12 +2786,14 @@ function draw.objects ()
 						if chars_mobs_npcs[i].id == selected_mob and darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0  then
 							love.graphics.draw(media.images.hex, cursor_white,mobto_hex_x-tile_w,mobto_hex_y+86); -- selection from portraits marked
 						end
-						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and not helpers.ifStealthed(current_mob,i)) then
+						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
 							if chars_mobs_npcs[i].control=="player" and i == current_mob then --mark player character whoose turn is now
 								love.graphics.draw(media.images.hex, cursor_yellow,mobto_hex_x-tile_w,mobto_hex_y+86); --current char marked
 							end;
 							if chars_mobs_npcs[i].invisibility > 0 then
 								love.graphics.setColor(255, 255, 255, 150);
+							elseif chars_mobs_npcs[i].stealth > 0 then
+								love.graphics.setColor(125, 125, 125, 150);
 							end;
 							if chars_mobs_npcs[i].status==1 then
 								local tmp = chars_mobs_npcs[i].sprite .. "_stay";
@@ -2809,10 +2811,12 @@ function draw.objects ()
 							love.graphics.setColor(255, 255, 255,255);
 						end;
 					elseif game_status == "moving" and i == current_mob then
-						if chars_mobs_npcs[i].invisibility > 0 then
-							love.graphics.setColor(255, 255, 255, 150);
-						end;
-						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and not helpers.ifStealthed(current_mob,i)) then
+							if chars_mobs_npcs[i].invisibility > 0 then
+								love.graphics.setColor(255, 255, 255, 150);
+							elseif chars_mobs_npcs[i].stealth > 0 then
+								love.graphics.setColor(125, 125, 125, 150);
+							end;
+						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
 							local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 							local img_mob_base=loadstring("return " .. tmpi)();
 							if global.use_walk_animation then
@@ -2874,7 +2878,7 @@ function draw.objects ()
 						end;
 					elseif game_status == "missle" then
 					elseif game_status == "multidamage" then
-						if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].invisibility == 0 and not helpers.ifStealthed(current_mob,i)) then
+						if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[j].stealth == 0) then
 							if chars_mobs_npcs[victim].freeze==0 and chars_mobs_npcs[victim].stone==0 then
 								local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 								local img_mob_base = loadstring("return " .. tmpi)();

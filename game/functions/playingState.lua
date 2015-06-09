@@ -22,7 +22,6 @@ function playingState.load()
 	require "data.log"
 	require "data.chats"
 	require "data.magic"
-	require "data.tricks"
 	require "data.comics"
 	require "data.books"
 	require "data.messages"
@@ -135,7 +134,6 @@ function playingState.load()
 	effects_data ();
 	logstrings_load ();
 	magic_tips_load ();
-	tricks_tips_load();
 	comics_load();
 	books_load ();
 	maps_load ();
@@ -1662,7 +1660,11 @@ function playingState.keypressed(key, unicode)
 			helpers.knockToDoor ();
 		end;
 		if key=="g" and chars_mobs_npcs[current_mob].person == "char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding") and global.status == "peace" then
-			--helpers.partyMoveToPoint ();
+			if chars_mobs_npcs[current_mob].stealth > 0 then
+				 chars_mobs_npcs[current_mob].stealth = 0;
+			elseif not ai.enemyWatchesTheMob (current_mob) then
+				 chars_mobs_npcs[current_mob].stealth = chars_mobs_npcs[current_mob].num_stealth*chars_mobs_npcs[current_mob].lvl_stealth;
+			end;
 		end;
 		if key=="p" then
 			if chars_mobs_npcs[current_mob].person=="char" and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" ) then
@@ -2020,7 +2022,6 @@ function playingState.keypressed(key, unicode)
 			show_inventory_tips = 0;
 			show_monsterid_tip = 0;
 			show_spellbook_tips = 0;
-			show_warbook_tips = 0;
 			loveframes.util.RemoveAll();
 			if oil_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = oil_smth;
@@ -2114,10 +2115,9 @@ function playingState.mousereleased (x,y,button)
 	end;
 	
 	if button == "r"  then
-		show_inventory_tips = 0;
-		show_monsterid_tip = 0;
-		show_spellbook_tips = 0;
-		show_warbook_tips = 0;
+		show_inventory_tips=0;
+		show_monsterid_tip=0;
+		show_spellbook_tips=0;
 		loveframes.util.RemoveAll();
 	end;
 	
@@ -2507,7 +2507,7 @@ function playingState.mousereleased (x,y,button)
 		local x,y = helpers.centerObject(media.images.sbook);
 		missle_type = helpers.bookCircles(page);
 		if missle_type then
-			helpers.ifTrickIsCastable ();	
+			helpers.ifSpellIsCastable ();	
 		end;
 		if mX>x+8 and mX<x+100 and mY>y and mY<y+50 then
 			utils.printDebug("sword axe falgpole");
@@ -3989,7 +3989,6 @@ function  playingState.mousepressed(x,y,button)
 		show_inventory_tips = 0;
 		show_monsterid_tip = 0;
 		show_spellbook_tips = 0;
-		show_warbook_tips = 0;
 	end;
 	if button == "r" and game_status == "sensing" then
 		game_status = "neutral";
@@ -4566,13 +4565,6 @@ function  playingState.mousepressed(x,y,button)
 		missle_type = helpers.bookCircles(page);
 		if missle_type then
 			show_spellbook_tips = 1;
-		end;
-	end;
-	if button == "r"  and game_status == "warbook" then -- watching spell tips in the spellbook
-		local x,y = helpers.centerObject(media.images.sbook);
-		missle_type = helpers.bookCircles(page);
-		if missle_type then
-			show_warbook_tips = 1;
 		end;
 	end;
 	if  button == "l" and mX>global.screenWidth-180 and mX<global.screenWidth-130 and mY>global.screenHeight-110 and mY<global.screenHeight and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
@@ -6124,30 +6116,11 @@ function  playingState.mousepressed(x,y,button)
 				atk_direction=3;
 			end;
 			if global.status == "battle" then
-				if missle_type == "none" then
-					game_status="attack";
-					damage.meleeAttack (damage.meleeAttackTool (current_mob));
-				elseif missle_type == "dencedefence" or missle_type == "savingstick"
-				or missle_type == "torero" or missle_type == "top" or missle_type == "acrobat"
-				or missle_type == "shore" or missle_type == "absoluteblock" or chars_mobs_npcs[current_mob].protectionmode = "block"
-	            or missle_type == "umbrella" then
-					damage.setProtectionMode ();
-				end;
+				game_status="attack";
+				damage.meleeAttack (damage.meleeAttackTool (current_mob));
 			elseif global.status == "peace" and chars_mobs_npcs[previctim].person ~= "char" then
 				chat (previctim);
 			end;
-		end;
-		
-		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () 
-		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 )) 
-		and not love.keyboard.isDown("lctrl") and global.status == "battle" 
-		and (missle_type == "dencedefence" or missle_type == "savingstick"
-			or missle_type == "torero" or missle_type == "top" or missle_type == "acrobat"
-			or missle_type == "shore" or missle_type == "absoluteblock" or chars_mobs_npcs[current_mob].protectionmode = "block"
-	        or missle_type == "umbrella"
-			)
-		then
-			damage.setProtectionMode ();
 		end;
 		
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
@@ -7685,6 +7658,9 @@ function mob_moving()
 		if path_counter > 0 then
 			chars_mobs_npcs[current_mob].x = way_of_the_mob[path_counter][1];
 			chars_mobs_npcs[current_mob].y = way_of_the_mob[path_counter][2];
+			if chars_mobs_npcs[current_mob].stealth > 0 then
+				chars_mobs_npcs[current_mob].stealth =  chars_mobs_npcs[current_mob].stealth - ai.enemyWatchesTheMobNum ();
+			end;
 			if chars_mobs_npcs[current_mob].ai == "cruiser" then
 				for i=1, #chars_mobs_npcs[current_mob].waypoint do
 					if chars_mobs_npcs[current_mob].x == chars_mobs_npcs[current_mob].waypoint[i][1] and chars_mobs_npcs[current_mob].y == chars_mobs_npcs[current_mob].waypoint[i][2] then
@@ -8166,7 +8142,7 @@ function letaBattleBegin ()
 	end;
 end;
 
-function lets_a_battle_finishes ()
+function letaBattleFinishes ()
 	utils.printDebug("Battle finished!");
 	if global.status == "battle" then
 		love.audio.play(media.sounds.battle_finishes,0);
@@ -8686,7 +8662,6 @@ function restore_rt ()
 				end;
 			end;
 			chars_mobs_npcs[i].protectionmode = "none";
-			chars_mobs_npcs[i].trick = "none";
 			game_status = "neutral";
 			ignore_kb = 0;
 			if not global.lookaround then
