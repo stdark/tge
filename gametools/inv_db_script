@@ -1,5 +1,7 @@
 #!/bin/bash
-rm inv_db.lua
+
+[[ -f "inv_db.lua" ]] && rm inv_db.lua
+
 odt2txt inv_to_db.ods --output=inv.txt --width=-1
 sed '/./!d' inv.txt > temp.txt
 sed '1,13d' temp.txt > temp2.txt
@@ -14,6 +16,8 @@ sed -i '$ a \}\' temp7.txt
 sed -i '$ a \end\' temp7.txt
 cp temp7.txt inventory.lua
 rm inv.txt temp.txt temp2.txt temp3.txt temp4.txt temp5.txt temp6.txt temp7.txt
-cp /home/alexyecu/workspace/love2d/game/data/inventory.lua /home/alexyecu/workspace/love2d/gametools/inventory.lua.back
-cp /home/alexyecu/workspace/love2d/gametools/inventory.lua /home/alexyecu/workspace/love2d/game/data/inventory.lua
+
+cp ../game/data/inventory.lua inventory.lua.back
+cp inventory.lua ../game/data/inventory.lua
+
 exit 0
