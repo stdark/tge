@@ -345,6 +345,7 @@ dungeon=false,
 openair=true,
 mindgame=false,
 form="rain",
+shader={255, 127, 63, 48}
 },
 
 incineration = {
@@ -720,6 +721,7 @@ dungeon=false,
 openair=true,
 mindgame=false,
 form="rain",
+shader={191, 237, 255, 48}
 },
 
 --/AIR
@@ -848,6 +850,7 @@ dungeon=true,
 openair=true,
 mindgame=false,
 form="ally",
+shader={182,255,0,48}
 },
 
 acidburst = {
@@ -883,7 +886,7 @@ dungeon=true,
 openair=true,
 mindgame=false,
 form="arrow",
-shader={182,255,0,48};
+shader={182,255,0,48}
 },
 
 freeze = {
@@ -1057,8 +1060,8 @@ mindgame=false,
 form="direct",
 },
 
-frozenstorm = {
-title="снежная буря",
+eyeofthestorm = {
+title="око бури",
 story="Круговерть холода, льда и снега, поражающая всех в пределах видимости",
 dmg1="нет",
 dmg2="нет",
@@ -3119,6 +3122,7 @@ dungeon=false,
 openair=true,
 mindgame=false,
 form="rain",
+shader={182,255,0,48}
 },
 
 levitation = {
@@ -4542,8 +4546,8 @@ recovery=50,
 mana=30,
 school=14,
 spell=11,
-skill = {"lvl_light","lvl_fire","lvl_air","lvl_earth"};
-level = {5,5,5,5};
+skill = {"lvl_light","lvl_fire","lvl_air","lvl_earth"},
+level = {5,5,5,5},
 day=true,
 night=true,
 dungeon=true,
@@ -4580,7 +4584,7 @@ form="party",
 	magic.allspells = {
 {"flamearrow","torchlight","protfromfire","fireball","firewall","firebelt","firering","firemine","fireblast","inferno","meteorshower","incineration"},
 {"staticharge","shockring","windfist","protfromstatic","bell","shield","lightning","jump","invisibility","twister","chainlightning","starburst"},
-{"coldbeam","poisonedspit","douse","protfromcold","acidburst","freeze","coldring","waterwalking","iceball","icefield","dehydratation","frozenstorm"},
+{"coldbeam","poisonedspit","douse","protfromcold","acidburst","freeze","coldring","waterwalking","iceball","icefield","dehydratation","eyeofthestorm"},
 {"razors","mobility","spikes","protfromacid","roots","stoneskin","stonewall","pitfall","rockblast","deathblossom","earthquake","massdistortion"},
 {"heal","harm","protfrompoison","charge","curetrauma","curepoison","might","dash","curedisease","encourage","regeneration","powerheal"},
 {"fear","mindblast","protfrommind","telekinesis","curemind","telepathy","feeblemind","glamour","berserk","paralyze","enslave"},

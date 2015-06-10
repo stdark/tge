@@ -54,7 +54,8 @@ function playingState.load()
 	tile_w=64;
 	tile_h=32;
 	tile_moveto =  love.graphics.newQuad(5, 48, tile_w+2, tile_h, 1024, 1024);
-	tile_cursor_empty=love.graphics.newQuad(745,172, tile_w+2, tile_h+2, 1024, 1024);
+	tile_cursor_empty = love.graphics.newQuad(745,172, tile_w+2, tile_h+2, 1024, 1024);
+	tile_cursor_white = love.graphics.newQuad(745,260, tile_w+2, tile_h+2, 1024, 1024);
     for ty=1,20 do
 		for tx=1,10 do
 			tile[(ty-1)*10+tx] = love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, 1024, 1024);
@@ -72,9 +73,8 @@ function playingState.load()
     stepsound_table = {};
     buildings_table = {};
     harvest_table = {};
-    
+	homelands_table = {};
 
-    
     area_names = {"ground","sand","water","magma","acid","poison"};
     area_stepsounds = {"ground","swamp","stone","sand","snow","metal"};
 	tile_empty =  love.graphics.newQuad(301, 48, tile_w+2, tile_h+2, 1024, 1024);
@@ -168,6 +168,17 @@ function playingState.load()
 	global.rnd_value = 5;
 	global.ctrl = -1;
 	global.hex = 1;
+	global.homeland = 0;
+	
+	global.homelands_colors = {};
+	
+	for i=1,50 do
+		local r = math.random(1,255);
+		local g = math.random(1,255);
+		local b = math.random(1,255);
+		table.insert(global.homelands_colors,{r,g,b});
+	end;
+	
 	btn_x=global.screenWidth-210;
 	back_size=256;
 	back_count=10;
@@ -255,6 +266,14 @@ function newLevel()
 			harvest_table[i][z][3]={}; -- herbs if not success
 		end;
 	end;
+	
+	for i=1, map_w do
+        homelands_table[i]={};
+		for z=1, map_h do
+			homelands_table[i][z]=0;
+		end;
+	end;
+	
 end;
 
 function flood_objects ()
@@ -266,7 +285,7 @@ end;
 function draw_background ()
 	for i=1,bgmap_h do
 		for h=1,bgmap_w do
-			if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest") and (h-map_x) <= 8 and (i-map_y) <= 3 then
+			if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands") and (h-map_x) <= 8 and (i-map_y) <= 3 then
 				love.graphics.draw(media.images.img_back, background_[bgmap[i][h]], (h-1)*back_size-map_x*64, (i-1)*back_size-map_y*32*0.75);
 			elseif editor_status == "background" then
 				hex_status=-1;
@@ -466,7 +485,7 @@ function centerObject(sprite)
 end;
 
 function draw_map()
-	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest") and hexes_status==1 then
+	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands") and hexes_status==1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				if show_invisible and map[my+map_y][mx+map_x]<20  and map[my+map_y][mx+map_x]<300 then
@@ -486,11 +505,13 @@ function resize_map ()
 				map[my] = {};
 				harvest_table[my] = {};
 				buildings_table[my] = {};
+				homelands_table = {};
 			end;
 			if not map[my][mx] then
 				map[my][mx] = current_hex_type;
 				harvest_table[my][mx] = {0,0,{}};
-				buildings_table[my][mx] = 0;	
+				buildings_table[my][mx] = 0;
+				homelands_table = 0;
 			end;
 
 		end;
@@ -505,6 +526,7 @@ function resize_map_lesser ()
 			table.remove(map,my);
 			table.remove(harvest_table,my);
 			table.remove(buildings_table,my);
+			table.remove(homelands_table,my);
 		end;
 		if map[my] then
 			local _limit2 = #map[my];
@@ -513,6 +535,7 @@ function resize_map_lesser ()
 					table.remove(map[my],mx);
 					table.remove(harvest_table[my],mx);
 					table.remove(buildings_table[my],mx);
+					table.remove(homelands_table[my],mx);
 				end;
 			end;
 		end;
@@ -554,7 +577,7 @@ function passCheck (x,y)
 end;
 
 function draw_objects ()
-	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest") then
+	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands") then
 		if map_x < 12 then
 			mxx = 1
 		else
@@ -649,7 +672,7 @@ function playingState.keypressed(key, unicode)
 	end;
 	
 	if  mX< global.screenWidth-274 then
-		if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" then
+		if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" then
 			if key == 'up' then
 				if map_y>2 then
 					map_y = map_y-2;
@@ -965,6 +988,35 @@ end;
 ----
 
 function playingState.mousepressed(x, y, button)
+	
+	if love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "homelands" then
+		if brush == 0 then
+			if insideMap(cursor_world_y,cursor_world_x) and passCheck (cursor_world_x,cursor_world_y) then
+				homelands_table[cursor_world_y][cursor_world_x] = global.homeland;
+			end;
+		elseif brush == 1 or brush == 2 or brush == 3 then
+			if insideMap(cursor_world_y,cursor_world_x) and passCheck (cursor_world_x,cursor_world_y) then
+				homelands_table[cursor_world_y][cursor_world_x] = global.homeland;
+			end;
+			local rings = ringArea(cursor_world_x,cursor_world_y);
+			for h=1,brush do
+				for i=1,#rings[h] do
+					if insideMap(rings[h][i].y,rings[h][i].x) and passCheck (rings[h][i].x,rings[h][i].y) then	
+						homelands_table[rings[h][i].y][rings[h][i].x] = global.homeland;
+					end;
+				end;
+			end;
+		elseif brush >= 4 and brush <= 10 then
+			local boomarea = squareArea(cursor_world_x,cursor_world_y,brush);
+			for i=1,#boomarea do
+				if insideMap(boomarea[i].y,boomarea[i].x) and passCheck (boomarea[i].x,boomarea[i].y) then
+					homelands_table[boomarea[i].y][boomarea[i].x] = global.homeland;
+				end;
+			end;
+		
+		end;
+	end;
+	
 	if love.mouse.isDown("r") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "hexes" and global.copy == 1 then
 		global.copied = {};
 		if brush == 0 then
@@ -989,6 +1041,7 @@ function playingState.mousepressed(x, y, button)
 		
 		end;
 	end;
+	
 	if love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "hexes" and global.copy == 1 and #global.copied > 0 and global.digger == -1 then
 		if brush == 0 then
 			if insideMap(cursor_world_y,cursor_world_x) then
@@ -1157,7 +1210,7 @@ function playingState.mousepressed(x, y, button)
 			end;
 		end;
 	end;
-	if global.ctrl == -1 and (editor_status == "hexes" or editor_status == "harvest") and global.digger == -1 then
+	if global.ctrl == -1 and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "homelands") and global.digger == -1 then
 		if button=="wd" then
 			global.copied = {};
 			if brush < 10 then
@@ -1173,7 +1226,7 @@ function playingState.mousepressed(x, y, button)
 			end;
 		end;
 	end;
-	if global.randomize_hexes == 1 and (editor_status == "hexes" or editor_status == "harvest") then
+	if global.randomize_hexes == 1 and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "homelands") then
 		if global.ctrl == 1 then
 			if button=="wu" then
 				if global.rnd_value < 10 then
@@ -1254,7 +1307,7 @@ function flood_map ()
 end;
 
 function draw_cursor ()
-	if (mX < global.screenWidth-274 and mY < global.screenHeight-150) and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "buildings") then
+	if (mX < global.screenWidth-274 and mY < global.screenHeight-150) and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "buildings" or editor_status == "homelands") then
 		if not hex_mouse_visible then
 			love.mouse.setVisible(false);
 		else
@@ -1314,6 +1367,7 @@ function save()
 	 .. "\r\n" .. "minimap_table=" .. Tserial.pack(minimap_table, true, false)
 	 .. "\r\n" .. "stepsound_table=" .. Tserial.pack(stepsound_table, true, false)
 	 .. "\r\n" .. "harvest_table=" .. Tserial.pack(harvest_table, true, false)
+	 .. "\r\n" .. "homelands_table=" .. Tserial.pack(homelands_table, true, false)
 	 .. "\r\n" .. "end;"
 	 );
 	print("levelname SAVED!");
@@ -1607,6 +1661,43 @@ function draw_harvest_buttons()
 	end;
 end;
 
+function draw_homelands_buttons()
+	local textinput = loveframes.Create("textinput");
+	textinput:SetPos(global.screenWidth-100, 550);
+	textinput:SetWidth(46);
+	textinput:SetText(global.homeland);
+	textinput:SetLimit(4);
+	textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+	textinput.OnEnter = function(object, text)
+		if text ~= nil then
+			global.homeland=tonumber(text);
+		end;
+	end;
+	
+	clearhomelandbutton = loveframes.Create("button")
+	clearhomelandbutton:SetPos(global.screenWidth-220,550);
+	clearhomelandbutton:SetHeight(40);
+	clearhomelandbutton:SetWidth(40);
+	clearhomelandbutton:SetText("0");
+	clearhomelandbutton.OnClick = function(object)
+		global.homeland = 0;
+		end;
+	
+	homelandsbuttons = {};
+	for i=1,50 do
+		local _addx = (i-1)*40-(math.ceil(i/5)-1)*200;
+		local _addy = math.floor((i-1)/5)*40;
+		homelandsbuttons[#homelandsbuttons+1] = loveframes.Create("button")
+		homelandsbuttons[#homelandsbuttons]:SetPos(global.screenWidth-220+_addx,40+_addy);
+		homelandsbuttons[#homelandsbuttons]:SetHeight(40);
+		homelandsbuttons[#homelandsbuttons]:SetWidth(40);
+		homelandsbuttons[#homelandsbuttons]:SetText(i);
+		homelandsbuttons[#homelandsbuttons].OnClick = function(object)
+			global.homeland = i;
+			end;
+	end;
+end;
+
 function drawUIButtons()
 	uibuttons = {};
 	
@@ -1848,6 +1939,18 @@ function drawUIButtons()
 		global.copy = -1*global.copy;
 	end;
 	
+	uibuttons[20] = loveframes.Create("button")
+	uibuttons[20]:SetPos(1360,global.screenHeight-60);
+	uibuttons[20]:SetHeight(40);
+	uibuttons[20]:SetWidth(100);
+	uibuttons[20]:SetText("areas");
+	uibuttons[20].OnClick = function(object)
+		editor_status = "homelands";
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		love.mouse.setVisible(false);
+		draw_homelands_buttons();
+	end;
 	
 end;
 
@@ -2128,6 +2231,24 @@ function draw_numbers()
 	love.graphics.setColor(255, 255, 255);
  end;
  
+ function draw_homelandNumbers()
+	for my=1, math.min(map_display_h, map_h-map_y) do
+		for mx=1, math.min(map_display_w, map_w-map_x) do
+			if homelands_table[my+map_y][mx+map_x] > 0 then
+				local index = math.min(255,homelands_table[my+map_y][mx+map_x]);
+				local _color1 = global.homelands_colors[index][1];
+				local _color2 = global.homelands_colors[index][2];
+				local _color3 = global.homelands_colors[index][3];
+				love.graphics.setColor(_color1, _color2, _color3,200);
+				drawHex (mx+map_x,my+map_y,tile_cursor_white);
+				love.graphics.setColor(255, 255, 255,255);
+				drawNumberHex (mx+map_x,my+map_y,32,homelands_table[my+map_y][mx+map_x]);
+			end;
+		end;
+	end;
+	love.graphics.setColor(255, 255, 255);
+ end;
+ 
 function drawNumberHex (x,y,add,txt)
 	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space)+8;
 	if y/2 == math.ceil(y/2) then
@@ -2149,6 +2270,11 @@ function playingState.draw()
 	if drawnumbers and (editor_status == "hexes" or editor_status == "buildings") then
 		draw_numbers();
 	end;
+	
+	if editor_status == "homelands" then
+		draw_homelandNumbers();
+	end;
+	
 	draw_objects();
 	
 	--HUD
@@ -2205,7 +2331,8 @@ function playingState.draw()
 		love.graphics.print("[LCTRL]+[C] - copy mode, RMB for copy, LMB for PASTE (режим копирования, ПКМ для копирования, ЛКМ для вставки)", 40,490);
 		love.graphics.print("can be used with randomize hexes (можно использовать со случайными гексами)");
 		love.graphics.print("[LCTRL]+WheelUp/WheelDown - quantity of randomizing hexes (количество рандомизируемых гекс)", 40,530);
-		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,530);
+		love.graphics.print("[LCTRL]+[P] - mob areas (территории мобов)", 40,550);
+		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,570);
 	end;
 	if editor_status == "background" then
 		love.graphics.print("tile type selected:", 100, 10);

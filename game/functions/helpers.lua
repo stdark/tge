@@ -3830,7 +3830,7 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 			end;
 		end;
 	end;
-	--melee
+	--MELEE
 	for i=1, #chars_mobs_npcs[index].arms do
 		local hand = chars_mobs_npcs[index]["arms"][i];
 		if chars_mobs_npcs[index]["equipment"][hand]~=0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].q > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class ~= "shield" then

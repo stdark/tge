@@ -216,6 +216,7 @@
 	star = anim8.newGrid(75, 200, media.images.spells:getWidth(), media.images.spells:getHeight(),2000,2350,0);
 	armageddonsky = anim8.newGrid(75, 200, media.images.spells:getWidth(), media.images.spells:getHeight(),1400,2350,0);
 	armageddonground = anim8.newGrid(75, 200, media.images.spells:getWidth(), media.images.spells:getHeight(),1100,2350,0);
+	acidrain = anim8.newGrid(75, 200, media.images.spells:getWidth(), media.images.spells:getHeight(),800,2350,0);
 	deathblossom = anim8.newGrid(150, 130, media.images.spells:getWidth(), media.images.spells:getHeight(),2370,2400,0);
 	comete = anim8.newGrid(75, 200, media.images.spells:getWidth(), media.images.spells:getHeight(),2140,2350,0);
 	
@@ -243,6 +244,7 @@
 	animation_star = anim8.newAnimation(star("1-3",1), 0.02);
 	animation_armageddonsky = anim8.newAnimation(armageddonsky("1-3",1), 0.02);
 	animation_armageddonground = anim8.newAnimation(armageddonground("1-3",1), 0.02);
+	animation_acidrain = anim8.newAnimation(acidrain("1-3",1), 0.02);
 	animation_deathblossom = anim8.newAnimation(deathblossom("1-1",1), 0.06);
 	animation_comete = anim8.newAnimation(comete("1-3",1), 0.02);
 

@@ -163,7 +163,7 @@ function draw.cursor ()
 					end;
 				end;
 	
-				if missle_type=="inferno" or missle_type=="prismaticlight" or missle_type=="frozenstorm"  or missle_type=="moonlight" or missle_type=="souldrinker" or missle_type =="masscurse" or missle_type == "massdispell" or missle_type =="misfortune" or missle_type == "despondency" or missle_type == "weakness"  or missle_type == "violation" then
+				if missle_type=="inferno" or missle_type=="prismaticlight" or missle_type=="eyeofthestorm"  or missle_type=="moonlight" or missle_type=="souldrinker" or missle_type =="masscurse" or missle_type == "massdispell" or missle_type =="misfortune" or missle_type == "despondency" or missle_type == "weakness"  or missle_type == "violation" then
 					local boomarea = boomareas.sightArea(); 
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);	
@@ -276,6 +276,17 @@ function draw.cursor ()
 				
 				if missle_type == "starburst" then
 					local power = 1;
+					local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
+					for i=2, #boomarea[1] do
+						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger);	
+					end;
+					for h=1, #sharea do
+						draw.drawHex(sharea[h].x,sharea[h].y,cursor_danger);
+					end;
+				end;
+				
+				if missle_type == "acidrain" then
+					local power = 3;
 					local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
 					for i=2, #boomarea[1] do
 						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger);	
@@ -977,7 +988,7 @@ function draw.boom ()
 		end;
 	end;
 	
-	if missle_type == "frozenstorm" then
+	if missle_type == "eyeofthestorm" then
 		snoweffect[1].ps:reset();
 		snoweffect[1].ps:start();
 		local boomarea = boomareas.sightArea(); 
@@ -1058,7 +1069,7 @@ function draw.boom ()
 	
 	if missle_type == "starburst" then 
 		local power = 1;
-		local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,12,power);
+		local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
 		for i=2, #boomarea[1] do
 			if helpers.passWalk(boomarea[1][i].y,boomarea[1][i].x) then
 				boomareas.ashGround (boomarea[1][i].x,boomarea[1][i].y);
@@ -1068,6 +1079,23 @@ function draw.boom ()
 		for i=1, #sharea do
 			if helpers.passWalk(sharea[i].y,sharea[i].x) then
 				boomareas.staticGround(sharea[i].x,sharea[i].y,i,lvl[1],num[1]);
+			end;
+		end;
+	end;
+	
+	if missle_type == "acidrain" then 
+		local power = 3;
+		local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
+		for i=2, #boomarea[1] do
+			if helpers.passWalk(boomarea[1][i].y,boomarea[1][i].x) then
+				boomareas.ashGround (boomarea[1][i].x,boomarea[1][i].y);
+				boomareas.acidGround (boomarea[1][i].x,boomarea[1][i].y);
+			end;
+		end;
+		for i=1, #sharea do
+			if helpers.passWalk(sharea[i].y,sharea[i].x) then
+				boomareas.ashGround(sharea[i].x,sharea[i].y,i,lvl[1],num[1]);
+				boomareas.acidGround(sharea[i].x,sharea[i].y,i,lvl[1],num[1]);
 			end;
 		end;
 	end;
@@ -2680,6 +2708,16 @@ function draw.objects ()
 							animation_star:draw(media.images.spells, (boomx+directions[2].xc[i])*64-300,(boomy+directions[2].y[i])*32*0.75-meteor_y-200);
 						else
 							animation_star:draw(media.images.spells, (boomx+directions[2].xn[i])*64-300,(boomy+directions[2].y[i])*32*0.75-meteor_y-200);
+						end;
+					end;
+				end;
+				if missle_type=="acidrain" then
+					animation_star = anim8.newAnimation(star("1-3",1), 0.02);
+					for i=1,6 do
+						if boomy/2==math.ceil(boomy/2) then
+							animation_acidrain:draw(media.images.spells, (boomx+directions[2].xc[i])*64-300,(boomy+directions[2].y[i])*32*0.75-meteor_y-200);
+						else
+							animation_acidrain:draw(media.images.spells, (boomx+directions[2].xn[i])*64-300,(boomy+directions[2].y[i])*32*0.75-meteor_y-200);
 						end;
 					end;
 				end;

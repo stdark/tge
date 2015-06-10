@@ -29,6 +29,7 @@ function ai.behavior()
 	
 	helpers.clearAiArrays();
 	trace.first_watch (current_mob);
+	
 --CALLED	
 	if chars_mobs_npcs[current_mob].ai == "called" then
 		if ai.enemyWatchesTheMob (current_mob) then

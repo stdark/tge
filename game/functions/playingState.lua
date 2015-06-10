@@ -1221,6 +1221,7 @@ function playingState.update(dt)
 			animation_meteor:update(dt);
 			animation_armageddonsky:update(dt);
 			animation_armageddonground:update(dt);
+			animation_acidrain:update(dt);
 			animation_deathblossom:update(dt);
 			animation_comete:update(dt);
 		end;

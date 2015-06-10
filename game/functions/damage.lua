@@ -2157,10 +2157,35 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
-	if missle_type == "frozenstorm" then
+	if missle_type == "eyeofthestorm" then
 		local boomarea = boomareas.sightArea(); 
 		for i=1,#boomarea do
 			elandscape[boomarea[i].y][boomarea[i].x] = "snow";	
+		end;
+	end;
+	
+	if missle_type == "coldray" then
+		local boomarea = boomareas.rayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
+		for i=1,#boomarea do
+			for j=1,#chars_mobs_npcs do
+				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
+					local damageHP = damage.magicalRes (j,8+num[1],"cold");
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[2],num[2],1,0,1,0,"cold",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[victim].cold_power = dot_power;
+						chars_mobs_npcs[victim].cold_dur = dot_dur;
+						helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.acided[chars_mobs_npcs[victim].gender]);
+					end;
+					local debuff = damage.applyCondition (j,lvl[1],num[2],"freeze","cold",false,false,1,false);
+					if debuff > 0 then
+						exp_for_what(math.ceil(debuff/3),current_mob);
+					end;
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
+				end;
+			end;
 		end;
 	end;
 	
@@ -2234,6 +2259,45 @@ function damage.multidamage () --FIXME two hexes
 			table.insert(damaged_mobs,j);
 			damage.mobDamaged(j,current_mob,damageHP);
 			exp_for_what(damageHP,current_mob)
+		end;
+	end;
+	
+	if missle_type == "acidrain" then 
+		local power = 3;
+		local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
+		for i=2, #boomarea[1] do
+			for j=1,#chars_mobs_npcs do
+				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
+					local damageHP = damage.magicalRes (j,8+num[1],"acid");
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"acid",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[victim].acid_power = dot_power;
+						chars_mobs_npcs[victim].acid_dur = dot_dur;
+						helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.acided[chars_mobs_npcs[victim].gender]);
+					end;
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
+				end;
+			end;
+		end;
+		for i=1, #sharea do
+			for j=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[j].x == sharea[i].x and chars_mobs_npcs[j].y == sharea[i].y then
+					local damageHP = damage.magicalRes (j,8+num[1]+sharea[i].power,"acid");
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"acid",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[victim].acid_power = dot_power;
+						chars_mobs_npcs[victim].acid_dur = dot_dur;
+						helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.acided[chars_mobs_npcs[victim].gender]);
+					end;
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
+				end;
+			end;
 		end;
 	end;
 	
@@ -5072,39 +5136,39 @@ function damage.mightModifer(index,hand)
 		secondhand = "lh2";
 	end;
 	if currentMobWeaponClass == "knuckle" then
-		modifer = 1.5;
+		modifer = 0.15;
 	elseif  currentMobWeaponSubClass == "claws" then
-		modifer = 0.5;
+		modifer = 0.05;
 	elseif  currentMobWeaponSubClass == "nipper" then
-		modifer = 3;
+		modifer = 0.3;
 	elseif  currentMobWeaponSubClass == "tentacles" then
-		modifer = 1;
+		modifer = 0.1;
 	elseif  currentMobWeaponSubClass == "thsword" then
 		modifer = 1.5;
 	elseif currentMobWeaponSubClass == "shortsword" then
-		modifer = 0.75;
+		modifer = 0.075;
 	elseif currentMobWeaponClass == "sword" then
-		modifer = 1;
+		modifer = 0.1;
 	elseif currentMobWeaponSubClass == "hetchet" and #chars_mobs_npcs[index]["arms"] <= secondhand and chars_mobs_npcs[index]["equipment"][secondhand] == 0 then
-		modifer = 1.75;
+		modifer = 0.175;
 	elseif currentMobWeaponClass == "axe" then
-		modifer = 1.5;
+		modifer = 0.15;
 	elseif currentMobWeaponClass == "crushing" then
-		modifer = 2;
+		modifer = 0.2;
 	elseif currentMobWeaponClass == "flagpole" and #chars_mobs_npcs[index]["arms"] <= secondhand and chars_mobs_npcs[index]["equipment"][secondhand] == 0 then
-		modifer = 1.5;
+		modifer = 0.15;
 	elseif currentMobWeaponClass == "flagpole" and #chars_mobs_npcs[index]["arms"] <= secondhand and chars_mobs_npcs[index]["equipment"][secondhand] > 0 then
-		modifer = 1.25;
+		modifer = 0.125;
 	elseif currentMobWeaponClass == "staff" then
-		modifer = 1.5;
+		modifer = 0.15;
 	elseif currentMobWeaponClass == "dagger" then
-		modifer = 0.5;
+		modifer = 0.05;
 	end;
 	if chars_mobs_npcs[index]["arms_health"][hand] == 0 then --attacking hand broken
 		modifer = 0;
 	elseif chars_mobs_npcs[index]["arms_health"][secondhand] == 0 and chars_mobs_npcs[index]["equipment"][secondhand] == 0 
 	and (currentMobWeaponSubClass == "thsword" or currentMobWeaponSubClass == "poleaxe" or currentMobWeaponSubClass == "staff" or currentMobWeaponClass == "flagpole" or currentMobWeaponSubClass == "hetchet") then
-		modifer = 0.25;
+		modifer = 0.025;
 	end;
 	return modifer;
 end;
@@ -5120,7 +5184,7 @@ function damage.countDamage(index,hand,flag)
 	else
 		dice = math.random(chars_mobs_npcs[index]["melee_stats"][hand].bmel); -- main variant
 	end;
-	local dmg = math.ceil((dice*chars_mobs_npcs[index]["melee_stats"][hand].amel+chars_mobs_npcs[index]["melee_stats"][hand].cmel+might_modifer*chars_mobs_npcs[index].mgt*might_modifer)+chars_mobs_npcs[index].heroism_power);
+	local dmg = math.ceil((dice*chars_mobs_npcs[index]["melee_stats"][hand].amel+chars_mobs_npcs[index]["melee_stats"][hand].cmel+might_modifer*chars_mobs_npcs[index].mgt)+chars_mobs_npcs[index].heroism_power);
 	return dmg;
 end;
 
