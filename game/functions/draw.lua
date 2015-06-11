@@ -2930,7 +2930,7 @@ function draw.objects ()
 							end;
 						end;
 					elseif game_status =="damage" and i == victim then
-						if chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 and (missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand") and magic.spell_tips[missle_type].form == "ally"then
+						if chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 and (missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand") and magic.spell_tips[missle_type].form == "ally" then
 							local tmp = chars_mobs_npcs[i].sprite .. "_stay";
 							local mob_stay = loadstring("return " .. tmp)();
 							local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
@@ -3992,11 +3992,14 @@ function draw.ui ()
 					drt2s = screen_mod_y-100*(delta_rt2spend-1);
 				end;
 				if missle_drive == "spellbook" then
-						delta_sp2spend = delta_st2spend + price_in_mana/chars_mobs_npcs[i].sp_max;
+					delta_sp2spend = delta_st2spend + price_in_mana/chars_mobs_npcs[i].sp_max;
 					if missle_type == "incineration" or missle_type == "dehydratation" then
 						delta_sp2spend = 1;
 					end;
 					dsp2s = screen_mod_y-100*(delta_sp2spend-1);
+				elseif missle_drive == "muscles" and helpers.missleAtWarBook() then
+					delta_st2spend = delta_st2spend + price_in_st/chars_mobs_npcs[i].st_max;
+					dst2s = screen_mod_y-100*(delta_st2spend-1);
 				end;
 			end;
 		end;

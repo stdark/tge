@@ -673,7 +673,7 @@ stamina=100,
 skill="unarmed",
 spell=4,
 page=3,
-form="ranged",
+form="special",
 },
 
 absoluteblock = {
@@ -890,6 +890,7 @@ skill="bow",
 spell=1,
 page=3,
 form="range",
+ammo=1,
 },
 
 maximumstreght = {
@@ -914,6 +915,7 @@ skill="bow",
 spell=2,
 page=3,
 form="range",
+ammo=1,
 },
 
 eagleseye = {
@@ -938,6 +940,7 @@ skill="bow",
 spell=3,
 page=3,
 form="range",
+ammo=1,
 },
 
 blinding = {
@@ -962,6 +965,7 @@ skill="bow",
 spell=4,
 page=3,
 form="range",
+ammo=2,
 },
 
 shielpenetration = {
@@ -986,6 +990,7 @@ skill="crossbow",
 spell=1,
 page=3,
 form="range",
+ammo=1,
 },
 
 carefulaiming = {
@@ -1010,6 +1015,7 @@ skill="crossbow",
 spell=2,
 page=3,
 form="range",
+ammo=1,
 },
 
 nailing = {
@@ -1034,6 +1040,7 @@ skill="crossbow",
 spell=3,
 page=3,
 form="range",
+ammo=1,
 },
 
 finishing = {
@@ -1058,6 +1065,7 @@ skill="crossbow",
 spell=4,
 page=3,
 form="range",
+ammo=1,
 },
 
 shockingsparkle = {
@@ -1082,6 +1090,7 @@ skill="throwing",
 spell=1,
 page=3,
 form="range",
+ammo=1,
 },
 
 hiddenstrike = {
@@ -1106,6 +1115,7 @@ skill="throwing",
 spell=2,
 page=3,
 form="range",
+ammo=1,
 },
 
 evilswarm = {
@@ -1130,6 +1140,7 @@ skill="throwing",
 spell=3,
 page=3,
 form="range",
+ammo=5,
 },
 
 bitingfan = {
@@ -1154,11 +1165,12 @@ skill="throwing",
 spell=4,
 page=3,
 form="range",
+ammo=7,
 },
 };
 
 tricks.alltricks = {
-{"slash","dencedefence","woodcutter","smash","lunge","armorpenetration","feint","decapitator","skullcrusher","nutchopper","impale","pin"},
+{"slash","dencedefence","smash","woodcutter","lunge","armorpenetration","feint","decapitator","skullcrusher","nutchopper","impale","pin"},
 {"bitsoulout","stunner","savingstick","backstab","vilehit","bloodyhit","ribbreaker","spinalshock","oblivion","deafen","smarthit","coupdegrace"},
 {"stomachhit","hammerhands","top","torero","bump","absoluteblock","sleepfinger","lotus","acrobat","shore","umbrella","ribhit"},
 {"parabolicshot","maximumstreght","carefulaiming","shieldpenetration","shockingsparkle","hiddenstrike","eagleseye","blinding","finishing","nailing","evilswarm","bitingfan"},

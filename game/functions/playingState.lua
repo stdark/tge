@@ -1435,13 +1435,7 @@ function playingState.update(dt)
 		end;
 
 		if game_status == "missle" then
-			if missle_type=="bolt"
-			or missle_type=="arrow"
-			or missle_type=="throwing"
-			or missle_type=="bullet"
-			or missle_type=="battery" then
-				missle_fly();
-			elseif  missle_type=="bottle" then
+			if helpers.missleIsAweapon () then
 				missle_fly();
 			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball" 
 			or missle_type == "windfist"
@@ -1462,7 +1456,7 @@ function playingState.update(dt)
 			end;
 		end;
 
-		if game_status == "boom" and global.timers.bm_timer>=0.4 then
+		if game_status == "boom" and global.timers.bm_timer >= 0.4 then
 			global.timers.bm_timer=0;
 			if missle_drive == "alchemy" or missle_drive == "trap" or missle_drive == "revenge" or magic.spell_tips[missle_type].form == "ball" or magic.spell_tips[missle_type].form == "rico" or magic.spell_tips[missle_type].form=="mole" then
 				damaged_mobs = damage.multidamage();
@@ -2511,7 +2505,7 @@ function playingState.mousereleased (x,y,button)
 		local x,y = helpers.centerObject(media.images.sbook);
 		missle_type = helpers.bookCircles(page);
 		if missle_type then
-			helpers.ifSpellIsCastable ();	
+			helpers.ifTrickIsCastable ();	
 		end;
 		if mX>x+8 and mX<x+100 and mY>y and mY<y+50 then
 			utils.printDebug("sword axe falgpole");
@@ -3993,6 +3987,7 @@ function  playingState.mousepressed(x,y,button)
 		show_inventory_tips = 0;
 		show_monsterid_tip = 0;
 		show_spellbook_tips = 0;
+		show_warbook_tips = 0;
 	end;
 	if button == "r" and game_status == "sensing" then
 		game_status = "neutral";
@@ -6318,13 +6313,39 @@ function  playingState.mousepressed(x,y,button)
 		if love.mouse.isDown("l") and mY < global.screenHeight-160
 		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 		and game_status == "sensing"
-		and missle_drive == "warbook"
+		and missle_drive == "muscles"
 		and tricks.tricks_tips[missle_type].form == "pose" then
 			damage.setProtectionMode();
 		end;
-		
+		--[[
+		if love.mouse.isDown("l") and mY < global.screenHeight-160
+		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+		and game_status == "sensing"
+		and missle_drive == "muscles"
+		and tricks.tricks_tips[missle_type].form == "melee" then
+			damage.meleeAttack (damage.meleeAttackTool (current_mob));
+		end;
+		]]
+		if love.mouse.isDown("l") and mY < global.screenHeight-160
+		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+		and game_status == "sensing"
+		and missle_drive == "muscles"
+		and tricks.tricks_tips[missle_type].form == "ranged" then
+			boomx= chars_mobs_npcs[victim].x;
+			boomy= chars_mobs_npcs[victim].y;
+			if missle_type == "evilswarm" or missle_type == "bitingfan" then
+				helpers.beforeShoot();
+				game_status="shot";
+				damage.shoot();	
+			else
+				helpers.beforeShoot();
+				game_status="shot";
+				damage.shoot();	
+			end;
+		end;
+--/tricks	
 --spells
-		if missle_drive ~= "warbook" then
+		if missle_drive ~= "muscles" then
 			if global.status ~= "mindgame" then
 				if love.mouse.isDown("l") and mY < global.screenHeight-160 and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char") and game_status == "sensing" and missle_type=="powerheal" then
 					helpers.beforeShoot();
@@ -6525,7 +6546,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 
 				if love.mouse.isDown("l") and mY < global.screenHeight-160
-				and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
+				and missle_type ~= "arrow" and not helpers.missleIsAweapon ()
 				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 				and magic.spell_tips[missle_type] and game_status == "sensing" and (magic.spell_tips[missle_type].form == "sight" or magic.spell_tips[missle_type].form == "vray" or magic.spell_tips[missle_type].form == "ray" or magic.spell_tips[missle_type].form == "breath") then
 					helpers.beforeShoot();
@@ -6534,7 +6555,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 
 				if love.mouse.isDown("l") and mY < global.screenHeight-160
-				and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
+				and not helpers.missleIsAweapon ()
 				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 				and game_status == "sensing" and magic.spell_tips[missle_type].form == "rico" and #rockline>1 then
 					helpers.beforeShoot();
@@ -6556,7 +6577,7 @@ function  playingState.mousepressed(x,y,button)
 				if love.mouse.isDown("l")
 				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 				and game_status == "sensing"
-				and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
+				and not helpers.missleIsAweapon ()
 				and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
 				and (magic.spell_tips[missle_type].form == "rain" or magic.spell_tips[missle_type].form == "skyrock") then
 					helpers.beforeShoot();
@@ -8071,14 +8092,17 @@ function missle_fly ()
 		global.timers.msla_timer=0;
 	end;
 	if global.timers.msl_timer >= 0.06 then -- 0.005 too fast
-		
 		missle_x = shot_line[fly_count][1];
 		missle_y = shot_line[fly_count][2];
 		if missle_x == chars_mobs_npcs[victim].x and missle_y == chars_mobs_npcs[victim].y then
 			--if missle_drive == "spellbook" or missle_drive=="scroll" or missle_drive=="wand" then
-			if missle_type == "bolt" or missle_type == "arrow" or missle_type == "throwing"  or missle_type == "bullet" or missle_type == "battery" then
+			if helpers.missleIsAweapon () and missle_type ~= "bottle" and missle_type ~= "bitingfan" then
 				game_status = "damage";
 				damage.singledamage();
+				fly_count = 1;
+			elseif missle_type == "evilswarm" then
+				game_status = "damage";
+				damage.multidamage();
 				fly_count = 1;
 			elseif missle_type == "bottle" then
 			elseif magic.spell_tips[missle_type].form == "ball"

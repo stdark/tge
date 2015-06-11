@@ -4191,34 +4191,36 @@ function helpers.castReady (drive)
 	end;
 end;
 
-function helpers.ifTrickIsCastable () --FIXME not completed
-	local time_check = true; --FIXME
+function helpers.ifTrickIsCastable ()
 	local stamina_check = false;
 	local recovery_check = false;
 	local weapon_check = false;
 
-	if global.status ~= "mindgame" or  (global.status == "mindgame" and trick_tips[missle_type].mindgame) then
-		mindgame_check = true;
-	end;
-	if chars_mobs_npcs[current_mob].st >= trick_tips[missle_type].stamina then
+	if chars_mobs_npcs[current_mob].st >= tricks.tricks_tips[missle_type].stamina then
 		stamina_check = true;
 	end;
-	if chars_mobs_npcs[current_mob].rt >= trick_tips[missle_type].recovery then
+	if chars_mobs_npcs[current_mob].rt >= tricks.tricks_tips[missle_type].recovery then
 		recovery_check = true;
 	end;
-	local _missle_name = tricks.alltricks[_page][_circle];
-	local _tipskill = tricks.trick_tips[_missle_name].weapon_skill;
-
+	local _tipskill = tricks.tricks_tips[missle_type].skill;
+	local _ammo = 0;
+	if tricks.tricks_tips[missle_type].ammo and tricks.tricks_tips[missle_type].ammo > 0 then
+		_ammo = tricks.tricks_tips[missle_type].ammo;
+	end
 	if _tipskill == "unarmed" and chars_mobs_npcs[current_mob]["equipment"].rh == 0 and chars_mobs_npcs[current_mob]["equipment"].lh == 0 then
 		weapon_check = true;
-	elseif (_tipskill == "sword" or _tipskill == "axe" or _tipskill == "crushing" or _tipskill == "flagpole" or _tipskill == "staff" or _tipskill == "dagger") and chars_mobs_npcs[current_mob]["equipment"].rh > 0 then
+	elseif (_tipskill == "sword" or _tipskill == "axe" or _tipskill == "crushing" or _tipskill == "flagpole" or _tipskill == "staff" or _tipskill == "dagger") and chars_mobs_npcs[current_mob]["equipment"].rh > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].q > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].class == _tipskill then
 		weapon_check = true;
-	elseif (_tipskill == "bow" or _tipskill == "crossbow" or _tipskill == "firearms" or _tipskill == "blaster") and chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
+	elseif (_tipskill == "bow" or _tipskill == "crossbow" or _tipskill == "firearms" or _tipskill == "blaster") and chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].q > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class == _tipskill and chars_mobs_npcs[current_mob]["equipment"].ammo > _ammo then
 		weapon_check = true;
-	elseif _tipskill == "throwing" and chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
+	elseif _tipskill == "throwing" and chars_mobs_npcs[current_mob]["equipment"].ammo > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class == _tipskill then
+		weapon_check = true;
+	elseif _tipskill == "shield" and chars_mobs_npcs[current_mob]["equipment"].lh > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].q > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].class == _tipskill then
+		weapon_check = true;
+	elseif _tipskill == "dodging" and (chars_mobs_npcs[current_mob]["equipment"].armor == 0 or (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].subclass =="leather" and chars_mobs_npcs[current_mob].lvl_dodging == 5)) then
 		weapon_check = true;
 	end;
-	if weapon_check and time_check and mana_check and recovery_check then
+	if weapon_check and stamina_check and recovery_check then
 		helpers.trickReady ();
 		return true;
 	end;
@@ -4227,13 +4229,10 @@ function helpers.ifTrickIsCastable () --FIXME not completed
 end;
 
 function helpers.trickReady ()
-	price_in_st = magic.spell_tips[missle_type].stamina;
-	rec = trick_tips[missle_type].recovery;
-	if magic.spell_tips[missle_type].form == "sight" or magic.spell_tips[missle_type].form == "ray" or magic.spell_tips[missle_type].form == "vray" or magic.spell_tips[missle_type].form == "skyray" or magic.spell_tips[missle_type].form == "trident" or magic.spell_tips[missle_type].form == "level" then
-		boomx = 1;
-		boomy = 1;
-	end;
-	missle_drive = drive;
+	price_in_st = tricks.tricks_tips[missle_type].stamina;
+	rec = tricks.tricks_tips[missle_type].recovery;
+	missle_drive = "muscles";
+	game_status = "sensing";
 end;
 
 function helpers.castFailed ()
@@ -4639,13 +4638,13 @@ function helpers.bookCircles(_page)
 	local _missle_type = false;
 	if game_status == "spellbook" then
 		if _circle and _page then
-			print("sb:::",_page,_circle);
 			_missle_type = magic.allspells[_page][_circle];
+			_missle_drive = "spellbook";
 		end;
 	elseif game_status == "warbook" then
 		if _circle and _page then
-			print("wb:::",_page,_circle);
 			_missle_type = tricks.alltricks[_page][_circle];
+			_missle_drive = "muscles";
 		end;
 	elseif game_status == "abilitiesbook" then
 		if _circle and _page then
@@ -4849,4 +4848,83 @@ function helpers.findPlaceBehindAnEnemy (index)
 	else
 		return 0,0;
 	end;
+end;
+
+function helpers.MeleeMissle(missle_type)
+	for i=1,#tricks.alltricks do
+		for h=1,#tricks.alltricks[i] do
+			if missle_type == tricks.alltricks[i][h] and tricks.tricks_tips[missle_type].form == "melee" then
+				return true;
+			end;
+		end;
+	end;
+	return false;
+end;
+
+function helpers.RangedMissle(missle_type)
+	for i=1,#tricks.alltricks do
+		for h=1,#tricks.alltricks[i] do
+			if missle_type == tricks.alltricks[i][h] and tricks.tricks_tips[missle_type].form == "ranged" then
+				return true;
+			end;
+		end;
+	end;
+	return false;
+end;
+
+function helpers.mobHasHitZoneAtHex(index,hex,zone)
+	for i=1,#chars_mobs_npcs[index]["hitzones"][hex] do
+		if chars_mobs_npcs[index]["hitzones"][hex][i] == zone then
+			return true;
+		end;
+	end;
+	return false;
+end;
+
+function helpers.randomLimb(index,hex,healthy)
+	local limbs = {};
+	local limb = false;
+	for i=1,#chars_mobs_npcs[index]["hitzones"][hex] do
+		if chars_mobs_npcs[index]["hitzones"][hex][i] == "rh" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh1" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh2" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh3" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "rf" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf1" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf2" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf3" 
+		then
+			if (healthy and chars_mobs_npcs[index][chars_mobs_npcs[index]["hitzones"][hex][i]] == 1) or not healthy then
+				table.insert(limbs,chars_mobs_npcs[index]["hitzones"][hex][i]);
+			end;
+		end;
+	end;
+	if #limbs > 0 then
+		limb = limbs[math.random(1,#limbs)];
+	end;
+	return limb;
+end;
+
+function helpers.missleIsAweapon ()
+	if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery"
+	or missle_type == "parabolicshot" or missle_type == "maximumstreght" or missle_type == "eagleseye" or missle_type == "blinding"
+	or missle_type == "carefulaiming" or missle_type == "shieldpenetration" or missle_type == "nailing" or missle_type == "finishing"
+	or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingfan"	
+	then
+		return true;
+	end;
+	return false;
+end;
+
+function helpers.missleAtWarBook()
+	for i=1,#tricks.alltricks do
+		for h=1,#tricks.alltricks[i] do
+			if missle_type == tricks.alltricks[i][h] then
+				return true;
+			end;
+		end;
+	end;
+	return false;
 end;

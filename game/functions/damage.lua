@@ -252,7 +252,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	local delta_spd = 0;
 	local bodyArmorPieces = {armor=0,belt=0,cloak=0};
 	helpers.recalcBattleStats (current_mob);
-	if missle_type=="bolt" or missle_type=="arrow" or missle_type=="throwing" or missle_type=="bullet" then
+	if helpers.missleIsAweapon () and missle_type ~= "bottle" then
 		love.audio.play(media.sounds.arrow_impact,0); -- FIXME: different sounds for different missles
 		local wpEffect,wpChance = damage.weaponPassives(current_mob,victim,missle_type);
 		local attacked_from = helpers.attackDirection(current_mob,victim);
@@ -724,10 +724,18 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	--/ammo modifers
 			dmghp = damage.physicalRes (victim,dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu/5) + add_dmghp; -- FIXME! Oil!
 			random_chance = math.random(100);
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q=chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q-1
+			if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery" then --wasting ammo
+				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - 1;
+			elseif helpers.missleIsAweapon () then
+				local _ammo = 0;
+				if tricks.tricks_tips[_missle_name].ammo and tricks.tricks_tips[_missle_name].ammo > 0 then
+					_ammo = tricks.tricks_tips[_missle_name].ammo;
+				end;
+				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - _ammo;
+			end;
 			if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q == 0 then
 				table.remove(chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo])
-				chars_mobs_npcs[current_mob]["equipment"].ammo=0
+				chars_mobs_npcs[current_mob]["equipment"].ammo = 0;
 			end;
 			local penalty = 0;
 			if helpers.aliveNature(current_mob) then
@@ -750,7 +758,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		iflucky = 1;
 	end;
 	if iflucky == 1 then
-		if missle_type=="bolt" or missle_type=="arrow" or missle_type=="throwing" or missle_type=="bullet" then
+		if helpers.missleIsAweapon () and missle_type ~= "bottle" then
 			if chars_mobs_npcs[victim].hp > 0 then
 				damage.HPminus(victim,dmghp,true);
 			end;
@@ -2799,8 +2807,8 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		end;
 	end;
 	
-	if missle_effect ~= "none" then --FIXME
-		add_effect_st = hold_tips[missle_effect].stamina;			
+	if helpers.MeleeMissle(missle_type) then --FIXME
+		add_effect_st = tricks.tricks_tips[missle_type].stamina;			
 	end;
 	
 	local currentMobWeaponClass,currentMobWeaponSubClass = damage.weaponClassInHand(current_mob,attacking_hand);
@@ -2824,6 +2832,15 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	random_chance = math.random(1,100)-50;
 	total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
 	chance_to_hit = chance_to_hit_norandom + random_chance + total_fate + chars_mobs_npcs[current_mob].rage;
+	if missle_type == "slash" then
+		chance_to_hit = math.ceil(chance_to_hit/2);
+	elseif missle_type == "smash" then
+		chance_to_hit = math.ceil(chance_to_hit/3);
+	elseif missle_type == "scullcrusher" then
+		chance_to_hit = math.ceil(chance_to_hit/4);
+	elseif missle_type == "lunge" then	
+		chance_to_hit = math.ceil(chance_to_hit*2);
+	end;
 	chars_mobs_npcs[current_mob].fate = 0;
 	chars_mobs_npcs[current_mob].fateself = 0;
 	chars_mobs_npcs[victim].fate = 0;
@@ -2832,7 +2849,12 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	if attacked_from == "back" then
 		chance_to_crit = chance_to_crit*2;
 	end;
-	
+	if missle_type == "vilehit" and (attacked_from == "back" or attacked_from == "rback" or attacked_from == "lback") then
+		chance_to_crit = chance_to_crit*5;
+	end;
+	if missle_type == "lunge" then
+		chance_to_crit = chance_to_crit*2;
+	end;
 	if chance_to_hit <= 0 then
 		iflucky = 0;
 		love.audio.play(media.sounds.sword_miss,0);
@@ -2841,12 +2863,35 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		iflucky = 1;
 		utils.randommore ();
 		hitzone = chars_mobs_npcs[victim]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[victim]["hitzones"][global.hex])];	
+		if missle_type == "scullcrusher" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+			hitzone = "head";
+			incoming_physical_dmg = math.ceil(incoming_physical_dmg*10);
+		elseif missle_type == "woodcutter" and helpers.randomLimb(victim,global.hex,true) then
+			hitzone = helpers.randomLimb(victim,global.hex);
+		elseif (missle_type == "stomachhit" or missle_type == "ribbraker" or missle_type == "impale" or missle_type == "vilehit" or missle_type == "bitsouloutr") and helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+			hitzone = "body";
+		elseif missle_type == "oblivion" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+			hitzone = "head";
+		elseif missle_type == "stunner"  then
+			if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+				hitzone = "head";
+			elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+				hitzone = "body";
+			end;
+		end;
 		local might_modifer = damage.mightModifer(current_mob,attacking_hand);
 	--DAMAGE
 		incoming_physical_dmg = damage.countDamage(current_mob,attacking_hand,nil);
+		if missle_type == "slash" then
+			incoming_physical_dmg = math.ceil(incoming_physical_dmg*3);
+		elseif missle_type == "smash" then
+			incoming_physical_dmg = math.ceil(incoming_physical_dmg*5);
+		elseif missle_type == "lunge" then	
+			incoming_physical_dmg = math.ceil(incoming_physical_dmg*1.5);
+		end;	
 	-- DODGE
 	
-		if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) then
+		if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) and missle_type ~= "feint" and missle_type ~= "smarthit" then
 			
 			chance_to_dodge = math.ceil(chars_mobs_npcs[victim].dex/5)+chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
 			if chars_mobs_npcs[victim].lvl_dodging >= 4 and chars_mobs_npcs[victim]["equipment"].cloak > 0 
@@ -2906,69 +2951,71 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		end;
 	--/DODGE
 	--HANDBLOCK --ONLY for arms == 2, so no Sheevas!
-		if attacked_from=="front" then
-			hands_dir_coff=1;
-		elseif attacked_from=="lh" then
-			hands_dir_coff=1;
-		elseif attacked_from=="rh" then
-			hands_dir_coff=1;
-		elseif attacked_from=="lback" then
-			hands_dir_coff=0;
-		elseif attacked_from=="rback" then
-			hands_dir_coff=0;
-		elseif attacked_from=="back" then
-			hands_dir_coff=0;
-		end;
-		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-		and chars_mobs_npcs[victim].lvl_unarmed >= 2
-		and helpers.mobHasHealthyHands(victim) > 0
-		and (chars_mobs_npcs[current_mob]["equipment"][attacking_hand] == 0 or currentMobWeaponClass == "claws" or currentMobWeaponClass == "knuckle" or currentMobWeaponClass == "tentacle" or currentMobWeaponClass == "nipper")
-		and helpers.mobCanDefendHimself(victim) then
-			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;	
-		end;	
-		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-		and chars_mobs_npcs[victim].lvl_unarmed >= 3
-		and helpers.mobHasHealthyHands(victim) > 0
-		and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and (currentMobWeaponClass == "staff" or currentMobWeaponClass == "club" or currentMobWeaponClass == "dagger" )
-		and helpers.mobCanDefendHimself (victim) then
-			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
-		end;
-		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-		and chars_mobs_npcs[victim].lvl_unarmed >= 3
-		and helpers.mobHasHealthyHands(victim) > 0
-		and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and currentMobWeaponClass == "flagpole"
-		and helpers.mobCanDefendHimself (victim) then
-			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
-		end;
-		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-		and chars_mobs_npcs[victim].lvl_unarmed == 5
-		and helpers.mobHasHealthyHands(victim) > 0
-		and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and currentMobWeaponClass == "sword" and currentMobWeaponSubClass ~= "thsword"
-		and helpers.mobCanDefendHimself (victim) then
-			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
-		end;
-		if chars_mobs_npcs[victim].protectionmode == "block" then
-			chance_to_hands = 0;
-		end;
-		if chars_mobs_npcs[victim].protectionmode == "hands" then
-			chance_to_hands = chance_to_hands*2;
-		end;
-		if chars_mobs_npcs[victim].protectionmode == "dodge" then
-			chance_to_hands = 0;
-		end;
-		if chars_mobs_npcs[victim].protectionmode == "parry" then
-			chance_to_hands = 0;
-		end;
-		if chars_mobs_npcs[victim].mgt*1.5 < chars_mobs_npcs[current_mob].mgt then
-			chance_to_hands = 0;
-		end;
-		if wpEffect == "deblock" and wpChance > math.random(1,100) then
-			chance_to_hands = 0;
-			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.deblocked[chars_mobs_npcs[current_mob].gender]);
-		end;
-		if chance_to_hands > 0 then
-			for i=#array_of_chances+1,chance_to_hands do
-				array_of_chances[i] = "hands";	
+		if missle_type ~= "feint" and missle_type ~= "smarthit" then
+			if attacked_from=="front" then
+				hands_dir_coff=1;
+			elseif attacked_from=="lh" then
+				hands_dir_coff=1;
+			elseif attacked_from=="rh" then
+				hands_dir_coff=1;
+			elseif attacked_from=="lback" then
+				hands_dir_coff=0;
+			elseif attacked_from=="rback" then
+				hands_dir_coff=0;
+			elseif attacked_from=="back" then
+				hands_dir_coff=0;
+			end;
+			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+			and chars_mobs_npcs[victim].lvl_unarmed >= 2
+			and helpers.mobHasHealthyHands(victim) > 0
+			and (chars_mobs_npcs[current_mob]["equipment"][attacking_hand] == 0 or currentMobWeaponClass == "claws" or currentMobWeaponClass == "knuckle" or currentMobWeaponClass == "tentacle" or currentMobWeaponClass == "nipper")
+			and helpers.mobCanDefendHimself(victim) then
+				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;	
+			end;	
+			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+			and chars_mobs_npcs[victim].lvl_unarmed >= 3
+			and helpers.mobHasHealthyHands(victim) > 0
+			and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and (currentMobWeaponClass == "staff" or currentMobWeaponClass == "club" or currentMobWeaponClass == "dagger" )
+			and helpers.mobCanDefendHimself (victim) then
+				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
+			end;
+			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+			and chars_mobs_npcs[victim].lvl_unarmed >= 3
+			and helpers.mobHasHealthyHands(victim) > 0
+			and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and currentMobWeaponClass == "flagpole"
+			and helpers.mobCanDefendHimself (victim) then
+				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
+			end;
+			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+			and chars_mobs_npcs[victim].lvl_unarmed == 5
+			and helpers.mobHasHealthyHands(victim) > 0
+			and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and currentMobWeaponClass == "sword" and currentMobWeaponSubClass ~= "thsword"
+			and helpers.mobCanDefendHimself (victim) then
+				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
+			end;
+			if chars_mobs_npcs[victim].protectionmode == "block" then
+				chance_to_hands = 0;
+			end;
+			if chars_mobs_npcs[victim].protectionmode == "hands" then
+				chance_to_hands = chance_to_hands*2;
+			end;
+			if chars_mobs_npcs[victim].protectionmode == "dodge" then
+				chance_to_hands = 0;
+			end;
+			if chars_mobs_npcs[victim].protectionmode == "parry" then
+				chance_to_hands = 0;
+			end;
+			if chars_mobs_npcs[victim].mgt*1.5 < chars_mobs_npcs[current_mob].mgt then
+				chance_to_hands = 0;
+			end;
+			if wpEffect == "deblock" and wpChance > math.random(1,100) then
+				chance_to_hands = 0;
+				helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.deblocked[chars_mobs_npcs[current_mob].gender]);
+			end;
+			if chance_to_hands > 0 then
+				for i=#array_of_chances+1,chance_to_hands do
+					array_of_chances[i] = "hands";	
+				end;
 			end;
 		end;
 	--/HANDBLOCK
@@ -3000,7 +3047,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		if chars_mobs_npcs[victim]["equipment"].lh > 0 and helpers.mobCanDefendHimself (victim)
 		and inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "shield"
 		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
-		and helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim]["arms_health"].lh > 0 then
+		and helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim]["arms_health"].lh > 0 
+		and missle_type ~= "feint" and missle_type ~= "smarthit" 
+		then
 			local block_dir_coff=0
 			if attacked_from=="front" then
 				block_dir_coff=1;
@@ -3054,7 +3103,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff"
 		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].subclass == "hetchet")
 		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q > 0
-		and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh") then
+		and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh") 
+		and missle_type ~= "feint" and missle_type ~= "smarthit"
+		then
 			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword" then
 				if chars_mobs_npcs[victim].lvl_sword > 1 then
 					chance_to_parry = chars_mobs_npcs[victim].num_sword;
@@ -3137,7 +3188,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		
 		if AC > 0 then
 			for i=#array_of_chances+1,AC do
-				array_of_chances[i] = "ac";	
+				if missle_type ~= "armorpenetration" and missle_type ~= "smarthit" then
+					array_of_chances[i] = "ac";
+				end;
 			end;
 		end
 		--/AC
@@ -3274,8 +3327,59 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			end;
 			if wpChance > math.random(1,100) then
 				damage.weaponpEffect(victim,hitzone,wpEffect); -- weapon passives
+				if missle_type == "woodcutter" and helpers.randomLimb(victim,global.hex,true) then
+					damage.weaponpEffect(victim,hitzone,"chop");	
+				end;
 			end;
 			local mob_genocide = 1;
+			--tricks
+			if missle_type == "stunner" then
+				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
+					chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_crushing; 
+				end;
+			elseif missle_type == "decapitator" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 10 then
+				damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
+			elseif missle_type == "coupdegrace" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 25 and (chars_mpbs_npcs[victm].paralyze > 0 or chars_mpbs_npcs[victm].stun > 0 or chars_mpbs_npcs[victm].sleep > 0 or chars_mpbs_npcs[victm].immobilize > 0) then
+				damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
+			elseif missle_type == "stomachhit" then
+				if helpers.aliveNature(victim) then
+					chars_mobs_npcs[victim].rt = math.min(50,chars_mobs_npcs[current_mob].rt); 
+				end;
+			elseif missle_type == "sleepfinger" then
+				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
+					chars_mobs_npcs[victim].sleep = chars_mobs_npcs[current_mob].lvl_unarmed; 
+				end;
+			elseif missle_type == "impale" then
+				if helpers.aliveNature(victim) then
+					chars_mobs_npcs[victim].pneumothorax = 1; 
+				end;
+			elseif missle_type == "pin" then
+				chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_flagpole;
+			elseif missle_type == "bitsoulout" then	
+				if helpers.aliveNature(victim) then
+					chars_mobs_npcs[victim].rt = 0; 
+				end;
+			elseif missle_type == "ribbreaker" then
+				if helpers.aliveNature(victim) then
+					chars_mobs_npcs[victim].st = math.min(50,chars_mobs_npcs[current_mob].st);  
+				end;
+			elseif missle_type == "spinalshock" then
+				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
+					chars_mobs_npcs[victim].paralyze = chars_mobs_npcs[current_mob].lvl_crushing; 
+				end;
+			elseif missle_type == "backstab" then
+				chars_mobs_npcs[victim].rt = 0;
+				chars_mobs_npcs[victim].charm = chars_mobs_npcs[current_mob].lvl_staff;
+			elseif missle_type == "oblivion" then
+				chars_mobs_npcs[victim].sp = math.max(0,chars_mobs_npcs[victim].sp - math.ceil(chars_mobs_npcs[victim].sp*0.25));
+				chars_mobs_npcs[victim].feeblemind = chars_mobs_npcs[current_mob].lvl_staff;
+			elseif missle_type == "deafen" then	
+				chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_staff;
+			elseif missle_type == "bloodyhit" then
+				if helpers.traumaNature(victim) then
+					chars_mobs_npcs[victim].bleeding = chars_mobs_npcs[victim].bleeding + chars_mobs_npcs[current_mob].lvl_dagger;
+				end;
+			end;
 			--weapon modifers
 			if chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].w > 0 then	
 				--damage
@@ -3438,6 +3542,8 @@ function damage.shoot()
 	parry = 0;
 	victim = previctim;
 	local recovery = 0;
+	local add_effect_st = 0;
+	local add_effect_rt = 0;
 	if victim ~= current_mob and missle_type ~= "inferno" and missle_type ~= "bottle" then  
 		delx = shot_line[1][1]-shot_line[#shot_line][1]; --nil FIX: limit distance of fire
 		dely = shot_line[1][2]-shot_line[#shot_line][2];
@@ -3459,7 +3565,7 @@ function damage.shoot()
 	atk_direction = chars_mobs_npcs[current_mob].view;
 	tmpi = "media.images." .. chars_mobs_npcs[current_mob].sprite .. "_base";
 	img_base = loadstring("return " .. tmpi)();
-	if missle_drive=="muscles" or missle_drive=="alchemy" then
+	if missle_drive == "muscles" or missle_drive == "alchemy" then
 		local recovery = 0;
 		if missle_type == "bolt" or missle_type == "arrow" then
 			local tmp = chars_mobs_npcs[current_mob].sprite .. "_sht1";
@@ -3467,16 +3573,20 @@ function damage.shoot()
 			animation_sht1 = anim8.newAnimation(mob_sht1[atk_direction]("1-9",1), 0.075,"pauseAtEnd");
 			recovery = helpers.countRangeRecoveryChar (current_mob);
 			love.audio.play(media.sounds.crossbow_shot, 0);
-		elseif missle_type=="throwing" then
+		elseif missle_type == "throwing" then
 			recovery = helpers.countRangeRecoveryChar (current_mob);
-		elseif missle_type=="bottle" then
+		elseif missle_type == "bottle" then
 			local tmp = chars_mobs_npcs[current_mob].sprite .. "_launch";
 			local mob_sht1 = loadstring("return " .. tmp)();
 			animation_sht1 = anim8.newAnimation(mob_sht1[atk_direction]("1-9",1), 0.075,"pauseAtEnd");
 			recovery = helpers.countBottleRecovery (current_mob);
+		end;	
+		if helpers.RangedMissle(missle_type) then --FIXME
+			add_effect_st = tricks.tricks_tips[missle_type].stamina;
+			add_effect_rt = tricks.tricks_tips[missle_type].recovery;			
 		end;
-		chars_mobs_npcs[current_mob].st= chars_mobs_npcs[current_mob].st - recovery;
-		chars_mobs_npcs[current_mob].rt= chars_mobs_npcs[current_mob].rt - recovery;
+		damage.STminus(current_mob,recovery+add_effect_st,false);
+		damage.RTminus(current_mob,recovery+add_effect_rt,false);
 		img_shoot = img_mob_war;
 	elseif missle_drive=="spellbook" or missle_drive=="scroll" or missle_drive=="wand" then
 		--love.audio.play(sfx.Sounds["spellbook"], 0)
@@ -5378,8 +5488,17 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 				helpers.addToActionLog( victim_name .. lognames.actions.paralyzed[chars_mobs_npcs[index].gender]);
 			end;
 		elseif hitzone == "rh" or hitzone == "lh" or hitzone == "rh1" or hitzone == "lh1" or hitzone == "rh2" or hitzone == "lh2" then
-			
+			local chance = math.random(1,3);
+			if chance == 1 then
+			chars_mobs_npcs[index][hitzone] = 0;
+				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			end;
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
+			local chance = math.random(1,3);
+			if chance == 1 then
+			chars_mobs_npcs[index][hitzone] = 0;
+				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			end;
 		end;
 	end;
 	if wpEffect == "chop" then
@@ -5393,16 +5512,14 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 				chars_mobs_npcs[index].sp = 0;
 			end;
 		elseif hitzone == "body" then
-			local effect  = math.random(1,2);
-			if effect == 1 then
-				chars_mobs_npcs[index].bleeding = 	chars_mobs_npcs[index].bleeding + math.random(1,10);
-				helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[index].gender]);
-			elseif effect == 2 then
-				--?
-			end;
+			chars_mobs_npcs[index].bleeding = chars_mobs_npcs[index].bleeding + math.random(1,10);
+			helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[index].gender]);
 		elseif hitzone == "rh" or hitzone == "lh" or hitzone == "rh1" or hitzone == "lh1" or hitzone == "rh2" or hitzone == "lh2" then
-			
+			chars_mobs_npcs[index][hitzone] = 0;
+			helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
+			chars_mobs_npcs[index][hitzone] = 0;
+			helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
 		end;
 	end;
 	if wpEffect == "cut" then
@@ -5413,8 +5530,17 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 			chars_mobs_npcs[index].bleeding = 	chars_mobs_npcs[index].bleeding + math.random(5,10);
 			helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[index].gender]);	
 		elseif hitzone == "rh" or hitzone == "lh" or hitzone == "rh1" or hitzone == "lh1" or hitzone == "rh2" or hitzone == "lh2" then
-			
+			local chance = math.random(1,2);
+			if chance == 1 then
+				chars_mobs_npcs[index][hitzone] = 0;
+				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			end;
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
+			local chance = math.random(1,2);
+			if chance == 1 then
+				chars_mobs_npcs[index][hitzone] = 0;
+				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			end;
 		end;
 	end;
 	if wpEffect == "pierce" then
@@ -5444,8 +5570,17 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 				end;
 			end;
 		elseif hitzone == "rh" or hitzone == "lh" or hitzone == "rh1" or hitzone == "lh1" or hitzone == "rh2" or hitzone == "lh2" then
-			
+			local chance = math.random(1,4);
+			if chance == 1 then
+				chars_mobs_npcs[index][hitzone] = 0;
+				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			end;	
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
+			local chance = math.random(1,4);
+			if chance == 1 then
+				chars_mobs_npcs[index][hitzone] = 0;
+				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			end;
 		end;
 	end;
 	if wpEffect == "tear" then
