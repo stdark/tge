@@ -297,7 +297,7 @@ function ai.behavior()
 				and l ~= current_mob
 				and chars_mobs_npcs[l].status == 1
 				and math.ceil(math.sqrt((chars_mobs_npcs[l].x-chars_mobs_npcs[current_mob].x)^2+(chars_mobs_npcs[l].y-chars_mobs_npcs[current_mob].y)^2)) <= mob_range
-				and chars_mobs_npcs[l].invisibility == 0 and chars_mobs_npcs[j].stealth == 0
+				and chars_mobs_npcs[l].invisibility == 0 and chars_mobs_npcs[l].stealth == 0
 				then
 					ai_world_x = chars_mobs_npcs[l].x;
 					ai_world_y = chars_mobs_npcs[l].y;

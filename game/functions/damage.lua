@@ -198,6 +198,7 @@ function damage.mobsAlive()
 end;
 
 function damage.singledamage () -- missle_type, missle_drive,current_mob,victim (all globals)
+	global.hex = 1; --FIXME
 	utils.printDebug("damaging called");
 	-- This function calculates damage and buffs/debuffs/dots from ranged weapon and direct single-target spells.
 	helpers.clearMissleLight ();
@@ -2731,6 +2732,7 @@ end;
 
 function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(RH2,LH2,RH3,LH3),teeth,tail,horns
 	utils.printDebug("attack!");
+	global.hex = 1;
 	if chars_mobs_npcs[current_mob].control == "player" and global.status == "peace" then
 		letaBattleBegin ();
 	end;
