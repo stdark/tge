@@ -99,7 +99,7 @@ function mainmenuState.createParty ()
 	nextStateName = "createPartyState";
 	currentState = loadingState;
 	currentState.start(media, loadingFinished);
-	img_preloader =  love.graphics.newImage("img/loadscreens/preloader0.jpg");
+	img_preloader =  love.graphics.newImage("img/loadscreens/preloader0.dds");
 end;
 
 function mainmenuState.keypressed(key)
