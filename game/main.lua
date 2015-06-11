@@ -1,6 +1,12 @@
 --game
 
-jit.on();
+if jit then			-- check luajit
+   jit.on();			-- an run if any
+   print("Running with luajit");
+else				-- else run without luajit
+   print("Running WITHOUT luajit");
+end
+
 love.keyboard.setKeyRepeat(0.01, 0.2);
 
 loadingState = require 'functions.loadingState';
