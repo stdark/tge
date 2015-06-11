@@ -1306,7 +1306,7 @@ function playingState.update(dt)
 
 		if game_status == "sensing" and chars_mobs_npcs[current_mob].control=="player" then
 			tmp_current_mob=current_mob
-			helpers.turnMob();
+			helpers.turnMob(current_mob);
 		end;
 		--0.04
 		if game_status == "attack" and global.timers.a_timer>=0.4 then
@@ -2600,7 +2600,7 @@ function playingState.mousereleased (x,y,button)
 	end;
 --/spellbook
 	if button == "l" and game_status == "sensing" and (not helpers.cursorAtMob (cursor_world_x,cursor_world_y) or not trace.arrowStatus(current_mob)) and blockturn==0 and mY>=40 and mY<=800 then
-		helpers.turnMob();
+		helpers.turnMob(current_mob);
 	end;
 	if button == "l" and game_status == "inventory" and holding_smth > 0 then --equip item
 		local list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false);
@@ -6113,7 +6113,7 @@ function  playingState.mousepressed(x,y,button)
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
 		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 )) 
 		and not love.keyboard.isDown("lctrl") then
-			helpers.turnMob();
+			helpers.turnMob(current_mob);
 			if chars_mobs_npcs[current_mob].rot==1 then
 				atk_direction=4;
 			elseif chars_mobs_npcs[current_mob].rot==2 then
@@ -6143,7 +6143,7 @@ function  playingState.mousepressed(x,y,button)
 		
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear() and helpers.cursorAtMob (cursor_world_x,cursor_world_y) --FIXME neutral is not neutral
 		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and game_status == "neutral" and global.status == "battle" then
-			helpers.turnMob();
+			helpers.turnMob(current_mob);
 			if chars_mobs_npcs[current_mob].rot==1 then
 				atk_direction=4;
 			elseif chars_mobs_npcs[current_mob].rot==2 then
@@ -6351,7 +6351,7 @@ function  playingState.mousepressed(x,y,button)
 				and magic.spell_tips[missle_type].form == "ally" then
 					point_to_go_x=cursor_world_x;
 					point_to_go_y=cursor_world_y;
-					helpers.turnMob();
+					helpers.turnMob(current_mob);
 					if helpers.allyUnderCursor () then
 						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
 						helpers.beforeShoot();
@@ -6370,7 +6370,7 @@ function  playingState.mousepressed(x,y,button)
 				and missle_type=="resurrect" then
 					point_to_go_x=cursor_world_x;
 					point_to_go_y=cursor_world_y;
-					helpers.turnMob();
+					helpers.turnMob(current_mob);
 					if helpers.deadCharUnderCursor () then
 						helpers.beforeShoot();
 						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
@@ -6408,7 +6408,7 @@ function  playingState.mousepressed(x,y,button)
 				and missle_type=="restoreundead" then
 					point_to_go_x=cursor_world_x;
 					point_to_go_y=cursor_world_y;
-					helpers.turnMob();
+					helpers.turnMob(current_mob);
 					mbund_cursor();
 					if control_under_cursor_is == "player" or person_under_cursor_is == "char" then
 						helpers.beforeShoot();
@@ -6473,7 +6473,7 @@ function  playingState.mousepressed(x,y,button)
 					point_to_go_y=cursor_world_y;
 					boomx = cursor_world_x;
 					boomy = cursor_world_y;
-					helpers.turnMob();
+					helpers.turnMob(current_mob);
 					mbund_cursor();
 					helpers.beforeShoot();
 					game_status="shot";
@@ -7211,7 +7211,7 @@ function  playingState.mousepressed(x,y,button)
 	then
 		print("SUMMON");
 		helpers.beforeShoot();
-		helpers.turnMob();
+		helpers.turnMob(current_mob);
 		game_status="shot";
 		boomx = cursor_world_x;
 		boomy = cursor_world_y;
@@ -7227,7 +7227,7 @@ function  playingState.mousepressed(x,y,button)
 	--and mlandscape_obj[map[cursor_world_y][cursor_world_x] ]==0
 	then
 		helpers.beforeShoot();
-		helpers.turnMob()
+		helpers.turnMob(current_mob);
 		game_status="shot"
 		boomx = cursor_world_x;
 		boomy = cursor_world_y;
@@ -7264,7 +7264,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 		if minecanbeinstalled==1 then
 			helpers.beforeShoot();
-			helpers.turnMob()
+			helpers.turnMob(current_mob);
 			game_status="shot"
 			damage.shoot();
 		end;

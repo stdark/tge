@@ -2916,7 +2916,7 @@ function draw.objects ()
 						end;
 					elseif game_status == "missle" then
 					elseif game_status == "multidamage" then
-						if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[j].stealth == 0) then
+						if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
 							if chars_mobs_npcs[victim].freeze==0 and chars_mobs_npcs[victim].stone==0 then
 								local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 								local img_mob_base = loadstring("return " .. tmpi)();

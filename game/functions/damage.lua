@@ -2356,7 +2356,7 @@ function damage.multidamage () --FIXME two hexes
 						end;
 					end;
 				end;
-				boomareas.fireGround(rings[h][i].y,rings[h][i].x,2,lvl[1],num[1]);
+				boomareas.fireGround(rings[h][i].x,rings[h][i].y,2,lvl[1],num[1]);
 			end;
 		end;
 	end;
