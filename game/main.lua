@@ -51,6 +51,9 @@ function love.load()
 	end;
 	--love.window.setMode(1920, 1080, {resizable=true});
 	--love.window.setMode(1280, 960, {resizable=false});
+	-- love.window.setMode(1200, 600, {resizable=false});
+	local width, height = love.window.getDesktopDimensions(1); -- get our display size
+	love.window.setMode(width, height, {resizable=false});      -- set screen size
 end;
 
 function love.update(dt)
@@ -81,7 +84,7 @@ end;
 function love.keypressed(key)
   if currentState.keypressed then
     currentState.keypressed(key)
-  end 
+  end
   loveframes.keypressed(x, y, button);
 end
 
@@ -107,7 +110,7 @@ function love.mousereleased(x,y,button)
 end
 
 function love.textinput(text)
-    loveframes.textinput(text); 
+    loveframes.textinput(text);
 end;
 
 function love.draw()
