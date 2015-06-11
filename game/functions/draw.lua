@@ -4773,10 +4773,10 @@ function draw.trading ()
 				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
 			end;
 		end;
-	elseif wares == "jewerly" then
-		local part = math.ceil(media.images.shopjewerly:getWidth()/8);
-		local x,y = helpers.centerObject(media.images.shopjewerly);
-		love.graphics.draw(media.images.shopjewerly,  x,y-50);
+	elseif wares == "jewelry" then
+		local part = math.ceil(media.images.shopjewelry:getWidth()/8);
+		local x,y = helpers.centerObject(media.images.shopjewelry);
+		love.graphics.draw(media.images.shopjewelry,  x,y-50);
 		local bagid = traders[current_shop].bars[11];
 		for i=1,8 do
 			if bars_list[bagid][i] ~= "none" then

@@ -22,6 +22,7 @@ function playingState.load()
 	require "data.log"
 	require "data.chats"
 	require "data.magic"
+	require "data.tricks"
 	require "data.comics"
 	require "data.books"
 	require "data.messages"
@@ -147,6 +148,7 @@ function playingState.load()
 	threats_load();
 	npc_load();
 	calendar.calendar_data ();
+	tricks_tips_load ();
 
 	fractions={
 	party={party=0,greens=-100,bandidos=-100,vagrants = 0,merchants=0},
@@ -2116,9 +2118,10 @@ function playingState.mousereleased (x,y,button)
 	end;
 	
 	if button == "r"  then
-		show_inventory_tips=0;
-		show_monsterid_tip=0;
-		show_spellbook_tips=0;
+		show_inventory_tips = 0;
+		show_monsterid_tip = 0;
+		show_spellbook_tips = 0;
+		show_warbook_tips = 0;
 		loveframes.util.RemoveAll();
 	end;
 	
@@ -4568,6 +4571,14 @@ function  playingState.mousepressed(x,y,button)
 			show_spellbook_tips = 1;
 		end;
 	end;
+	if button == "r"  and game_status == "warbook" then -- watching trick tips in the warbook
+		local x,y = helpers.centerObject(media.images.wbook);
+		missle_type = helpers.bookCircles(page);
+		if missle_type then
+			show_warbook_tips = 1;
+		end;
+	end;
+	
 	if  button == "l" and mX>global.screenWidth-180 and mX<global.screenWidth-130 and mY>global.screenHeight-110 and mY<global.screenHeight and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
 		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
 			game_status = "inventory";
@@ -4758,9 +4769,9 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 		end;
-		if wares == "jewerly" then
-			local x,y = helpers.centerObject(media.images.shopjewerly);
-			local part = math.ceil(media.images.shopjewerly:getWidth()/8);
+		if wares == "jewelry" then
+			local x,y = helpers.centerObject(media.images.shopjewelry);
+			local part = math.ceil(media.images.shopjewelry:getWidth()/8);
 			local borders = 32;
 			for i =1,8 do
 				if mX > x+part*(i-1)+borders and mX < x+part*i-borders and mY > y + 50 and mY < y +150 then
@@ -5043,9 +5054,9 @@ function  playingState.mousepressed(x,y,button)
 					end;
 				end;
 			end;
-			if wares == "jewerly" then
-				local x,y = helpers.centerObject(media.images.shopjewerly);
-				local part = math.ceil(media.images.shopjewerly:getWidth()/8);
+			if wares == "jewelry" then
+				local x,y = helpers.centerObject(media.images.shopjewelry);
+				local part = math.ceil(media.images.shopjewelry:getWidth()/8);
 				local borders = 32;
 				for i =1,8 do
 					if mX > x+part*(i-1)+borders and mX < x+part*i-borders and mY > y + 50 and mY < y +150 then
@@ -6302,250 +6313,262 @@ function  playingState.mousepressed(x,y,button)
 				helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.teleported[chars_mobs_npcs[current_mob].gender]);
 		   end;
 		end;
+--tricks
+					
+		if love.mouse.isDown("l") and mY < global.screenHeight-160
+		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+		and game_status == "sensing"
+		and missle_drive == "warbook"
+		and tricks.tricks_tips[missle_type].form == "pose" then
+			damage.setProtectionMode();
+		end;
+		
 --spells
-		if global.status ~= "mindgame" then
-			if love.mouse.isDown("l") and mY < global.screenHeight-160 and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char") and game_status == "sensing" and missle_type=="powerheal" then
-				helpers.beforeShoot();
-				boomx=cursor_world_x;
-				boomy=cursor_world_y;
-				game_status="shot";
-				damage.shoot();
-			end;
-			
-			if love.mouse.isDown("l") and mY < global.screenHeight-160 and game_status == "sensing" and missle_type=="ritualofthevoid" then
-				helpers.beforeShoot();
-				boomx=cursor_world_x;
-				boomy=cursor_world_y;
-				game_status="shot";
-				damage.shoot();
-			end;
+		if missle_drive ~= "warbook" then
+			if global.status ~= "mindgame" then
+				if love.mouse.isDown("l") and mY < global.screenHeight-160 and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char") and game_status == "sensing" and missle_type=="powerheal" then
+					helpers.beforeShoot();
+					boomx=cursor_world_x;
+					boomy=cursor_world_y;
+					game_status="shot";
+					damage.shoot();
+				end;
+				
+				if love.mouse.isDown("l") and mY < global.screenHeight-160 and game_status == "sensing" and missle_type=="ritualofthevoid" then
+					helpers.beforeShoot();
+					boomx=cursor_world_x;
+					boomy=cursor_world_y;
+					game_status="shot";
+					damage.shoot();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
-			and game_status == "sensing"
-			and helpers.aliveNature(previctim) and damage.mobIsAlive(chars_mobs_npcs[previctim]) and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].sense --not too far!
-			and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
-			and magic.spell_tips[missle_type].form == "ally" then
-				point_to_go_x=cursor_world_x;
-				point_to_go_y=cursor_world_y;
-				helpers.turnMob();
-				if helpers.allyUnderCursor () then
-					previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and game_status == "sensing"
+				and helpers.aliveNature(previctim) and damage.mobIsAlive(chars_mobs_npcs[previctim]) and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].sense --not too far!
+				and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
+				and magic.spell_tips[missle_type].form == "ally" then
+					point_to_go_x=cursor_world_x;
+					point_to_go_y=cursor_world_y;
+					helpers.turnMob();
+					if helpers.allyUnderCursor () then
+						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
+						helpers.beforeShoot();
+						game_status="shot";
+						damage.shoot();
+					end;
+				end;
+
+				if love.mouse.isDown("l") and mY < global.screenHeight-1600
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and game_status == "sensing"
+				and chars_mobs_npcs[previctim].status==-1
+				and not helpers.aliveAtHex(chars_mobs_npcs[previctim].x,chars_mobs_npcs[previctim].y)
+				and helpers.aliveNature(previctim) and damage.mobIsAlive(chars_mobs_npcs[previctim]) and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+				and missle_type=="resurrect" then
+					point_to_go_x=cursor_world_x;
+					point_to_go_y=cursor_world_y;
+					helpers.turnMob();
+					if helpers.deadCharUnderCursor () then
+						helpers.beforeShoot();
+						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
+						game_status="shot"
+						damage.shoot();
+					end;
+				end;
+
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and game_status == "sensing"
+				and helpers.cursorAtDeadMob (cursor_world_x,cursor_world_y)
+				and not helpers.aliveAtHex(chars_mobs_npcs[previctim].x,chars_mobs_npcs[previctim].y)
+				and helpers.aliveNature(previctim)
+				and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+				and not chars_mobs_npcs[previctim].summoned
+				and missle_type=="raisedead" then
+					point_to_go_x=cursor_world_x
+					point_to_go_y=cursor_world_y
+					helpers.turnMob()
+					if helpers.deadMobUnderCursor () then
+						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
+						helpers.beforeShoot();
+						game_status="shot"
+						damage.shoot();
+					end;
+				end
+
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and game_status == "sensing"
+				and damage.mobIsAlive(chars_mobs_npcs[previctim]) and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
+				and chars_mobs_npcs[previctim].nature=="undead"
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+				and missle_type=="restoreundead" then
+					point_to_go_x=cursor_world_x;
+					point_to_go_y=cursor_world_y;
+					helpers.turnMob();
+					mbund_cursor();
+					if control_under_cursor_is == "player" or person_under_cursor_is == "char" then
+						helpers.beforeShoot();
+						game_status="shot";
+						damage.shoot();
+					end;
+				end;
+
+				if love.mouse.isDown("l") and mY < global.screenHeight-160 and game_status == "sensing"
+				and helpers.cursorAtEnemy (cursor_world_x,cursor_world_y)
+				and (chars_mobs_npcs[previctim].control == "ai"or helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y) > chars)
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+				and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
+				and (magic.spell_tips[missle_type].form == "direct" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "skyray") then
+					boomy=cursor_world_y;
+					boomx=cursor_world_x;
 					helpers.beforeShoot();
 					game_status="shot";
 					damage.shoot();
 				end;
-			end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-1600
-			and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
-			and game_status == "sensing"
-			and chars_mobs_npcs[previctim].status==-1
-			and not helpers.aliveAtHex(chars_mobs_npcs[previctim].x,chars_mobs_npcs[previctim].y)
-			and helpers.aliveNature(previctim) and damage.mobIsAlive(chars_mobs_npcs[previctim]) and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
-			and missle_type=="resurrect" then
-				point_to_go_x=cursor_world_x;
-				point_to_go_y=cursor_world_y;
-				helpers.turnMob();
-				if helpers.deadCharUnderCursor () then
-					helpers.beforeShoot();
-					previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
-					game_status="shot"
-					damage.shoot();
-				end;
-			end;
-
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and game_status == "sensing"
-			and helpers.cursorAtDeadMob (cursor_world_x,cursor_world_y)
-			and not helpers.aliveAtHex(chars_mobs_npcs[previctim].x,chars_mobs_npcs[previctim].y)
-			and helpers.aliveNature(previctim)
-			and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
-			and not chars_mobs_npcs[previctim].summoned
-			and missle_type=="raisedead" then
-				point_to_go_x=cursor_world_x
-				point_to_go_y=cursor_world_y
-				helpers.turnMob()
-				if helpers.deadMobUnderCursor () then
-					previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
-					helpers.beforeShoot();
-					game_status="shot"
-					damage.shoot();
-				end;
-			end
-
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
-			and game_status == "sensing"
-			and damage.mobIsAlive(chars_mobs_npcs[previctim]) and damage.mobCanBeDamaged(chars_mobs_npcs[previctim])
-			and chars_mobs_npcs[previctim].nature=="undead"
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
-			and missle_type=="restoreundead" then
-				point_to_go_x=cursor_world_x;
-				point_to_go_y=cursor_world_y;
-				helpers.turnMob();
-				mbund_cursor();
-				if control_under_cursor_is == "player" or person_under_cursor_is == "char" then
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and (chars_mobs_npcs[previctim].control=="ai"	or person_under_cursor=="mob")
+				and cursor_on_mob==1
+				and game_status == "sensing"
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+				and (missle_type=="spikes" or missle_type=="razors")
+				then
+					boomx= chars_mobs_npcs[current_mob].x;
+					boomy= chars_mobs_npcs[current_mob].y;
 					helpers.beforeShoot();
 					game_status="shot";
 					damage.shoot();
 				end;
-			end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160 and game_status == "sensing"
-			and helpers.cursorAtEnemy (cursor_world_x,cursor_world_y)
-			and (chars_mobs_npcs[previctim].control == "ai"or helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y) > chars)
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
-			and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
-			and (magic.spell_tips[missle_type].form == "direct" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "skyray") then
-				boomy=cursor_world_y;
-				boomx=cursor_world_x;
-				helpers.beforeShoot();
-				game_status="shot";
-				damage.shoot();
-			end;
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and cursor_on_mob==1
+				and game_status == "sensing"
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+				and chars_mobs_npcs[previctim].nature == "undead"
+				and missle_type=="controlundead" then
+					victim=previctim;
+					boomy= chars_mobs_npcs[previctim].y;
+					boomx= chars_mobs_npcs[previctim].x;
+					helpers.beforeShoot();
+					game_status="shot";
+					damage.shoot();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and (chars_mobs_npcs[previctim].control=="ai"	or person_under_cursor=="mob")
-			and cursor_on_mob==1
-			and game_status == "sensing"
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
-			and (missle_type=="spikes" or missle_type=="razors")
-			then
-				boomx= chars_mobs_npcs[current_mob].x;
-				boomy= chars_mobs_npcs[current_mob].y;
-				helpers.beforeShoot();
-				game_status="shot";
-				damage.shoot();
-			end;
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and missle_type ~= "bottle" and missle_drive ~= "muscles"
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and game_status == "sensing"
+				and chars_mobs_npcs[previctim].status==1
+				and chars_mobs_npcs[previctim].freeze==0
+				and chars_mobs_npcs[previctim].stone==0
+				and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+				and (magic.spell_tips[missle_type].form=="ring" or magic.spell_tips[missle_type].form=="proactive")
+				then
+					point_to_go_x=cursor_world_x;
+					point_to_go_y=cursor_world_y;
+					boomx = cursor_world_x;
+					boomy = cursor_world_y;
+					helpers.turnMob();
+					mbund_cursor();
+					helpers.beforeShoot();
+					game_status="shot";
+					damage.shoot();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and cursor_on_mob==1
-			and game_status == "sensing"
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
-			and chars_mobs_npcs[previctim].nature == "undead"
-			and missle_type=="controlundead" then
-				victim=previctim;
-				boomy= chars_mobs_npcs[previctim].y;
-				boomx= chars_mobs_npcs[previctim].x;
-				helpers.beforeShoot();
-				game_status="shot";
-				damage.shoot();
-			end;
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and chars_mobs_npcs[current_mob].control=="player"	and helpers.cursorAtEnemy (cursor_world_x,cursor_world_y,y)
+				and game_status == "sensing"
+				and missle_type=="chainlightning"
+				and #mobsmarked>1 then
+					boomx=cursor_world_x;
+					boomy=cursor_world_y;
+					game_status="shot";
+					helpers.beforeShoot();
+					damage.shoot();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and missle_type ~= "bottle" and missle_drive ~= "muscles"
-			and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
-			and game_status == "sensing"
-			and chars_mobs_npcs[previctim].status==1
-			and chars_mobs_npcs[previctim].freeze==0
-			and chars_mobs_npcs[previctim].stone==0
-			and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-			and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
-			and (magic.spell_tips[missle_type].form=="ring" or magic.spell_tips[missle_type].form=="proactive")
-			then
-				point_to_go_x=cursor_world_x;
-				point_to_go_y=cursor_world_y;
-				boomx = cursor_world_x;
-				boomy = cursor_world_y;
-				helpers.turnMob();
-				mbund_cursor();
-				helpers.beforeShoot();
-				game_status="shot";
-				damage.shoot();
-			end;
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and chars_mobs_npcs[current_mob].control == "player" and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
+				and game_status == "sensing" and missle_type=="genocide" then
+					boomx=cursor_world_x;
+					boomy=cursor_world_y;
+					game_status="shot";
+					helpers.beforeShoot();
+					damage.shoot();
+				end;
+				
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and chars_mobs_npcs[current_mob].control == "player"
+				and game_status == "sensing" and missle_type=="armageddon" then
+					boomx=cursor_world_x;
+					boomy=cursor_world_y;
+					meteor_y=500
+					stone_y=0
+					game_status="shot";
+					helpers.beforeShoot();
+					damage.shoot();
+				end;
+				
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and chars_mobs_npcs[current_mob].control == "player" and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
+				and game_status == "sensing" and missle_type=="roots" then
+					boomx=cursor_world_x;
+					boomy=cursor_world_y;
+					game_status="shot";
+					helpers.beforeShoot();
+					damage.instantCast();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and chars_mobs_npcs[current_mob].control=="player"	and helpers.cursorAtEnemy (cursor_world_x,cursor_world_y,y)
-			and game_status == "sensing"
-			and missle_type=="chainlightning"
-			and #mobsmarked>1 then
-				boomx=cursor_world_x;
-				boomy=cursor_world_y;
-				game_status="shot";
-				helpers.beforeShoot();
-				damage.shoot();
-			end;
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and magic.spell_tips[missle_type] and game_status == "sensing" and (magic.spell_tips[missle_type].form == "sight" or magic.spell_tips[missle_type].form == "vray" or magic.spell_tips[missle_type].form == "ray" or magic.spell_tips[missle_type].form == "breath") then
+					helpers.beforeShoot();
+					game_status="shot";
+					damage.shoot();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and chars_mobs_npcs[current_mob].control == "player" and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-			and game_status == "sensing" and missle_type=="genocide" then
-				boomx=cursor_world_x;
-				boomy=cursor_world_y;
-				game_status="shot";
-				helpers.beforeShoot();
-				damage.shoot();
-			end;
-			
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and chars_mobs_npcs[current_mob].control == "player"
-			and game_status == "sensing" and missle_type=="armageddon" then
-				boomx=cursor_world_x;
-				boomy=cursor_world_y;
-				meteor_y=500
-				stone_y=0
-				game_status="shot";
-				helpers.beforeShoot();
-				damage.shoot();
-			end;
-			
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and chars_mobs_npcs[current_mob].control == "player" and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-			and game_status == "sensing" and missle_type=="roots" then
-				boomx=cursor_world_x;
-				boomy=cursor_world_y;
-				game_status="shot";
-				helpers.beforeShoot();
-				damage.instantCast();
-			end;
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and game_status == "sensing" and magic.spell_tips[missle_type].form == "rico" and #rockline>1 then
+					helpers.beforeShoot();
+					game_status="shot";
+					rock_step=1;
+					missle_x=rockline[1].x;
+					missle_y=rockline[1].y;
+					misx,misy = helpers.rockCoords (rockline[1].x,rockline[1].y);
+					damage.shoot();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
-			and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
-			and magic.spell_tips[missle_type] and game_status == "sensing" and (magic.spell_tips[missle_type].form == "sight" or magic.spell_tips[missle_type].form == "vray" or magic.spell_tips[missle_type].form == "ray" or magic.spell_tips[missle_type].form == "breath") then
-				helpers.beforeShoot();
-				game_status="shot";
-				damage.shoot();
-			end;
+				if love.mouse.isDown("l") and game_status == "sensing" and missle_type=="wizardeye" and mY < global.screenHeight-160 then
+					boomx = cursor_world_x;
+					boomy = cursor_world_y;
+					helpers.beforeShoot();
+					damage.instantCast();
+				end;
 
-			if love.mouse.isDown("l") and mY < global.screenHeight-160
-			and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
-			and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
-			and game_status == "sensing" and magic.spell_tips[missle_type].form == "rico" and #rockline>1 then
-				helpers.beforeShoot();
-				game_status="shot";
-				rock_step=1;
-				missle_x=rockline[1].x;
-				missle_y=rockline[1].y;
-				misx,misy = helpers.rockCoords (rockline[1].x,rockline[1].y);
-				damage.shoot();
+				if love.mouse.isDown("l")
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and game_status == "sensing"
+				and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
+				and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
+				and (magic.spell_tips[missle_type].form == "rain" or magic.spell_tips[missle_type].form == "skyrock") then
+					helpers.beforeShoot();
+					boomx=cursor_world_x;
+					boomy=cursor_world_y;
+					meteor_y=500;
+					game_status="shot";
+					damage.shoot();
+				end;
+			elseif global.status ~= "mindgame" then
+				
 			end;
-
-			if love.mouse.isDown("l") and game_status == "sensing" and missle_type=="wizardeye" and mY < global.screenHeight-160 then
-				boomx = cursor_world_x;
-				boomy = cursor_world_y;
-				helpers.beforeShoot();
-				damage.instantCast();
-			end;
-
-			if love.mouse.isDown("l")
-			and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
-			and game_status == "sensing"
-			and missle_type ~= "arrow" and missle_type ~= "bolt" and missle_type ~= "throwing" and missle_type ~= "bottle" and missle_type ~= "bullet" and missle_type ~= "battery"
-			and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
-			and (magic.spell_tips[missle_type].form == "rain" or magic.spell_tips[missle_type].form == "skyrock") then
-				helpers.beforeShoot();
-				boomx=cursor_world_x;
-				boomy=cursor_world_y;
-				meteor_y=500;
-				game_status="shot";
-				damage.shoot();
-			end;
-		elseif global.status ~= "mindgame" then
-			
 		end;
 --//spells
 
@@ -7808,7 +7831,7 @@ function mob_moving()
 			and chars_mobs_npcs[current_mob].id ~= previctim
 			and chars_mobs_npcs[previctim].status == 1 then
 				if global.status == "battle" and (chars_mobs_npcs[previctim].person ~= "char" or chars_mobs_npcs[previctim].berserk > 0 or chars_mobs_npcs[previctim].control > 0) then
-					helpers.turnMob ();
+					helpers.turnMob (current_mob);
 					local recovery = 0;
 					if chars_mobs_npcs[current_mob].person == "char" then
 						recovery = helpers.countMeleeRecoveryChar (current_mob);
@@ -7827,7 +7850,7 @@ function mob_moving()
 						helpers.addToActionLog( name .. lognames.actions.tired[chars_mobs_npcs[current_mob].gender]);
 					end;
 				elseif global.status == "peace" and chars_mobs_npcs[previctim].person ~= "char" and not global.steal then
-					helpers.turnMob ();
+					helpers.turnMob (current_mob);
 					chars_mobs_npcs[previctim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
 					chat (previctim);
 					path_status = 0;
@@ -7849,7 +7872,7 @@ function mob_moving()
 				path_status = 0;
 				hang = 0;
 			elseif chars_mobs_npcs[current_mob].control == "player" and mob_is_going_to_useobject == 1 then
-				helpers.turnMob ();
+				helpers.turnMob (current_mob);
 				game_status = "neutral";
 				helpers.useObject();
 				path_status = 0;
@@ -7977,7 +8000,7 @@ function steal (index)
 		if chars_mobs_npcs[current_mob].lvl_thievery >= 4 then
 		--equiped rings and amulets
 			for i=1,#chars_mobs_npcs[index].inventory_list do
-				if helpers.isJewerly(chars_mobs_npcs[index].inventory_list[i].ttxid) then
+				if helpers.isjewelry(chars_mobs_npcs[index].inventory_list[i].ttxid) then
 					table.insert(items_to_remove,chars_mobs_npcs[index].inventory_list[i]);
 				end;
 			end;

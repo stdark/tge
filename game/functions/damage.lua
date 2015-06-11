@@ -2783,7 +2783,21 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	local handsMod = 1;
 	local add_effect_st = 0;
 	
-	if missle_effect ~= "none" then
+	local _shored_index = helpers.ifUmbrella (); --shore trick (dodging skill)
+	local whoshored = victim;
+	if helpers.mobCanDefendHimself (victim) and _shored_index then
+		if _shored_index > 1 then
+			victim = _shored_index;
+			point_to_go_x = chars_mobs_npcs[victim].x;
+			point_to_go_y = chars_mobs_npcs[victim].y;
+			helpers.turnMob (current_mob);
+			chars_mobs_npcs[whoshored].trick = "none";
+			chars_mobs_npcs[whoshored].protectionmode = "none";
+			helpers.addToActionLog(helpers.mobName(whoshored) .. lognames.actions.hasshored[chars_mobs_npcs[whoshored].gender] .. helpers.mobName(vicitm));
+		end;
+	end;
+	
+	if missle_effect ~= "none" then --FIXME
 		add_effect_st = hold_tips[missle_effect].stamina;			
 	end;
 	
@@ -2829,8 +2843,10 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	--DAMAGE
 		incoming_physical_dmg = damage.countDamage(current_mob,attacking_hand,nil);
 	-- DODGE
+	
 		if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) then
-		chance_to_dodge = math.ceil(chars_mobs_npcs[victim].dex/5)+chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
+			
+			chance_to_dodge = math.ceil(chars_mobs_npcs[victim].dex/5)+chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
 			if chars_mobs_npcs[victim].lvl_dodging >= 4 and chars_mobs_npcs[victim]["equipment"].cloak > 0 
 			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].q > 0 then
 				chance_to_dodge = chance_to_dodge + inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].ttxid].dg; -- +CLOAK
@@ -2954,6 +2970,30 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			end;
 		end;
 	--/HANDBLOCK
+	
+	local _protector_index = helpers.ifUmbrella (); --umbrella trick (shield skill)
+	local formervictim = victim; 
+	if helpers.mobCanDefendHimself (victim) and _protector_index then
+		if _protector_index > 1 then
+			victim = _protector_index[1];
+			point_to_go_x = chars_mobs_npcs[victim].x;
+			point_to_go_y = chars_mobs_npcs[victim].y;
+			helpers.turnMob (current_mob);
+		else
+			local _x = chars_mobs_npcs[victim].x;
+			local _y = chars_mobs_npcs[victim].y;
+			chars_mobs_npcs[victim].x = chars_mobs_npcs[_protector_index[1]].x;
+			chars_mobs_npcs[victim].y = chars_mobs_npcs[_protector_index[1]].y;
+			chars_mobs_npcs[_protector_index[1]].x = _x;
+			chars_mobs_npcs[_protector_index[1]].y = _y;
+			victim = _protector_index[1];
+		end;
+		chars_mobs_npcs[victim].trick = "none";
+		chars_mobs_npcs[victim].protectionmode = "none";
+		chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
+		helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.covered[chars_mobs_npcs[victim].gender] .. helpers.mobName(formervictim));
+	end;
+	
 	--BLOCK --only for two arms!
 		if chars_mobs_npcs[victim]["equipment"].lh > 0 and helpers.mobCanDefendHimself (victim)
 		and inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "shield"
@@ -3105,12 +3145,24 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		if #array_of_chances > chance_to_hit then
 			fulldamage = 0;
 			hitResult = array_of_chances[chance_to_hit];
+			local _x,_y = helpers.findPlaceBehindAnEnemy (current_mob);
+			if (chars_mobs_npcs[victim].trick == "acrobat" and _x ~= 0) then
+				hitResult = "dodge";
+				chars_mobs_npcs[victim].trick = "none";
+				chars_mobs_npcs[victim].x = x;
+				chars_mobs_npcs[victim].y = y;
+				chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
+				helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.fooledwithdodge[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
+			end;
 			local armorDmgMod = 1;
 			if wpEffect == "destroy" and wpChance > math.random(1,100) then
 				armorDmgMod = 2;
 			end;
 			if hitResult == "dodge" then
-				--critical dodge
+				if chars_mobs_npcs[victim].trick == "torero" then
+					chars_mobs_npcs[victim].trick = "none";
+					chars_mobs_npcs[current_mob].rt = 0;
+				end;
 				dodge = 1;
 				helpers.addToActionLog( victim_name .. lognames.actions.dodge[chars_mobs_npcs[current_mob].gender]);
 			elseif hitResult == "hands" then
@@ -3129,8 +3181,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q == 0 then
 						--gloves destroyed
 					end;
-				end;
-				
+				end;	
 			elseif hitResult == "block" then
 				love.audio.play(media.sounds.block,0);		
 				helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
@@ -3138,6 +3189,22 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg*armorDmgMod));
 					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
 						--shield destroyed
+					end;
+					if chars_mobs_npcs[victim].trick == "bump" then
+						chars_mobs_npcs[victim].trick = "none";
+						local x,y = helpers.findPlaceBehindAnEnemy (current_mob);
+						if x ~= 0 then
+							chars_mobs_npcs[current_mob].x = x;
+							chars_mobs_npcs[current_mob].y = y;
+							chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
+							helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.bumpedwithshield[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
+						end;
+					end;
+					if chars_mobs_npcs[victim].trick == "ribhit" then
+						chars_mobs_npcs[victim].trick = "none";
+						chars_mobs_npcs[current_mob].rt = 0;
+						chars_mobs_npcs[current_mob].stun = chars_mobs_npcs[victim].lv_shield;
+						helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.hitedwithshield[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
 					end;
 				end;
 				block = 1;
@@ -5507,7 +5574,7 @@ function damage.setProtectionMode ()
 		chars_mobs_npcs[current_mob].trick = missle_type;
 	elseif missle_type == "absoluteblock" then
 		chars_mobs_npcs[current_mob].protectionmode = "block";
-	elseif missle_type == "umbrella" then
+	elseif missle_type == "bump" or missle_type == "ribhit" or missle_type == "umbrella" then
 		chars_mobs_npcs[current_mob].protectionmode = "block";
 		chars_mobs_npcs[current_mob].trick = missle_type;
 	end;

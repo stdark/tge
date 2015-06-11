@@ -697,7 +697,7 @@ stamina=100,
 skill="shield",
 spell=1,
 page=3,
-form="melee",
+form="pose",
 },
 
 bump = {
@@ -721,7 +721,7 @@ stamina=100,
 skill="shield",
 spell=1,
 page=2,
-form="special",
+form="pose",
 },
 
 ribhit = {
@@ -745,7 +745,7 @@ stamina=100,
 skill="shield",
 spell=3,
 page=3,
-form="special",
+form="pose",
 },
 
 umbrella = {
@@ -769,11 +769,11 @@ stamina=100,
 skill="shield",
 spell=1,
 page=3,
-form="special",
+form="pose",
 },
 
-torero = {
-title="тореадор",
+top = {
+title="волчок",
 story="",
 dmg1="",
 dmg2="",
@@ -796,8 +796,8 @@ page=3,
 form="pose",
 },
 
-top = {
-title="волчок",
+torero = {
+title="тореро",
 story="",
 dmg1="",
 dmg2="",
@@ -1158,10 +1158,10 @@ form="range",
 };
 
 tricks.alltricks = {
-{"slash","dencedefence","smash","woodcutter","lunge","armorpenetration","feint","decapitator","nutchopper","skullcrusher","impale","pin"},
-{"bitsoulout","stunner","backstab","savingstick","vilehit","bloodyhit","ribbreaker","spinalshock","deafen","oblivion","smarthit","coupdegrace"},
-{"stomachhit","hammerhands","absoluteblock","bump","torero","top","sleepfinger","lotus","ribhit","umbrella","acrobat","shore"},
-{"parabolicshot","maximumstreght","shieldpenetration","carefulaiming","shockingsparkle","hiddenstrike","eagleseye","blinding","nailing","finishing","evilswarm","bitingfan"},
+{"slash","dencedefence","woodcutter","smash","lunge","armorpenetration","feint","decapitator","skullcrusher","nutchopper","impale","pin"},
+{"bitsoulout","stunner","savingstick","backstab","vilehit","bloodyhit","ribbreaker","spinalshock","oblivion","deafen","smarthit","coupdegrace"},
+{"stomachhit","hammerhands","top","torero","bump","absoluteblock","sleepfinger","lotus","acrobat","shore""umbrella","ribhit"},
+{"parabolicshot","maximumstreght","carefulaiming","shieldpenetration","shockingsparkle","hiddenstrike","eagleseye","blinding","finishing","nailing","evilswarm","bitingfan"},
 {"","","","","","","","","","","",""},
 };
 

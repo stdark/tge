@@ -4051,8 +4051,8 @@ function helpers.isAlchemicalComponent(index)
 	return false;
 end;
 
-function helpers.isJewerly(index)
-	if inventory_ttx[index].class == "jewerly" then
+function helpers.isjewelry(index)
+	if inventory_ttx[index].class == "jewelry" then
 		return true
 	end;
 	return false;
@@ -4639,10 +4639,12 @@ function helpers.bookCircles(_page)
 	local _missle_type = false;
 	if game_status == "spellbook" then
 		if _circle and _page then
+			print("sb:::",_page,_circle);
 			_missle_type = magic.allspells[_page][_circle];
 		end;
 	elseif game_status == "warbook" then
 		if _circle and _page then
+			print("wb:::",_page,_circle);
 			_missle_type = tricks.alltricks[_page][_circle];
 		end;
 	elseif game_status == "abilitiesbook" then
@@ -4725,56 +4727,126 @@ function helpers.musicPull() --FIXME not completed
 	return false
 end;
 
-function helpers.turnMob () --FIXME 2hex
-	if chars_mobs_npcs[current_mob].hexes == 1 then
-		if  point_to_go_x<chars_mobs_npcs[current_mob].x and point_to_go_y<chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=6;
+function helpers.turnMob (index) --FIXME 2hex
+	if chars_mobs_npcs[index].hexes == 1 then
+		if  point_to_go_x<chars_mobs_npcs[index].x and point_to_go_y<chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=6;
 		end;
-		if point_to_go_x>chars_mobs_npcs[current_mob].x and point_to_go_y<chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=1;
+		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y<chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=1;
 		end;
-		if  point_to_go_x<chars_mobs_npcs[current_mob].x and point_to_go_y>chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=4;
+		if  point_to_go_x<chars_mobs_npcs[index].x and point_to_go_y>chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=4;
 		end;
-		if point_to_go_x>chars_mobs_npcs[current_mob].x and point_to_go_y>chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=3;
+		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y>chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=3;
 		end; 
-		if point_to_go_x>chars_mobs_npcs[current_mob].x and point_to_go_y== chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=2;
+		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y== chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=2;
 		end;
-		if point_to_go_x<chars_mobs_npcs[current_mob].x and point_to_go_y== chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=5;
+		if point_to_go_x<chars_mobs_npcs[index].x and point_to_go_y== chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=5;
 		end;
-		if point_to_go_x== chars_mobs_npcs[current_mob].x and chars_mobs_npcs[current_mob].y/2~=math.ceil(chars_mobs_npcs[current_mob].y/2) and point_to_go_y<chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=6;
+		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2~=math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y<chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=6;
 		end;
-		if point_to_go_x== chars_mobs_npcs[current_mob].x and chars_mobs_npcs[current_mob].y/2~=math.ceil(chars_mobs_npcs[current_mob].y/2) and point_to_go_y>chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=4;
+		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2~=math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y>chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=4;
 		end;
-		if point_to_go_x== chars_mobs_npcs[current_mob].x and chars_mobs_npcs[current_mob].y/2==math.ceil(chars_mobs_npcs[current_mob].y/2) and point_to_go_y<chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=1;
+		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2==math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y<chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=1;
 		end;
-		if point_to_go_x== chars_mobs_npcs[current_mob].x and chars_mobs_npcs[current_mob].y/2==math.ceil(chars_mobs_npcs[current_mob].y/2) and point_to_go_y>chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].rot=3;
+		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2==math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y>chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].rot=3;
 		end;
-		if point_to_go_x == chars_mobs_npcs[current_mob].x and point_to_go_y < chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].view=8; --look straight up
-		elseif point_to_go_x == chars_mobs_npcs[current_mob].x and point_to_go_y > chars_mobs_npcs[current_mob].y then
-			chars_mobs_npcs[current_mob].view=7; --look straight down
-		elseif point_to_go_x ~= chars_mobs_npcs[current_mob].x then
-			chars_mobs_npcs[current_mob].view= chars_mobs_npcs[current_mob].rot; --standart
+		if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].view=8; --look straight up
+		elseif point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y > chars_mobs_npcs[index].y then
+			chars_mobs_npcs[index].view=7; --look straight down
+		elseif point_to_go_x ~= chars_mobs_npcs[index].x then
+			chars_mobs_npcs[index].view= chars_mobs_npcs[index].rot; --standart
 		end;
-		if chars_mobs_npcs[current_mob].control=="player" and game_status == "sensing" then
+		if chars_mobs_npcs[index].control=="player" and game_status == "sensing" then
 			trace.all_to_darkness();
-			trace.trace_hexes(current_mob,false,trace.sightArray (current_mob));
-			trace.one_around(current_mob);
+			trace.trace_hexes(index,false,trace.sightArray (index));
+			trace.one_around(index);
 			trace.clear_rounded();
-		elseif chars_mobs_npcs[current_mob].control=="player" and game_status == "attack" then
-			trace.first_watch(current_mob);
+		elseif chars_mobs_npcs[index].control=="player" and game_status == "attack" then
+			trace.first_watch(index);
 			trace.clear_rounded();
 		end;
 	else
 		--check where is opponent
 		--do not turn or anti-turn
+	end;
+end;
+
+function helpers.ifUmbrella ()
+	local ring1 = boomareas.smallRingArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+	local ring2 = boomareas.smallRingArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+	local _protectors = {};
+	local _protectors2 = {};
+	local index = false
+	for i=1,#chars_mobs_npcs do
+		if chars_mobs_npcs[i].trick == "umbrella" and i ~= victim and i ~= current_mob and chars_mobs_npcs[i].party == chars_mobs_npcs[victim].party and chars_mobs_npcs[i].control == chars_mobs_npcs[victim].control then
+			for i=h,#ring1 do
+				if chars_mobs_npcs[i].x == ring1[h].x and chars_mobs_npcs[i].y == ring1[h].y then
+					table.insert(_protectors,{i,1});
+				end;
+			end;
+			for i=h,#ring2 do
+				if chars_mobs_npcs[i].x == ring1[h].x and chars_mobs_npcs[i].y == ring1[h].y then
+					table.insert(_protectors,{i,2});
+				end;
+			end;
+		end;
+	end;
+	for i=1,#_protectors do
+		for h=1,#_protectors2 do
+			if _protectors[i][1] == _protectors2[h][1]then
+				_protectors2[h][2] = _protectors2[h][2] + _protectors[i][2];
+			else
+				table.insert(_prtotectors[2],_protectors[i]);
+			end;
+		end;
+	end;
+	if #_protectors2 > 1 then
+		local _rnd = math.random(1,#_protectors2);
+		return _protectors2[_rnd];
+	else
+		return index;
+	end;
+end;
+
+function helpers.ifShore ()
+	local ring = boomareas.smallRingArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+	local _shored = {};
+	local index = false
+	for i=1,#chars_mobs_npcs do
+		if chars_mobs_npcs[i].trick == "shore" and i ~= victim and i ~= current_mob and chars_mobs_npcs[i].party ~= chars_mobs_npcs[victim].party and chars_mobs_npcs[i].control ~= chars_mobs_npcs[victim].control then
+			for i=h,#ring do
+				if chars_mobs_npcs[i].x == ring[h].x and chars_mobs_npcs[i].y == ring[h].y then
+					table.insert(_shored,i);
+				end;
+			end;
+		end;
+	end;
+	if #_shored > 1 then
+		local _rnd = math.random(1,#_shored);
+		return _shored[_rnd];
+	else
+		return index;
+	end;
+end;
+
+function helpers.findPlaceBehindAnEnemy (index)
+	local x,y = 0;
+	local ring = boomareas.smallRingArea(chars_mobs_npcs[index].x,chars_mobs_npcs[index].y);
+	local x = ring[helpers.antiDirection(chars_mobs_npcs[index].rot)].x;
+	local y = ring[helpers.antiDirection(chars_mobs_npcs[index].rot)].y;
+	if helpers.passCheck (x,y) then
+		return x,y;
+	else
+		return 0,0;
 	end;
 end;

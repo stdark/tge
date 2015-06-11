@@ -172,7 +172,7 @@ function ai.behavior()
 				--if #shot_line > 0 then --dirty fix
 				point_to_go_x = chars_mobs_npcs[previctim].x;
 				point_to_go_y = chars_mobs_npcs[previctim].y;
-				helpers.turnMob ();
+				helpers.turnMob (current_mob);
 					--chars_mobs_npcs[current_mob].rot =  helpers.antiDirection(atk_direction);
 				damage.shoot ();
 				--else
@@ -257,7 +257,7 @@ function ai.behavior()
 				--if #shot_line > 0 then --dirty fix
 				point_to_go_x = chars_mobs_npcs[previctim].x;
 				point_to_go_y = chars_mobs_npcs[previctim].y;
-				helpers.turnMob ();
+				helpers.turnMob (current_mob);
 					--chars_mobs_npcs[current_mob].rot =  helpers.antiDirection(atk_direction);
 				damage.shoot ();
 				--else
@@ -333,7 +333,7 @@ function ai.behavior()
 			if  helpers.ifMobIsNear(current_mob,target_roll) then
 				ai_world_x = chars_mobs_npcs[target_roll].x;
 				ai_world_y = chars_mobs_npcs[target_roll].y;
-				helpers.turnMob ();
+				helpers.turnMob (current_mob);
 				mob_under_cursor= chars_mobs_npcs[target_roll].id;
 				atk_direction = helpers.attackDirection (current_mob,victim);
 				chars_mobs_npcs[current_mob].rot = atk_direction;
