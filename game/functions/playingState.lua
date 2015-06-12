@@ -284,22 +284,14 @@ function playingState.load()
 
 	arrays_of_tmp_landscape ();
 
-	back_size=256
-	back_count=10
+	back_size = 256;
+	back_count = 8;
 
-	bgmap_w=#bgmap[1]
-	bgmap_h=#bgmap
+	bgmap_w=#bgmap[1];
+	bgmap_h=#bgmap;
 
-	current_back=1
-	row_back=1
-	background_={}
-
-	for i=1,back_count do
-		for h=1,back_count do
-			background_[(i-1)*back_count+h] = love.graphics.newQuad((h-1)*back_size, (i-1)*back_size, back_size, back_size, back_size*back_count, back_size*back_count);
-			--bgmap[(i-1)*back_count+h] = love.graphics.newQuad((h-1)*back_size, (i-1)*back_size, back_size, back_size, back_size*back_count, back_size*back_count);
-		end;
-	end;
+	current_back=1;
+	row_back=1;
 
 	atk_direction=1;
 	global.wheeled=0;

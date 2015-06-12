@@ -17,6 +17,15 @@ function sprites.load()
 			mindgame_icons[index] = love.graphics.newQuad(x, y, 64,64, media.images.mindgame_icons_img:getWidth(), media.images.mindgame_icons_img:getHeight());
 		end;
 	end;
+	background_={}
+
+	for i=1,back_count do
+		for h=1,back_count do
+			background_[(i-1)*back_count+h] = love.graphics.newQuad((h-1)*back_size, (i-1)*back_size, back_size, back_size, back_size*back_count, back_size*back_count);
+		end;
+	end;
+	
+	
 	gold_icons={}
 	gold_icons[1] = love.graphics.newQuad(305, 0, 128,64, media.images.ui:getWidth(), media.images.ui:getHeight());
 	gold_icons[2] = love.graphics.newQuad(305, 64, 96,32, media.images.ui:getWidth(), media.images.ui:getHeight());
