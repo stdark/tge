@@ -30,7 +30,7 @@ end;
 
 function damage.physicalRes (index,damage,hitzone) --FIXME weapon passives and hitzones
 	if not hitzone then
-		hitzone = math.random(1,10);
+		hitzone = chars_mobs_npcs[index]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[index]["hitzones"][global.hex])];	
 	end;
 	local bodyArmorPieces = {armor=0,belt=0,cloak=0};
 	local newDamage = 0;
@@ -262,17 +262,28 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			delta_spd = 100;
 		end;
 		chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
-		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) then
+		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) 
+		and missle_type ~= "parabolicshot"
+		then
 			helpers.addToActionLog( lognames.actions.targetpartlyhided);
-			chance_to_hit=math.ceil(chance_to_hit/2);
+			chance_to_hit = math.ceil(chance_to_hit/2);
 		end;
-		if missle_type=="throwing" then
+		--tricks
+		if missle_type == "carefulaimnig" then
+			chance_to_hit =	chance_to_hit*chars_mobs_npcs[current_mob].lvl_crossbow;
+		elseif missle_type == "eagleseye" then
+			chance_to_hit =	chance_to_hit*chars_mobs_npcs[current_mob].lvl_bow;
+		elseif missle_type == "maximumstreght" then
+			chance_to_hit =	math.ceil(chance_to_hit/2);
+		end;
+		--/tricks
+		if helpers.likeAStar () then
 			chance_to_hit = math.ceil(chance_to_hit*(chars_mobs_npcs[current_mob].leye + chars_mobs_npcs[current_mob].reye)/2);
-		elseif missle_type=="arrow" then
+		elseif helpers.likeABow () then
 			if chars_mobs_npcs[current_mob].reye == 0 then
 				chance_to_hit = 0;
 			end;
-		elseif missle_type=="bolt" or missle_type=="bullet" then
+		elseif helpers.likeAGun () then
 			if chars_mobs_npcs[current_mob].reye == 0 and chars_mobs_npcs[current_mob].leye == 1 then
 				chance_to_hit = math.ceil(0.25*chance_to_hit);
 			end;
@@ -290,7 +301,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		if attacked_from == "back" then
 			chance_to_crit = chance_to_crit*2;
 		end;
-		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) then --partly covered
+		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) and missle_type ~= "parabolicshot" then --partly covered
 			chance_to_crit = 0;
 		end;
 		if chance_to_hit <= 0 then
@@ -301,6 +312,19 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			iflucky = 1;
 			utils.randommore ();
 			hitzone = chars_mobs_npcs[victim]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[victim]["hitzones"][global.hex])];
+--tricks
+			if missle_type == "blinding" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+				hitzone = "head";
+			elseif missle_type == "nailing" and helpers.randomLimb(victim,global.hex,true) then
+				hitzone = helpers.randomLimb(victim,global.hex);
+			elseif missle_type == "carefulaiming" or missle_type == "eagleseye" or missle_type == "finishing" then
+				if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+					hitzone = "head";
+				elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+					hitzone = "body";
+				end;
+			end;
+--/tricks
 			utils.randommore ();
 			if chars_mobs_npcs[current_mob].curse == 0 and chars_mobs_npcs[current_mob].bless == 0 then
 				dice = math.random(chars_mobs_npcs[current_mob].brng);
@@ -312,8 +336,15 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				dice = math.random(chars_mobs_npcs[current_mob].brng);
 			end;
 			incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu);
+			--trick
+			if missle_type == "blinding" and not helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+				incoming_physical_dmg = incoming_physical_dmg*2;
+			elseif missle_type == "maximumstreght" then
+				incoming_physical_dmg = incoming_physical_dmg + incoming_physical_dmg*chars_mobs_npcs[current_mob].mgt/100;
+			end;
+			--/trick
 		-- DODGE
-			if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) then
+			if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) and missle_type ~= "hiddenstrike" then
 				chance_to_dodge = chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
 				if chars_mobs_npcs[victim].lvl_dodging >= 4 and chars_mobs_npcs[victim]["equipment"].cloak > 0 
 				and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].q > 0 then
@@ -430,6 +461,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			and chars_mobs_npcs[victim].lh > 0
 			and inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "shield"
 			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
+			and missle_type ~= "hiddenstrike"
 			and helpers.mobCanDefendHimself (victim) then
 				local block_dir_coff=0
 				if attacked_from=="front" then
@@ -478,8 +510,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			and (missle_type == "throwing" or missle_type == "arrow" or missle_type == "bolt")
 			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q > 0
 			and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh")
-			and chars_mobs_npcs[victim].status==1 and chars_mobs_npcs[victim].stun==0 and chars_mobs_npcs[victim].sleep==0
-			and chars_mobs_npcs[victim].paralyze==0 and chars_mobs_npcs[victim].freeze==0 and chars_mobs_npcs[victim].stone==0 then
+			and helpers.mobCanDefendHimself (victim) and missle_type ~= "hiddenstrike" then
 				if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword" then
 					if chars_mobs_npcs[victim].lvl_sword >= 3 then
 						chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_sword/2);
@@ -514,7 +545,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				end;
 			end;
 			if  helpers.mobCanDefendHimself (victim) -- LEFT HAND
-			and missle_type ~= "ray"
+			and missle_type ~= "ray" and missle_type ~= "hiddenstrike"
 			and chars_mobs_npcs[victim].lh > 0
 			and chars_mobs_npcs[victim]["equipment"].lh > 0 and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "sword" or
 			inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "dagger")
@@ -549,7 +580,9 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			end;
 			if AC > 0 then
 				for i=#array_of_chances+1,AC do
-					array_of_chances[i] = "ac";	
+					if missle_type ~= "shieldpenetration" or missle_type ~= "hiddenstrike" then
+						array_of_chances[i] = "ac";
+					end;
 				end;
 			end
 			--/AC
@@ -722,6 +755,18 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				end;
 			end;
 	--/ammo modifers
+			if missle_type == "blinding" then
+				chars_mobs_npcs[victim].reye = 0;
+				chars_mobs_npcs[victim].leye = 0;
+				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			elseif missle_type == "nailing" then
+				chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_crossbow;
+			elseif missle_type == "shockingsparkle" then
+				local _rtdmg = chars_mobs_npcs[current_mob].num_thrownig;
+				damage.RTminus(victim,_rtdmg,true);
+			elseif missle_type == "finishing" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 5 then
+				damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
+			end;
 			dmghp = damage.physicalRes (victim,dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu/5) + add_dmghp; -- FIXME! Oil!
 			random_chance = math.random(100);
 			if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery" then --wasting ammo
@@ -802,6 +847,21 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 						damage.RTminus(victim,num,true);
 					end;
 				end;
+			end;
+		elseif missle_drive == "muscles" and  helpers.missleAtWarBook() then
+			local _damage = chars_mobs_npcs[current_mob].lvl_unarmed*chars_mobs_npcs[current_mob].num_unarmed;
+			local hitzone = false;
+			local tempspellname = "tricks.tricks_tips." .. missle_type .. ".title";
+			local spellname = loadstring("return " .. tempspellname)();
+			if missle_type == "lotus" then
+				if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+					hitzone = "head";
+				elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+					hitzone = "body";
+				end;
+				dmghp = damage.physicalRes (victim,_damage,hitzone)
+				damage.HPminus(victim,dmghp,true);
+				helpers.addToActionLog( agressor_name .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
 			end;
 		else -- magic
 			local lvl,num = helpers.countBoomNumbers ();
@@ -1039,7 +1099,11 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		helpers.addToActionLog( agressor_name .. lognames.actions.sht[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
 	end;
 	local alldmg = math.ceil(dmghp + dmgsp/2 + dmgst/4 + dmgrt/8);
-	damage.mobDamaged(victim,current_mob,dmghp);
+	local _damager = current_mob;
+	if missle_type == "hiddenstrike" and damage.falseDamager(chars_mobs.npcs[victim].x,chars_mobs.npcs[victim].y,3) then
+		_damager = damage.falseDamager();
+	end;
+	damage.mobDamaged(victim,_damager,dmghp);
 	local damaged_mobs = {};
 	table.insert(damaged_mobs,victim);
 	if chars_mobs_npcs[current_mob].person == "char" then
@@ -1067,6 +1131,13 @@ function damage.multidamage () --FIXME two hexes
 	local boomdur = 1;
 	local boompower = 1;
 	local lvl,num = helpers.countBoomNumbers ();
+	
+	if missle_type == "evilswarm" then
+	end;
+	
+	if missle_type == "bitingfan" then
+	end;
+	
 	if missle_type == "fireball" then
 		boomareas.ashGround (boomx,boomy);
 		for j=1,#chars_mobs_npcs do
@@ -3301,6 +3372,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 					incoming_physical_dmg = 0;
 				end;
 				local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
+				if missle_type == "nutchopper" then
+					deltaDMG = deltaDMG*chars_mobs_npcs[current_mob].lvl_axe+chars_mobs_npcs[current_mob].num_axe;
+				end;
 				damage.armorDestroying (hitzone,attacked_from,deltaDMG);
 				--
 			end;
@@ -5726,4 +5800,23 @@ function damage.setSelfBuff ()
 end;
 
 function damage.setSpecialAttack ()
+end;
+
+function damage.falseDamager(x,y,r)
+	local new_damager_id = false
+	local ring = boomareas.ringArea(x,y);
+	local shored = {};
+	for i=1,r do
+		for h=1,#ring[i] do
+			for j=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[j].x == x and chars_mobs_npcs[j].y == y then
+					table.insert(shored,j);
+				end;
+			end;
+		end;
+	end;
+	if #shored > 0 then
+		new_damager_id = shored[math.random(1,#shored)];
+	end;
+	return id;
 end;

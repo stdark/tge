@@ -59,6 +59,7 @@ function draw.numbers()
  end;
  
 function draw.cursor ()
+	local missle_form = nil;
 	if chars_mobs_npcs[current_mob].control=="player"
 	and cursor_world_x>map_limit_w 
 	and cursor_world_x<map_w-map_limit_w 
@@ -98,13 +99,20 @@ function draw.cursor ()
 				local lvl,num = helpers.countBoomNumbers ();
 				if missle_drive == "alchemy" or missle_drive == "book" or missle_drive == "scroll" or missle_drive == "wand" then
 					local lvl,num = helpers.countBoomNumbers (missle_drive);
+				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() then
+					missle_form = tricks.tricks_tips[missle_type].form;
 				end;
-				if (missle_type == "bolt" or missle_type == "arrow" or missle_type == "throwing") and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
+				if helpers.singleShot () and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
 				elseif missle_type == "bottle" and helpers.passWalk(cursor_world_x,cursor_world_y) then
 					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and missle_form == "fan" then
+				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and missle_form == "arrow" then
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and missle_form == "ball" then
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
 				elseif (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand") then
-					local missle_form = magic.spell_tips[missle_type].form;
+					missle_form = magic.spell_tips[missle_type].form;
 					if missle_form == "arrow" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
 					elseif missle_form == "direct" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then --and trace.arrowStatus(current_mob) then
@@ -170,6 +178,22 @@ function draw.cursor ()
 					end;
 				end;
 			 
+				if missle_type == "evilswarm" then
+					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
+						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+						for i=1,#rings[1] do
+							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+						end;
+					end;
+				end;
+				
+				if missle_type == "bitingfan" then
+					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,3+math.ceil(chars_mobs_npcs[current_mob].mgt/10),false);
+					for i=1,#boomarea do
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+					end;
+				end;
+				
 				if missle_type == "fireball" then
 					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
