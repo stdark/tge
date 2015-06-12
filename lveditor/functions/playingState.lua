@@ -181,10 +181,10 @@ function playingState.load()
 	
 	btn_x=global.screenWidth-210;
 	back_size=256;
-	back_count=10;
+	back_count=8;
 	bgmap_w=25;
 	bgmap_h=12;
-	
+
 	for i=1,5 do
 		for h=1,5 do
 			row_buttons[(i-1)*5+h]={btn_x+(h-1)*36,36*i};
@@ -227,7 +227,7 @@ function playingState.update(dt)
 	row_buttons = {};
 	for i=1,5 do
 		for h=1,5 do
-			row_buttons[(i-1)*5+h]={btn_x+(h-1)*36,36*i};
+			row_buttons[(i-1)*5+h]={btn_x+(h-1)*40,40*i};
 		end;
 	end;
 	btn_x=global.screenWidth - 210;
@@ -306,8 +306,8 @@ function array_of_map ()
 end;
 
 function draw_hexbuttons ()
-	for j=1,10 do
-		if editor_status == "hexes" then
+	if editor_status == "hexes" then
+		for j=1,10 do
 			love.graphics.draw(media.images.img, tile[row_status*10+j], btn_x+2, 240+(j-1)*40);
 			love.graphics.line( btn_x,  240+(j-1)*40-2,
 			btn_x+tile_w+8,  240+(j-1)*40-2,
@@ -324,9 +324,14 @@ function draw_hexbuttons ()
 			if row_status*10+current_hex_type>120 then
 				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-120], global.screenWidth-150, global.screenHeight-300);
 			end;
-		elseif editor_status == "background" then
-			love.graphics.draw(media.images.img_back, background_[row_back*10+j], btn_x+2, 150+(j-1)*60,0,0.2 ,0.2);
-			if current_back==j then
+		end;
+		love.graphics.draw(media.images.img, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
+	end;
+	
+	if editor_status == "background" then
+		for j=1,8 do
+			love.graphics.draw(media.images.img_back, background_[(row_back-1)*8+j], btn_x+2, 150+(j-1)*60,0,0.2 ,0.2);
+			if current_back == j then
 				love.graphics.line( btn_x-2,  150+(j-1)*60-5,
 				btn_x+back_size/5+5,  150+(j-1)*60-5,
 				btn_x+back_size/5+5,  150+(j-1)*60+back_size/5+5,
@@ -334,9 +339,6 @@ function draw_hexbuttons ()
 				btn_x-2,  150+(j-1)*60-5);
 			end;
 		end;
-	end;
-	if editor_status == "hexes" then
-		love.graphics.draw(media.images.img, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
 	end;
 end;
 
@@ -471,6 +473,22 @@ function draw_buttons ()
 					if current_building > #buildings_stats then
 						current_building = #buildings_stats;
 					end;
+				end;
+			end;
+		end;
+	end;
+	
+	if editor_status == "background" then
+		local togglebuttons = {};
+		for i=1,cc do
+			for h=1,4 do        
+				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
+				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*4+h][1],  row_buttons[(i-1)*4+h][2]);
+				togglebuttons[#togglebuttons]:SetHeight(40);
+				togglebuttons[#togglebuttons]:SetWidth(40);
+				togglebuttons[#togglebuttons]:SetText(4*(i-1)+h);
+				togglebuttons[#togglebuttons].OnClick = function(object)
+					row_back = h;
 				end;
 			end;
 		end;
@@ -1184,7 +1202,7 @@ function playingState.mousepressed(x, y, button)
 				and mX<(h-1)*back_size/5+100-add_bg_x*back_size/5+back_size/5
 				and mY >(i-1)*back_size/5+100-add_bg_y*back_size/5
 				and mY<(i-1)*back_size/5+100-add_bg_y*back_size/5+back_size/5 then
-					bgmap[i][h]=row_back*10+current_back;
+					bgmap[i][h]=(row_back-1)*8+current_back;
 				end;
 			end;
 		end;
@@ -1200,13 +1218,9 @@ function playingState.mousepressed(x, y, button)
 			end;
 		end;
 	elseif editor_status == "background" then
-		for j=1,10 do
+		for j=1,8 do
 			if love.mouse.isDown("l") and mX>global.screenWidth-274 and mX>btn_x and mY>150+(j-1)*60 and mX<btn_x+tile_w and mY<150+(j-1)*60+back_size/5 then
-				current_back=j;
-				loveframes.util.RemoveAll();
-				drawUIButtons();
-				boxes();
-				 draw_hexbuttons ();
+				current_back = j;
 			end;
 		end;
 	end;
@@ -2041,19 +2055,19 @@ end;
 
 function flood_back_alt ()
 	if bgmap_w>back_count and bgmap_h>back_count then
-		for i=1,bgmap_w do
-			for h=1,bgmap_h do
-				if i<=10 and h <=10 then
-					bgmap[i][h]=(i-1)*10+h;
+		for i=1,bgmap_h do
+			for h=1,bgmap_w do
+				if i <=8  and h <= 8 then
+					bgmap[i][h] = (i-1)*8 + h;
 				end
-				if i>10 and h<= 10 then
-					bgmap[h][i]=10;
+				if i > 8 and h <= 8 then
+					bgmap[i][h] = 56;
 				end
-				if i<=10 and h> 10 then
-					bgmap[h][i]=90;
+				if i <= 8 and h > 8 then
+					bgmap[i][h] = 8;
 				end
-				if i>10 and h> 10 then
-					bgmap[h][i]=100;
+				if i > 8 and h > 8 then
+					bgmap[i][h] = 64;
 				end;
 			end;
 		end;
@@ -2061,13 +2075,10 @@ function flood_back_alt ()
 end;
 
 function flood_back()
-	while #bgmap>0 do
-		table.remove(bgmap,1);
-	end
 	for i=1,bgmap_h do
 		bgmap[i] = {};
 		for z=1, bgmap_w do
-			bgmap[i][z]= row_back*10+current_back;
+			bgmap[i][z]= row_back*8+current_back;
 		end;
 	end;
 end;
@@ -2336,7 +2347,7 @@ function playingState.draw()
 	end;
 	if editor_status == "background" then
 		love.graphics.print("tile type selected:", 100, 10);
-		love.graphics.print(row_back*10+current_back, 230, 10);
+		love.graphics.print(row_back*8+current_back, 230, 10);
 		love.graphics.print("level name", global.screenWidth-130, 380);
 		love.graphics.print("openair/dungeon", global.screenWidth-130, 430);
 		love.graphics.print("bg filename", global.screenWidth-130, 480);

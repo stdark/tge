@@ -12,8 +12,8 @@ chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},
-            num_unarmed=1,num_dagger=10,num_sword=5,num_axe=1,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=1,num_crossbow=3,num_throwing=1,num_firearms=1,--skills weapon num
-            lvl_unarmed=1,lvl_dagger=3,lvl_sword=2,lvl_axe=1,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=1,lvl_crossbow=1,lvl_throwing=1,lvl_firearms=1,--skills weapon lv
+            num_unarmed=1,num_dagger=10,num_sword=20,num_axe=1,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=1,num_crossbow=20,num_throwing=1,num_firearms=1,--skills weapon num
+            lvl_unarmed=1,lvl_dagger=3,lvl_sword=5,lvl_axe=1,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=1,lvl_crossbow=5,lvl_throwing=1,lvl_firearms=1,--skills weapon lv
             num_dodging=5, num_leather=3,num_chainmail=1, num_plate=1,num_shield=20,--skills armor num
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num

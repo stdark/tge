@@ -4908,10 +4908,43 @@ function helpers.randomLimb(index,hex,healthy)
 end;
 
 function helpers.missleIsAweapon ()
-	if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery"
+	if missle_type == "arrow" or missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery"
 	or missle_type == "parabolicshot" or missle_type == "maximumstreght" or missle_type == "eagleseye" or missle_type == "blinding"
 	or missle_type == "carefulaiming" or missle_type == "shieldpenetration" or missle_type == "nailing" or missle_type == "finishing"
 	or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingfan"	
+	then
+		return true;
+	end;
+	return false;
+end;
+
+function helpers.likeAGun ()
+	if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery"
+	or missle_type == "carefulaiming" or missle_type == "shieldpenetration" or missle_type == "nailing" or missle_type == "finishing" then
+		return true;
+	end;
+	return false;
+end;
+
+function helpers.likeABow ()
+	if missle_type == "arrow" or missle_type == "parabolicshot" or missle_type == "maximumstreght" or missle_type == "eagleseye" or missle_type == "blinding" then
+		return true;
+	end;
+	return false;
+end;
+
+function helpers.likeAStar ()
+	if missle_type == "throwing" or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingfan" then
+		return true;
+	end;
+	return false;
+end;
+
+function helpers.singleShot ()
+	if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery"
+	or missle_type == "arrow" or missle_type == "parabolicshot" or missle_type == "maximumstreght" or missle_type == "eagleseye" or missle_type == "blinding"
+	or missle_type == "carefulaiming" or missle_type == "shieldpenetration" or missle_type == "nailing" or missle_type == "finishing"
+	or missle_type == "throwing" or missle_type == "shockingsparkle" or missle_type == "hiddenstrike"
 	then
 		return true;
 	end;
