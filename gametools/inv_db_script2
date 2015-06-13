@@ -1,17 +1,28 @@
 #!/bin/bash
 
+# Script to convert inventory from OpenOffice Calc file to lua
+# function
+
+# Needs unzip and xmlstarlet
+
 ODS="inv_to_db.ods"		# OpenOffice table with stats
 XML="content.xml"		# Main part of OpenOffice table
 XSLT="inv_db.xslt"		# XSLT list to transform OpenOffice xmp to lua
+
 die() { echo "$0: $1 "  >&2 && exit 1 ; }
 
+# checks
 [[ -f "${XSLT}"               ]] || die "Need $XSLT for successful transformation"
 [[ $(which unzip 2>/dev/null) ]] || die "Need unzip. Install it"
 [[ $(which xml 2>/dev/null)   ]] || die "Need xmlstarlet (http://xmlstar.sourceforge.net/). Install it"
 
+# convert
 unzip -p "${ODS}" "${XML}" | xml tr inv_db.xslt > inventory.lua || die "Can't parse ${ODS}"
 
+# store backup
 cp ../game/data/inventory.lua inventory.lua.back
+
+# save nev file
 cp inventory.lua ../game/data/inventory.lua
 
 exit 0

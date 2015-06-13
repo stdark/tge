@@ -1,6 +1,14 @@
 --game
+print(_VERSION);			-- debug. TODO replace to utils.printDebug() ???
 
-jit.on();
+-- check luajit, to prevent falling if luajit is not installed
+if jit then
+   jit.on();				-- an run if any
+   print("Running with luajit");
+else					-- else run without luajit
+   print("Running WITHOUT luajit");
+end
+
 love.keyboard.setKeyRepeat(0.01, 0.2);
 
 loadingState = require 'functions.loadingState';
