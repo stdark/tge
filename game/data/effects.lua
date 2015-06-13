@@ -164,6 +164,18 @@
 	acidburst[8] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight(),0+add,576+addy,0);
 	acidburst[7] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight(),0+add,672+addy,0);
 	
+	local add = 7*64;
+	local addy = 768;
+	deadlyswarm = {};
+	deadlyswarm[1] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,768,0);
+	deadlyswarm[2] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,864,0);
+	deadlyswarm[3] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,960,0);
+	deadlyswarm[4] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,1056,0);
+	deadlyswarm[5] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,1152,0);
+	deadlyswarm[6] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,1248,0);
+	deadlyswarm[7] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,1344,0);
+	deadlyswarm[8] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight()+addy,0+add,1440,0);
+	
 	local add = 21*64;
 	local addy = 1600;
 	dragonbreath = {};
@@ -234,7 +246,7 @@
 	animation_fireball = anim8.newAnimation(fireball[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
 	animation_cold = anim8.newAnimation(cold[atk_direction]("1-9",1), 0.02,"pauseAtEnd");
 	animation_light = anim8.newAnimation(light[atk_direction]("1-9",1), 0.02,"pauseAtEnd");
-	
+	animation_deadlyswarm = anim8.newAnimation(deadlyswarm[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
 	animation_bolt = anim8.newAnimation(bolt[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
 	animation_grenade = anim8.newAnimation(grenade[atk_direction]("1-6",1), 0.02,"pauseAtEnd");
 	animation_toxiccloud = anim8.newAnimation(toxiccloud[atk_direction]("1-3",1), 0.02,"pauseAtEnd");

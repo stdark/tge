@@ -310,7 +310,7 @@ function draw.cursor ()
 				end;
 				
 				if missle_type == "acidrain" then
-					local power = 3;
+					local power = 1;
 					local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
 					for i=2, #boomarea[1] do
 						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger);	
@@ -401,6 +401,24 @@ function draw.cursor ()
 					end;
 				end;
 				
+				if missle_type == "pandemia" then
+					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+					for h=1,3 do
+						for i=1,#rings[h] do
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+						end;
+					end;
+				end;
+				
+				if missle_type == "darkcontamination" then
+					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+					for h=1,3 do
+						for i=1,#rings[h] do
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+						end;
+					end;
+				end;
+				
 				if missle_type == "dragonbreath" then
 					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
@@ -481,6 +499,22 @@ function draw.cursor ()
 				end;
 				
 				if missle_type == "coldring" then
+					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
+						local mobID = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
+						local mob = chars_mobs_npcs[mobID];
+						if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
+							local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+							for i=1,#rings[3] do
+								draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger);
+							end;
+							for i=1,#rings[2] do
+								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger);
+							end;
+						end;
+					end;
+				end;
+				
+				if missle_type == "deadlywave" then
 					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
 						local mobID = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
 						local mob = chars_mobs_npcs[mobID];
@@ -648,6 +682,18 @@ function draw.boom ()
 	end;
 	
 	if missle_type == "dragonbreath" then
+		boomareas.poisonAir(boomx,boomy);
+		local i = 1;
+		boomareas.poisonAir(boomx,boomy);
+		local rings = boomareas.ringArea(boomx,boomy);
+		for h=1,3 do
+			for i=1,#rings[h] do
+				boomareas.poisonAir(rings[h][i].y,rings[h][i].x);
+			end;
+		end;
+	end;
+	
+	if missle_type == "earthquake" then
 		boomareas.poisonAir(boomx,boomy);
 		local i = 1;
 		boomareas.poisonAir(boomx,boomy);
@@ -1113,13 +1159,13 @@ function draw.boom ()
 		for i=2, #boomarea[1] do
 			if helpers.passWalk(boomarea[1][i].y,boomarea[1][i].x) then
 				boomareas.ashGround (boomarea[1][i].x,boomarea[1][i].y);
-				boomareas.acidGround (boomarea[1][i].x,boomarea[1][i].y);
+				boomareas.acidExploGround (boomarea[1][i].x,boomarea[1][i].y);
 			end;
 		end;
 		for i=1, #sharea do
 			if helpers.passWalk(sharea[i].y,sharea[i].x) then
 				boomareas.ashGround(sharea[i].x,sharea[i].y,i,lvl[1],num[1]);
-				boomareas.acidGround(sharea[i].x,sharea[i].y,i,lvl[1],num[1]);
+				boomareas.acidExploGround(sharea[i].x,sharea[i].y,i,lvl[1],num[1]);
 			end;
 		end;
 	end;
@@ -1716,9 +1762,9 @@ function draw.bigLog ()
 	love.graphics.draw(media.images.map, x,y-50);
 	love.graphics.setColor(0, 0, 0);
 	local counter = 0;
-	for i=math.max(1,#logactions-100),#logactions do
+	for i = #logactions,math.max(1,#logactions-100),-1 do
 		local text = logactions[i];
-		love.graphics.print(text,x+55,y+counter*10);
+		love.graphics.print(text,x+55,y+200-(y+counter*10));
 		counter = counter + 1;
 	end;
 	love.graphics.setColor(255, 255, 255);
@@ -2692,6 +2738,9 @@ function draw.objects ()
 				elseif missle_type=="poisonedspit" then
 					animation_poisonedspit = anim8.newAnimation(poisonedspit[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
 					animation_poisonedspit:draw(media.images.spells, add_to_mslx*tile_w-tile_w*2,add_to_msly*tile_h*0.75-64);
+				elseif missle_type=="deadlyswarm" then
+					animation_deadlyswarm = anim8.newAnimation(deadlyswarm[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
+					animation_deadlyswarm:draw(media.images.spells, add_to_mslx*tile_w-tile_w*2,add_to_msly*tile_h*0.75-64);
 				elseif missle_type=="fireball" then
 					animation_fireball = anim8.newAnimation(fireball[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
 					animation_fireball:draw(media.images.spells, add_to_mslx*tile_w-tile_w*2,add_to_msly*tile_h*0.75-64);
@@ -2900,7 +2949,7 @@ function draw.objects ()
 						end
 						--if  i == victim and chars_mobs_npcs[victim].status == 1 then
 						if  i == victim then
-							if chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and block == 0 and parry == 0 then
+							if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and block == 0 and parry == 0 then
 								local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 								local img_mob_base=loadstring("return " .. tmpi)();
 								animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);		

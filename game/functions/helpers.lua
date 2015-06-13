@@ -537,6 +537,9 @@ function helpers.mobCanDefendHimself (index)
 	if chars_mobs_npcs[index].panic > 0 then
 		return false;
 	end;
+	if chars_mobs_npcs[index].deadlyswarm > 0 then
+		return false;
+	end;
 	return true;
 end;
 
@@ -1859,6 +1862,9 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].blind_power = 0;
 	chars_mobs_npcs[i].blind_dur = 0;
 	chars_mobs_npcs[i].dark_gasp = 0;
+	chars_mobs_npcs[i].deadlyswarm = 0;
+	chars_mobs_npcs[i].darkcontamination = 0;
+	chars_mobs_npcs[i].fingerofdeath = 0;
 	
 	chars_mobs_npcs[i].flame_power = 0;
 	chars_mobs_npcs[i].flame_dur = 0;
@@ -3545,7 +3551,7 @@ function helpers.dodgeIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].defmod = "dodge";
-		restore_rt();
+		restoreRT()
 	else
 		love.audio.play(media.sounds.error,0);
 	end;
@@ -3561,7 +3567,7 @@ function helpers.blockIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].protectionmode = "block";
-		restore_rt();
+		restoreRT()
 	else
 		love.audio.play(media.sounds.error,0);
 	end;
@@ -3588,7 +3594,7 @@ function helpers.parryIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].protectionmode = "parry";
-		restore_rt();
+		restoreRT()
 	else
 		love.audio.play(media.sounds.error,0);
 	end;
@@ -3601,7 +3607,7 @@ function helpers.handsIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].protectionmode = "hands";
-		restore_rt();
+		restoreRT()
 	else
 		love.audio.play(media.sounds.error,0);
 	end;

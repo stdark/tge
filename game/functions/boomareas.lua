@@ -69,7 +69,7 @@ function boomareas.ringArea(x,y)
 	return rings
 end;
 
-function boomareas.showerArea(x,y, clearance,power) -- clearance 12/18, power 1-3
+function boomareas.showerArea(x,y, clearance,power) -- clearance 12/18, power 1-3 
 	local boomarea = {};
 	for i=1,8 do -- 7 stars,stones to [8] + circle around of each
 		boomarea[i] = {};
@@ -112,7 +112,9 @@ function boomareas.showerArea(x,y, clearance,power) -- clearance 12/18, power 1-
 				if todo > 0 then
 					sharea[todo].power = sharea[todo].power + 10^j/10
 				elseif todo == -1 then
-					table.insert(sharea,{x=boomarea[h][power][i].x,y=boomarea[h][power][i].y,power=math.ceil(10^j/10)});
+					if helpers.passCheck(boomarea[h][power][i].x,boomarea[h][power][i].y) then
+						table.insert(sharea,{x=boomarea[h][power][i].x,y=boomarea[h][power][i].y,power=math.ceil(10^j/10)});
+					end;
 				end;
 			end;
 		end;

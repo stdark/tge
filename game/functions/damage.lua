@@ -932,9 +932,15 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				dmghp =  damage.magicalRes (victim,math.random(1,3)*num[1],"mind");
 				damage.HPminus(victim,dmghp,true);
 			end;
+			if missle_type == "deadlyswarm" then
+				local _damage =  5+math.random(1,3)*(num[1]+num[2]);
+				dmghp = damage.physicalRes (victim,_damage,false)
+				damage.HPminus(victim,dmghp,true);
+				chars_mobs_npcs[victim].deadlyswarm = damage.applyCondition (victim,lvl[1],num[1],"deadlyswarm",false,"dex",false,1,false);
+			end;
 			if missle_type == "golemstopper" then
 				if chars_mobs_npcs[victim].nature == "golem" then
-					dmghp =  math.random(1,10)*lvl[1]*num[1];
+					dmghp =  math.random(1,10)*lvl[1]*num[2];
 				else
 					dmghp = 0;
 				end;
@@ -965,8 +971,6 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				local tmp = math.ceil(dmghp/10);
 				dmgrt = math.min(tmp,200-chars_mobs_npcs[victim].rt)
 				damage.RTminus(victim,dmgrt,true);
-				chars_mobs_npcs[victim].rt = chars_mobs_npcs[victim].rt - dmgrt;
-				chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp - dmghp;
 			end;
 			if missle_type=="sunray" then
 				dmghp = 20 + damage.magicalRes (victim,math.random(1,20)*num[1],"light");
@@ -1004,6 +1008,28 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					--trauma
 				--end;
 			end;
+			
+			if missle_type == "manaburn" then
+				local debuff = math.min(chars_mobs_npcs[victim].sp,num[2]);
+				damage.SPminus(victim,debuff,true);
+				local _damage = damage.magicalRes (victim,debuff,"fire");
+				damage.HPminus(victim,_damage,true);
+				local damaged_mobs = {};
+				table.insert(damaged_mobs,victim);
+			end;
+			
+			if missle_type == "boilingblood" then
+				local debuff = lvl[1]*num[1];
+				local _damage = damage.magicalRes (victim,debuff,"fire");
+				if _damage >= chars_mobs_npcs[victim].hp then
+					chars_mobs_npcs[j].revenge_type = "acid";
+					chars_mobs_npcs[j].revenge_power = lvl[2]*num[2];
+				end; 
+				damage.HPminus(victim,_damage,true);
+				local damaged_mobs = {};
+				table.insert(damaged_mobs,victim);
+			end;
+			
 			if missle_type == "incineration" then
 				chars_mobs_npcs[victim].cold_dur = 0;
 				chars_mobs_npcs[victim].cold_power = 0;
@@ -1031,7 +1057,8 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[current_mob].gender] .. selfdmglog .. lognames.actions.metr .. lognames.actions.ofhp);	
 				end;
 				damage.HPcheck(victim);
-			end;		
+			end;
+					
 			if missle_type == "implosion" then
 				dmgst = math.min(chars_mobs_npcs[victim].st,lvl[1]*num[1]);
 				dmgrt = math.min(chars_mobs_npcs[victim].rt,lvl[1]*num[1]);
@@ -1040,6 +1067,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				damage.RTminus(victim,dmgrt,true);
 				damage.HPminus(victim,dmghp,true);
 			end;
+			
 			if missle_type=="massdistortion" then
 				if chars_mobs_npcs[victim].shieldoflight == 0 then
 					if chars_mobs_npcs[victim].person == "char" then
@@ -1051,6 +1079,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					damage.HPminus(victim,dmghp,true);
 				end;
 			end;
+			
 			if missle_type == "dehydratation" then
 				if chars_mobs_npcs[victim].nature~="undead" 
 				and chars_mobs_npcs[victim].nature~="golem" 
@@ -1429,6 +1458,42 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
+	if missle_type == "earthquake" then
+		helpers.clearHlandscape(boomx,boomy);
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for h=1,3 do
+			for i=1,#rings[h] do
+				helpers.clearHlandscape(rings[h][i].x,rings[h][i].y);
+				for j=1,#chars_mobs_npcs do
+					if (helpers.cursorAtCurrentMob (j,boomx,boomy)) or (helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y)) and helpers.mobDependsGround(j) then
+						local damageRT = chars_mobs_npcs[j].rt;
+						damage.RTminus(j,damageRT,true);
+						table.insert(damaged_mobs,j);
+						exp_for_what(math.ceil(damageRT/4),current_mob)
+					end;
+				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "deadlywave" then
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for h=1,3 do
+			for i=1,#rings[h] do
+				for j=1,#chars_mobs_npcs do
+					if (helpers.cursorAtCurrentMob (j,boomx,boomy)) or (helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y)) and helpers.mobDependsGround(j) then
+						local damageHPD = damageHP + damage.magicalRes (j,math.random(10,lvl[2]),"darkness",false);
+						local damageHPP = damageHP + damage.magicalRes (j,math.random(10,lvl[2]),"poison",false);
+						local damageHP = damageHPD + damageHPP;
+						damage.HPminus(j,damageHP,true);
+						table.insert(damaged_mobs,j);
+						exp_for_what(damageHP,current_mob)
+					end;
+				end;
+			end;
+		end;
+	end;
+	
 	if missle_type == "comete" then
 		if helpers.cursorAtCurrentMob (j,cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 			local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
@@ -1752,6 +1817,40 @@ function damage.multidamage () --FIXME two hexes
 							local healHP = 10 + 5*num[1];
 							damage.HPplus(j,healHP);
 							exp_for_what(healHP,current_mob)
+						end;
+					end;
+				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "pandemia" then
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for h=1,3 do
+			for i=1,#rings[h] do
+				if helpers.passJump(rings[h][i].y,rings[h][i].x) then
+					for j=1,chars do
+						if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) and helpers.aliveNature(j) and helpers.mobIsAlive(j) then
+							debuff = damage.applyCondition (j,lvl[1],num[2],"diesease","diesease",false,false,1,false);
+							chars_mobs_npcs[j].diesease = math.max(chars_mobs_npcs[j].diesease,debuff);
+							exp_for_what(math.ceil(debuff/2),current_mob)
+						end;
+					end;
+				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "darkcontamination" then
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for h=1,3 do
+			for i=1,#rings[h] do
+				if helpers.passJump(rings[h][i].y,rings[h][i].x) then
+					for j=1,chars do
+						if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
+							debuff = damage.applyCondition (j,lvl[1],num[2],"darkcontamination","darkness",false,false,1,false);
+							chars_mobs_npcs[j].darkcontamination = math.max(chars_mobs_npcs[j].darkcontamination,debuff);
+							exp_for_what(math.ceil(debuff/2),current_mob)
 						end;
 					end;
 				end;
@@ -2343,7 +2442,7 @@ function damage.multidamage () --FIXME two hexes
 	end;
 	
 	if missle_type == "acidrain" then 
-		local power = 3;
+		local power = 1;
 		local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
 		for i=2, #boomarea[1] do
 			for j=1,#chars_mobs_npcs do
@@ -2799,9 +2898,14 @@ function damage.ifBattleEnds()
 			sum_of_tmpexpdeaths = sum_of_tmpexpdeaths+chars_mobs_npcs[i].tmpexpdeaths;
 		end;
 		for i=1,chars do
-			local countedexp=math.ceil(quater_exp+quater_exp*chars_mobs_npcs[i].tmpexpdmg/math.max(1,sum_of_tmpexpdmg)+quater_exp*chars_mobs_npcs[i].tmpexplost/math.max(1,chars_mobs_npcs[i].tmpexplost)+quater_exp*chars_mobs_npcs[i].tmpexpdeaths/math.max(1,sum_of_tmpexpdeaths));
-			chars_stats[i].xp = chars_stats[i].xp+countedexp;
-			helpers.addToActionLog( chars_stats[i].name .. lognames.actions.got[chars_mobs_npcs[current_mob].gender] .. countedexp .. lognames.actions.ofexp);
+			if sum_of_tmpexpdmg > 0 or sum_of_tmpexplost > 0 or sum_of_tmpexpdeaths > 0 then
+				local countedexp=math.ceil(quater_exp+quater_exp*chars_mobs_npcs[i].tmpexpdmg/math.max(1,sum_of_tmpexpdmg)+quater_exp*chars_mobs_npcs[i].tmpexplost/math.max(1,chars_mobs_npcs[i].tmpexplost)+quater_exp*chars_mobs_npcs[i].tmpexpdeaths/math.max(1,sum_of_tmpexpdeaths));
+				chars_stats[i].xp = chars_stats[i].xp+countedexp;
+				helpers.addToActionLog( chars_stats[i].name .. lognames.actions.got[chars_mobs_npcs[current_mob].gender] .. countedexp .. lognames.actions.ofexp);
+				chars_mobs_npcs[i].tmpexpdmg = 0;
+				chars_mobs_npcs[i].tmpexplost = 0;
+				chars_mobs_npcs[i].tmpexpdeaths = 0;
+			end;
 		end;
 	end;
 	if not helpers.partyAlive () then
@@ -3610,7 +3714,13 @@ end;
 
 function damage.shoot()
 	utils.printDebug("Shoot!");
-	letaBattleBegin ();
+	--[[if (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand") then
+		if magic.spell_tips[missle_type].startsbattle then
+			letaBattleBegin ();
+		end;
+	else
+		letaBattleBegin ();
+	end;]]
 	dodge = 0;
 	block = 0;
 	parry = 0;
@@ -3710,8 +3820,21 @@ function damage.instantCast () --FIXME use lvl, num
 	victim = previctim
 	local recovery = helpers.countMagicRecovery (current_mob,missle_type,missle_drive);
 	chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-recovery;
+	
 	if missle_type == "heal" then
 		prebuff=math.random(5)*lvl[1]+num[1]*5;
+		buff=math.min(prebuff,math.abs(chars_mobs_npcs[victim].hp_max-chars_mobs_npcs[victim].hp));
+		chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp+buff;
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
+		helpers.addToActionLog( lognames.actions.andrestored[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim) .. " " .. buff .. lognames.actions.metr .. lognames.actions.ofhp);
+		helpers.mobAtBody (victim);
+		if chars_mobs_npcs[victim].hp>0 and mobs_at_hex==0 then
+			chars_mobs_npcs[victim].status=1;
+		end;
+	end;
+	
+	if missle_type == "restoreundead" then
+		prebuff=math.random(5)*lvl[1]+num[2]*5;
 		buff=math.min(prebuff,math.abs(chars_mobs_npcs[victim].hp_max-chars_mobs_npcs[victim].hp));
 		chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp+buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
@@ -4079,6 +4202,30 @@ function damage.instantCast () --FIXME use lvl, num
 	
 	if missle_type == "curecurse" then
 		local prebuff = lvl[1]*num[1];
+		if chars_mobs_npcs[victim].fingerofdeath > 0 then
+			local delta = chars_mobs_npcs[victim].fingerofdeath - prebuff;
+			local _buff = 0;
+			if delta > 0 then
+				_buff = chars_mobs_npcs[victim].fingerofdeath - prebuff;
+			else
+				_buff = prebuff+delta;
+			end;
+			chars_mobs_npcs[victim].fingerofdeath = chars_mobs_npcs[victim].fingerofdeath-_buff;
+			prebuff = prebuff-_buff;
+			buff = buff + _buff;
+		end;
+		if chars_mobs_npcs[victim].darkcontamination > 0 then
+			local delta = chars_mobs_npcs[victim].darkcontamination - prebuff;
+			local _buff = 0;
+			if delta > 0 then
+				_buff = chars_mobs_npcs[victim].darkcontamination - prebuff;
+			else
+				_buff = prebuff+delta;
+			end;
+			chars_mobs_npcs[victim].darkcontamination = chars_mobs_npcs[victim].darkcontamination-_buff;
+			prebuff = prebuff-_buff;
+			buff = buff + _buff;
+		end;
 		if chars_mobs_npcs[victim].curse > 0 then
 			local delta = chars_mobs_npcs[victim].curse - prebuff;
 			local _buff = 0;
@@ -4425,6 +4572,8 @@ function damage.instantCast () --FIXME use lvl, num
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
 	
 	if missle_type == "darkgasp" then
@@ -4435,6 +4584,20 @@ function damage.instantCast () --FIXME use lvl, num
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
+	end;
+	
+	if missle_type == "fingerofdeath" then
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
+		debuff = damage.applyCondition (victim,lvl[1],num[1],"fingerofdeath","darkness",false,false,1,false);
+		if debuff > 0 then
+			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.fingerofdeathed[chars_mobs_npcs[current_mob].gender]);
+		else
+			helpers.addToActionLog( lognames.actions.noeffect);
+		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
 	
 	if missle_type == "slow" then
@@ -4445,6 +4608,8 @@ function damage.instantCast () --FIXME use lvl, num
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
 
 	--FIXME: use damage.applyCondition lvl num
@@ -4466,6 +4631,8 @@ function damage.instantCast () --FIXME use lvl, num
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
 
 	if missle_type == "enslave" then
@@ -4484,6 +4651,8 @@ function damage.instantCast () --FIXME use lvl, num
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
 
 	if missle_type == "controlundead" then
@@ -4500,17 +4669,45 @@ function damage.instantCast () --FIXME use lvl, num
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
 
 	if missle_type == "freeze" then
-		dur=math.ceil((chars_mobs_npcs[current_mob].lvl_water-1+chars_mobs_npcs[current_mob].num_water/5)*(100-chars_mobs_npcs[victim].rezcold)/100);
+		--dur=math.ceil((chars_mobs_npcs[current_mob].lvl_water-1+chars_mobs_npcs[current_mob].num_water/5)*(100-chars_mobs_npcs[victim].rezcold)/100);
+		dur=damage.applyCondition (victim,lvl[1],num[1],"freeze","cold",false,false,1,false);
 		debuff=math.max(chars_mobs_npcs[victim].freeze,dur);
 		chars_mobs_npcs[victim].freeze=debuff;
 		chars_mobs_npcs[victim].flame_power = 0;
 		chars_mobs_npcs[victim].flame_dur = 0;
+		chars_mobs_npcs[victim].deadlyswarm = 0;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.freeze[chars_mobs_npcs[current_mob].gender]);
 		love.audio.play(media.sounds.spell_freeze,0);
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
+	end;
+	
+	if missle_type == "turntostone" then
+		dur = damage.applyCondition (victim,lvl[1],num[2],"stone",false,"luk",false,1,false);
+		debuff = math.max(chars_mobs_npcs[victim].stone,dur);
+		if debuff > 0 then
+			chars_mobs_npcs[victim].stone = debuff;
+			chars_mobs_npcs[victim].flame_power = 0;
+			chars_mobs_npcs[victim].flame_dur = 0;
+			chars_mobs_npcs[victim].acid_power = 0;
+			chars_mobs_npcs[victim].acid_dur = 0;
+			chars_mobs_npcs[victim].cold_power = 0;
+			chars_mobs_npcs[victim].cold_dur = 0;
+			chars_mobs_npcs[victim].poison_power = 0;
+			chars_mobs_npcs[victim].poison_dur = 0;
+			chars_mobs_npcs[victim].deadlyswarm = 0;
+		end;
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
+		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.freeze[chars_mobs_npcs[current_mob].gender]);
+		--love.audio.play(media.sounds.spell_stone,0);
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
 
 	if missle_type == "firemine" then
@@ -4533,8 +4730,10 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.immobilized[chars_mobs_npcs[victim].gender]);
 		--helpers.addToActionLog( lognames.actions.trapinstalled);
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
 	end;
-
+	
 	if missle_type == "telepathy" then
 		if chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind>chars_mobs_npcs[victim].rezmind then
 			helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
@@ -4594,13 +4793,32 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
 	end;
-
+	
+	if missle_type == "clone" then
+		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="clone",fraction="party"});
+		helpers.addMob(#chars_mobs_npcs,"mob");
+		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
+		chars_mobs_npcs[#chars_mobs_npcs].hp = lvl[1]*num[1];
+		helpers.addToActionLog(lognames.actions.clonecreated);
+		local rings = boomareas.ringArea(boomx,boomy);
+		for h=1,3 do
+			for i=1,#rings[h] do
+				for j=1,#chars_mobs_npcs do
+					if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and chars_mobs_npcs[j].rez_mind < lvl[2]*num[2] then
+						chars_mobs_npcs[j].aggressor = #chars_mobs_npcs;
+						chars_mobs_npcs[j].aggro = lvl[2]*num[2] - chars_mobs_npcs[j].rez_mind;
+					end;
+				end;
+			end;
+		end;
+	end;
+	
 	if chars_mobs_npcs[current_mob].person=="char" then
-	chars_mobs_npcs[current_mob].tmpexpdmg= chars_mobs_npcs[current_mob].tmpexpdmg+debuff
+		chars_mobs_npcs[current_mob].tmpexpdmg= chars_mobs_npcs[current_mob].tmpexpdmg+debuff;
 	end
 		
 	if chars_mobs_npcs[current_mob].person=="char" then
-	chars_mobs_npcs[current_mob].tmpexpdmg= chars_mobs_npcs[current_mob].tmpexpdmg+areadot --expa
+		chars_mobs_npcs[current_mob].tmpexpdmg= chars_mobs_npcs[current_mob].tmpexpdmg+areadot; --expa
 	end
 
 	chars_mobs_npcs[current_mob].rage = 0;
@@ -4650,6 +4868,8 @@ function damage.mindGameCast()
 			local snd = "mindgame_loyality";
 			love.audio.play(media["sounds"][snd],0);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("charm",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
+			chars_mobs_npcs[victim].aggressor = 0;
+			chars_mobs_npcs[victim].aggro = 0;
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;
@@ -5226,7 +5446,9 @@ function damage.deadNow (index)
 	chars_mobs_npcs[index].dash_dur = 0;
 	chars_mobs_npcs[index].dash_power = 0;
 	chars_mobs_npcs[index].invisibility = 0;
-			
+	chars_mobs_npcs[index].deadlyswarm = 0;
+	chars_mobs_npcs[index].darkcontamination = 0;
+	chars_mobs_npcs[index].fingerofdeath = 0;	
 	if chars_mobs_npcs[index].person == "char" then
 		tmp_name_dead = chars_stats[index].name;
 	elseif chars_mobs_npcs[index].person=="mob" then
@@ -5264,7 +5486,7 @@ function damage.deadNow (index)
 		chars_mobs_npcs[index].inventory_list = {};
 		--/ creating a loot bag
 	end;
-	helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.death .. " N" .. index); --FIXME
+	helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.death[chars_mobs_npcs[i].gender] .. " N" .. index); --FIXME
 
 	if #mobs_revengers > 0 then
 		missle_drive="revenge";

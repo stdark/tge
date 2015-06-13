@@ -3785,7 +3785,7 @@ form="ally",
 },
 
 boilingblood = {
-title="смертельный рой",
+title="кипящая кровь",
 story="",
 dmg1="нет",
 dmg2="нет",
@@ -3831,7 +3831,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="enemy",
+form="arrow",
 },
 
 turntostone = {
@@ -4210,7 +4210,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="sight",
+form="area",
 },
 
 restoreundead = {
@@ -4285,7 +4285,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="sight",
+form="area",
 },
 
 deadlywave = {
@@ -4315,7 +4315,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="area",
+form="ring",
 },
 
 transfusion = {

@@ -1178,6 +1178,7 @@ function playingState.update(dt)
 			animation_stonewall:update(dt);
 			animation_startfireburn:update(dt);
 			animation_mobility:update(dt);
+			animation_deadlyswarm:update(dt);
 		end;
 		if game_status == "damage" or game_status == "multidamage" or game_status == "attack" then 
 			for i=1,6 do
@@ -1351,7 +1352,7 @@ function playingState.update(dt)
 				end;
 				global.lookaround = false;
 			end;
-			restore_rt();
+			restoreRT()
 		end;
 
 		if game_status == "sensing" and missle_type == "genocide" then
@@ -2286,6 +2287,7 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[current_mob].blind_power = 0;
 						chars_mobs_npcs[current_mob].blind_dur = 0;
 						chars_mobs_npcs[current_mob].curse = 0;
+						chars_mobs_npcs[current_mob].deadlyswarm = 0;
 						
 						chars_mobs_npcs[current_mob].mgt_debuff_power=0;
 						chars_mobs_npcs[current_mob].mgt_debuff_dur=0;
@@ -8051,7 +8053,7 @@ function steal (index)
 		else
 			fractions[chars_mobs_npcs[victim].fraction].party = fractions[chars_mobs_npcs[victim].fraction].party - math.ceil(5 + (100-chars_mobs_npcs[current_mob].chr)/10);
 			chars_mobs_npcs[current_mob].rt = 0;
-			restore_rt();
+			restoreRT()
 		end;
 	end;
 	helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.didntrob[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
@@ -8186,8 +8188,8 @@ function letaBattleFinishes ()
 	utils.printDebug("Battle finished!");
 	if global.status == "battle" then
 		love.audio.play(media.sounds.battle_finishes,0);
-		helpers.addToActionLog( lognames.actions.battlefinished);
-		global.status="peace";
+		helpers.addToActionLog(lognames.actions.battlefinished);
+		global.status = "peace";
 		for i=1,#chars_mobs_npcs do
 			chars_mobs_npcs[i].enslave = 0;
 			if chars_mobs_npcs[i].summoned then
@@ -8197,7 +8199,7 @@ function letaBattleFinishes ()
 	end;
 end;
 
-function restore_rt ()
+function restoreRT ()
 	dodge = 0;
 	block = 0;
 	parry = 0;
@@ -8235,16 +8237,45 @@ function restore_rt ()
 				end;
 				if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "humanoid" then
 					damage.HPminus(i,10);
-				end
+				end;
 				if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "undead" then
 					damage.HPplus(i,5);
-				end
+				end;
+				if chars_mobs_npcs[i].fingerofdeath > 0 then
+					local chance = math.random(1,math.max(chars_mobs_npcs[i].luk+1,101));
+					if chance > chars_mobs_npcs[i].luk then
+						damage.HPminus(i,chars_mobs_npcs[i].hp);
+					end;
+					chars_mobs_npcs[i].fingerofdeath = chars_mobs_npcs[i].fingerofdeath -1;
+				end;
+				if chars_mobs_npcs[i].darkcontamination > 0 and leveltype == "openair" and calendar.hour >= 6 and calendar.hour <= 21 then
+					damage.HPminus(i,math.random(1,100));
+					chars_mobs_npcs[i].darkcontamination = chars_mobs_npcs[i].darkcontamination -1;
+				end;
 				if chars_mobs_npcs[i].freeze>0 then
 					chars_mobs_npcs[i].freeze = chars_mobs_npcs[i].freeze-1;
 				end
 				if chars_mobs_npcs[i].stone > 0 then
 					chars_mobs_npcs[i].stone = chars_mobs_npcs[i].stone-1;
-				end
+				end;
+				if chars_mobs_npcs[j].diesease > 0 then
+					if chars_mobs_npcs[j].diesease > chars_mobs_npcs[j].rez_diesease and chars_mobs_npcs[j].diesease < 100 then
+						chars_mobs_npcs[j].diesease = chars_mobs_npcs[j].diesease + 1;
+					elseif chars_mobs_npcs[j].diesease < chars_mobs_npcs[j].rez_diesease then
+						chars_mobs_npcs[j].diesease = chars_mobs_npcs[j].diesease - 1;
+					end;
+				end;
+				if chars_mobs_npcs[j].diesease > 0 then
+					local x = chars_mobs_npcs[j].x;
+					local y = chars_mobs_npcs[j].y;
+					local ring = boomareas.smallRingArea(x,y);
+					for k=1,#chars_mobs_npcs do
+						if helpers.aliveNature(k) and helpers.mobIsAlive (k) and helpers.cursorAtCurrentMob (k,x,y) then
+							local diesease = damage.applyCondition (k,1,chars_mobs_npcs[j].diesease,"diesease","diesease",false,false,1,true);
+							chars_mobs_npcs[k].diesease = diesease;
+						end;
+					end;
+				end;
 				if chars_mobs_npcs[i].flame_dur > 0 then
 					chars_mobs_npcs[i].flame_dur = chars_mobs_npcs[i].flame_dur-1;
 					--dmg = chars_mobs_npcs[i].flame_power*math.ceil((100-chars_mobs_npcs[i].rezfire)/100);
