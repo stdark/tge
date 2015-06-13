@@ -127,8 +127,8 @@ function damage.applyCondition (index,lvl,num,condition,element,stat,skill,coff,
 	else
 		condition = math.ceil(num*coff);
 	end;
-	if condition_power > 0 then
-		chars_mobs_npcs[index][condition] = condtion_power;
+	if condition > 0 then
+		chars_mobs_npcs[index][condition] = condtion;
 	end;
 	return condition;
 end;

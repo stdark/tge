@@ -2554,11 +2554,11 @@ function playingState.mousereleased (x,y,button)
 			utils.printDebug("school of distortion");
 			page=13;
 			love.audio.play(media.sounds.bookpage, 0);
-		elseif mX>x+901 and mX<x+978 and mY>y+40 and mY<y+50 then
+		elseif mX>x+901 and mX<x+978 and mY>y and mY<y+50 then
 			utils.printDebug("school of body");
 			page=5;
 			love.audio.play(media.sounds.bookpage, 0);
-		elseif  mX>x+901 and mX<x+978 and mY>y+95 and mY<y+115 then
+		elseif  mX>x+901 and mX<x+978 and mY>y+55 and mY<y+115 then
 			utils.printDebug("school of mind");
 			page=6;
 			love.audio.play(media.sounds.bookpage, 0);

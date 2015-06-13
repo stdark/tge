@@ -17,6 +17,12 @@ function sprites.load()
 			mindgame_icons[index] = love.graphics.newQuad(x, y, 64,64, media.images.mindgame_icons_img:getWidth(), media.images.mindgame_icons_img:getHeight());
 		end;
 	end;
+	
+	back_size=256;
+	back_count=8;
+	bgmap_w=25;
+	bgmap_h=12;
+	
 	background_={}
 
 	for i=1,back_count do
