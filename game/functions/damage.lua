@@ -5486,7 +5486,7 @@ function damage.deadNow (index)
 		chars_mobs_npcs[index].inventory_list = {};
 		--/ creating a loot bag
 	end;
-	helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.death[chars_mobs_npcs[i].gender] .. " N" .. index); --FIXME
+	helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.death[chars_mobs_npcs[index].gender] .. " N" .. index); --FIXME
 
 	if #mobs_revengers > 0 then
 		missle_drive="revenge";

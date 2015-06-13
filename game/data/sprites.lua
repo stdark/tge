@@ -20,8 +20,8 @@ function sprites.load()
 	
 	back_size=256;
 	back_count=8;
-	bgmap_w=25;
-	bgmap_h=12;
+	bgmap_w=#bgmap;
+	bgmap_h=#bgmap[1];
 	
 	background_={}
 
