@@ -1,9 +1,11 @@
 --game
+print(_VERSION);			-- debug. TODO replace to utils.printDebug() ???
 
-if jit then			-- check luajit
-   jit.on();			-- an run if any
+-- check luajit, to prevent falling if luajit is not installed
+if jit then
+   jit.on();				-- an run if any
    print("Running with luajit");
-else				-- else run without luajit
+else					-- else run without luajit
    print("Running WITHOUT luajit");
 end
 
