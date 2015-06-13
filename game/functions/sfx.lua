@@ -29,7 +29,7 @@ function sfx.castSound ()
 		love.audio.play(media.sounds["spell_rezfrom"], 0);
 	elseif missle_type=="protfrompoison" then
 		love.audio.play(media.sounds["spell_rezof"], 0);
-	elseif missle_type=="protfromdiesease" then
+	elseif missle_type=="protfromdisease" then
 		love.audio.play(media.sounds["spell_rezof"], 0);
 	elseif missle_type=="protofmind" then
 		love.audio.play(media.sounds["spell_rezof"], 0);

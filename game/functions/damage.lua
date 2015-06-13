@@ -1831,8 +1831,8 @@ function damage.multidamage () --FIXME two hexes
 				if helpers.passJump(rings[h][i].y,rings[h][i].x) then
 					for j=1,chars do
 						if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) and helpers.aliveNature(j) and helpers.mobIsAlive(j) then
-							debuff = damage.applyCondition (j,lvl[1],num[2],"diesease","diesease",false,false,1,false);
-							chars_mobs_npcs[j].diesease = math.max(chars_mobs_npcs[j].diesease,debuff);
+							debuff = damage.applyCondition (j,lvl[1],num[2],"disease","disease",false,false,1,false);
+							chars_mobs_npcs[j].disease = math.max(chars_mobs_npcs[j].disease,debuff);
 							exp_for_what(math.ceil(debuff/2),current_mob)
 						end;
 					end;

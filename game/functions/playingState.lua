@@ -8258,21 +8258,21 @@ function restoreRT ()
 				if chars_mobs_npcs[i].stone > 0 then
 					chars_mobs_npcs[i].stone = chars_mobs_npcs[i].stone-1;
 				end;
-				if chars_mobs_npcs[j].diesease > 0 then
-					if chars_mobs_npcs[j].diesease > chars_mobs_npcs[j].rez_diesease and chars_mobs_npcs[j].diesease < 100 then
-						chars_mobs_npcs[j].diesease = chars_mobs_npcs[j].diesease + 1;
-					elseif chars_mobs_npcs[j].diesease < chars_mobs_npcs[j].rez_diesease then
-						chars_mobs_npcs[j].diesease = chars_mobs_npcs[j].diesease - 1;
+				if chars_mobs_npcs[j].disease > 0 then
+					if chars_mobs_npcs[j].disease > chars_mobs_npcs[j].rez_disease and chars_mobs_npcs[j].disease < 100 then
+						chars_mobs_npcs[j].disease = chars_mobs_npcs[j].disease + 1;
+					elseif chars_mobs_npcs[j].disease < chars_mobs_npcs[j].rez_disease then
+						chars_mobs_npcs[j].disease = chars_mobs_npcs[j].disease - 1;
 					end;
 				end;
-				if chars_mobs_npcs[j].diesease > 0 then
+				if chars_mobs_npcs[j].disease > 0 then
 					local x = chars_mobs_npcs[j].x;
 					local y = chars_mobs_npcs[j].y;
 					local ring = boomareas.smallRingArea(x,y);
 					for k=1,#chars_mobs_npcs do
 						if helpers.aliveNature(k) and helpers.mobIsAlive (k) and helpers.cursorAtCurrentMob (k,x,y) then
-							local diesease = damage.applyCondition (k,1,chars_mobs_npcs[j].diesease,"diesease","diesease",false,false,1,true);
-							chars_mobs_npcs[k].diesease = diesease;
+							local disease = damage.applyCondition (k,1,chars_mobs_npcs[j].disease,"disease","disease",false,false,1,true);
+							chars_mobs_npcs[k].disease = disease;
 						end;
 					end;
 				end;
