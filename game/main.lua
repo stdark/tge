@@ -1,12 +1,13 @@
 --game
-print(_VERSION);			-- debug. TODO replace to utils.printDebug() ???
+require 'functions.utils';
+utils.printDebug(_VERSION);
 
 -- check luajit, to prevent falling if luajit is not installed
 if jit then
    jit.on();				-- an run if any
-   print("Running with luajit");
+   utils.printDebug("Running with luajit");
 else					-- else run without luajit
-   print("Running WITHOUT luajit");
+   utils.printDebug("Running WITHOUT luajit");
 end
 
 love.keyboard.setKeyRepeat(0.01, 0.2);
@@ -17,7 +18,7 @@ createpartyState = require 'functions.createpartyState';
 playingState = require 'functions.playingState';
 
 require "lib.loveframes";
-require 'functions.utils';
+
 --require "lib.utf8"
 
 currentState = nil;
