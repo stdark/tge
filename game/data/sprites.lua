@@ -197,8 +197,15 @@ function sprites.load()
 	for i=1,4 do
 		local _x = (i-1)*64;
 		table.insert(door_img,love.graphics.newQuad(_x, 448, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
-	end;	
-
+	end;
+	
+	obelisk_img = love.graphics.newQuad(0, 17*32, 64,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	altar_img = love.graphics.newQuad(64, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	competition_img = love.graphics.newQuad(64, 19*32, 32,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	pedestal_img = love.graphics.newQuad(128, 18*32, 32,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	portal_img = love.graphics.newQuad(32*5, 20*32, 64,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	well_img = love.graphics.newQuad(7*32, 17*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	
 	lock_2_base = love.graphics.newQuad(600, 0, 200, 88, media.images.ui:getWidth(), media.images.ui:getHeight())
 	lock_2_closed_elements = {};
 	lock_2_closed_elements[6] = {

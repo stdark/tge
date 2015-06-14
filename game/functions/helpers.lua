@@ -2772,14 +2772,38 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		objects_list[global.object].img = cauldron_img[1];
 		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drinkfromcauldron[chars_mobs_npcs[current_mob].gender]);
 		global.object = 0;
-	elseif objects_list[global.object].typ == "pedestal" and chars_mobs_npcs[current_mob][objects_list[global.object].effext1] == 0 then
-		chars_mobs_npcs[current_mob][objects_list[global.object].effext1] = chars_mobs_npcs[current_mob][objects_list[global.object].value1];
+	elseif objects_list[global.object].typ == "pedestal" and chars_mobs_npcs[current_mob][objects_list[global.object].effect1] == 0 then
+		chars_mobs_npcs[current_mob][objects_list[global.object].effect1] = chars_mobs_npcs[current_mob][objects_list[global.object].value1];
 		if objects_list[global.object].effect2 then
-			chars_mobs_npcs[current_mob][objects_list[global.object].effext2] = chars_mobs_npcs[current_mob][objects_list[global.object].value2];
+			chars_mobs_npcs[current_mob][objects_list[global.object].effect2] = chars_mobs_npcs[current_mob][objects_list[global.object].value2];
 			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.usedpedestal[chars_mobs_npcs[current_mob].gender]); --FIXME type of pedestal
 		end;
 		global.object = 0;
 	elseif objects_list[global.object].typ == "altar" then
+	elseif objects_list[global.object].typ == "obelisk" then
+		--FIXME open one piece of puzzle
+		game_status = "obelisk";
+	elseif objects_list[global.object].typ == "portal" then
+		if helpers.passCheck(objects_list[global.object].outx,objects_list[global.object].outy) then
+			chars_mobs_npcs[current_mob].x = objects_list[global.object].outx;
+			chars_mobs_npcs[current_mob].y = objects_list[global.object].outy;
+			helpers.cam_to_mob(current_mob);
+		end;
+	elseif objects_list[global.object].typ == "competition" then
+		local used_before = false;
+		if chars_mobs_npcs[current_mob].person == "char" then
+			for i=1, #objects_list[global.object].uids do
+				if objects_list[global.object].uids[i] == chars_mobs_npcs[current_mob].uid then
+					used_before = true;
+				end;
+			end;
+		end;
+		if not used_before then
+			if chars_mobs_npcs[current_mob][objects_list[global.object].stat] >= objects_list[global.object].limit then
+				chars_mobs_npcs[current_mob].skillpoints = chars_mobs_npcs[current_mob].skillpoints + objects_list[global.object].bonus;
+				table.insert(objects_list[global.object].uids,chars_mobs_npcs[current_mob].uid);
+			end;
+		end;
 	end;
 end;
 

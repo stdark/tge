@@ -498,6 +498,11 @@ function playingState.load()
 		
 		objects_list[1]={x=6, y=8, xi=6, yi=8, typ="barrel", subtyp=1, img=barrel_img[2]};
 		objects_list[2]={x=7, y=10, xi=7, yi=10, typ="cauldron", subtyp=1, img=cauldron_img[2]};
+		objects_list[3]={x=42, y=30, xi=42, yi=30, typ="obelisk", subtyp=1, img=obelisk_img};
+		objects_list[4]={x=31, y=14, xi=31, yi=14, typ="pedestal", effect1="heroism_power",effect2="heroism_dur",value1=10,value2=10, img=pedestal_img};
+		objects_list[5]={x=27, y=25, xi=27, yi=25, typ="competition", stat="mgt", limit=5, bonus=5, uids={}, img=competition_img};
+		objects_list[6]={x=38, y=18, xi=38, yi=18, outx=18, outy=25, typ="portal", subtyp=1, img=portal_img};
+		objects_list[7]={x=46, y=21, xi=46, yi=21, typ="well", subtyp=1, img=well_img};
 		
 		for i=1,#objects_list do
 			if objects_list[i].typ == "cauldron" then

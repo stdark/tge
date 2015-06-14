@@ -2477,11 +2477,38 @@ function draw.objects ()
 				
 			end;
 			for j=1, #objects_list do
-				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				local addx = 0;
+				local add y = 0;
+				if objects_list[j].typ == "barrel" or  objects_list[j].typ == "cauldron" then
+					addx = 32;
+					addy = 32;
+				elseif objects_list[j].typ == "obelisk" then
+					addx = 32;
+					addy = 96;
+				elseif objects_list[j].typ == "pedestal" then
+					addx = 16;
+					addy = 72;			
+				elseif objects_list[j].typ == "altar" then
+					addx = 32;
+					addy = 64;
+				elseif objects_list[j].typ == "competition" then
+					addx = 16;
+					addy = 40;
+				elseif objects_list[j].typ == "well" then
+					addx = 64;
+					addy = 64
+				elseif objects_list[j].typ == "portal" then
+					addx = 32;
+					addy = 64;
+				elseif objects_list[j].typ == "well" then
+					addx = 64;
+					addy = 160;
+				end;
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
+						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
-						love.graphics.draw(media.images.tmpobjs,objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-32);
+						love.graphics.draw(media.images.tmpobjs,objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
 					end;
 				end;
 			end;
