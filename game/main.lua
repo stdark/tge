@@ -1,12 +1,13 @@
 --game
-print(_VERSION);			-- debug. TODO replace to utils.printDebug() ???
+require 'functions.utils';
+utils.printDebug(_VERSION);
 
 -- check luajit, to prevent falling if luajit is not installed
 if jit then
    jit.on();				-- an run if any
-   print("Running with luajit");
+   utils.printDebug("Running with luajit");
 else					-- else run without luajit
-   print("Running WITHOUT luajit");
+   utils.printDebug("Running WITHOUT luajit");
 end
 
 love.keyboard.setKeyRepeat(0.01, 0.2);
@@ -17,7 +18,7 @@ createpartyState = require 'functions.createpartyState';
 playingState = require 'functions.playingState';
 
 require "lib.loveframes";
-require 'functions.utils';
+
 --require "lib.utf8"
 
 currentState = nil;
@@ -49,14 +50,15 @@ function love.load()
 	currentState = loadingState;
 	nextState = mainmenuState;
 	currentState.start(media, loadingFinished);
+
 	randomX = os.time();
 	randomize = {};
-	local tmp = 0;
 	rndCounter = 1;
-	randomize[1],tmp = math.modf((84589*randomX + 45989),(217728));
+	randomize[1], _ = math.modf((84589*randomX + 45989),(217728));
 	for i=2,20 do
-		randomize[i],tmp = math.modf((84589*randomize[i-1] + 45989 ),(217728));
+		randomize[i], _ = math.modf((84589*randomize[i-1] + 45989 ),(217728));
 	end;
+
 	--love.window.setMode(1920, 1080, {resizable=true});
 	--love.window.setMode(1280, 960, {resizable=false});
 	-- love.window.setMode(1200, 600, {resizable=false});
@@ -69,15 +71,15 @@ function love.update(dt)
 	global.screenWidth = love.graphics.getWidth();
 	global.screenHeight = love.graphics.getHeight();
 	fps = love.timer.getFPS( );
+
 	randomXX = os.time();
 	if randomX ~= randomXX then
 		randomX = randomXX;
 		randomize = {};
-		local tmp = 0;
 		rndCounter = 1;
-		randomize[1],tmp = math.modf((84589*randomX + 45989),(217728));
+		randomize[1], _ = math.modf((84589*randomX + 45989),(217728));
 		for i=2,20 do
-			randomize[i],tmp = math.modf((84589*randomize[i-1] + 45989 ),(217728));
+			randomize[i], _ = math.modf((84589*randomize[i-1] + 45989 ),(217728));
 		end;
 	end;
 	math.randomseed(randomize[rndCounter]);
@@ -85,6 +87,7 @@ function love.update(dt)
 	if rndCounter >= 20 then
 		rndCounter = 1;
 	end;
+
 	currentState.update(dt);
 	loveframes.update(dt);
 end;
