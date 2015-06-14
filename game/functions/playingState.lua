@@ -757,6 +757,28 @@ function playingState.load()
 			boomareas.trackGround (chars_mobs_npcs[i].x,chars_mobs_npcs[i].y,chars_mobs_npcs[i].track,chars_mobs_npcs[i].rot);
 		end;
 	end;
+	
+	for j=1, #objects_list do
+		local xx,yy = helpers.hexToPixels (objects_list[j].xi,objects_list[j].yi);
+		if objects_list[j].typ == "barrel" or  objects_list[j].typ == "cauldron" then
+
+		elseif objects_list[j].typ == "obelisk" then
+
+		elseif objects_list[j].typ == "pedestal" then
+			table.insert(lights,{x=objects_list[j].xi,y=objects_list[j].yi,light=lightWorld.newLight(xx, yy, 255, 135, 220, 128),typ="ground"});
+			lights[#lights]["light"].setGlowStrength(0.3);
+		elseif objects_list[j].typ == "altar" then
+
+		elseif objects_list[j].typ == "competition" then
+			table.insert(lights,{x=objects_list[j].xi,y=objects_list[j].yi,light=lightWorld.newLight(xx, yy, 0, 236, 255, 128),typ="ground"});
+			lights[#lights]["light"].setGlowStrength(0.3);
+		elseif objects_list[j].typ == "portal" then
+			table.insert(lights,{x=objects_list[j].xi,y=objects_list[j].yi,light=lightWorld.newLight(xx, yy, 15, 255, 0, 128),typ="ground"});
+			lights[#lights]["light"].setGlowStrength(0.3);
+		elseif objects_list[j].typ == "well" then
+
+		end;
+	end;
 
 	current_mob = 1;
 	if ai.enemyWatchesYou () then

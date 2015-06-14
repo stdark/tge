@@ -2499,7 +2499,7 @@ function draw.objects ()
 					addy = 64
 				elseif objects_list[j].typ == "portal" then
 					addx = 32;
-					addy = 64;
+					addy = 0;
 				elseif objects_list[j].typ == "well" then
 					addx = 64;
 					addy = 160;

@@ -2398,6 +2398,53 @@ function helpers.findShadows()
 			end;	
 		end;
 	end;
+	
+	for j=1, #objects_list do
+		local rings = boomareas.ringArea(objects_list[j].xi,objects_list[j].yi);
+		if objects_list[j].typ == "barrel" or  objects_list[j].typ == "cauldron" then
+
+		elseif objects_list[j].typ == "obelisk" then
+
+		elseif objects_list[j].typ == "pedestal" then
+			for i=1,#rings[1] do
+				if helpers.insideMap(rings[1][i].y,rings[1][i].x) then
+					slandscape[rings[1][i].y][rings[1][i].x] = math.max(2,environment_light,slandscape[rings[1][i].y][rings[1][i].x]);
+				end;
+			end;
+			for i=1,#rings[2] do
+				if helpers.insideMap(rings[2][i].y,rings[2][i].x) then
+					slandscape[rings[2][i].y][rings[2][i].x] = math.max(1,environment_light,slandscape[rings[2][i].y][rings[2][i].x]);
+				end;
+			end;
+		elseif objects_list[j].typ == "altar" then
+
+		elseif objects_list[j].typ == "competition" then
+			for i=1,#rings[1] do
+				if helpers.insideMap(rings[1][i].y,rings[1][i].x) then
+					slandscape[rings[1][i].y][rings[1][i].x] = math.max(2,environment_light,slandscape[rings[1][i].y][rings[1][i].x]);
+				end;
+			end;
+			for i=1,#rings[2] do
+				if helpers.insideMap(rings[2][i].y,rings[2][i].x) then
+					slandscape[rings[2][i].y][rings[2][i].x] = math.max(1,environment_light,slandscape[rings[2][i].y][rings[2][i].x]);
+				end;
+			end;
+		elseif objects_list[j].typ == "portal" then
+			for i=1,#rings[1] do
+				if helpers.insideMap(rings[1][i].y,rings[1][i].x) then
+					slandscape[rings[1][i].y][rings[1][i].x] = math.max(2,environment_light,slandscape[rings[1][i].y][rings[1][i].x]);
+				end;
+			end;
+			for i=1,#rings[2] do
+				if helpers.insideMap(rings[2][i].y,rings[2][i].x) then
+					slandscape[rings[2][i].y][rings[2][i].x] = math.max(1,environment_light,slandscape[rings[2][i].y][rings[2][i].x]);
+				end;
+			end;
+		elseif objects_list[j].typ == "well" then
+
+		end;
+	end;
+	
 end;
 
 function helpers.blindedWithLight (index,x,y) --check x/y FIXME
@@ -2788,6 +2835,14 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			chars_mobs_npcs[current_mob].x = objects_list[global.object].outx;
 			chars_mobs_npcs[current_mob].y = objects_list[global.object].outy;
 			helpers.cam_to_mob(current_mob);
+			if chars_mobs_npcs[current_mob].torchlight_dur > 0 then
+				for i=1,#lights do
+					if lights[i].typ == "mob" and lights[i].index == current_mob then
+						lights[i].x = chars_mobs_npcs[current_mob].x;
+						lights[i].y = chars_mobs_npcs[current_mob].y;
+					end;
+				end;
+			end;
 		end;
 	elseif objects_list[global.object].typ == "competition" then
 		local used_before = false;
