@@ -502,8 +502,8 @@ function playingState.load()
 		objects_list[4]={x=31, y=14, xi=31, yi=14, typ="pedestal", effect1="heroism_power",effect2="heroism_dur",value1=10,value2=10, img=pedestal_img};
 		objects_list[5]={x=27, y=25, xi=27, yi=25, typ="competition", stat="mgt", limit=5, bonus=5, uids={}, img=competition_img};
 		objects_list[6]={x=38, y=18, xi=38, yi=18, outx=18, outy=25, typ="portal", subtyp=1, img=portal_img};
-		objects_list[7]={x=46, y=21, xi=46, yi=21, typ="well", subtyp=1, img=well_img};
-		
+		objects_list[7]={x=46, y=21, xi=46, yi=21, typ="well", subtyp="drink", story="wellmagical", plus="hp", plusvalue=10, minus=false, minusvalue=0, conditions={}, wimg="well_clean", img=well_img};
+		objects_list[8]={x=48, y=20, xi=48, yi=20, typ="well", subtyp="dungeon", story="welldungeon", plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_dungeon", img=well_img};
 		for i=1,#objects_list do
 			if objects_list[i].typ == "cauldron" then
 				boomareas.ashGround (objects_list[i].xi,objects_list[i].yi);
@@ -1577,7 +1577,7 @@ function playingState.keypressed(key, unicode)
 	end;
 	
 	if key == "5" then
-		game_status = "obelisk";
+		game_status = "obelisk"; --FIXME from diary
 	end;
 	
 	if chars_mobs_npcs[current_mob].control == "player" or game_status == "menu" then
@@ -1986,6 +1986,7 @@ function playingState.keypressed(key, unicode)
 		or game_status == "journal"
 		or game_status == "calendar"
 		or game_status == "obelisk"
+		or game_status == "well"
 		)
 		and   chars_mobs_npcs[current_mob].control=="player" 
 		and holding_smth==0

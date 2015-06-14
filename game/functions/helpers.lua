@@ -2769,7 +2769,7 @@ end;
 
 function helpers.cursorAtMaterialBag(x,y) --FIXME doors are 2-sided
 	for i=1,#bags_list do
-		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret") then
+		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well") then
 			return true,i;
 		end;
 	end;
@@ -2819,6 +2819,9 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		objects_list[global.object].img = cauldron_img[1];
 		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drinkfromcauldron[chars_mobs_npcs[current_mob].gender]);
 		global.object = 0;
+	elseif objects_list[global.object].typ == "well" then
+		game_status = "well";
+		draw.wellButtons ();
 	elseif objects_list[global.object].typ == "pedestal" and chars_mobs_npcs[current_mob][objects_list[global.object].effect1] == 0 then
 		chars_mobs_npcs[current_mob][objects_list[global.object].effect1] = chars_mobs_npcs[current_mob][objects_list[global.object].value1];
 		if objects_list[global.object].effect2 then
@@ -2859,6 +2862,37 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 				table.insert(objects_list[global.object].uids,chars_mobs_npcs[current_mob].uid);
 			end;
 		end;
+	end;
+end;
+
+function helpers.drinkFromWell ()
+	helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drunkfromwell[chars_mobs_npcs[current_mob].gender]);
+	love.audio.play(media.sounds.drink,0);
+	if objects_list[global.object].plus then
+		if objects_list[global.object].plus == "hp" then
+			damage.HPplus(current_mob,objects_list[global.object].plusvalue,true);
+		elseif objects_list[global.object].plus == "sp" then
+			damage.SPplus(current_mob,objects_list[global.object].plusvalue,true);
+		elseif objects_list[global.object].plus == "st" then
+			damage.STplus(current_mob,objects_list[global.object].plusvalue,true);
+		end;
+	end;
+	if objects_list[global.object].minus then
+		if objects_list[global.object].minus == "hp" then
+			damage.HPminus(current_mob,objects_list[global.object].minusvalue,true);
+		elseif objects_list[global.object].minus == "sp" then
+			damage.SPminus(current_mob,objects_list[global.object].minusvalue,true);
+		elseif objects_list[global.object].minus == "st" then
+			damage.STminus(current_mob,objects_list[global.object].minusvalue,true);
+		end;
+	end;
+	for i=1, #objects_list[global.object].conditions do
+		chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].name] = chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].value];
+	end;
+	game_status = "neutral";
+	if global.status == "battle" then
+		damage.RTminus(current_mob,100);
+		game_status = "restoring";
 	end;
 end;
 

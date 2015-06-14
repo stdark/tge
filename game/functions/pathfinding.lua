@@ -47,7 +47,7 @@ function path_finding (mode,ignore_mobs)
 				last_path_hex_turn = rotation_to_chest; -- check if hex is free!
 				mob_is_going_to_picklock = 1;
 			end;
-			--trashheap,skullpile,campfire,crystal,secret
+			--trashheap,skullpile,campfire,crystal,secret,well
 			local at_mbag,mbagid = helpers.cursorAtMaterialBag(cursor_world_x,cursor_world_y);
 			if at_mbag then
 				point_to_go_x = cursor_world_x;

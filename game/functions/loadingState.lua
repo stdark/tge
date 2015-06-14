@@ -205,6 +205,12 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "book15_pic9","img/books/book15/book15_pic9.dds");
 			loader.newImage(media.images, "book15_pic10","img/books/book15/book15_pic10.dds");
 
+			loader.newImage(media.images, "well_clean","img/wells/well_clean.dds");
+			loader.newImage(media.images, "well_magical","img/wells/well_magical.dds");
+			loader.newImage(media.images, "well_bad","img/wells/well_bad.dds");
+			loader.newImage(media.images, "well_evil","img/wells/well_evil.dds");
+			loader.newImage(media.images, "well_dry","img/wells/well_dry.dds");
+			loader.newImage(media.images, "well_dungeon","img/wells/well_dungeon.dds");
 			
 			loader.newImage(media.images, "map1","img/map1.dds");
 			

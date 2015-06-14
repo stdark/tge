@@ -1247,6 +1247,33 @@ function draw.obelisk ()
 	end;
 end;
 
+function draw.well ()
+	local x,y = helpers.centerObject(media.images.map);
+	love.graphics.draw(media.images.map, x,y-50);
+	love.graphics.draw(media.images[objects_list[global.object].wimg], x,y-50);
+end;
+
+function draw.wellButtons ()
+	loveframes.util.RemoveAll();
+	local x,y = helpers.centerObject(media.images.map);
+	local text = lognames.descriptions[objects_list[global.object].story];
+	wellTextField = loveframes.Create("text");
+	wellTextField:SetPos(x+50,y + 450);
+	wellTextField:SetMaxWidth(700);
+	wellTextField:SetFont(bookFont);
+	wellTextField:SetText(text);
+	if objects_list[global.object].subtyp == "drink" then
+		global.buttons.drink_button = loveframes.Create("imagebutton");
+		global.buttons.drink_button:SetImage(media.images.button9);
+		global.buttons.drink_button:SetPos(x+300,y+600);
+		global.buttons.drink_button:SizeToImage()
+		global.buttons.drink_button:SetText(lognames.buttons.drink);
+		global.buttons.drink_button.OnClick = function(object)
+			helpers.drinkFromWell ();
+				end;	
+	end;
+end;
+
 function draw.stats(index)
 	local x,y = helpers.centerObject(media.images.stats);
 	love.graphics.draw(media.images.stats, x,y-70);
@@ -2458,7 +2485,7 @@ function draw.objects ()
 				end;  
 			end;
 			for j=1,#bags_list do
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and bags_list[j].typ ~= "well" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-12);
 					else  
@@ -2474,6 +2501,13 @@ function draw.objects ()
 					end;
 				end;
 				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "well" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-64, (my-1)*tile_h*0.75+top_space-160);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-64, (my-1)*tile_h*0.75+top_space-160);
+					end;
+				end;
 				
 			end;
 			for j=1, #objects_list do
@@ -2494,15 +2528,12 @@ function draw.objects ()
 				elseif objects_list[j].typ == "competition" then
 					addx = 16;
 					addy = 40;
-				elseif objects_list[j].typ == "well" then
-					addx = 64;
-					addy = 64
 				elseif objects_list[j].typ == "portal" then
 					addx = 32;
 					addy = 0;
 				elseif objects_list[j].typ == "well" then
 					addx = 64;
-					addy = 160;
+					addy = 96;
 				end;
 				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
@@ -2932,6 +2963,7 @@ function draw.objects ()
 					or game_status == "switchlevel"
 					or game_status == "calendar"
 					or game_status == "obelisk"
+					or game_status == "well"
 					or game_status == "log"
 					or (game_status == "shot" and i ~= current_mob)
 					or (game_status == "damage" and i ~= victim)
@@ -4273,6 +4305,9 @@ function draw.ui ()
 	end;
 	if game_status == "obelisk" then
 		draw.obelisk ();
+	end;
+	if game_status == "well" then
+		draw.well ();
 	end;
 	if (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "showinventory") then
 		draw.inventory_bag();
