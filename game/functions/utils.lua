@@ -1,7 +1,7 @@
 utils = {};
 
 directions = {};
-  
+
 directions[1] = {};
 directions[2] = {};
 directions[3] = {};
@@ -43,32 +43,12 @@ fanform_xn[6]={1,0,-1,-2,-3,1,0,-1,-2,-3,-4,0,-1,-2,-3,-4,0,-1,-2,-3,-4,-1,-2,-3
 fanform_xc[6]={2,1,0,-1,-2,1,0,-1,-2,-3,1,0,-1,-2,-3,0,-1,-2,-3,-4,0,-1,-2,-3,-4};
 
 function utils.printDebug(message)
-	if debug then
-		print(message);
-	end;
+   -- Send message to log
+   if debug then
+      print(message);
+   end;
 end;
 
-function utils.getseed ()
-	local sum = 0;
-	if love._os == "Linux" then
-		local filo = io.open ("/dev/urandom","r")
-		local num = string.byte(filo:read());
-		filo:close();
-	end;
-	if sum ~= 0 then
-		return sum;
-	else
-		return 0;
-	end;
-end;
-
-function utils.randommore ()
-	rndCounter = rndCounter + 1;
-	if rndCounter >= 20 then
-		rndCounter = 1;
-	end;
-	math.randomseed(randomize[rndCounter]);
-end;
 
 function utils.generateHolyGrail () --FIXME check for objects,chests
 	local selected_level = math.random(1,2);
@@ -97,7 +77,7 @@ function utils.generateHolyGrail () --FIXME check for objects,chests
 					table.insert(applicable_hexes,{y=mx,x=my});
 				end;
 			end;
-		end; 
+		end;
 	end;
 	local selected_hex = math.random(1,#applicable_hexes);
 	print("GRAIL",selected_level,selected_hex,#applicable_hexes,applicable_hexes[selected_hex].x,applicable_hexes[selected_hex].y);
@@ -136,3 +116,50 @@ function utils.smallRingArea(x,y)
 	end;
 	return ring;
 end;
+
+
+---- Bicycle random generator
+
+randomize = {};			-- array for random seeds
+rndCounter = 1;			-- current seed num
+randomizeSize = 20		-- how many seeds in randomize
+
+function utils.random(seed)
+   -- Get random number based on argument
+   i, _ = math.modf(( (84589 * seed) + 45989), (217728));
+   return i;
+end;
+
+function utils.initRandomize(seed)
+   -- Set 20 random numbers to randomize array
+   randomize = {};		-- reset randomize
+   rndCounter = 1;		-- reset current seed num
+   randomize[1] = utils.random(seed);
+   for i = 2, randomizeSize do
+      randomize[i] = utils.random(randomize[i-1]);
+   end;
+end;
+
+function utils.getseed ()	-- deprecated ???
+   local sum = 0;
+   if love._os == "Linux" then
+      local filo = io.open ("/dev/urandom","r")
+      local num = string.byte(filo:read());
+      filo:close();
+   end;
+   if sum ~= 0 then
+      return sum;
+   else
+      return 0;
+   end;
+end;
+
+function utils.randommore ()
+   -- Set next int in randomize array as seed for lua random generator
+   math.randomseed(randomize[rndCounter]); -- init random by current rndCounter
+   rndCounter = rndCounter + 1;		   -- and increase it
+   if rndCounter >= randomizeSize then	   --  but no more than randomizeSize
+      rndCounter = 1;
+   end;
+end;
+--

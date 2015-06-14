@@ -51,18 +51,13 @@ function love.load()
 	nextState = mainmenuState;
 	currentState.start(media, loadingFinished);
 
-	randomX = os.time();
-	randomize = {};
-	rndCounter = 1;
-	randomize[1], _ = math.modf((84589*randomX + 45989),(217728));
-	for i=2,20 do
-		randomize[i], _ = math.modf((84589*randomize[i-1] + 45989 ),(217728));
-	end;
+	randomX = os.time();          -- take seconds from 'epoch' as base for random
+	utils.initRandomize(randomX); -- init randomize arrray
 
 	--love.window.setMode(1920, 1080, {resizable=true});
 	--love.window.setMode(1280, 960, {resizable=false});
 	-- love.window.setMode(1200, 600, {resizable=false});
-	local width, height = love.window.getDesktopDimensions(1); -- get our display size
+	local width, height = love.window.getDesktopDimensions(1);  -- get our display size
 	love.window.setMode(width, height, {resizable=false});      -- set screen size
 end;
 
@@ -72,21 +67,12 @@ function love.update(dt)
 	global.screenHeight = love.graphics.getHeight();
 	fps = love.timer.getFPS( );
 
-	randomXX = os.time();
+	local randomXX = os.time();
 	if randomX ~= randomXX then
 		randomX = randomXX;
-		randomize = {};
-		rndCounter = 1;
-		randomize[1], _ = math.modf((84589*randomX + 45989),(217728));
-		for i=2,20 do
-			randomize[i], _ = math.modf((84589*randomize[i-1] + 45989 ),(217728));
-		end;
+		utils.initRandomize(randomX);
 	end;
-	math.randomseed(randomize[rndCounter]);
-	rndCounter = rndCounter + 1;
-	if rndCounter >= 20 then
-		rndCounter = 1;
-	end;
+	utils.randommore(); 	-- init lua lua random generator
 
 	currentState.update(dt);
 	loveframes.update(dt);
