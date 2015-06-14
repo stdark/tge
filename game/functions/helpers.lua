@@ -2158,9 +2158,13 @@ end;
 function helpers.neutralWatch ()
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].control == "player" then
+			tmp_current_mob = i;
 			trace.first_watch(i);
+			trace.one_around(i);
 		end;
 	end;
+	trace.chars_around();
+	trace.clear_rounded()
 end;
 
 function helpers.lightIsNear(x,y)

@@ -1710,15 +1710,8 @@ function playingState.keypressed(key, unicode)
 		   path_status=0;
 		   game_status="neutral";
 			helpers.neutralWatch();
-			for i=1,chars do
-				if chars_mobs_npcs[i].control == "player" then
-					trace.first_watch(i);
-				end;
-			end;
-			trace.chars_around();
-			trace.clear_rounded();
 		end;
-   
+
 		if key == "s"
 		and (game_status == "neutral"
 		or game_status == "path_finding"
