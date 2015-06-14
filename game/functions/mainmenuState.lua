@@ -54,6 +54,7 @@ function mainmenuState.drawButtons ()
 	global.buttons.start_button:SizeToImage()
 	global.buttons.start_button:SetText(lognames.buttons.startgame);
 	global.buttons.start_button.OnClick = function(object)
+		global.grail_level,global.grail_x,global.grail_y,global.grail_maparray =  utils.generateHolyGrail ();
 		mainmenuState.startGame ();
 			end;
 	global.buttons.create_button = loveframes.Create("imagebutton");

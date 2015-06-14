@@ -1,6 +1,5 @@
 function path_finding (mode,ignore_mobs)
 	hitHex = {x=0,y=0};
-	mobs_at_map ();
 	mob_is_going_to_picklock = 0;
 	mob_is_going_to_knock = 0;
 	mob_is_going_to_useobject = 0;
@@ -40,12 +39,34 @@ function path_finding (mode,ignore_mobs)
 			point_to_go_y = chars_mobs_npcs[current_mob].y;
 		end;
 		if chars_mobs_npcs[current_mob].person == "char" then
+			--chest
 			local cursor_at_chest, pointx,pointy,rotation_to_chest = helpers.cursorAtChest(cursor_world_x,cursor_world_y);
 			if cursor_at_chest then
 				point_to_go_x = pointx;
 				point_to_go_y = pointy;
 				last_path_hex_turn = rotation_to_chest; -- check if hex is free!
 				mob_is_going_to_picklock = 1;
+			end;
+			--trashheap,skullpile,campfire,crystal,secret
+			local at_mbag,mbagid = helpers.cursorAtMaterialBag(cursor_world_x,cursor_world_y);
+			if at_mbag then
+				point_to_go_x = cursor_world_x;
+				point_to_go_y = cursor_world_y;
+				local newx,newy = findAltWayToHex(cursor_world_x,cursor_world_y);
+				if newx and newy then
+					point_to_go_x = newx;
+					point_to_go_y = newy;
+				end;
+				mob_is_going_to_useobject = 1;
+				if point_to_go_x and helpers.passWalk(point_to_go_x,point_to_go_y) and not helpers.isAimOnMob (point_to_go_x,point_to_go_y) then
+					path_can_be_found = 1;
+					hitHex = {x=cursor_hex_x,y=cursor_hex_y};
+					mob_is_going_to_picklock = 1;
+				else
+					path_status = 0;
+					--print("path not found!");
+				end;
+				
 			end;
 			--[[local cursor_at_door, pointx,pointy,rotation_to_door,opened = helpers.cursorAtClosedDoor(cursor_world_x,cursor_world_y); --FIXME doors are 2-sided
 			if cursor_at_door and not opened then
@@ -54,6 +75,7 @@ function path_finding (mode,ignore_mobs)
 				last_path_hex_turn = rotation_to_door; -- check if hex is free!
 				mob_is_going_to_picklock = 1;
 			end;]]
+			--buildings
 			local cursor_at_building,rotation_to_building = helpers.cursorAtBuilding(cursor_world_x,cursor_world_y);
 			if cursor_at_building then
 				point_to_go_x = cursor_world_x;
@@ -61,6 +83,7 @@ function path_finding (mode,ignore_mobs)
 				last_path_hex_turn = rotation_to_building; -- check if hex is free!
 				mob_is_going_to_knock = 1;
 			end;
+			--obelisks,altars,barrels,cauldrons,pedestals
 			if helpers.cursorAtObject(cursor_world_x,cursor_world_y) then
 				point_to_go_x = cursor_world_x;
 				point_to_go_y = cursor_world_y;
@@ -130,8 +153,6 @@ function path_finding (mode,ignore_mobs)
 			if atk_direction > 6 then
 				atk_direction = 1;
 			end;
-			--atk_dir_to_hex (); 
-			--if not helpers.isAimOnMob () and helpers.passWalk(point_to_go_x+add_x,point_to_go_y+add_y) and allmobs[point_to_go_x+add_x][point_to_go_y+add_y] == 0 then
 			if not helpers.isAimOnMob (rings[1][counter].x,rings[1][counter].y) and helpers.passWalk(rings[1][counter].x,rings[1][counter].y) then
 				point_go_x = rings[1][atk_direction].x;
 				point_to_go_y = rings[1][atk_direction].y;
@@ -143,7 +164,6 @@ function path_finding (mode,ignore_mobs)
 				path_status = 0;
 				path_print = "path not found (char)!";
 				hang = 0;
-				--chars_mobs_npcs[current_mob].rt = math.max(chars_mobs_npcs[current_mob].rt-100,0);
 				damage.RTminus(current_mob,100,false);
 				game_status = "restoring";
 				print ("alt way problem");

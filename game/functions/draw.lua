@@ -1189,9 +1189,9 @@ end;
 
 function draw.papermap ()
 	local x,y = helpers.centerObject(media.images.map);
-	love.graphics.draw(media.images.map, x,y-50)
-	tile_w_paper=8
-	tile_h_paper=4
+	love.graphics.draw(media.images.map, x,y-50);
+	local tile_w_paper = 8;
+	local tile_h_paper = 4;
 	for my=1 + map_y, map_h do
 		for mx=1 + map_x, map_w do	
 			if darkness[1][my][mx] < 2 then 
@@ -1231,8 +1231,23 @@ function draw.papermap ()
 	end;
 end;
 
+function draw.obelisk ()
+	local x,y = helpers.centerObject(media.images.map);
+	love.graphics.draw(media.images.map, x,y-50);
+	local tile_w_paper=64;
+	local tile_h_paper=32;
+	for my=1,23 do
+		for mx=1,11 do	
+			if (my)/2 == math.ceil((my)/2) then
+				love.graphics.draw(media.images.hex, minimap_hexes[global.grail_maparray[my][mx]],((mx-1)*tile_w_paper)+x+8, (my-1)*tile_h_paper*0.75+y+45,0,1);
+			else
+				love.graphics.draw(media.images.hex, minimap_hexes[global.grail_maparray[my][mx]],((mx-1)*tile_w_paper+tile_w_paper/2)+x+8, (my-1)*tile_h_paper*0.75+y+45,0,1);
+			end;
+		end;
+	end;
+end;
+
 function draw.stats(index)
-	
 	local x,y = helpers.centerObject(media.images.stats);
 	love.graphics.draw(media.images.stats, x,y-70);
 	--402x254
@@ -2889,6 +2904,7 @@ function draw.objects ()
 					or game_status == "ai"
 					or game_status == "switchlevel"
 					or game_status == "calendar"
+					or game_status == "obelisk"
 					or game_status == "log"
 					or (game_status == "shot" and i ~= current_mob)
 					or (game_status == "damage" and i ~= victim)
@@ -4227,6 +4243,9 @@ function draw.ui ()
 	end;
 	if game_status == "log" then
 		draw.bigLog();
+	end;
+	if game_status == "obelisk" then
+		draw.obelisk ();
 	end;
 	if (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "showinventory") then
 		draw.inventory_bag();

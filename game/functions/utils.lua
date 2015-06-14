@@ -1,5 +1,47 @@
 utils = {};
 
+directions = {};
+  
+directions[1] = {};
+directions[2] = {};
+directions[3] = {};
+
+directions[1].xn = {1,1,1,0,-1,0};
+directions[1].xc = {0,1,0,-1,-1,-1};
+directions[1].xnr = {0,-1,0,1,1,1};
+directions[1].xcr = {-1,-1,-1,0,1,0};
+directions[1].y = {-1,0,1,1,0,-1};
+
+directions[2].xn = {0,1,2,2,2,1,0,-1,-1,-2,-1,-1};
+directions[2].xc = {0,1,1,2,1,1,0,-1,-2,-2,-2,-1};
+directions[2].y = {-2,-2,-1,0,1,2,2,2,1,0,-1,-2};
+
+directions[3].xn = {0,1,2,2,3,3,3,2,2,1,0,-1,-2,-2,-3,-2,-2,-1};
+directions[3].xc = {-1,0,1,2,2,3,2,2,1,0,-1,-2,-2,-3,-3,-3,-2,-2};
+directions[3].y = {-3,-3,-3,-2,-1,0,1,2,3,3,3,3,2,1,0,-1,-2,-3};
+
+fanform_y={};
+fanform_xc={};
+fanform_xn={};
+fanform_y[1]={-5,-5,-5,-5,-5,-4,-4,-4,-4,-4,-3,-3,-3,-3,-3,-2,-2,-2,-2,-2,-1,-1,-1,-1,-1};
+fanform_xc[1]={-1,0,1,2,3,-1,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,1,2,3,5,5};
+fanform_xn[1]={-2,-1,0,1,2,-1,0,1,2,3,-1,0,1,2,3,0,1,2,3,4,0,1,2,3,4};
+fanform_y[2]={-4,-3,-3,-2,-2,-2,-1,-1,-1,-1,0,0,0,0,0,1,1,1,1,2,2,2,3,3,4};
+fanform_xc[2]={3,3,4,2,3,4,2,3,4,5,1,2,3,4,5,2,3,4,5,2,3,4,3,4,3};
+fanform_xn[2]={3,2,3,2,3,4,1,2,3,4,1,2,3,4,5,1,2,3,4,2,3,4,2,3,3};
+fanform_y[3]={5,5,5,5,5,4,4,4,4,4,3,3,3,3,3,2,2,2,2,2,1,1,1,1,1,};
+fanform_xc[3]={-1,0,1,2,3,-1,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,1,2,3,5,5};
+fanform_xn[3]={-2,-1,0,1,2,-1,0,1,2,3,-1,0,1,2,3,0,1,2,3,4,0,1,2,3,4};
+fanform_y[4]={5,5,5,5,5,4,4,4,4,4,3,3,3,3,3,2,2,2,2,2,1,1,1,1,1};
+fanform_xn[4]={1,0,-1,-2,-3,1,0,-1,-2,-3,-4,0,-1,-2,-3,-4,0,-1,-2,-3,-4,-1,-2,-3,-5,-5};
+fanform_xc[4]={2,1,0,-1,-2,1,0,-1,-2,-3,1,0,-1,-2,-3,0,-1,-2,-3,-4,0,-1,-2,-3,-4};
+fanform_y[5]={-4,-3,-3,-2,-2,-2,-1,-1,-1,-1,0,0,0,0,0,1,1,1,1,2,2,2,3,3,4};
+fanform_xn[5]={-3,-3,-4,-2,-3,-4,-2,-3,-4,-5,-1,-2,-3,-4,-5,-2,-3,-4,-5,-2,-3,-4,-3,-4,-3};
+fanform_xc[5]={-3,-2,-3,-2,-3,-4,-1,-2,-3,-4,-1,-2,-3,-4,-5,-1,-2,-3,-4,-2,-3,-4,-2,-3,-3};
+fanform_y[6]={-5,-5,-5,-5,-5,-4,-4,-4,-4,-4,-3,-3,-3,-3,-3,-2,-2,-2,-2,-2,-1,-1,-1,-1,-1};
+fanform_xn[6]={1,0,-1,-2,-3,1,0,-1,-2,-3,-4,0,-1,-2,-3,-4,0,-1,-2,-3,-4,-1,-2,-3,-5,-5};
+fanform_xc[6]={2,1,0,-1,-2,1,0,-1,-2,-3,1,0,-1,-2,-3,0,-1,-2,-3,-4,0,-1,-2,-3,-4};
+
 function utils.printDebug(message)
 	if debug then
 		print(message);
@@ -26,4 +68,71 @@ function utils.randommore ()
 		rndCounter = 1;
 	end;
 	math.randomseed(randomize[rndCounter]);
+end;
+
+function utils.generateHolyGrail () --FIXME check for objects,chests
+	local selected_level = math.random(1,2);
+	package.loaded[ 'levels.level1' ] = nil;
+	package.loaded[ 'levels.level2' ] = nil;
+	if selected_level == 1 then
+		require "levels.level1"
+	elseif selected_level == 2 then
+		require "levels.level2"
+	end;
+	level ();
+	map_w = #map
+	map_h = #map[1]
+	local applicable_hexes = {};
+	for my=1,map_h do
+		for mx=1, map_w do
+			if map[mx][my] <= 300 and heights_table[map[mx][my]] == 0 and mx > 12 and mx < map_w - 12 and my > 24 and my < map_h - 24 then
+				local ring = utils.smallRingArea(mx,my);
+				local add_hex = true;
+				for i=1,#ring do
+					if heights_table[map[ring[i].x][ring[i].y]] ~= 0 then
+						add_hex = false;
+					end;
+				end;
+				if add_hex then
+					table.insert(applicable_hexes,{y=mx,x=my});
+				end;
+			end;
+		end; 
+	end;
+	local selected_hex = math.random(1,#applicable_hexes);
+	print("GRAIL",selected_level,selected_hex,#applicable_hexes,applicable_hexes[selected_hex].x,applicable_hexes[selected_hex].y);
+	local obelisks_array = {};
+	for i=1,23 do
+		obelisks_array[i] = {};
+		for h=1,11 do
+			local x = applicable_hexes[selected_hex].x - 11 + i;
+			local y = applicable_hexes[selected_hex].y - 5 + h;
+			if map[x][y] <= 300 then
+				obelisks_array[i][h] = minimap_table[map[x][y]];
+			else
+				obelisks_array[i][h] = 13;
+			end;
+		end;
+	end;
+	return selected_level,applicable_hexes[selected_hex].x,applicable_hexes[selected_hex].y,obelisks_array;
+end;
+
+function utils.smallRingArea(x,y)
+	local ring = {};
+	local xdirections = {};
+	local ydirections = {};
+	local ydirections = directions[1].y
+	local xdirections= {};
+	local halfy = y/2;
+	if halfy == math.ceil(halfy) then
+		xdirections = directions[1].xc;
+	else
+		xdirections = directions[1].xn;
+	end;
+	for k=1,6 do
+		local xx = x+xdirections[k];
+		local yy = y+ydirections[k];
+		table.insert(ring,{x=xx,y=yy});
+	end;
+	return ring;
 end;

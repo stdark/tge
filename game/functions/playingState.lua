@@ -162,61 +162,12 @@ function playingState.load()
 	mob_h=64
 
 	hexes_to_sense={}
-  
-	directions = {};
-  
-	directions[1] = {};
-	directions[2] = {};
-	directions[3] = {};
-  
-	directions[1].xn = {1,1,1,0,-1,0};
-	directions[1].xc = {0,1,0,-1,-1,-1};
-	directions[1].xnr = {0,-1,0,1,1,1};
-	directions[1].xcr = {-1,-1,-1,0,1,0};
-	directions[1].y = {-1,0,1,1,0,-1};
-	
-	directions[2].xn = {0,1,2,2,2,1,0,-1,-1,-2,-1,-1};
-	directions[2].xc = {0,1,1,2,1,1,0,-1,-2,-2,-2,-1};
-	directions[2].y = {-2,-2,-1,0,1,2,2,2,1,0,-1,-2};
-  
-	directions[3].xn = {0,1,2,2,3,3,3,2,2,1,0,-1,-2,-2,-3,-2,-2,-1};
-	directions[3].xc = {-1,0,1,2,2,3,2,2,1,0,-1,-2,-2,-3,-3,-3,-2,-2};
-	directions[3].y = {-3,-3,-3,-2,-1,0,1,2,3,3,3,3,2,1,0,-1,-2,-3};
-
-	fanform_y={};
-	fanform_xc={};
-	fanform_xn={};
-	fanform_y[1]={-5,-5,-5,-5,-5,-4,-4,-4,-4,-4,-3,-3,-3,-3,-3,-2,-2,-2,-2,-2,-1,-1,-1,-1,-1};
-	fanform_xc[1]={-1,0,1,2,3,-1,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,1,2,3,5,5};
-	fanform_xn[1]={-2,-1,0,1,2,-1,0,1,2,3,-1,0,1,2,3,0,1,2,3,4,0,1,2,3,4};
-	fanform_y[2]={-4,-3,-3,-2,-2,-2,-1,-1,-1,-1,0,0,0,0,0,1,1,1,1,2,2,2,3,3,4};
-	fanform_xc[2]={3,3,4,2,3,4,2,3,4,5,1,2,3,4,5,2,3,4,5,2,3,4,3,4,3};
-	fanform_xn[2]={3,2,3,2,3,4,1,2,3,4,1,2,3,4,5,1,2,3,4,2,3,4,2,3,3};
-	fanform_y[3]={5,5,5,5,5,4,4,4,4,4,3,3,3,3,3,2,2,2,2,2,1,1,1,1,1,};
-	fanform_xc[3]={-1,0,1,2,3,-1,0,1,2,3,4,0,1,2,3,4,0,1,2,3,4,1,2,3,5,5};
-	fanform_xn[3]={-2,-1,0,1,2,-1,0,1,2,3,-1,0,1,2,3,0,1,2,3,4,0,1,2,3,4};
-	fanform_y[4]={5,5,5,5,5,4,4,4,4,4,3,3,3,3,3,2,2,2,2,2,1,1,1,1,1};
-	fanform_xn[4]={1,0,-1,-2,-3,1,0,-1,-2,-3,-4,0,-1,-2,-3,-4,0,-1,-2,-3,-4,-1,-2,-3,-5,-5};
-	fanform_xc[4]={2,1,0,-1,-2,1,0,-1,-2,-3,1,0,-1,-2,-3,0,-1,-2,-3,-4,0,-1,-2,-3,-4};
-	fanform_y[5]={-4,-3,-3,-2,-2,-2,-1,-1,-1,-1,0,0,0,0,0,1,1,1,1,2,2,2,3,3,4};
-	fanform_xn[5]={-3,-3,-4,-2,-3,-4,-2,-3,-4,-5,-1,-2,-3,-4,-5,-2,-3,-4,-5,-2,-3,-4,-3,-4,-3};
-	fanform_xc[5]={-3,-2,-3,-2,-3,-4,-1,-2,-3,-4,-1,-2,-3,-4,-5,-1,-2,-3,-4,-2,-3,-4,-2,-3,-3};
-	fanform_y[6]={-5,-5,-5,-5,-5,-4,-4,-4,-4,-4,-3,-3,-3,-3,-3,-2,-2,-2,-2,-2,-1,-1,-1,-1,-1};
-	fanform_xn[6]={1,0,-1,-2,-3,1,0,-1,-2,-3,-4,0,-1,-2,-3,-4,0,-1,-2,-3,-4,-1,-2,-3,-5,-5};
-	fanform_xc[6]={2,1,0,-1,-2,1,0,-1,-2,-3,1,0,-1,-2,-3,0,-1,-2,-3,-4,0,-1,-2,-3,-4};
 	
 	irradiations={"dawn","day","afterglow", "twilight", "night","dungeon","firelight"};
 	areaEffectsPriority = {"fire","ice","mud","acid","poison"};
 	
 	hang = 0;
  
-	allmobs={};
-	for a=1,map_w do
-		allmobs[a]={};
-		for b=1,map_h do
-			allmobs[a][b]=0;
-		end;
-	end;
 	tempbb={};
 	tmp_ppoint={};
 	tmp_ppoint2={};
@@ -661,7 +612,6 @@ function playingState.load()
 --/NEW LEVEL
 	
 	trace.chars_around();
-	mobs_at_map();
 	--helpers.battleorder();
 		
 	local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
@@ -1598,6 +1548,11 @@ function playingState.keypressed(key, unicode)
 			game_status = tmp_game_status;
 	   end;
 	end;
+	
+	if key == "5" then
+		game_status = "obelisk";
+	end;
+	
 	if chars_mobs_npcs[current_mob].control == "player" or game_status == "menu" then
 		if key == "lctrl" then
 		  love.mouse.setVisible(true);
@@ -2003,6 +1958,7 @@ function playingState.keypressed(key, unicode)
 		or game_status == "npcidentify"
 		or game_status == "journal"
 		or game_status == "calendar"
+		or game_status == "obelisk"
 		)
 		and   chars_mobs_npcs[current_mob].control=="player" 
 		and holding_smth==0
@@ -7667,7 +7623,6 @@ function mob_moving()
 				end;
 			end;
 		end;
-		mobs_at_map();
 		walked_before = walked_before + 1;
 		if global.status == "peace" then
 			calendar.add_time_interval(calendar.delta_walk_in_peace);
@@ -8773,7 +8728,6 @@ end;
 
 function mob_plus()
 	utils.printDebug("mob_plus called");
-	mobs_at_map ();
 	clear_elandscape ();
 	game_status = "neutral";
 	missle_type = "none";
@@ -9023,21 +8977,6 @@ function find_nonfree_space_at_inv ()
 		end;
 	end;
 	bagremoved = 0;
-end;
-
-function mobs_at_map()
-	for a=1, map_w do
-		for b=1, map_h do
-			allmobs[a][b]=0;
-			for i=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[i].x==a and chars_mobs_npcs[i].y==b and chars_mobs_npcs[i].status==1 then
-					allmobs[a][b]=1
-				else
-				--allmobs[a][b]=0
-				end;
-			end;
-		end;
-	end;
 end;
 
 function noslot_func()
