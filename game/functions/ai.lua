@@ -3,7 +3,6 @@ ai = {}
 function ai.behavior()
 	utils.printDebug("ai_called");
 	mob_can_move = 0;
-	mobs_at_map ();
 	game_status="ai";
 	mob_range = chars_mobs_npcs[current_mob].rng-walked_before; --count walked before!
 	path_can_be_found = 0;

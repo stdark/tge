@@ -2613,33 +2613,6 @@ function helpers.countRange()
 	end;
 end;
 
-function helpers.find_free_hexes_allmap ()
-	local free_hexes = {};
-	mob_range = helpers.countRange();
-	for i=1,#all_ground_hexes do
-		local _point_unavailable = true;
-		if math.ceil(math.sqrt((all_ground_hexes[i].x-chars_mobs_npcs[current_mob].x)^2+(all_ground_hexes[i].y-chars_mobs_npcs[current_mob].y)^2)) > mob_range 
-		or all_ground_hexes[i].pass ~= 0
-		or all_ground_hexes[i].x <= map_limit_w 
-		or all_ground_hexes[i].x >= map_w-map_limit_w 
-		or all_ground_hexes[i].y <= map_limit_h 
-		or all_ground_hexes[i].y >= map_h-map_limit_h
-		or allmobs[all_ground_hexes[i].y][all_ground_hexes[i].x] ~= 0 then
-			 _point_available = false;
-		end;
-		if _point_available and heights_table[map[all_ground_hexes[i].y][all_ground_hexes[i].x]] == 0 and allmobs[all_ground_hexes[i].y][all_ground_hexes[i].x]==0 then
-			ai_world_x = all_ground_hexes[i].x;
-			ai_world_y = all_ground_hexes[i].y;
-			mob_can_move = 0;
-			path_finding (0,0);
-			if  path_status == 1 then
-				table.insert(free_hexes,i);
-			end;
-		end;
-	end;
-	return free_hexes;
-end;
-
 function helpers.find_free_hexes (index)
 	local mob_range = chars_mobs_npcs[index].rng-walked_before;
 	local free_hexes = {};
@@ -2747,6 +2720,15 @@ function helpers.cursorAtOpenedDoor(x,y) --FIXME doors are 2-sided
 	return false,nil;
 end;
 
+function helpers.cursorAtMaterialBag(x,y) --FIXME doors are 2-sided
+	for i=1,#bags_list do
+		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret") then
+			return true,i;
+		end;
+	end;
+	return false,nil,nil;
+end;
+
 function helpers.cursorAtObject(x,y)
 	for i=1,#objects_list do
 		if objects_list[i].xi == x and objects_list[i].yi == y then
@@ -2775,7 +2757,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		array_x = directions[1].xc;
 	end;
 	if objects_list[global.object].typ == "barrel" and objects_list[global.object].subtyp > 0 then
-		chars_stats[current_mob][global.stats_short[objects_list[global.object].subtyp]] = chars_stats[current_mob][global.stats_short[objects_list[global.object].subtyp]] + 5;
+		chars_stats[current_mob][global.stats_short[objects_list[global.object].subtyp]] = chars_stats[current_mob][global.stats_short[objects_list[global.object].subtyp]] + 2;
 		helpers.recalcBattleStats(current_mob);
 		objects_list[global.object].subtyp = 0;
 		love.audio.play(media.sounds.drink,0);
@@ -2783,7 +2765,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		global.object = 0;
 		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drinkfrombarrel[chars_mobs_npcs[current_mob].gender]);
 	elseif objects_list[global.object].typ == "cauldron" and objects_list[global.object].subtyp > 0 then
-		chars_stats[current_mob][global.resistances[objects_list[global.object].subtyp]] = chars_stats[current_mob][global.resistances[objects_list[global.object].subtyp]] + 10;
+		chars_stats[current_mob][global.resistances[objects_list[global.object].subtyp]] = chars_stats[current_mob][global.resistances[objects_list[global.object].subtyp]] + 1;
 		helpers.recalcResistances(current_mob);
 		objects_list[global.object].subtyp = 0;
 		love.audio.play(media.sounds.drink,0);
@@ -2792,11 +2774,12 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		global.object = 0;
 	elseif objects_list[global.object].typ == "pedestal" and chars_mobs_npcs[current_mob][objects_list[global.object].effext1] == 0 then
 		chars_mobs_npcs[current_mob][objects_list[global.object].effext1] = chars_mobs_npcs[current_mob][objects_list[global.object].value1];
-		if objects_list[global.object].effext2 then
+		if objects_list[global.object].effect2 then
 			chars_mobs_npcs[current_mob][objects_list[global.object].effext2] = chars_mobs_npcs[current_mob][objects_list[global.object].value2];
 			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.usedpedestal[chars_mobs_npcs[current_mob].gender]); --FIXME type of pedestal
 		end;
 		global.object = 0;
+	elseif objects_list[global.object].typ == "altar" then
 	end;
 end;
 
