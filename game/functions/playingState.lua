@@ -3773,7 +3773,9 @@ function playingState.mousereleased (x,y,button)
 			--love.audio.play(media.sounds.yami,0);
 			helpers.addToActionLog(chars_stats[current_mob].name .. lognames.actions.eaten[chars_mobs_npcs[current_mob].gender]);
 			local value = inventory_ttx[list[holding_smth].ttxid].a;
-			helpers.addSatiation(index,value);
+			if chars_mobs_npcs[index].basiliskbreath == 0 then
+				helpers.addSatiation(index,value);
+			end;
 			table.remove(list,holding_smth);
 			for i=1,11 do
 				for h=1,15 do
@@ -7767,42 +7769,7 @@ function mob_moving()
 			path_counter=0;
 			hang = 0;
 		end;
-		if dlandscape_obj[b][a] == "fire" and dlandscape_duration[b][a] > 0 then
-			local dmgland = dlandscape_power[b][a];
-			local name = helpers.mobName(current_mob);
-			local dmg = damage.magicalRes (current_mob,dmgland,"fire");
-			damage.HPminus(current_mob,dmg);
-			dlandscape_duration[b][a] = dlandscape_duration[b][a] - 1;
-			if dlandscape_duration[b][a] == 0 then
-				dlandscape_power[b][a] = 0;
-				dlandscape_obj[b][a] = 0;
-				boomareas.ashGround (a,b)
-				helpers.clearLights (a,b);
-			end;
-			helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[current_mob].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.fire);
-		end;
-		if alandscape_obj[b][a] == "poison" then
-			local dmg=alandscape_power[b][a]
-			local name = helpers.mobName(current_mob);
-			if chars_mobs_npcs[current_mob].poison_power <= alandscape_power[b][a] then
-				chars_mobs_npcs[current_mob].poison_power = alandscape_power[b][a];
-				chars_mobs_npcs[current_mob].poison_dur = chars_mobs_npcs[current_mob].poison_dur + 3;
-				helpers.addToActionLog( name .. lognames.actions.poisoned[chars_mobs_npcs[current_mob].gender])
-			end;
-			alandscape_duration[b][a]=alandscape_duration[b][a] - 1;
-			if alandscape_duration[b][a] == 0 then
-				alandscape_power[b][a] = 0;
-				alandscape_obj[b][a] = 0;
-				boomareas.ashGround (a,b)
-				helpers.clearLights (a,b);
-			end;
-		end;
-		if dlandscape_obj[b][a] == "twister" or dlandscape_obj[b][a] == "twisterpart" then
-			trapped  = 1;
-			chars_mobs_npcs[current_mob].immobilize = chars_mobs_npcs[current_mob].immobilize + 5;
-			local name = helpers.mobName(current_mob);
-			helpers.addToActionLog( name .. lognames.actions.immobilized[chars_mobs_npcs[current_mob].gender]);
-		end;
+		damage.damageOfLandscape(current_mob,a,b);
 		local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
 		local mob_walk = loadstring("return " .. tmp)();
 		if path_counter == 1 then
@@ -8244,6 +8211,7 @@ function restoreRT ()
 				if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "undead" then
 					damage.HPplus(i,5);
 				end;
+				damage.damageOfLandscape(current_mob,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 				if chars_mobs_npcs[i].fingerofdeath > 0 then
 					local chance = math.random(1,math.max(chars_mobs_npcs[i].luk+1,101));
 					if chance > chars_mobs_npcs[i].luk then
@@ -8383,6 +8351,12 @@ function restoreRT ()
 				end;
 				if chars_mobs_npcs[i].executor_dur>0 then
 					chars_mobs_npcs[i].executor_dur= chars_mobs_npcs[i].executor_dur-1;
+				end;
+				if chars_mobs_npcs[i].holyblood_dur>0 then
+					if chars_mobs_npcs[i].nature == "undead" then
+						damage.HPminus(i,chars_mobs_npcs[i].holyblood_power,false);
+					end;
+					chars_mobs_npcs[i].holyblood_dur= chars_mobs_npcs[i].holyblood_dur-1;
 				end;
 				if chars_mobs_npcs[i].hourofpower_dur>0 then
 					chars_mobs_npcs[i].hourofpower_dur= chars_mobs_npcs[i].hourofpower_dur-1;
@@ -8622,11 +8596,12 @@ function restoreRT ()
 		for a=1,map_w do
 			for b=1, map_h do
 				if dlandscape_duration[a][b] > 0 then
-					dlandscape_duration[a][b] =dlandscape_duration[a][b]-1; --FIX stonewall and pit
+					dlandscape_duration[a][b] = dlandscape_duration[a][b]-1; --FIX stonewall and pit
 				end;
 				if vlandscape_duration[a][b] > 0 then
 					vlandscape_duration[a][b] = vlandscape_duration[a][b]-1;
 				end;
+				
 				if dlandscape_duration[a][b] == 0 then
 					if dlandscape_obj[a][b] == "fire" then
 						boomareas.ashGround (a,b);
@@ -8644,8 +8619,12 @@ function restoreRT ()
 					alandscape_obj[a][b] = 0;
 					alandscape_power[a][b] = 0;
 				end;
+<<<<<<< HEAD
 
 
+=======
+				
+>>>>>>> upstream/master
 				if mlandscape_duration[a][b] > 0 then
 					mlandscape_duration[a][b] = mlandscape_duration[a][b]-1;
 				end;

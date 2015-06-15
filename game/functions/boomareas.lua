@@ -1240,6 +1240,24 @@ function boomareas.fireGround (x,y,i,lvl,num)
 	helpers.clearHlandscape(x,y);
 end;
 
+function boomareas.holyGround (x,y,i,lvl,num)
+	local cursor_at_chest,pointx,pointy,rotation_to_chest = helpers.cursorAtChest(x,y);
+	if helpers.passWalk(x,y) and not cursor_at_chest then
+		if dlandscape_obj[y][x] == 0 then
+			dlandscape_obj[y][x] = "light";
+			local xx,yy = helpers.hexToPixels (x,y);
+			table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 255, 255, 128),typ="ground"});
+			lights[#lights]["light"].setGlowStrength(0.3);
+			dlandscape_power[y][x] = math.ceil(lvl*1/i);
+			dlandscape_duration[y][x] = math.ceil(num*1/i);
+		elseif dlandscape_obj[y][x] == "light" then
+			if dlandscape_power[y][x] >= math.ceil(lvl*1/i) then
+				dlandscape_duration[y][x] = math.ceil(num*1/i);
+			end;
+		end;
+	end;
+end;
+
 function boomareas.startFireGround (x,y,i,lvl,num)
 	local cursor_at_chest,pointx,pointy,rotation_to_chest = helpers.cursorAtChest(x,y);
 	if helpers.passWalk(x,y) and not cursor_at_chest then

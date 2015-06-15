@@ -869,19 +869,19 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			local spellname = loadstring("return " .. tempspellname)();
 			helpers.addToActionLog( agressor_name .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
 			if missle_type == "flamearrow" then
-				dmghp = damage.magicalRes (victim,num[1]*math.random(1,8),"fire"); --FIXME nil
+				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,8),"fire"); --FIXME nil
 				damage.HPminus(victim,dmghp,true);
 				helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
 			end;
 			if missle_type == "staticharge" then
-				dmghp = damage.magicalRes (victim,num[1]*math.random(2,6),"static");
-				tmp = damage.magicalRes (victim,num[1]*math.random(2,6),"static");
+				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,2,6),"static");
+				tmp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,2,6),"static");
 				dmgrt = -math.min(tmp,200-chars_mobs_npcs[victim].rt);
 				damage.HPminus(victim,dmghp,true);
 				damage.RTminus(victim,dmgrt,true);
 			end;
 			if missle_type == "poisonedspit" then
-				dmghp = damage.magicalRes (victim,2+num[1]*math.random(1,2),"poison");
+				dmghp = damage.magicalRes (victim,2+num[1]*damage.damageRandomizator(current_mob,1,2),"poison");
 				local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"poison",false);
 				if dot_power > 0 and dot_dur > 0 then
 					chars_mobs_npcs[victim].poison_power = dot_power;
@@ -896,8 +896,8 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				end;
 			end;
 			if missle_type == "coldbeam" then
-				dmghp = damage.magicalRes (victim,num[1]*math.random(1,7),"cold")
-				dmgst = damage.magicalRes (victim,num[1]*math.random(1,7),"cold")
+				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,7),"cold")
+				dmgst = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,7),"cold")
 				damage.HPminus(victim,dmghp,true);
 				damage.STminus(victim,dmgst);
 			end;
@@ -911,21 +911,21 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			end;
 			if missle_type == "spiritualarrow" then
 				if helpers.soulNature(victim) then
-					dmghp =  damage.magicalRes (victim,math.random(1,6)*num[1],"spirit");
+					dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,6)*num[1],"spirit");
 				else
 					dmghp = 0;
 				end;
 				damage.HPminus(victim,dmghp,true);
 			end;
 			if missle_type == "lightbolt" then
-				dmghp =  damage.magicalRes (victim,math.random(1,4)*num[1],"light");
+				dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,4)*num[1],"light");
 				if chars_mobs_npcs[victim].nature == "undead" then
 					dmghp = v*2;
 				end;
 				damage.HPminus(victim,dmghp,true);
 			end;
 			if missle_type == "darkflame" then
-				dmghp =  damage.magicalRes (victim,math.random(1,10)*num[1],"darkness")+damage.magicalRes (victim,math.random(1,10)*num[1],"fire");
+				dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,10)*num[1],"darkness")+damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,10)*num[1],"fire");
 				damage.HPminus(victim,dmghp,true);
 			end;
 			if missle_type == "mindblast" then
@@ -933,14 +933,14 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				damage.HPminus(victim,dmghp,true);
 			end;
 			if missle_type == "deadlyswarm" then
-				local _damage =  5+math.random(1,3)*(num[1]+num[2]);
+				local _damage =  5 + damage.damageRandomizator(current_mob,1,3)*(num[1]+num[2]);
 				dmghp = damage.physicalRes (victim,_damage,false)
 				damage.HPminus(victim,dmghp,true);
 				chars_mobs_npcs[victim].deadlyswarm = damage.applyCondition (victim,lvl[1],num[1],"deadlyswarm",false,"dex",false,1,false);
 			end;
 			if missle_type == "golemstopper" then
 				if chars_mobs_npcs[victim].nature == "golem" then
-					dmghp =  math.random(1,10)*lvl[1]*num[2];
+					dmghp = damage.damageRandomizator(current_mob,1,10)*lvl[1]*num[2];
 				else
 					dmghp = 0;
 				end;
@@ -948,7 +948,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			end;
 			if missle_type == "destroyundead" then
 				if chars_mobs_npcs[victim].nature == "undead" then
-					dmghp =  math.random(1,10)*lvl[1]*num[1];
+					dmghp =  damage.damageRandomizator(current_mob,1,10)*lvl[1]*num[1];
 				else
 					dmghp = 0;
 				end;
@@ -956,7 +956,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			end;
 			if missle_type == "windfist" and chars_mobs_npcs[victim].size ~= "giant" then
 				chars_mobs_npcs[victim].stun = damage.applyCondition (victim,lvl[1],num[1],"stun",false,"enu",false,1,false);
-				local dmgrt = math.max(chars_mobs_npcs[victim].rt,20 + math.random(1,lvl[1]*num[1]));
+				local dmgrt = math.max(chars_mobs_npcs[victim].rt,20 +  damage.damageRandomizator(current_mob,1,lvl[1]*num[1]));
 				damage.RTminus(victim,dmgrt,true);
 				local ring = boomareas.smallRingArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
 				if helpers.passCheck(ring[chars_mobs_npcs[current_mob].rot].x,ring[chars_mobs_npcs[current_mob].rot].y) then
@@ -966,18 +966,18 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.stunned[chars_mobs_npcs[victim].gender]);
 			end;
 			if missle_type=="lightning" then
-				dmghp = damage.magicalRes (victim,math.random(1,8)*num[1],"static");
+				dmghp = damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,8)*num[1],"static");
 				damage.HPminus(victim,dmghp,true);
 				local tmp = math.ceil(dmghp/10);
 				dmgrt = math.min(tmp,200-chars_mobs_npcs[victim].rt)
 				damage.RTminus(victim,dmgrt,true);
 			end;
 			if missle_type=="sunray" then
-				dmghp = 20 + damage.magicalRes (victim,math.random(1,20)*num[1],"light");
+				dmghp = 20 + damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,20)*num[1],"light");
 				damage.HPminus(victim,dmghp,true);
 			end;
 			if missle_type == "acidburst" then -- FIXME: not ac but debuff ac
-				dmghp = damage.magicalRes (victim,math.random(2,18)*num[1],"acid");
+				dmghp = damage.magicalRes (victim,damage.damageRandomizator(current_mob,2,18)*num[1],"acid");
 				damage.HPminus(victim,dmghp,true);
 				tmp = num[1];
 				debuffpower = math.max(tmp,chars_mobs_npcs[victim].ac);
@@ -993,7 +993,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			
 			-- continue from here
 			if missle_type=="razors" and chars_mobs_npcs[victim].motion == "walking" then
-				dmghp = math.ceil(math.random(5)*num[1]*(100-chars_mobs_npcs[victim].ac)/100)
+				dmghp = math.ceil(damage.damageRandomizator(current_mob,1,5)*num[1]*(100-chars_mobs_npcs[victim].ac)/100)
 				damage.HPminus(victim,dmghp,true);
 				if chars_mobs_npcs[victim].nature ~= "undead" 
 				and chars_mobs_npcs[victim].nature ~= "golem"
@@ -1033,7 +1033,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			if missle_type == "incineration" then
 				chars_mobs_npcs[victim].cold_dur = 0;
 				chars_mobs_npcs[victim].cold_power = 0;
-				dotdmg = math.random(15)*(100-chars_mobs_npcs[victim].rezfire)/100;
+				dotdmg = damage.damageRandomizator(current_mob,1,15)*(100-chars_mobs_npcs[victim].rezfire)/100;
 				local dmglog = 0;
 				local selfdmglog = 0;
 				dmghp = chars_mobs_npcs[current_mob].num_fire*(100-chars_mobs_npcs[victim].rezfire)/100;
@@ -1087,8 +1087,8 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					local dmglog = 0;
 					local dmglog2 = 0;
 					dmghp = num[1];
-					dmgst = math.random(12);
-					chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp - dmghp;
+					dmgst = damage.damageRandomizator(current_mob,1,12);
+					chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp - dmghp;
 					dmglog = dmglog + dmghp;
 					dmglog2 = dmglog2 + dmgst;
 					while (chars_mobs_npcs[victim].st >= 0 or chars_mobs_npcs[current_mob].sp >= 0) do
@@ -1171,7 +1171,7 @@ function damage.multidamage () --FIXME two hexes
 		boomareas.ashGround (boomx,boomy);
 		for j=1,#chars_mobs_npcs do
 			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
-				local damageHP = damage.magicalRes (j,math.random(1,6)*num[1] + lvl[1],"fire");
+				local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,6)*num[1] + lvl[1],"fire");
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				if missle_drive ~= "trap" then
@@ -1200,7 +1200,7 @@ function damage.multidamage () --FIXME two hexes
 				boomareas.ashGround (rings[h][i].x,rings[h][i].y);
 				for j=1,#chars_mobs_npcs do
 					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
-						local damageHP = damage.magicalRes (j,math.random(1,6)*num[1],"fire");
+						local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,6)*num[1],"fire");
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						if missle_drive ~= "trap" then
@@ -1233,7 +1233,7 @@ function damage.multidamage () --FIXME two hexes
 		boomareas.poisonAir(boomx,boomy,index,lvl[2],num[2]);
 		for j=1,#chars_mobs_npcs do
 			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
-				local damageHP = damage.magicalRes (j,math.random(1,25)*num[1] + lvl[1],"darkness");
+				local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,25)*num[1] + lvl[1],"darkness");
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
@@ -1251,7 +1251,7 @@ function damage.multidamage () --FIXME two hexes
 			for i=1,#rings[h] do
 				for j=1,#chars_mobs_npcs do
 					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
-						local damageHP = damage.magicalRes (j,math.random(1,25)*num[1],"darkness");
+						local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,25)*num[1],"darkness");
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
@@ -1305,13 +1305,13 @@ function damage.multidamage () --FIXME two hexes
 		local boompower = 2;
 		for j=1,#chars_mobs_npcs do
 			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
-				local damageHP = damage.magicalRes (j,12 + math.random(1,3)*num[1] + lvl[1],"cold");
+				local damageHP = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"cold");
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
 				exp_for_what(damageHP,current_mob)
 				if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
-					local damageST = damage.magicalRes (j,12 + math.random(1,3)*num[1] + lvl[1],"cold");
+					local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"cold");
 					chars_mobs_npcs[j].st = chars_mobs_npcs[j].st - damageST;
 					helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(j) .. " " .. damageST .. lognames.actions.metr .. " " .. lognames.actions.ofst);
 					exp_for_what(math.ceil(damageST/2),current_mob)
@@ -1331,13 +1331,13 @@ function damage.multidamage () --FIXME two hexes
 			for i=1,#rings[h] do
 				for j=1,#chars_mobs_npcs do
 					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
-						local damageHP = damage.magicalRes (j,12 + math.random(1,2)*num[1],"cold");
+						local damageHP = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,2)*num[1],"cold");
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
 						exp_for_what(damageHP,current_mob)
 						if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
-							local damageST = damage.magicalRes (j,12 + math.random(1,2)*num[1],"cold");
+							local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,2)*num[1],"cold");
 							damage.STminus(j,damageST,true);
 							exp_for_what(math.ceil(damageST/2),current_mob)
 						end;
@@ -1361,7 +1361,7 @@ function damage.multidamage () --FIXME two hexes
 		boomareas.poisonAir(boomx,boomy,index,lvl[2],num[2]);
 		for j=1,#chars_mobs_npcs do
 			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
-				local damageHP = damage.magicalRes (j,25+math.random(1,10)*num[2] + num[1],"poison");
+				local damageHP = damage.magicalRes (j,25+damage.damageRandomizator(current_mob,1,10)*num[2] + num[1],"poison");
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
@@ -1379,7 +1379,7 @@ function damage.multidamage () --FIXME two hexes
 			for i=1,#rings[h] do
 				for j=1,#chars_mobs_npcs do
 					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
-						local damageHP = damage.magicalRes (j,25+math.random(1,10)*num[2],"poison");
+						local damageHP = damage.magicalRes (j,25+damage.damageRandomizator(current_mob,1,10)*num[2],"poison");
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
@@ -1402,7 +1402,7 @@ function damage.multidamage () --FIXME two hexes
 	if missle_type == "rockblast" then
 		for j=1,#chars_mobs_npcs do
 			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
-				local damageHP = damage.physicalRes (j,math.random(1,8)*num[1] + lvl[1]);
+				local damageHP = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,8)*num[1] + lvl[1]);
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
@@ -1420,7 +1420,7 @@ function damage.multidamage () --FIXME two hexes
 			for i=1,#rings[h] do
 				for j=1,#chars_mobs_npcs do
 					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
-						local damageHP = damage.physicalRes (j,math.random(1,8)*num[1]);
+						local damageHP = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,8)*num[1]);
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						exp_for_what(damageHP,current_mob)
@@ -1482,14 +1482,23 @@ function damage.multidamage () --FIXME two hexes
 			for i=1,#rings[h] do
 				for j=1,#chars_mobs_npcs do
 					if (helpers.cursorAtCurrentMob (j,boomx,boomy)) or (helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y)) and helpers.mobDependsGround(j) then
-						local damageHPD = damageHP + damage.magicalRes (j,math.random(10,lvl[2]),"darkness",false);
-						local damageHPP = damageHP + damage.magicalRes (j,math.random(10,lvl[2]),"poison",false);
+						local damageHPD = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[2]),"darkness",false);
+						local damageHPP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[2]),"poison",false);
 						local damageHP = damageHPD + damageHPP;
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						exp_for_what(damageHP,current_mob)
 					end;
 				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "holyground" then
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for h=1,3 do
+			for i=1,#rings[h] do	
+				boomareas.holyGround (rings[h].x,rings[h],y,1,lvl[1],num[2])
 			end;
 		end;
 	end;
@@ -1501,10 +1510,10 @@ function damage.multidamage () --FIXME two hexes
 				for i=1,#rings[h] do
 					for j=1,#chars_mobs_npcs do
 						if (helpers.cursorAtCurrentMob (j,boomx,boomy)) or (helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y)) then
-							local damageHP = damage.magicalRes (j,math.random(10,lvl[1]),"light",false);
-							damageHP = damageHP + damage.magicalRes (j,math.random(10,lvl[2]),"fire",false);
-							damageHP = damageHP + damage.magicalRes (j,math.random(10,lvl[3]),"cold",false);
-							damageHP = damageHP + damage.magicalRes (j,math.random(10,lvl[4]),"static",false);
+							local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[1]),"light",false);
+							damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[2]),"fire",false);
+							damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[3]),"cold",false);
+							damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[4]),"static",false);
 							damageHP = damageHP + damage.physicalRes (j,20);
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
@@ -1536,7 +1545,7 @@ function damage.multidamage () --FIXME two hexes
 				if helpers.passCheck(ringB[i].x,ringB[i].y) then
 					dlandscape_obj[ringB[i].y][ringB[i].x] = "fire";
 					dlandscape_duration[ringB[i].y][ringB[i].x] = 1;
-					dlandscape_power[ringB[i].y][ringB[i].x] = math.random(1,5);	
+					dlandscape_power[ringB[i].y][ringB[i].x] = damage.damageRandomizator(current_mob,1,5);	
 				end;
 			end;
 			
@@ -1547,7 +1556,7 @@ function damage.multidamage () --FIXME two hexes
 				if helpers.passCheck(ringB[i].x,ringB[i].y) then
 					alandscape_obj[ringB[i].y][ringB[i].x] = "poison";
 					alandscape_duration[ringB[i].y][ringB[i].x] = 1;
-					alandscape_power[ringB[i].y][ringB[i].x] = math.random(1,5);	
+					alandscape_power[ringB[i].y][ringB[i].x] = damage.damageRandomizator(current_mob,1,5);	
 				end;
 			end;
 
@@ -1563,7 +1572,7 @@ function damage.multidamage () --FIXME two hexes
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
-					local damageHP = damage.magicalRes (j,4+math.random(1,3)*num[1] + lvl[1],"fire",false);
+					local damageHP = damage.magicalRes (j,4+damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"fire",false);
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
@@ -1623,7 +1632,7 @@ function damage.multidamage () --FIXME two hexes
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
-					local damageHP = damage.physicalRes (j,6+math.random(1,6)*num[2]);
+					local damageHP = damage.physicalRes (j,6+damage.damageRandomizator(current_mob,1,6)*num[2]);
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
@@ -1645,7 +1654,7 @@ function damage.multidamage () --FIXME two hexes
 		for i=1,#rings[1] do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,rings[h][1].x,rings[h][1].y) then
-					local damageRT = damage.magicalRes (j,math.random(1,2)*num[1]*num[2],"static");
+					local damageRT = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[1]*num[2],"static");
 					damage.RTminus(j,damageRT,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,math.ceil(damageRT/4));
@@ -1697,6 +1706,26 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
+	if missle_type == "friendlyfire" then -- add dmg
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for i=h,#rings do
+			for i=1,#rings[h] do
+				for j=1,#chars_mobs_npcs do
+					local relations = ai.fractionRelations (current_mob,j);
+					if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and relations < 0 then	
+						local dmg1 = math.ceil(damage.magicalRes (j,num[1]*lvl[1],"light")*math.abs(relations)/100);
+						local dmg2 = math.ceil(damage.magicalRes (j,num[1]*lvl[1],"fire")*math.abs(relations)/100);
+						local damageHP = dmg1+dmg2;
+						damage.HPminus(j,damageHP,true);
+						table.insert(damaged_mobs,j);
+						damage.mobDamaged(j,current_mob,damageHP);
+						exp_for_what(damageHP,current_mob);
+					end;
+				end;
+			end;
+		end;
+	end;
+	
 	if missle_type == "coldring" then -- add dmg
 		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 		for i=1,#rings[3] do
@@ -1708,7 +1737,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.mobDamaged(j,current_mob,damageHP);
 					exp_for_what(damageHP,current_mob)
 					if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
-						local damageST = damage.magicalRes (j,12 + math.random(1,3)*num[1] + lvl[1],"cold");
+						local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"cold");
 						chars_mobs_npcs[j].st = chars_mobs_npcs[j].st - damageST;
 						helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(j) .. " " .. damageST .. lognames.actions.metr .. " " .. lognames.actions.ofst);
 						exp_for_what(math.ceil(damageST/2),current_mob)
@@ -1738,7 +1767,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.mobDamaged(j,current_mob,damageHP);
 						exp_for_what(damageHP,current_mob)
 						if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
-							local damageST = damage.magicalRes (j,12 + math.random(1,3)*num[1] + lvl[1],"cold");
+							local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"cold");
 							damage.STminus(j,damageST,true);
 							exp_for_what(math.ceil(damageST/2),current_mob)
 							if lvl[1] == 5 then
@@ -1791,8 +1820,8 @@ function damage.multidamage () --FIXME two hexes
 				for j=1,#chars_mobs_npcs do
 					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
 						chars_mobs_npcs[j].immobilize = 3+lvl[1];
-						local damageHP = damage.physicalRes (j,math.random(1,4)*num[1] + lvl[1]);
-						local damageST = damage.physicalRes (j,math.random(1,4)*num[1] + lvl[1]);
+						local damageHP = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[1] + lvl[1]);
+						local damageST = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[1] + lvl[1]);
 						damage.HPminus(j,damageHP,true);
 						damage.STminus(j,damageST,true);
 						table.insert(damaged_mobs,j);
@@ -1862,7 +1891,7 @@ function damage.multidamage () --FIXME two hexes
 		local boomarea = boomareas.pathArea(2,1);
 		for j=1,#chars_mobs_npcs do
 			if helpers.cursorAtCurrentMob (j,boomx,boomy) and chars_mobs_npcs[j].motion == "walking" then
-				local dmg = math.random(1,9)*num[1];
+				local dmg = damage.damageRandomizator(current_mob,1,9)*num[1];
 				local damageHP = damage.physicalRes (j,dmg);
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
@@ -1885,7 +1914,7 @@ function damage.multidamage () --FIXME two hexes
 		for i=1,math.min(5+chars_mobs_npcs[current_mob].lvl_earth,#boomarea) do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) and chars_mobs_npcs[j].motion == "walking" then
-					local dmg = math.random(2,6)*num[1];
+					local dmg = damage.damageRandomizator(current_mob,2,6)*num[1];
 					local damageHP = damage.physicalRes (j,dmg);
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
@@ -1969,7 +1998,7 @@ function damage.multidamage () --FIXME two hexes
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) and chars_mobs_npcs[j].person ~= "char" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "golem" then
-					local damageHP =  damage.magicalRes (j,25 + math.random(1,8)*num[1],"darkness");
+					local damageHP =  damage.magicalRes (j,25 + damage.damageRandomizator(current_mob,1,8)*num[1],"darkness");
 					damage.HPminus(j,damageHP,true);
 					gainedHP = gainedHP + damageHP;
 					table.insert(damaged_mobs,j);
@@ -2063,11 +2092,11 @@ function damage.multidamage () --FIXME two hexes
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
 					if chars_mobs_npcs[j].person == "char" or chars_mobs_npcs[j].nature == "undead" then
-						local healHP = math.random(1,4)*num[2];
+						local healHP = damage.damageRandomizator(current_mob,1,4)*num[2];
 						damage.HPminus(j,healHP,true);
 						exp_for_what(healHP,current_mob)
 					else
-						local damageHP =  damage.magicalRes (j,math.random(1,4)*num[1],"darkness");
+						local damageHP =  damage.magicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[1],"darkness");
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
@@ -2083,7 +2112,7 @@ function damage.multidamage () --FIXME two hexes
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
 				if chars_mobs_npcs[j].x == boomarea[i].x and chars_mobs_npcs[j].y ==  boomarea[i].y then
-					local damageHP = damage.magicalRes (j,math.random(2,6)*num[1],"darkness");
+					local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,2,6)*num[1],"darkness");
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
@@ -2301,6 +2330,10 @@ function damage.multidamage () --FIXME two hexes
 								chars_mobs_npcs[j].regeneration_dur = 0;
 								chars_mobs_npcs[j].regeneration_power = 0;
 								counter = counter - 1;
+							elseif chars_mobs_npcs[j].holyblood_dur > 0 then
+								chars_mobs_npcs[j].holyblood_dur = 0;
+								chars_mobs_npcs[j].holyblood_power = 0;
+								counter = counter - 1;	
 							end;
 							if chars_mobs_npcs[j].nature == "elemental" then
 								local dmg = math.min(dmg,chars_mobs_npcs[j].hp);
@@ -2433,7 +2466,7 @@ function damage.multidamage () --FIXME two hexes
 		for j=1,#chars_mobs_npcs do
 			local damageHP = damage.magicalRes (j,num[1],"darkness");
 			damageHP = damageHP + damage.magicalRes (j,num[2],"fire");
-			damageHP = damageHP + damage.physicalRes (j,math.random(1,20));
+			damageHP = damageHP + damage.physicalRes (j,damage.damageRandomizator(current_mob,1,20));
 			damage.HPminus(j,damageHP,true);
 			table.insert(damaged_mobs,j);
 			damage.mobDamaged(j,current_mob,damageHP);
@@ -2485,7 +2518,7 @@ function damage.multidamage () --FIXME two hexes
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
-					local damageHP = damage.magicalRes (j,math.random(1,8)*num[1] + lvl[1],"static");
+					local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,8)*num[1] + lvl[1],"static");
 					damage.mobDamaged(j,current_mob,damageHP);
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
@@ -3706,6 +3739,21 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		--helpers.countMoral(i);
 	--end;
 	a_timer = 0;
+	
+	if chars_mobs_npcs[victim].holyblood_dur>0 and chars_mobs_npcs[current_mob].nature == "undead" then
+		local predmg = damage.magicalRes (current_mob,chars_mobs_npcs[victim].holyblood_power,"light");
+		local dmg = predmg;
+		if predmg >= chars_mobs_npcs[current_mob].hp then
+			dmg = chars_mobs_npcs[current_mob].hp - 1;
+		end;
+		damage.HPminus(i,dmg,true);
+		local power,dur = damage.applyConditionTwoFactors (index,math.random(1,chars_mobs_npcs[victim].holyblood_power),math.random(1,chars_mobs_npcs[victim].holyblood_dur),"holyblood","element",false,false,1,true);
+		if power > 0 and dur > 0 then
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].holyblood_power,power);
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].holyblood_dur,dur);
+		end;
+	end;
+	
 	local damaged_mobs = {};
 	table.insert(damaged_mobs,victim);
 	--damage.deathsWatcher(damaged_mobs);
@@ -3822,7 +3870,7 @@ function damage.instantCast () --FIXME use lvl, num
 	chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-recovery;
 	
 	if missle_type == "heal" then
-		prebuff=math.random(5)*lvl[1]+num[1]*5;
+		prebuff = damage.damageRandomizator(current_mob,1,5)*lvl[1]+num[1]*5;
 		buff=math.min(prebuff,math.abs(chars_mobs_npcs[victim].hp_max-chars_mobs_npcs[victim].hp));
 		chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp+buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
@@ -3834,7 +3882,7 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 	
 	if missle_type == "restoreundead" then
-		prebuff=math.random(5)*lvl[1]+num[2]*5;
+		prebuff = damage.damageRandomizator(current_mob,1,5)*lvl[1]+num[2]*5;
 		buff=math.min(prebuff,math.abs(chars_mobs_npcs[victim].hp_max-chars_mobs_npcs[victim].hp));
 		chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp+buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
@@ -3858,14 +3906,14 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 
 	if missle_type == "charge" then
-		prebuff = math.random(5)*num[1]+lvl[1]*5;
+		prebuff = damage.damageRandomizator(current_mob,1,5)*num[1]+lvl[1]*5;
 		buff = math.min(prebuff,math.abs(200-chars_mobs_npcs[victim].rt));
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		damage.RTplus(victim,buff);
 	end;
 
 	if missle_type == "encourage" then
-		prebuff = math.random(5)*num[1]+lvl[1]*5;
+		prebuff = damage.damageRandomizator(current_mob,1,5)*num[1]+lvl[1]*5;
 		buff = math.min(prebuff,math.abs(chars_mobs_npcs[i].st_max-chars_mobs_npcs[victim].st));
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		damage.STplus(victim,buff);
@@ -4459,14 +4507,19 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.likeahero[chars_mobs_npcs[current_mob].gender]);
 	end;
 
-	if chars_mobs_npcs[current_mob].person=="char" then
-	
-	end
+	if missle_type=="holyblood" then
+		local dur = chars_mobs_npcs[current_mob].num_water+chars_mobs_npcs[current_mob].num_light;
+		local power = chars_mobs_npcs[current_mob].lvl_light + chars_mobs_npcs[current_mob].lvl_water;
+		chars_mobs_npcs[victim].holyblood_dur=dur;
+		chars_mobs_npcs[victim].holyblood_power=power;
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
+		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.likeasaint[chars_mobs_npcs[current_mob].gender]);
+	end;
 
 	if missle_type=="resurrect" then
 		love.audio.play(media.sounds.spell_resurrect,0);
 		if chars_mobs_npcs[current_mob].lvl_body==5 then
-			buff=math.random(5)*chars_mobs_npcs[current_mob].num_body;
+			buff=damage.damageRandomizator(current_mob,1,5)*chars_mobs_npcs[current_mob].num_body;
 		else
 			buff=1;
 		end;
@@ -5449,6 +5502,9 @@ function damage.deadNow (index)
 	chars_mobs_npcs[index].deadlyswarm = 0;
 	chars_mobs_npcs[index].darkcontamination = 0;
 	chars_mobs_npcs[index].fingerofdeath = 0;	
+	chars_mobs_npcs[index].holyblood_dur = 0;
+	chars_mobs_npcs[index].holyblood_power = 0;
+	chars_mobs_npcs[index].basiliskbreath = 0;
 	if chars_mobs_npcs[index].person == "char" then
 		tmp_name_dead = chars_stats[index].name;
 	elseif chars_mobs_npcs[index].person=="mob" then
@@ -6041,4 +6097,67 @@ function damage.falseDamager(x,y,r)
 		new_damager_id = shored[math.random(1,#shored)];
 	end;
 	return id;
+end;
+
+function damage.damageOfLandscape(index,x,y)
+	if dlandscape_obj[y][x] == "fire" and dlandscape_duration[y][x] > 0 then
+		local dmgland = dlandscape_power[y][x];
+		local name = helpers.mobName(index);
+		local dmg = damage.magicalRes (index,dmgland,"fire");
+		damage.HPminus(index,dmg);
+		dlandscape_duration[y][x] = dlandscape_duration[y][x] - 1;
+		if dlandscape_duration[y][x] == 0 then
+			dlandscape_power[y][x] = 0;
+			dlandscape_obj[y][x] = 0;
+			boomareas.ashGround (a,b)
+			helpers.clearLights (a,b);
+		end;
+		helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[index].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.fire);
+	end;
+	if alandscape_obj[y][x] == "poison" then
+		local dmg=alandscape_power[y][x]
+		local name = helpers.mobName(index);
+		if chars_mobs_npcs[index].poison_power <= alandscape_power[y][x] then
+			chars_mobs_npcs[index].poison_power = alandscape_power[y][x];
+			chars_mobs_npcs[index].poison_dur = chars_mobs_npcs[index].poison_dur + 3;
+			helpers.addToActionLog( name .. lognames.actions.poisoned[chars_mobs_npcs[index].gender])
+		end;
+		alandscape_duration[y][x]=alandscape_duration[y][x] - 1;
+		if alandscape_duration[y][x] == 0 then
+			alandscape_power[y][x] = 0;
+			alandscape_obj[y][x] = 0;
+			boomareas.ashGround (a,b)
+			helpers.clearLights (a,b);
+		end;
+	end;
+	if dlandscape_obj[y][x] == "holy" and dlandscape_duration[y][x] > 0 then
+		local dmgland = dlandscape_power[y][x];
+		local name = helpers.mobName(index);
+		local dmg = damage.magicalRes (index,dmgland,"light");
+		if chars_mobs_npcs[index].locomotion == "walk" then
+			damage.HPminus(index,dmg);
+			helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[index].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.fire);
+			dlandscape_duration[y][x] = dlandscape_duration[y][x] - 1;
+			if dlandscape_duration[y][x] == 0 then
+				dlandscape_power[y][x] = 0;
+				dlandscape_obj[y][x] = 0;
+				--boomareas.ashGround (a,b)
+				--helpers.clearLights (a,b);
+			end;
+		end;
+	end;
+	if dlandscape_obj[y][x] == "twister" or dlandscape_obj[y][x] == "twisterpart" then
+		trapped  = 1;
+		chars_mobs_npcs[index].immobilize = chars_mobs_npcs[index].immobilize + 5;
+		local name = helpers.mobName(index);
+		helpers.addToActionLog( name .. lognames.actions.immobilized[chars_mobs_npcs[index].gender]);
+	end;
+end;
+
+function damage.damageRandomizator(index,minvalue,maxvalue)
+	local result = minvalue;
+	if chars_mobs_npcs[index].curse == 0 then
+		result = math.random(minvalue,maxvalue);
+	end;
+	return result;
 end;

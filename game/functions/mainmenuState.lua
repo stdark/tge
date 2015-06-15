@@ -55,7 +55,7 @@ function mainmenuState.drawButtons ()
    global.buttons.start_button:SetImage(background_image);
    --global.buttons.start_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth(),200);
    -- global.buttons.start_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth() - 250 ,200);))
-   global.buttons.start_button:SetPos(x_position, 200);
+   global.buttons.start_button:SetPos(x_position+300, 200);
    global.buttons.start_button:SizeToImage()
    global.buttons.start_button:SetText(lognames.buttons.startgame);
    global.buttons.start_button.OnClick = function(object)
@@ -67,7 +67,7 @@ function mainmenuState.drawButtons ()
    global.buttons.create_button:SetImage(background_image);
    --global.buttons.create_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth(),350);
    -- global.buttons.create_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth() - 250,350);
-   global.buttons.create_button:SetPos(x_position, 350);
+   global.buttons.create_button:SetPos(x_position+300, 350);
    global.buttons.create_button:SizeToImage()
    global.buttons.create_button:SetText(lognames.buttons.createparty);
    global.buttons.create_button.OnClick = function(object)

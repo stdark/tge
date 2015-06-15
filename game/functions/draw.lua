@@ -697,13 +697,26 @@ function draw.boom ()
 	end;
 	
 	if missle_type == "earthquake" then
-		boomareas.poisonAir(boomx,boomy);
+		elandscape[boomy][boomx] = "dust";
 		local i = 1;
 		boomareas.poisonAir(boomx,boomy);
 		local rings = boomareas.ringArea(boomx,boomy);
 		for h=1,3 do
 			for i=1,#rings[h] do
-				boomareas.poisonAir(rings[h][i].y,rings[h][i].x);
+				elandscape[rings[h][i].y][rings[h][i].x] = "dust";
+			end;
+		end;
+	end;
+	
+	if missle_type == "friendlyfire" then
+		local xx,yy = helpers.hexToPixels (x,y);
+		table.insert(lights,{x=boomx,y=boomy,light=lightWorld.newLight(xx, yy, 255, 255, 255, 128),typ="boom"});
+		elandscape[boomy][boomx] = "flame";
+		boomareas.poisonAir(boomx,boomy);
+		local rings = boomareas.ringArea(boomx,boomy);
+		for h=1,3 do
+			for i=1,#rings[h] do
+				elandscape[rings[h][i].y][rings[h][i].x] = "flame";
 			end;
 		end;
 	end;
