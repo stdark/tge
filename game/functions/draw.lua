@@ -2503,9 +2503,9 @@ function draw.objects ()
 				
 				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "well" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-64, (my-1)*tile_h*0.75+top_space-160);
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-64, (my-1)*tile_h*0.75+top_space-96);
 					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-64, (my-1)*tile_h*0.75+top_space-160);
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-64, (my-1)*tile_h*0.75+top_space-96);
 					end;
 				end;
 				
@@ -3259,14 +3259,18 @@ function draw.objects ()
 end;
 
 function draw.bag ()
+	local x,y = helpers.centerObject(media.images.inv1);
+	local inv_add_x = x+12;
+	local inv_add_y = y-25;
+	local inv_part2 = x+654+3*32;
 	sorttarget="bag";
 	sorttarget=oldsorttarget;
 	for i=1,11 do
 		for h=1,15 do
 			if bags[bagid][h][i] > 0 and bags[bagid][h][i] < 10000 then
 				tempid=bags[bagid][h][i];
-				if bags_list[bagid][tempid] then
-					draw.drawItem(tempid,bags_list[bagid][tempid].ttxid,(i-1)*32+inv_add_x+inv_part2,(h-1)*32+inv_add_y,true,bagid);
+				if bags_list[bagid][tempid] then			
+					draw.drawItem(tempid,bags_list[bagid][tempid].ttxid,(i-1)*32+inv_part2,(h-1)*32+inv_add_y,true,bagid);
 				end;
 			end;
 			if bagid > 0 and bags[bagid][h][i] > 0 then
@@ -4411,7 +4415,7 @@ function draw.picklock () --chest/door/groundtrap
 	love.graphics.print(lognames.actions.inspectlv .. " ".. chars_mobs_npcs[current_mob].lvl_traps*chars_mobs_npcs[current_mob].num_traps+chars_mobs_npcs[current_mob].sns, x+520, y+15);
 	love.graphics.print(lognames.actions.disarmlv .. " ".. chars_mobs_npcs[current_mob].lvl_traps*chars_mobs_npcs[current_mob].num_traps+chars_mobs_npcs[current_mob].dex+chars_mobs_npcs[current_mob].luk, x+520, y+30);
 	
-	local _x,_y = helpers.hexBehindMob(current_mob);
+	local _x,_y = helpers.hexInFronTOfMob(current_mob);
 	local at_door,doorid,locked,traped = helpers.cursorAtClosedDoor(_x,_y);
 	if at_door then
 		bagid = doorid;
@@ -4662,7 +4666,7 @@ function draw.inventory_bag ()
 	local inv_add_x = x+12;
 	local inv_add_y = y-25;
 	local inv_part2 = x+654;
-	
+	local mbx,mby = helpers.hexInFronTOfMob(current_mob);
 	if game_status == "inventory" then
 		if inv_page == 1 then
 			love.graphics.draw(media.images.inv1, x,y-50);
@@ -4681,8 +4685,8 @@ function draw.inventory_bag ()
 	
 	local bags_at_hex = 0;
 	for j=1, #bags_list do
-		if chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y then
-			love.graphics.draw(media.images.tmpobjs, bags_list[j].img,x+740+bags_at_hex*32,y-80+media.images.inv1:getHeight());
+		if (chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y) or (bags_list[j].x == mbx and bags_list[j].y == mby and helpers.cursorAtMaterialBag(mbx,mby)) then
+			love.graphics.draw(media.images.tmpobjs, bags_list[j].img,x+740+bags_at_hex*96,y-80+media.images.inv1:getHeight());
 			bags_at_hex = bags_at_hex + 1;
 		end;
 	end;
@@ -4752,6 +4756,10 @@ function draw.inventory_bag ()
 			else
 				--draw_zaglushka ()
 			end;
+		elseif bags_list[j].x == mbx and bags_list[j].y == mby and helpers.cursorAtMaterialBag(mbx,mby) then
+			bags_list[j].opened = true;
+			bagid = j;
+			draw.bag();
 		end;
 		if helpers.trapInFrontOf(current_mob) then
 			game_status = "picklocking";

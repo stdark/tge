@@ -492,6 +492,12 @@ function playingState.load()
 		--{ttxid=303,q=32,w=0,e=0,r=1,h=0},
 		};
 		
+		bags_list[9]={
+		x=34,y=18, xi=34, yi=18, typ="well", opened=false, locked=false, dir=0, img=well_img,
+		{ttxid=72,q=10,w=0,e=0,r=1,h=0},
+		{ttxid=202,q=5,w=0,e=0,r=1,h=0},
+		};
+		
 		--52,35,3
 		
 		objects_list={};
@@ -2567,10 +2573,10 @@ function playingState.mousereleased (x,y,button)
 	if button == "l" and game_status == "sensing" and (not helpers.cursorAtMob (cursor_world_x,cursor_world_y) or not trace.arrowStatus(current_mob)) and blockturn==0 and mY>=40 and mY<=800 then
 		helpers.turnMob(current_mob);
 	end;
-	if button == "l" and game_status == "inventory" and holding_smth > 0 then --equip item
+	if button == "l" and game_status == "inventory" and holding_smth > 0  then --equip item
 		local list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false);
 --right hand
-		if helpers.inSlot("rh")
+		if helpers.inSlot("rh") and chars_mobs_npcs[current_mob]["equipment"].rh == 0
 		and (inventory_ttx[list[holding_smth].ttxid].class == "sword" or inventory_ttx[list[holding_smth].ttxid].class == "axe" or inventory_ttx[list[holding_smth].ttxid].class == "staff" or inventory_ttx[list[holding_smth].ttxid].class == "flagpole" or inventory_ttx[list[holding_smth].ttxid].class == "crushing" or inventory_ttx[list[holding_smth].ttxid].class == "dagger")
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "thsword" or chars_mobs_npcs[current_mob]["equipment"].lh==0)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "poleaxe"  or chars_mobs_npcs[current_mob]["equipment"].lh==0)
@@ -2613,7 +2619,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --ranged
-		if helpers.inSlot("ranged")
+		if helpers.inSlot("ranged") and chars_mobs_npcs[current_mob]["equipment"].ranged == 0
 		and (inventory_ttx[list[holding_smth].ttxid].class == "bow" or inventory_ttx[list[holding_smth].ttxid].class == "crossbow" or inventory_ttx[list[holding_smth].ttxid].class == "gun" or inventory_ttx[list[holding_smth].ttxid].class == "blaster" or inventory_ttx[list[holding_smth].ttxid].class == "wand")
 		--and inventory_ttx[list[holding_smth].ttxid].skill ~= "cantbeequiped"
 		--and inventory_ttx[list[holding_smth].ttxid].skill ~= "none"
@@ -2658,7 +2664,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --ammo
-		if helpers.inSlot("ammo")
+		if helpers.inSlot("ammo") and chars_mobs_npcs[current_mob]["equipment"].ammo == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "ammo"
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "cantbeequiped"
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "none"
@@ -2700,7 +2706,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --armor
-		if helpers.inSlot("armor")
+		if helpers.inSlot("armor") and chars_mobs_npcs[current_mob]["equipment"].armor == 0
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "cantbeequiped"
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "none"
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "alchemy" 
@@ -2734,7 +2740,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --left hand
-		if helpers.inSlot("lh")
+		if helpers.inSlot("lh") and chars_mobs_npcs[current_mob]["equipment"].lh == 0
 		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "thsword")
 		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "poleaxe")
 		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "staff")
@@ -2772,7 +2778,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --helm
-		if helpers.inSlot("head")
+		if helpers.inSlot("head") and chars_mobs_npcs[current_mob]["equipment"].head == 0
 		and (inventory_ttx[list[holding_smth].ttxid].class == "helm" or inventory_ttx[list[holding_smth].ttxid].class == "hat" or inventory_ttx[list[holding_smth].ttxid].class == "crown") 
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class;
@@ -2800,7 +2806,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		 end;
 --boots
-		if helpers.inSlot("boots")
+		if helpers.inSlot("boots") and chars_mobs_npcs[current_mob]["equipment"].boots == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "boots"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class;
@@ -2828,7 +2834,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
  --gloves
-		if helpers.inSlot("gloves")
+		if helpers.inSlot("gloves") and chars_mobs_npcs[current_mob]["equipment"].gloves == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "gloves"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class;
@@ -2851,7 +2857,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --cloak
-		if helpers.inSlot("cloak")
+		if helpers.inSlot("cloak") and chars_mobs_npcs[current_mob]["equipment"].cloak == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "cloak"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class;
@@ -2897,7 +2903,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --amulet
-		if helpers.inSlot("amulet")
+		if helpers.inSlot("amulet") and chars_mobs_npcs[current_mob]["equipment"].amulet == 0
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "amulet"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class;
@@ -2919,7 +2925,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --art
-		if helpers.inSlot("art")
+		if helpers.inSlot("art") and chars_mobs_npcs[current_mob]["equipment"].art == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "art"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class;
@@ -2941,7 +2947,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 --rings
-		if helpers.inSlot("ring1")
+		if helpers.inSlot("ring1") and chars_mobs_npcs[current_mob]["equipment"].ring1 == 0
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class
@@ -2962,7 +2968,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 		
-		if  helpers.inSlot("ring2")
+		if  helpers.inSlot("ring2") and chars_mobs_npcs[current_mob]["equipment"].ring2
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class
@@ -2983,7 +2989,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 		
-		if  helpers.inSlot("ring3")
+		if  helpers.inSlot("ring3") and chars_mobs_npcs[current_mob]["equipment"].ring3
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class
@@ -3004,7 +3010,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 		
-		if helpers.inSlot("ring4")
+		if helpers.inSlot("ring4") and chars_mobs_npcs[current_mob]["equipment"].ring4
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class
@@ -3025,7 +3031,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 		
-		if helpers.inSlot("ring5")
+		if helpers.inSlot("ring5") and chars_mobs_npcs[current_mob]["equipment"].ring5
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class
@@ -3046,7 +3052,7 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 		
-		if helpers.inSlot("ring6")
+		if helpers.inSlot("ring6") and chars_mobs_npcs[current_mob]["equipment"].ring6
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class
@@ -3071,7 +3077,7 @@ function playingState.mousereleased (x,y,button)
 --picklocking equip
 	if button == "l" and game_status == "picklocking" and holding_smth > 0 then
 		local list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false);
-		if helpers.inSlot("key")
+		if helpers.inSlot("key") and picklock[current_mob].key == 0
 		and (inventory_ttx[list[holding_smth].ttxid].class == "key" or inventory_ttx[list[holding_smth].ttxid].class == "key")
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1
 		and picklock[current_mob].key == 0 then
@@ -3086,7 +3092,7 @@ function playingState.mousereleased (x,y,button)
 			slot = 0;
 		end;
 --add tool to picklocking	
-		if helpers.inSlot("picklock")
+		if helpers.inSlot("picklock") and picklock[current_mob].picklock == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "picklock"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1
 		and picklock[current_mob].picklock == 0
@@ -3102,7 +3108,7 @@ function playingState.mousereleased (x,y,button)
 			slot=0;
 		end;
 --add tool to picklocking	
-		if helpers.inSlot("traptool")
+		if helpers.inSlot("traptool") and picklock[current_mob].traptool == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "traptool"
 		and picklock[current_mob].traptool==0
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
@@ -3117,7 +3123,7 @@ function playingState.mousereleased (x,y,button)
 			slot=0;
 		end;
 --add tool to picklocking	
-		if helpers.inSlot("forcer")
+		if helpers.inSlot("forcer") and picklock[current_mob].forcer == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "forcer"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1
 		and picklock[current_mob].forcer==0 and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
@@ -7858,7 +7864,12 @@ function mob_moving()
 				game_status = "neutral";
 			elseif chars_mobs_npcs[current_mob].control == "player" and mob_is_going_to_picklock == 1 then
 				game_status = "neutral";
-				chars_mobs_npcs[current_mob].rot = last_path_hex_turn;
+				if bags_list[bagid].typ == "chest" or bags_list[bagid].typ == "door" then
+					chars_mobs_npcs[current_mob].rot = last_path_hex_turn;
+				else
+					helpers.turnMob (current_mob);
+				end;
+				inventory_bag_call ();
 				game_status = "inventory";
 				path_status = 0;
 				hang = 0;
@@ -8934,7 +8945,7 @@ function inventory_bag_call ()
 		--helpers.resort_inv(bagid);
 	end;
 	
-	draw.inventory_bag ();
+	--draw.inventory_bag ();
 end;
 
 function closeAllBags ()

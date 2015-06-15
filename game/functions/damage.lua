@@ -4251,26 +4251,26 @@ function damage.instantCast () --FIXME use lvl, num
 			buff = buff + _buff;
 		end;
 		if chars_mobs_npcs[victim].flith > 0 then
-			local delta = chars_mobs_npcs[victim].flith - prebuff;
+			local delta = chars_mobs_npcs[victim].flith_dur - prebuff;
 			local _buff = 0;
 			if delta > 0 then
-				_buff = chars_mobs_npcs[victim].flith - prebuff;
+				_buff = chars_mobs_npcs[victim].flith_dur - prebuff;
 			else
 				_buff = prebuff+delta;
 			end;
-			chars_mobs_npcs[victim].flith = chars_mobs_npcs[victim].flith-_buff;
+			chars_mobs_npcs[victim].flith_dur = chars_mobs_npcs[victim].flith_dur-_buff;
 			prebuff = prebuff-_buff;
 			buff = buff + _buff;
 		end;
 		if chars_mobs_npcs[victim].misfortune > 0 then
-			local delta = chars_mobs_npcs[victim].misfortune - prebuff;
+			local delta = chars_mobs_npcs[victim].misfortune_dur - prebuff;
 			local _buff = 0;
 			if delta > 0 then
-				_buff = chars_mobs_npcs[victim].misfortune - prebuff;
+				_buff = chars_mobs_npcs[victim].misfortune_dur - prebuff;
 			else
 				_buff = prebuff+delta;
 			end;
-			chars_mobs_npcs[victim].misfortune = chars_mobs_npcs[victim].misfortune-_buff;
+			chars_mobs_npcs[victim].misfortune_dur = chars_mobs_npcs[victim].misfortune_dur-_buff;
 			prebuff = prebuff-_buff;
 			buff = buff + _buff;
 		end;

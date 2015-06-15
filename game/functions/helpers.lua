@@ -28,7 +28,7 @@ function helpers.passCheck (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value <= 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) and not helpers.cursorAtClosedDoor(x,y) then
+	if helpers.insideMap(x,y) and height_value <= 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) then
 		return true
 	else
 		return false
@@ -40,7 +40,7 @@ function helpers.passLev (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y) then
+	if map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
@@ -62,7 +62,7 @@ function helpers.passJump (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value < 2 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and not helpers.cursorAtClosedDoor(x,y) then
+	if helpers.insideMap(x,y) and height_value < 2 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) then
 		return true
 	else
 		return false
@@ -79,7 +79,7 @@ function helpers.passFly (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value <= 2 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and not helpers.cursorAtClosedDoor(x,y) then
+	if helpers.insideMap(x,y) and height_value <= 2 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and not helpers.cursorAtClosedDoor(x,y) and not not helpers.cursorAtMaterialBag(x,y) then
 		return true
 	else
 		return false
@@ -98,7 +98,7 @@ function helpers.passWaterWalk (x,y)
 	if not map[y][x] then
 		return false;
 	end;
-	if helpers.insideMap(y,x) and heights_table[map[y][x] ] <= 0 and hex_type[map[y][x] ] == "water" and not helpers.cursorAtClosedDoor(x,y) then
+	if helpers.insideMap(y,x) and heights_table[map[y][x] ] <= 0 and hex_type[map[y][x] ] == "water" and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) then
 		return true
 	else
 		return false
@@ -115,7 +115,7 @@ function helpers.passWalk (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value == 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) then
+	if helpers.insideMap(x,y) and height_value == 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) then
 		return true
 	else
 		return false
@@ -715,8 +715,11 @@ function helpers.anim_random ()
 end;
 
 function helpers.BagNear (x,y)
+	local x,y = helpers.hexInFronTOfMob(current_mob);
+	local at_door,doorid,locked,traped = helpers.cursorAtClosedDoor(x,y);
+	local at_mbag,mbagid = helpers.cursorAtMaterialBag(x,y);
 	for i=1, #bags_list do
-		if x == bags_list[i].x and y == bags_list[i].y then
+		if (x == bags_list[i].x and y == bags_list[i].y) or atdoor or at_mbag or helpers.trapInFrontOf(current_mob) then
 			return true;
 		end;
 	end;
@@ -781,10 +784,15 @@ function helpers.whatBag (index)
 	if bagid > 0 then
 		return bagid;
 	end;
-	local x,y = helpers.hexBehindMob(current_mob);
+	local x,y = helpers.hexInFronTOfMob(current_mob);
 	local at_door,doorid,locked,traped = helpers.cursorAtClosedDoor(x,y);
 	if at_door then
 		bagid = doorid;
+		return bagid;
+	end;
+	local at_mbag,mbagid = helpers.cursorAtMaterialBag(x,y);
+	if at_mbag then
+		bagid = mbagid;
 		return bagid;
 	end;
 	return false;
@@ -1865,6 +1873,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].deadlyswarm = 0;
 	chars_mobs_npcs[i].darkcontamination = 0;
 	chars_mobs_npcs[i].fingerofdeath = 0;
+	chars_mobs_npcs[i].curse = 0;
 	
 	chars_mobs_npcs[i].flame_power = 0;
 	chars_mobs_npcs[i].flame_dur = 0;
@@ -1924,7 +1933,6 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].prayer_dur = 0
 	chars_mobs_npcs[i].rage = 0;
 	chars_mobs_npcs[i].thirstofblood = 0;
-	chars_mobs_npcs[i].curse = 0;
 	chars_mobs_npcs[i].regen_power = 0;
 	chars_mobs_npcs[i].regen_dur = 0;
 	chars_mobs_npcs[i].healaura_power = 0;
@@ -2712,7 +2720,7 @@ function helpers.knockToDoor () --FIXME: housewatch then chat/buying/selling/npc
 		return;
 	end;
  end;
- local x,y = helpers.hexBehindMob(current_mob);
+ local x,y = helpers.hexInFronTOfMob(current_mob);
  local at_door,doorid,locked,traped = helpers.cursorAtClosedDoor(x,y);
  if at_door and not locked and not traped then
 	bags_list[doorid].opened = true;
@@ -2733,13 +2741,13 @@ function helpers.knockToDoor () --FIXME: housewatch then chat/buying/selling/npc
  end;
 end;
 
-function helpers.hexBehindMob(index)
+function helpers.hexInFronTOfMob(index)
 	local y = chars_mobs_npcs[index].y + directions[1]["y"][chars_mobs_npcs[index].rot];
 	local x = nil;
 	if helpers.mobevenornot (index) then
 		x = chars_mobs_npcs[index].x + directions[1]["xc"][chars_mobs_npcs[index].rot];
 	else
-		y = chars_mobs_npcs[index].x + directions[1]["xn"][chars_mobs_npcs[index].rot];
+		x = chars_mobs_npcs[index].x + directions[1]["xn"][chars_mobs_npcs[index].rot];
 	end;
 	return x,y;
 end;
@@ -2777,7 +2785,7 @@ function helpers.cursorAtMaterialBag(x,y) --FIXME doors are 2-sided
 			return true,i;
 		end;
 	end;
-	return false,nil,nil;
+	return false,nil;
 end;
 
 function helpers.cursorAtObject(x,y)
@@ -2893,11 +2901,43 @@ function helpers.drinkFromWell ()
 	for i=1, #objects_list[global.object].conditions do
 		chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].name] = chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].value];
 	end;
+	
+	if objects_list[global.object].poisoned then
+		local condition_power,condition_dur = damage.applyConditionTwoFactor (current_mob,objects_list[global.object]["poisoned"].lvl,objects_list[global.object]["poisoned"].num,"poison","poison",false,false,1,false);
+		chars_mobs_npcs[current_mob].poison_power = math.max(chars_mobs_npcs[current_mob].poison_power,condition_power);
+		chars_mobs_npcs[current_mob].poison_dur = math.max(chars_mobs_npcs[current_mob].poison_dur,condition_dur);
+	end;
+	
+	if objects_list[global.object].infected then
+		local condition = damage.applyCondition (current_mob,objects_list[global.object]["infected"].lvl,objects_list[global.object]["infected"].num,"disease","disease",false,false,1,false);
+		chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
+	end;
+	
 	game_status = "neutral";
 	if global.status == "battle" then
 		damage.RTminus(current_mob,100);
 		game_status = "restoring";
 	end;
+end;
+
+function helpers.inspectScullpile ()
+	--log
+	local curselist = {"curse","evileye","basiliskbreath","misfortune","darkgasp","darkcontamination","flith","fingerofdeath"};
+	local current_curse = math.random(1,#curselist);
+	if current_curse ~= "misfortune" and current_curse ~= "flith" then
+		local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,current_curse,"darkness",false,"spothidden",1,true);
+		chars_mobs_npcs[current_mob][current_curse] = math.max(chars_mobs_npcs[current_mob][current_curse],condition);
+	else
+		local condition_power,condition_dur = damage.applyConditionTwoFactors (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,current_curse,"darkness",false,"spothidden",1,true);
+		chars_mobs_npcs[current_mob][current_curse .. "_power"] = math.max(chars_mobs_npcs[current_mob][current_curse .. "_power"],condition_power);
+		chars_mobs_npcs[current_mob][current_curse .. "_dur"] = math.max(chars_mobs_npcs[current_mob][current_curse .. "_dur"],condition_dur);
+	end; 
+end;
+
+function helpers.inspectTrashheap ()
+	--log
+	local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,"disease","disease",false,"spothidden",1,true);
+	chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
 end;
 
 function helpers.trapInFrontOf(index)
@@ -4195,7 +4235,7 @@ function helpers.trapHere(x,y)
 end;
 
 function helpers.bagIsVisible(index)
-	if bags_list[index].typ == "bag" or bags_list[index].typ == "chest" or bags_list[index].typ == "skulls" or bags_list[index].typ == "trash" or bags_list[index].typ == "door" then
+	if bags_list[index].typ == "bag" or bags_list[index].typ == "chest" or bags_list[index].typ == "skulls" or bags_list[index].typ == "trash" or bags_list[index].typ == "door" or bags_list[index].typ == "well" then
 		return true;
 	end;
 	if bags_list[index].typ == "trap" or bags_list[index].typ == "secret" then
