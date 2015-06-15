@@ -205,6 +205,9 @@ function sprites.load()
 	pedestal_img = love.graphics.newQuad(128, 18*32, 32,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	portal_img = love.graphics.newQuad(32*5, 20*32, 64,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	well_img = love.graphics.newQuad(7*32, 17*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	trashheap_img = love.graphics.newQuad(32*5, 18*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	scullpile_img = love.graphics.newQuad(32*11, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	crystals_img = love.graphics.newQuad(32*11, 19*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	
 	lock_2_base = love.graphics.newQuad(600, 0, 200, 88, media.images.ui:getWidth(), media.images.ui:getHeight())
 	lock_2_closed_elements = {};

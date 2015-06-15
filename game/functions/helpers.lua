@@ -2781,7 +2781,7 @@ end;
 
 function helpers.cursorAtMaterialBag(x,y) --FIXME doors are 2-sided
 	for i=1,#bags_list do
-		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well") then
+		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "crystals" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well") then
 			return true,i;
 		end;
 	end;
@@ -2842,6 +2842,22 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		end;
 		global.object = 0;
 	elseif objects_list[global.object].typ == "altar" then
+		local used_before = false;
+		if chars_mobs_npcs[current_mob].person == "char" then
+			for i=1, #objects_list[global.object].uids do
+				if objects_list[global.object].uids[i] == chars_mobs_npcs[current_mob].uid then
+					used_before = true;
+				end;
+			end;
+		end;
+		if not used_before then
+			local stat = objects_list[global.object].stat;
+			local bonus = objects_list[global.object].bonus;
+			--if chars_mobs_npcs[current_mob][objects_list[global.object].stat] >= objects_list[global.object].limit then --FIXME some condition for an altar?
+				chars_stats[current_mob][stat] = chars_stats[current_mob][stat] + bonus;
+				table.insert(objects_list[global.object].uids,chars_mobs_npcs[current_mob].uid);
+			--end;
+		end;
 	elseif objects_list[global.object].typ == "obelisk" then
 		--FIXME open one piece of puzzle
 		game_status = "obelisk";
@@ -2870,7 +2886,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		end;
 		if not used_before then
 			if chars_mobs_npcs[current_mob][objects_list[global.object].stat] >= objects_list[global.object].limit then
-				chars_mobs_npcs[current_mob].skillpoints = chars_mobs_npcs[current_mob].skillpoints + objects_list[global.object].bonus;
+				chars_stats[current_mob].skillpoints = chars_stats[current_mob].skillpoints + objects_list[global.object].bonus;
 				table.insert(objects_list[global.object].uids,chars_mobs_npcs[current_mob].uid);
 			end;
 		end;
@@ -2923,7 +2939,7 @@ end;
 function helpers.inspectScullpile ()
 	--log
 	local curselist = {"curse","evileye","basiliskbreath","misfortune","darkgasp","darkcontamination","flith","fingerofdeath"};
-	local current_curse = math.random(1,#curselist);
+	local current_curse = curselist[math.random(1,#curselist)];
 	if current_curse ~= "misfortune" and current_curse ~= "flith" then
 		local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,current_curse,"darkness",false,"spothidden",1,true);
 		chars_mobs_npcs[current_mob][current_curse] = math.max(chars_mobs_npcs[current_mob][current_curse],condition);
@@ -2931,13 +2947,55 @@ function helpers.inspectScullpile ()
 		local condition_power,condition_dur = damage.applyConditionTwoFactors (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,current_curse,"darkness",false,"spothidden",1,true);
 		chars_mobs_npcs[current_mob][current_curse .. "_power"] = math.max(chars_mobs_npcs[current_mob][current_curse .. "_power"],condition_power);
 		chars_mobs_npcs[current_mob][current_curse .. "_dur"] = math.max(chars_mobs_npcs[current_mob][current_curse .. "_dur"],condition_dur);
-	end; 
+	end;
+	game_status = "inventory";
 end;
 
-function helpers.inspectTrashheap ()
+function helpers.inspectTrashHeap ()
 	--log
 	local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,"disease","disease",false,"spothidden",1,true);
 	chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
+	game_status = "inventory";
+end;
+
+function helpers.inspectCrystals ()
+	--log
+	if bags_list[bagid].charged then
+		local dmg = damage.magicalRes (current_mob,bags_list[bagid].power,"static")
+		local inspector = current_mob;
+		if dmg > 0 then
+			local rnd = math.random(1,4);
+			if rnd == 1 then
+				dmg = math.min(dmg,chars_mobs_npcs[current_mob].hp-1);
+				damage.HPminus(current_mob,dmg,true);
+			elseif rnd == 2 then
+				damage.SPminus(current_mob,dmg,true);
+			elseif rnd == 3 then
+				damage.STminus(current_mob,dmg,true);
+			elseif rnd == 4 then
+				damage.RTminus(current_mob,dmg,true);
+			end;
+		end;
+		bags_list[bagid].charged = false;
+	end;
+	game_status = "inventory";
+end;
+
+function helpers.trapInFrontOf(index)
+	local array_x = "";
+	local array_y = directions[1].y
+	local rot = chars_mobs_npcs[index].rot;
+	if helpers.mobevenornot (index) then
+		array_x = directions[1].xn;
+	else
+		array_x = directions[1].xc;
+	end;
+	for i=1,#bags_list do
+		if bags_list[i].xi ==  chars_mobs_npcs[index].x + array_x[rot] and bags_list[i].yi ==  chars_mobs_npcs[index].y + array_y[rot] and bags_list[i].typ == "trap" and bags_list[i].detected then
+			return i;
+		end;
+	end;
+	return false;
 end;
 
 function helpers.trapInFrontOf(index)
@@ -4235,7 +4293,7 @@ function helpers.trapHere(x,y)
 end;
 
 function helpers.bagIsVisible(index)
-	if bags_list[index].typ == "bag" or bags_list[index].typ == "chest" or bags_list[index].typ == "skulls" or bags_list[index].typ == "trash" or bags_list[index].typ == "door" or bags_list[index].typ == "well" then
+	if bags_list[index].typ == "bag" or bags_list[index].typ == "chest" or bags_list[index].typ == "crystals" or bags_list[index].typ == "scullpile" or bags_list[index].typ == "trashheap" or bags_list[index].typ == "door" or bags_list[index].typ == "well" then
 		return true;
 	end;
 	if bags_list[index].typ == "trap" or bags_list[index].typ == "secret" then

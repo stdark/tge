@@ -47,7 +47,7 @@ function path_finding (mode,ignore_mobs)
 				last_path_hex_turn = rotation_to_chest; -- check if hex is free!
 				mob_is_going_to_picklock = 1;
 			end;
-			--trashheap,skullpile,campfire,crystal,secret,well
+			--trashheap,scullpile,campfire,crystals,secret,well
 			local at_mbag,mbagid = helpers.cursorAtMaterialBag(cursor_world_x,cursor_world_y);
 			if at_mbag then
 				point_to_go_x = cursor_world_x;
@@ -466,18 +466,18 @@ function findAltWayToHex(x,y)
 	newx = rings[atk_direction].x;
 	newy = rings[atk_direction].y;
 	counter = 1;
-	if not helpers.isAimOnMob (rings[counter].x,rings[counter].y) and helpers.passCheck(rings[counter].x,rings[counter].y) then
+	if not helpers.isAimOnMob (rings[atk_direction].x,rings[atk_direction].y) and helpers.passCheck(rings[atk_direction].x,rings[atk_direction].y) then
 		newx = rings[atk_direction].x;
 		newy = rings[atk_direction].y;
 		path_can_be_found = 1;
 		return newx,newy;	
 	end;
-	while (helpers.isAimOnMob (rings[counter].x,rings[counter].y) or not helpers.passCheck(rings[counter].x,rings[counter].y)) do
+	while (helpers.isAimOnMob (rings[atk_direction].x,rings[atk_direction].y) or not helpers.passCheck(rings[atk_direction].x,rings[atk_direction].y)) do
 		atk_direction = atk_direction+1;
 		if atk_direction > 6 then
 			atk_direction = 1;
 		end;
-		if not helpers.isAimOnMob (rings[counter].x,rings[counter].y) and helpers.passCheck(rings[counter].x,rings[counter].y) then
+		if not helpers.isAimOnMob (rings[atk_direction].x,rings[atk_direction].y) and helpers.passCheck(rings[atk_direction].x,rings[atk_direction].y) then
 			newx = rings[atk_direction].x;
 			newy = rings[atk_direction].y;
 			path_can_be_found = 1;

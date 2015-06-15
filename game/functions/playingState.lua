@@ -498,6 +498,22 @@ function playingState.load()
 		{ttxid=202,q=5,w=0,e=0,r=1,h=0},
 		};
 		
+		bags_list[10]={
+		x=16,y=25, xi=16, yi=25, typ="crystals", charged = true, power = 25, opened=false, locked=false, img=crystals_img,
+		{ttxid=429+math.random(1,6),q=1,w=0,e=0,r=1,h=0},
+		};
+		
+		bags_list[11]={
+		x=31,y=9, xi=31, yi=9, typ="trashheap", condition_lvl=1,condition_num=5, opened=false, locked=false, img=trashheap_img,
+		{ttxid=1+math.random(1,10*5),q=math.random(1,10),w=0,e=0,r=1,h=0},
+		};
+		
+		bags_list[12]={
+		x=15,y=36, xi=15, yi=36, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img,
+		{ttxid=440,q=math.random(1,10),w=0,e=0,r=1,h=0},
+		};
+		
+		--31x9,15x36
 		--52,35,3
 		
 		objects_list={};
@@ -8942,10 +8958,14 @@ function inventory_bag_call ()
 			end;
 		end;
 		helpers.repackBag()
-		--helpers.resort_inv(bagid);
+		if bags_list[bagid].typ == "scullpile" then
+			helpers.inspectScullpile ();
+		elseif bags_list[bagid].typ == "trashheap" then
+			helpers.inspectTrashHeap ();
+		elseif bags_list[bagid].typ == "crystals" then
+			helpers.inspectCrystals ();
+		end;
 	end;
-	
-	--draw.inventory_bag ();
 end;
 
 function closeAllBags ()
