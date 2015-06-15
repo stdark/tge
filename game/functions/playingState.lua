@@ -8601,7 +8601,7 @@ function restoreRT ()
 				if vlandscape_duration[a][b] > 0 then
 					vlandscape_duration[a][b] = vlandscape_duration[a][b]-1;
 				end;
-				
+
 				if dlandscape_duration[a][b] == 0 then
 					if dlandscape_obj[a][b] == "fire" then
 						boomareas.ashGround (a,b);
@@ -8619,12 +8619,6 @@ function restoreRT ()
 					alandscape_obj[a][b] = 0;
 					alandscape_power[a][b] = 0;
 				end;
-<<<<<<< HEAD
-
-
-=======
-				
->>>>>>> upstream/master
 				if mlandscape_duration[a][b] > 0 then
 					mlandscape_duration[a][b] = mlandscape_duration[a][b]-1;
 				end;
