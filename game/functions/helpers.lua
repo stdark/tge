@@ -4,7 +4,7 @@ helpers = {};
 function helpers.passMove (x,y,index)
 	if not helpers.insideMap(x,y) then
 		return false;
-	end;	
+	end;
 	local passable = false;
 	if chars_mobs_npcs[index].wingsoflight > 0 then
 		passable = helpers.passFly (x,y);
@@ -208,7 +208,7 @@ end;
 	 local mob_even = helpers.mobevenornot(current_mob);
 	 if mob_even then
 		 for i=1,6 do
-			 if (cursor_world_x-chars_mobs_npcs[current_mob].x) == directions[1].xc[i] 
+			 if (cursor_world_x-chars_mobs_npcs[current_mob].x) == directions[1].xc[i]
 			 and (cursor_world_y-chars_mobs_npcs[current_mob].y) == directions[1].y[i] then
 				return true;
 			 end;
@@ -223,7 +223,7 @@ end;
 	 end;
 	 return false;
  end;
- 
+
  function helpers.ifMobAtCordinates (x,y)
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].ai ~= "building" and chars_mobs_npcs[i].status > 0 and chars_mobs_npcs[i].hexes == 1 and x == chars_mobs_npcs[i].x and y == chars_mobs_npcs[i].y then
@@ -236,7 +236,7 @@ end;
 	end;
 	return false;
  end;
- 
+
  function helpers.ifDeadMobAtCordinates (x,y)
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].status <= 0 and chars_mobs_npcs[i].hexes == 1 and x == chars_mobs_npcs[i].x and y == chars_mobs_npcs[i].y then
@@ -267,7 +267,7 @@ function helpers.cursorWorldCoordinates () -- in hexes
 			end;
 			if math.abs(centreY - mY) <= deltaY then
 				coordY = h;
-				deltaY = math.abs(centreY - mY); 
+				deltaY = math.abs(centreY - mY);
 			end
 			local addx = 0;
 			if coordY/2 == math.ceil(coordY/2) then
@@ -1088,7 +1088,7 @@ function helpers.enemyYouWatch (index)
 	local darkarray = {};
 	darkarray = darkness[chars_mobs_npcs[index].party];
 	for my=1, map_h do
-		for mx=1, map_w do	
+		for mx=1, map_w do
 			if darkness[chars_mobs_npcs[index].party][my][mx] == 0 then
 				for j=1, #chars_mobs_npcs do
 					if chars_mobs_npcs[j].status > 0 and ai.fractionRelations (index,j) < 0 and chars_mobs_npcs[j].x == mx and chars_mobs_npcs[j].x == my and chars_mobs_npcs[j].invisibility == 0 and not helpers.ifStealthed(index,j) then
@@ -1482,7 +1482,7 @@ function helpers.countFreeCells (bag)
 end;
 
 function helpers.harvestOne ()
-	local free_cells = helpers.countFreeCells (inventory_bag[chars_mobs_npcs[current_mob].id]); 
+	local free_cells = helpers.countFreeCells (inventory_bag[chars_mobs_npcs[current_mob].id]);
 	if hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] > 0 and hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] < 26 then
 		if #free_cells > 0 then
 			helpers.addToActionLog( lognames.actions.found .. harvest_ttx[hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]].title);
@@ -1490,7 +1490,7 @@ function helpers.harvestOne ()
 			inventory_bag[current_mob][free_cells[1][1]][free_cells[1][2]] = #chars_mobs_npcs[current_mob]["inventory_list"];
 			hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] = 0;
 		else
-			helpers.addToActionLog( lognames.actions.nospace);	
+			helpers.addToActionLog( lognames.actions.nospace);
 		end;
 	else
 		helpers.addToActionLog( lognames.actions.nothingtotake);
@@ -1616,7 +1616,7 @@ function helpers.addMob(i,person)
 		chars_mobs_npcs[i].tmpexpdmg = 0;
 		chars_mobs_npcs[i].tmpexplost = 0;
 		chars_mobs_npcs[i].tmpexpdeaths = 0;
-		chars_mobs_npcs[i].lv = chars_stats[i].lv;	
+		chars_mobs_npcs[i].lv = chars_stats[i].lv;
 		chars_mobs_npcs[i]["personality"] = {};
 		chars_mobs_npcs[i]["personality"]["current"] = {};
 		chars_mobs_npcs[i]["personality"]["current"].etiquette=chars_stats[i].etiquette;
@@ -1633,8 +1633,8 @@ function helpers.addMob(i,person)
 			chars_mobs_npcs[i].class == "ieromonk" or
 			chars_mobs_npcs[i].class == "paladin" or
 			chars_mobs_npcs[i].class == "crusader" or
-			chars_mobs_npcs[i].class == "cleric" or 
-			chars_mobs_npcs[i].class == "bishop" or 
+			chars_mobs_npcs[i].class == "cleric" or
+			chars_mobs_npcs[i].class == "bishop" or
 			chars_mobs_npcs[i].class == "deathknight" or
 			chars_mobs_npcs[i].class == "crusinant" then
 			chars_mobs_npcs[i].sp_stat	= chars_mobs_npcs[i].spr;
@@ -1647,16 +1647,16 @@ function helpers.addMob(i,person)
 			chars_mobs_npcs[i].sp_stat	= math.max(chars_mobs_npcs[i].int,chars_mobs_npcs[i].spr);
 		end;
 	end;
-	
+
 	if person ~= "char" and tmpclass2.spellbook == 1 then
 		chars_mobs_npcs[i].spellnames = tmpclass2.spellnames;
 		helpers.createSpellbookBySpellNames(tmpclass2.spellnames);
 	end;
-	
+
 	if person ~= "char" and tmpclass2.warbook == 1 then
 		helpers.createWarbook(i);
 	end;
-	
+
 	chars_mobs_npcs[i].multiattack = tmpclass2.multiattack;
 	chars_mobs_npcs[i].status = 1;
 	chars_mobs_npcs[i].id = i;
@@ -1665,7 +1665,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].aggro = 0;
 	chars_mobs_npcs[i].aggressor = 0;
 	chars_mobs_npcs[i].perks = tmpclass2.perks;
-	
+
 	--chars_mobs_npcs[i].class = tmpclass2.class;
 
 	chars_mobs_npcs[i].hp_base = tmpclass2.hp_base;
@@ -1735,15 +1735,15 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].motion = tmpclass2.motion;
 	chars_mobs_npcs[i].hexes = tmpclass2.hexes;
 	chars_mobs_npcs[i].hitzones = tmpclass2.hitzones;
-	
+
 	chars_mobs_npcs[i].claws = tmpclass2.claws;
 	chars_mobs_npcs[i].teeth = tmpclass2.teeth;
 	chars_mobs_npcs[i].horns = tmpclass2.horns;
 	chars_mobs_npcs[i].hoofs = tmpclass2.hoofs;
-	
+
 	chars_mobs_npcs[i].inventory_list = tmpclass2.inventory_list;
 	chars_mobs_npcs[i].equipment = tmpclass2.equipment;
-	
+
 	chars_mobs_npcs[i].mgt=tmpclass2.mgt;
 	chars_mobs_npcs[i].enu=tmpclass2.enu;
 	chars_mobs_npcs[i].dex=tmpclass2.dex;
@@ -1754,7 +1754,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].spr=tmpclass2.spr;
 	chars_mobs_npcs[i].chr=tmpclass2.chr;
 	chars_mobs_npcs[i].luk=tmpclass2.luk;
-	
+
 	--[[if person == "mob" then
 		chars_mobs_npcs[i].rng=math.ceil(tmpclass2.spd/10)*tmpclass2.mvcoff+5;
 		chars_mobs_npcs[i].sense=10+math.ceil(tmpclass2.sns/5);
@@ -1768,14 +1768,14 @@ function helpers.addMob(i,person)
 	--end;
 
 	chars_mobs_npcs[i].sp_stat = chars_mobs_npcs[i].int;
-	
+
 	chars_mobs_npcs[i].view=i;
 	chars_mobs_npcs[i].ac=tmpclass2.ac;
 	chars_mobs_npcs[i].dt=tmpclass2.dt;
 	chars_mobs_npcs[i].dr=tmpclass2.dr;
 	chars_mobs_npcs[i].block=tmpclass2.block;
 	chars_mobs_npcs[i].parry = 0;
-	
+
 	--[[chars_mobs_npcs[i].atkm=tmpclass2.atkm;
 	chars_mobs_npcs[i].amel=tmpclass2.amel;
 	chars_mobs_npcs[i].bmel=tmpclass2.bmel;
@@ -1784,11 +1784,11 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].arng=tmpclass2.arng;
 	chars_mobs_npcs[i].brng=tmpclass2.brng;
 	chars_mobs_npcs[i].crng=tmpclass2.crng;]]
-	
+
 	chars_mobs_npcs[i].melee_stats = {rh={atkm=0,amel=0,bmel=0,cmel=0},lh={atkm=0,amel=0,bmel=0,cmel=0},rh1={atkm=0,amel=0,bmel=0,cmel=0},lh1={atkm=0,amel=0,bmel=0,cmel=0},rh2={atkm=0,amel=0,bmel=0,cmel=0},lh2={atkm=0,amel=0,bmel=0,cmel=0}};
 	chars_mobs_npcs[i].arms_health = {rh=1,lh=1,rh1=1,lh1=1,rh2=1,lh2=1};
 	chars_mobs_npcs[i].arms = tmpclass2.arms;
-	
+
 	chars_mobs_npcs[i].aggro=0;
 	chars_mobs_npcs[i].aggressor = 0;
 
@@ -1843,7 +1843,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].recmag=tmpclass2.recmag;
 
 	chars_mobs_npcs[i].preservation=0;
-	
+
 	chars_mobs_npcs[i].battleai=tmpclass2.battleai;
 	chars_mobs_npcs[i].freeze=0;
 	chars_mobs_npcs[i].stone=0;
@@ -1874,7 +1874,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].darkcontamination = 0;
 	chars_mobs_npcs[i].fingerofdeath = 0;
 	chars_mobs_npcs[i].curse = 0;
-	
+
 	chars_mobs_npcs[i].flame_power = 0;
 	chars_mobs_npcs[i].flame_dur = 0;
 	chars_mobs_npcs[i].firebelt_power = 0;
@@ -1923,7 +1923,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].shieldfromstatic_dur = 0;
 	chars_mobs_npcs[i].shieldfromacid_power = 0;
 	chars_mobs_npcs[i].shieldfromacid_dur = 0;
-	
+
 	chars_mobs_npcs[i].bless = 0;
 	chars_mobs_npcs[i].fate = 0;
 	chars_mobs_npcs[i].fateself = 0;
@@ -1955,7 +1955,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].painreflection=0;
 	chars_mobs_npcs[i].waterwalking=0;
 	chars_mobs_npcs[i].levitation=0;
-	
+
 	chars_mobs_npcs[i].might_power = 0;
 	chars_mobs_npcs[i].might_dur = 0;
 	chars_mobs_npcs[i].dash_power = 0;
@@ -2070,29 +2070,29 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].rezlight=tmpclass2.rezlight;
 	chars_mobs_npcs[i].rezdarkness=tmpclass2.rezdarkness;
 	chars_mobs_npcs[i].rezzero=0; -- hack for non elemental damage
-	
+
 	chars_mobs_npcs[i].hp_max = chars_mobs_npcs[i].hp_base + chars_mobs_npcs[i].hp_coff * chars_mobs_npcs[i].enu + chars_mobs_npcs[i].num_bodybuilding*chars_mobs_npcs[i].lvl_bodybuilding;
 	chars_mobs_npcs[i].sp_max = chars_mobs_npcs[i].sp_base + chars_mobs_npcs[i].sp_coff * chars_mobs_npcs[i].sp_stat + chars_mobs_npcs[i].num_mysticism*chars_mobs_npcs[i].lvl_mysticism;
 	chars_mobs_npcs[i].st_max = 200 + chars_mobs_npcs[i].st_base + chars_mobs_npcs[i].st_coff * chars_mobs_npcs[i].enu;
-	
+
 	chars_mobs_npcs[i].hp = chars_mobs_npcs[i].hp_max;
 	chars_mobs_npcs[i].sp = chars_mobs_npcs[i].sp_max;
 	chars_mobs_npcs[i].st = chars_mobs_npcs[i].st_max;
 	chars_mobs_npcs[i].rt = 200;
-	
+
 	if tmpclass2.sp_limit then
 		chars_mobs_npcs[i].sp_limit = tmpclass2.sp_limit;
 	end;
-		
+
 	chars_mobs_npcs[i].hp_regeneration = tmpclass2.hp_regeneration;
 	chars_mobs_npcs[i].sp_regeneration = tmpclass2.sp_regeneration;
-	chars_mobs_npcs[i].st_regeneration = tmpclass2.st_regeneration;	
-	chars_mobs_npcs[i].moral = 0;	
+	chars_mobs_npcs[i].st_regeneration = tmpclass2.st_regeneration;
+	chars_mobs_npcs[i].moral = 0;
 	chars_mobs_npcs[i].base_moral = tmpclass2.moral;
-	
+
 	chars_mobs_npcs[i].revenge_type = tmpclass2.revenge_type;
 	chars_mobs_npcs[i].revenge_power = tmpclass2.revenge_power;
-	
+
 	if person ~= "char" then
 		if tmpclass2.loot_gold_max > 0 then
 			chars_mobs_npcs[i].gold = math.random(tmpclass2.loot_gold_min,tmpclass2.loot_gold_max);
@@ -2146,7 +2146,7 @@ end;
 function helpers.cam_to_mob ()
 	if chars_mobs_npcs[current_mob].x >= 15 then
 		map_x = chars_mobs_npcs[current_mob].x - 12;
-	else 
+	else
 		map_x = 0;
 	end;
 	if chars_mobs_npcs[current_mob].y >= 30 then
@@ -2157,10 +2157,30 @@ function helpers.cam_to_mob ()
 	helpers.castShadows();
 end;
 
-function helpers.cam_to_hex (x,y)
-	map_x = x-map_x;
-	map_y = y-map_y;
-	helpers.castShadows();
+function helpers.cam_to_hex (x, y)
+   -- map_x = x - map_x;
+   -- map_y = y - map_y;
+
+   --  map_x, map_y - coordinates of upper left corner tile !
+   local w, _ = math.modf(map_display_w / 2); -- get x margin for current screen size
+   local h, _ = math.modf(map_display_h / 2); -- get y margin for current screen size
+
+   map_x = x - w;
+   map_y = y - h;
+   -- check for borders
+   if map_x < 0 then
+      map_x = 0;
+   elseif map_x > map_w then
+      map_x = map_w - map_display_w;
+   end;
+
+   if map_y < 0 then
+      map_y = 0;
+   elseif map_y > map_h then
+      map_y = map_h - map_display_h;
+   end;
+
+   helpers.castShadows();
 end;
 
 function helpers.neutralWatch ()
@@ -2179,7 +2199,7 @@ function helpers.lightIsNear(x,y)
 	local ring = boomareas.smallRingArea(x,y);
 	for i=1,#ring do
 		if dlandscape_obj[ring[i].x][ring[i].y] == "fire"  then
-			return true;	
+			return true;
 		end;
 	end;
 	return false;
@@ -2193,7 +2213,7 @@ function helpers.castShadows ()
 	end;
 	shadows = {};
 	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do		
+		for mx=1, math.min(map_display_w, map_w-map_x) do
 			if map[my+map_y][mx+map_x]>120 and map[my+map_y][mx+map_x] <= 220 and visibility_table[map[my+map_y][mx+map_x]] == 1 then --check in future
 				local xx,yy =  helpers.hexToPixels(mx,my);
 				table.insert(shadows,{x=mx,y=my,shadow = lightWorld.newCircle(xx, yy, 20),typ="obj"});
@@ -2223,7 +2243,7 @@ end;
 function helpers.takenFromWhere (bagtype)
 	local from = "";
 	if bagtype == "bag" then
-		from = lognames.actions.frombag;	
+		from = lognames.actions.frombag;
 	elseif bagtype.typ == "chest" then
 		from = lognames.actions.chest;
 	elseif bagtype == "safe" then
@@ -2342,7 +2362,7 @@ function helpers.findShadows()
 			slandscape[i][z] = environment_light;
 		end;
 	end;
-	
+
 	if map_x < 12 then
 		mxx = 1
 	else
@@ -2407,10 +2427,10 @@ function helpers.findShadows()
 				if helpers.insideMap(rings[3][i].y,rings[3][i].x) then
 					slandscape[rings[3][i].y][rings[3][i].x] = math.max(1,environment_light,slandscape[rings[3][i].y][rings[3][i].x]);
 				end;
-			end;	
+			end;
 		end;
 	end;
-	
+
 	for j=1, #objects_list do
 		local rings = boomareas.ringArea(objects_list[j].xi,objects_list[j].yi);
 		if objects_list[j].typ == "barrel" or  objects_list[j].typ == "cauldron" then
@@ -2456,7 +2476,7 @@ function helpers.findShadows()
 
 		end;
 	end;
-	
+
 end;
 
 function helpers.blindedWithLight (index,x,y) --check x/y FIXME
@@ -2486,7 +2506,7 @@ function helpers.countMeleeRecoveryChar (index)
 	local armorrecovery = 0;
 	local shieldrecovery = 0;
 	local speedrecovery = 0;
-	
+
 	if chars_mobs_npcs[index]["equipment"].rh > 0 then
 		recovery = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].rt;
 	elseif chars_mobs_npcs[index]["equipment"].rh == 0 then
@@ -2501,7 +2521,7 @@ function helpers.countMeleeRecoveryChar (index)
 			secondarmrecovery = 0;
 		end;
 	end;
-	
+
 	if chars_mobs_npcs[index]["equipment"].rh == 0 and chars_mobs_npcs[index].lvl_unarmed >= 3 then
 		 skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_unarmed);
 	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "sword" and chars_mobs_npcs[index].lvl_sword >= 3 then
@@ -2511,15 +2531,15 @@ function helpers.countMeleeRecoveryChar (index)
 	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "staff" and chars_mobs_npcs[index].lvl_staff == 5 then
 		skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_unarmed);
 	end;
-	
+
 	if chars_mobs_npcs[index].num_armmastery > 0 and chars_mobs_npcs[index].lvl_armmastery <= 4 then
 		armmasteryrecovery = math.min(20,chars_mobs_npcs[index].num_armmastery);
 	elseif chars_mobs_npcs[index].num_armmastery > 0 and chars_mobs_npcs[index].lvl_armmastery == 4 then
 		armmasteryrecovery = math.min(50,2*chars_mobs_npcs[index].num_armmastery);
 	end;
-	
+
 	recovery = math.max(10,recovery + secondarmrecovery - (skillweaponrecovery + armmasteryrecovery));
-	
+
 	if chars_mobs_npcs[index]["equipment"].lh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].lh].ttxid].class == "shield" then
 		if chars_mobs_npcs[index].lvl_shield < 3 then
 			recovery = recovery + inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].lh].ttxid].rt;
@@ -2546,9 +2566,9 @@ function helpers.countMeleeRecoveryChar (index)
 		end;
 		recovery = recovery+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].rt;
 	end
-	
+
 	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
-	
+
 	return recovery;
 end;
 
@@ -2566,7 +2586,7 @@ function helpers.countRangeRecoveryChar (index)
 	local armorrecovery = 0;
 	local shieldrecovery = 0;
 	local speedrecovery = 0;
-		
+
 	if chars_mobs_npcs[index]["equipment"].ranged > 0 then
 		local prerecovery = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].rt;
 		if inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "bow" and chars_mobs_npcs[index].lvl_bow >= 3 then
@@ -2612,9 +2632,9 @@ function helpers.countRangeRecoveryChar (index)
 		end;
 		recovery = recovery+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].rt;
 	end
-	
+
 	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
-	
+
 	return recovery;
 end;
 
@@ -2624,7 +2644,7 @@ function helpers.countBottleRecovery (index)
 		skillweaponrecovery = chars_mobs_npcs[index].num_throwing;
 	end;
 	local recovery = math.max(20,50 - math.ceil(chars_mobs_npcs[index].spd/10) - skillweaponrecovery);
-	return recovery;	
+	return recovery;
 end;
 
 function helpers.countRangeRecoveryMob (index)
@@ -2643,7 +2663,7 @@ function helpers.countMagicRecovery (index,missle_type,missle_drive)
 		recovery = recovery + 25;
 	end;
 	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
-	return recovery;	
+	return recovery;
 end;
 
 function helpers.clearAiArrays()
@@ -2678,7 +2698,7 @@ function helpers.find_free_hexes (index)
 	mob_range = helpers.countRange();
 	for mx = math.max(1,chars_mobs_npcs[current_mob].x-mob_range),math.min(chars_mobs_npcs[current_mob].x+mob_range,map_w) do
 		for my = math.max(1,chars_mobs_npcs[current_mob].y-mob_range),math.min(chars_mobs_npcs[current_mob].y+mob_range,map_h) do
-			if helpers.passCheck(mx,my) and not helpers.aliveAtHex(mx,my) 
+			if helpers.passCheck(mx,my) and not helpers.aliveAtHex(mx,my)
 			and math.ceil(math.sqrt((mx-chars_mobs_npcs[current_mob].x)^2+(my-chars_mobs_npcs[current_mob].y)^2)) <= mob_range
 			and helpers.passMove (mx,my,current_mob)
 			then
@@ -2917,18 +2937,18 @@ function helpers.drinkFromWell ()
 	for i=1, #objects_list[global.object].conditions do
 		chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].name] = chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].value];
 	end;
-	
+
 	if objects_list[global.object].poisoned then
 		local condition_power,condition_dur = damage.applyConditionTwoFactor (current_mob,objects_list[global.object]["poisoned"].lvl,objects_list[global.object]["poisoned"].num,"poison","poison",false,false,1,false);
 		chars_mobs_npcs[current_mob].poison_power = math.max(chars_mobs_npcs[current_mob].poison_power,condition_power);
 		chars_mobs_npcs[current_mob].poison_dur = math.max(chars_mobs_npcs[current_mob].poison_dur,condition_dur);
 	end;
-	
+
 	if objects_list[global.object].infected then
 		local condition = damage.applyCondition (current_mob,objects_list[global.object]["infected"].lvl,objects_list[global.object]["infected"].num,"disease","disease",false,false,1,false);
 		chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
 	end;
-	
+
 	game_status = "neutral";
 	if global.status == "battle" then
 		damage.RTminus(current_mob,100);
@@ -3052,7 +3072,7 @@ function helpers.attackDirection(attacker,hisvictim)
 	or (chars_mobs_npcs[attacker].rot==5 and chars_mobs_npcs[hisvictim].rot==2)
 	or (chars_mobs_npcs[attacker].rot==6 and chars_mobs_npcs[hisvictim].rot==3) then
 		attacked_from="front";
-	elseif 
+	elseif
 	   (chars_mobs_npcs[attacker].rot==1 and chars_mobs_npcs[hisvictim].rot==3)
 	or (chars_mobs_npcs[attacker].rot==2 and chars_mobs_npcs[hisvictim].rot==4)
 	or (chars_mobs_npcs[attacker].rot==3 and chars_mobs_npcs[hisvictim].rot==5)
@@ -3060,7 +3080,7 @@ function helpers.attackDirection(attacker,hisvictim)
 	or (chars_mobs_npcs[attacker].rot==5 and chars_mobs_npcs[hisvictim].rot==1)
 	or (chars_mobs_npcs[attacker].rot==6 and chars_mobs_npcs[hisvictim].rot==2) then
 		attacked_from="rh";
-	elseif 
+	elseif
 	   (chars_mobs_npcs[attacker].rot==1 and chars_mobs_npcs[hisvictim].rot==5)
 	or (chars_mobs_npcs[attacker].rot==2 and chars_mobs_npcs[hisvictim].rot==6)
 	or (chars_mobs_npcs[attacker].rot==3 and chars_mobs_npcs[hisvictim].rot==1)
@@ -3068,7 +3088,7 @@ function helpers.attackDirection(attacker,hisvictim)
 	or (chars_mobs_npcs[attacker].rot==5 and chars_mobs_npcs[hisvictim].rot==3)
 	or (chars_mobs_npcs[attacker].rot==6 and chars_mobs_npcs[hisvictim].rot==4) then
 		attacked_from="lh";
-	elseif 
+	elseif
 	   (chars_mobs_npcs[attacker].rot==1 and chars_mobs_npcs[hisvictim].rot==6)
 	or (chars_mobs_npcs[attacker].rot==2 and chars_mobs_npcs[hisvictim].rot==1)
 	or (chars_mobs_npcs[attacker].rot==3 and chars_mobs_npcs[hisvictim].rot==2)
@@ -3076,7 +3096,7 @@ function helpers.attackDirection(attacker,hisvictim)
 	or (chars_mobs_npcs[attacker].rot==5 and chars_mobs_npcs[hisvictim].rot==4)
 	or (chars_mobs_npcs[attacker].rot==6 and chars_mobs_npcs[hisvictim].rot==5) then
 		attacked_from="lback";
-	elseif 
+	elseif
 	   (chars_mobs_npcs[attacker].rot==1 and chars_mobs_npcs[hisvictim].rot==2)
 	or (chars_mobs_npcs[attacker].rot==2 and chars_mobs_npcs[hisvictim].rot==3)
 	or (chars_mobs_npcs[attacker].rot==3 and chars_mobs_npcs[hisvictim].rot==4)
@@ -3095,11 +3115,11 @@ function helpers.countProtection (index)
 	local deltaac = 0;
 	local deltadt = 0;
 	local deltadr = 0;
-	
+
 	local deltaac_body = 0;
 	local deltadt_body = 0;
 	local deltadr_body = 0;
-	
+
 	local counter = 1;
 	local minimalac = totalac;
 	local minimaldt = totaldt;
@@ -3210,7 +3230,7 @@ function helpers.countProtection (index)
 		totaldr = totaldr+deltadr;
 		updatemaxmin ("hands");
 	end;
-	
+
 	--[[if chars_mobs_npcs[index].stoneskin_dur>0 then
 		chars_mobs_npcs[index].ac= chars_mobs_npcs[index].ac+chars_mobs_npcs[index].stoneskin_power;
 	else
@@ -3308,7 +3328,7 @@ end;
 
 function helpers.countModifiedPrice (price)
 	local wishprice = price;
-	if (tip_class == "sword" or tip_class == "axe" or tip_class == "flagpole" or tip_class == "dagger" or tip_class == "crushing" or tip_class == "staff" or tip_class == "bow" or tip_class == "crossbow" or tip_class == "throwing" or tip_class == "firearm" or tip_class == "ammo" or tip_class == "armor" or tip_class == "helm" or tip_class == "boots" or tip_class == "shield" or tip_class == "belt" or tip_class == "gloves" or tip_class == "cloak" or tip_class == "amulet" or tip_class == "ring") and list[tmpinv].w > 0 then	
+	if (tip_class == "sword" or tip_class == "axe" or tip_class == "flagpole" or tip_class == "dagger" or tip_class == "crushing" or tip_class == "staff" or tip_class == "bow" or tip_class == "crossbow" or tip_class == "throwing" or tip_class == "firearm" or tip_class == "ammo" or tip_class == "armor" or tip_class == "helm" or tip_class == "boots" or tip_class == "shield" or tip_class == "belt" or tip_class == "gloves" or tip_class == "cloak" or tip_class == "amulet" or tip_class == "ring") and list[tmpinv].w > 0 then
 		if list[tmpinv].e == 1000 then
 			price=price+items_modifers[list[tmpinv].w].price;
 		end;
@@ -3375,7 +3395,7 @@ function helpers.inv_tips_add()
 	baseprice = tip_price;
 	tip_mod = "";
 	tip_effect = "";
-	if (tip_class == "sword" or tip_class == "axe" or tip_class == "flagpole" or tip_class == "dagger" or tip_class == "crushing" or tip_class == "staff" or tip_class == "bow" or tip_class == "crossbow" or tip_class == "throwing" or tip_class == "firearm" or tip_class == "ammo" or tip_class == "armor" or tip_class == "helm" or tip_class == "boots" or tip_class == "shield" or tip_class == "belt" or tip_class == "gloves" or tip_class == "cloak" or tip_class == "amulet" or tip_class == "ring") and list[tmpinv].w > 0 then	
+	if (tip_class == "sword" or tip_class == "axe" or tip_class == "flagpole" or tip_class == "dagger" or tip_class == "crushing" or tip_class == "staff" or tip_class == "bow" or tip_class == "crossbow" or tip_class == "throwing" or tip_class == "firearm" or tip_class == "ammo" or tip_class == "armor" or tip_class == "helm" or tip_class == "boots" or tip_class == "shield" or tip_class == "belt" or tip_class == "gloves" or tip_class == "cloak" or tip_class == "amulet" or tip_class == "ring") and list[tmpinv].w > 0 then
 		tip_mod = items_modifers[list[tmpinv].w].name;
 		tip_effect = items_modifers[list[tmpinv].w].description;
 	end;
@@ -3543,7 +3563,7 @@ function helpers.resort_inv (index) --index ll be made later
 			end;
 		end;
 	else
-		
+
 	end;
 	--/ better sorting
 	for i=1,#list do
@@ -3551,17 +3571,17 @@ function helpers.resort_inv (index) --index ll be made later
 		selected_char = th;
 		if sorttarget == "char" then
 			donotsortthis = 0;
-			for key,value in pairs(chars_mobs_npcs[th]["equipment"]) do 
+			for key,value in pairs(chars_mobs_npcs[th]["equipment"]) do
 				if value == holding_smth then
 					donotsortthis = 1;
 				end;
 			end;
-			for key,value in pairs(alchlab[th]) do 
+			for key,value in pairs(alchlab[th]) do
 				if value == holding_smth then
 					donotsortthis = 1;
 				end;
 			end;
-			for key,value in pairs(picklock[th]) do 
+			for key,value in pairs(picklock[th]) do
 				if value == holding_smth then
 					donotsortthis = 1;
 				end;
@@ -3582,7 +3602,7 @@ function helpers.resort_inv (index) --index ll be made later
 		table.remove(list,i);
 	end;
 	--while #list > list_length do
-		--table.remove(list,#list)	
+		--table.remove(list,#list)
 	--end;
 	sort_switcher=0;
 	local newfullness = helpers.countFulness(bag[th]);
@@ -3608,13 +3628,13 @@ function helpers.idAndRepair(dragfrom)
 	end;
 	print(tmp_bagid,work_this);
 	--repair
-	if love.keyboard.isDown("lctrl","rctrl") and work_this > 0 and list[work_this].q < inventory_ttx[list[work_this].ttxid].material 
+	if love.keyboard.isDown("lctrl","rctrl") and work_this > 0 and list[work_this].q < inventory_ttx[list[work_this].ttxid].material
 	and (inventory_ttx[list[work_this].ttxid].class == "sword" or inventory_ttx[list[work_this].ttxid].class == "axe" or inventory_ttx[list[work_this].ttxid].class == "crushing"
 	or inventory_ttx[list[work_this].ttxid].class == "flagpole" or inventory_ttx[list[work_this].ttxid].class == "dagger" or inventory_ttx[list[work_this].ttxid].class == "staff"
 	or inventory_ttx[list[work_this].ttxid].class == "armor" or inventory_ttx[list[work_this].ttxid].class == "shield" or inventory_ttx[list[work_this].ttxid].class == "helm"
 	or inventory_ttx[list[work_this].ttxid].class == "boots" or inventory_ttx[list[work_this].ttxid].class == "hat" or inventory_ttx[list[work_this].ttxid].class == "crown"
 	or inventory_ttx[list[work_this].ttxid].class == "belt" or inventory_ttx[list[work_this].ttxid].class == "cloak")
-	and chars_mobs_npcs[current_mob].num_repair*chars_mobs_npcs[current_mob].lvl_repair > list[work_this].q 
+	and chars_mobs_npcs[current_mob].num_repair*chars_mobs_npcs[current_mob].lvl_repair > list[work_this].q
 	then
 		list[work_this].q = math.min(chars_mobs_npcs[current_mob].num_repair*chars_mobs_npcs[current_mob].lvl_repair,inventory_ttx[list[work_this].ttxid].material);
 		helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.fixed[chars_mobs_npcs[current_mob].gender] .. lognames.actions.someequipment);
@@ -3632,7 +3652,7 @@ function helpers.idAndRepair(dragfrom)
 	or inventory_ttx[list[work_this].ttxid].class == "belt" or inventory_ttx[list[work_this].ttxid].class == "cloak" or inventory_ttx[list[work_this].ttxid].class == "ring" or inventory_ttx[list[work_this].ttxid].class == "amulet")
 	then
 		local tmp = list[work_this].w - math.ceil(list[work_this].w/3)*3;
-		if list[work_this].w > 0 then 
+		if list[work_this].w > 0 then
 			if tmp == 0 then
 				add = 3;
 			elseif tmp == 1 then
@@ -3664,7 +3684,7 @@ end;
 
 function helpers.countDistance (x1,y1,x2,y2)
 	if y1/2 ~= math.ceil(y1/2) then
-		
+
 	end;
 	local distance = math.ceil(math.sqrt((x1-x2)^2 +(y1-y2)^2));
 	return distance;
@@ -3703,7 +3723,7 @@ function helpers.select_portrait()
 					break;
 				end;
 			elseif chars_mobs_npcs[current_mob].y/2 ~= math.ceil(chars_mobs_npcs[current_mob].y/2) then
-				if chars_mobs_npcs[selected_portrait].x == chars_mobs_npcs[current_mob].x+directions[1].xn[h] and 
+				if chars_mobs_npcs[selected_portrait].x == chars_mobs_npcs[current_mob].x+directions[1].xn[h] and
 				chars_mobs_npcs[selected_portrait].y == chars_mobs_npcs[current_mob].y+directions[1].y[h] then
 					char_for_trading_is_near = 1;
 					break;
@@ -3743,8 +3763,8 @@ function helpers.dodgeIfPossible (index)
 	or ((inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].subclass == "leather"
 	or inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].subclass == "fur"
 	or inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].subclass == "skin") and chars_mobs_npcs[index].lvl_dodging >= 3)
-	or (inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].subclass == "chainmail" and chars_mobs_npcs[index].lvl_dodging >= 4)	
-	or (inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].subclass == "plate" and chars_mobs_npcs[index].lvl_dodging == 5))		
+	or (inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].subclass == "chainmail" and chars_mobs_npcs[index].lvl_dodging >= 4)
+	or (inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].subclass == "plate" and chars_mobs_npcs[index].lvl_dodging == 5))
 	then
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
@@ -3754,7 +3774,7 @@ function helpers.dodgeIfPossible (index)
 		love.audio.play(media.sounds.error,0);
 	end;
 end;
-	
+
 function helpers.blockIfPossible (index)
 	if chars_mobs_npcs[index]["equipment"].lh > 0 and helpers.mobCanDefendHimself (index)
 	and chars_mobs_npcs[index].st >= 50
@@ -3775,7 +3795,7 @@ function helpers.parryIfPossible (index)
 	if helpers.mobCanDefendHimself (index) -- RIGHT HAND
 	and chars_mobs_npcs[index].st >= 50
 	and chars_mobs_npcs[index].rt >= 50
-	and (chars_mobs_npcs[index]["equipment"].rh > 0 and chars_mobs_npcs[index]["arms_health"].rh > 0 
+	and (chars_mobs_npcs[index]["equipment"].rh > 0 and chars_mobs_npcs[index]["arms_health"].rh > 0
 	and (
 	inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "sword"
 	or inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "flagpole"
@@ -3884,7 +3904,7 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 			chars_mobs_npcs[index].num_alchemy= chars_mobs_npcs[index].num_alchemy+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][alchlab[index].tool6].ttxid].a;
 		end;
 	end;
-	
+
 	chars_mobs_npcs[index].mgt = tmpclass2.mgt;
 	chars_mobs_npcs[index].enu = tmpclass2.enu;
 	chars_mobs_npcs[index].dex = tmpclass2.dex;
@@ -3964,29 +3984,29 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].howerofpower_power;
 	end;
 	if chars_mobs_npcs[index].misfortune_dur > 0 then --MISFORTUNE
-		chars_mobs_npcs[index].luk_debuff_power = chars_mobs_npcs[index].luk_debuff_power + chars_mobs_npcs[index].misfortune_power;	
+		chars_mobs_npcs[index].luk_debuff_power = chars_mobs_npcs[index].luk_debuff_power + chars_mobs_npcs[index].misfortune_power;
 	end;
 	if chars_mobs_npcs[index].might_dur > 0 then --MIGHT
 		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_buff_power + chars_mobs_npcs[index].might_power;
-		chars_mobs_npcs[index].enu_buff_power = chars_mobs_npcs[index].enu_buff_power + chars_mobs_npcs[index].might_power;	
+		chars_mobs_npcs[index].enu_buff_power = chars_mobs_npcs[index].enu_buff_power + chars_mobs_npcs[index].might_power;
 	end;
 	if chars_mobs_npcs[index].dash_dur > 0 then --DASH
 		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_buff_power + chars_mobs_npcs[index].dash_power;
-		chars_mobs_npcs[index].dex_buff_power = chars_mobs_npcs[index].dex_buff_power + chars_mobs_npcs[index].dash_power;	
+		chars_mobs_npcs[index].dex_buff_power = chars_mobs_npcs[index].dex_buff_power + chars_mobs_npcs[index].dash_power;
 	end;
 	if chars_mobs_npcs[index].concentration_dur > 0 then --CONCENTRATION
 		chars_mobs_npcs[index].int_buff_power = chars_mobs_npcs[index].int_buff_power + chars_mobs_npcs[index].concentration_dur;
-		chars_mobs_npcs[index].spr_buff_power = chars_mobs_npcs[index].spr_buff_power + chars_mobs_npcs[index].concentration_dur;	
+		chars_mobs_npcs[index].spr_buff_power = chars_mobs_npcs[index].spr_buff_power + chars_mobs_npcs[index].concentration_dur;
 	end;
 	if chars_mobs_npcs[index].dash_dur > 0 then --PRESICION
-		chars_mobs_npcs[index].acu_buff_power = chars_mobs_npcs[index].acu_buff_power + chars_mobs_npcs[index].precision_power;	
+		chars_mobs_npcs[index].acu_buff_power = chars_mobs_npcs[index].acu_buff_power + chars_mobs_npcs[index].precision_power;
 	end;
 	if chars_mobs_npcs[index].glamour_dur > 0 then --GLAMOUR
-		chars_mobs_npcs[index].chr_buff_power = chars_mobs_npcs[index].chr_buff_power + chars_mobs_npcs[index].glamour_power;	
+		chars_mobs_npcs[index].chr_buff_power = chars_mobs_npcs[index].chr_buff_power + chars_mobs_npcs[index].glamour_power;
 	end;
 	if chars_mobs_npcs[index].blind_dur > 0 then --BLIND
 		chars_mobs_npcs[index].sns_debuff_power = chars_mobs_npcs[index].sns_debuff_power + chars_mobs_npcs[index].blind_power;
-		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].blind_power;	
+		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].blind_power;
 	end;
 	if chars_mobs_npcs[index].darkgasp > 0 then --DARKGASP
 		chars_mobs_npcs[index].sns_debuff_power = chars_mobs_npcs[index].sns_debuff_power + chars_mobs_npcs[index].darkgasp;
@@ -4014,7 +4034,7 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	chars_mobs_npcs[index].spr=math.ceil(math.max(1,chars_mobs_npcs[index].spr*poison_mod2+chars_mobs_npcs[index].spr_buff_power-chars_mobs_npcs[index].spr_debuff_power));
 	chars_mobs_npcs[index].chr=math.ceil(math.max(1,chars_mobs_npcs[index].chr*poison_mod2+chars_mobs_npcs[index].chr_buff_power-chars_mobs_npcs[index].chr_debuff_power));
 	chars_mobs_npcs[index].luk=math.max(1,chars_mobs_npcs[index].luk+chars_mobs_npcs[index].luk_buff_power-chars_mobs_npcs[index].luk_debuff_power);
-	
+
 	chars_mobs_npcs[index].mgt=math.ceil(chars_mobs_npcs[index].mgt+chars_mobs_npcs[index].hourofpower_power);
 	chars_mobs_npcs[index].enu=math.ceil(chars_mobs_npcs[index].enu+chars_mobs_npcs[index].hourofpower_power);
 	chars_mobs_npcs[index].dex=math.ceil(chars_mobs_npcs[index].dex+chars_mobs_npcs[index].hourofpower_power);
@@ -4023,7 +4043,7 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	chars_mobs_npcs[index].sns=math.ceil(chars_mobs_npcs[index].sns+chars_mobs_npcs[index].hourofpower_power);
 	chars_mobs_npcs[index].int=math.ceil(chars_mobs_npcs[index].int+chars_mobs_npcs[index].hourofpower_power);
 	chars_mobs_npcs[index].spr=math.ceil(chars_mobs_npcs[index].spr+chars_mobs_npcs[index].hourofpower_power);
-	
+
 	--if chars_mobs_npcs[index].person=="char" then
 	for e=1,#chars_mobs_npcs[index]["equipment"] do
 		if chars_mobs_npcs[current_mob]["equipment"] > 0 then
@@ -4134,13 +4154,13 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 			add_parry = chars_mobs_npcs[index].num_dagger*(chars_mobs_npcs[index].lvl_dagger-3);
 		end;
 		chars_mobs_npcs[index].parry = chars_mobs_npcs[index].parry + add_parry;
-	end;	
+	end;
 	--end;
 	-- belts,cloaks
-	
+
 	chars_mobs_npcs[index].rng = 5+math.ceil((chars_mobs_npcs[index].spd+chars_mobs_npcs[index].dex)/10);
 	chars_mobs_npcs[index].sense =10+math.ceil(chars_mobs_npcs[index].sns/5);
-	
+
 	helpers.recalcResistances(index);
 end;
 
@@ -4313,8 +4333,8 @@ end;
 
 function helpers.noSkill()
 	love.audio.play(media.sounds.noskill, 0);
-	if tmpskillname=="sword" or tmpskillname=="axe" or tmpskillname=="flagpole" or tmpskillname=="crushing" 
-	or tmpskillname=="dagger" or tmpskillname=="stuff" 
+	if tmpskillname=="sword" or tmpskillname=="axe" or tmpskillname=="flagpole" or tmpskillname=="crushing"
+	or tmpskillname=="dagger" or tmpskillname=="stuff"
 	or tmpskillname=="bow" or tmpskillname=="crossbow" or tmpskillname=="throwing" or tmpskillname=="firearms" or tmpskillname=="blaster" then
 		helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.noskill .. tmpskillname2)
 	elseif tmpskillname=="leather" or  tmpskillname=="chainmail" or  tmpskillname=="plate" or  tmpskillname=="shield" then
@@ -4521,7 +4541,7 @@ function helpers.switchLevelAsk(switch_level)
 	global.buttons.g1_button.OnClick = function(object)
 		game_status="restoring";
 	end;
-	
+
 	--next
 	--picture
 end;
@@ -4607,7 +4627,7 @@ function helpers.battleorder ()
 	end;
 
 	table.sort(order_of_turns, function(a,b) return a[2] > b[2] end);
-	
+
 	for i=1,#order_of_turns-1 do
 		for j=1,#order_of_turns-1 do
 			if order_of_turns[j][1] > order_of_turns[j+1][1] and order_of_turns[j][2] ==  order_of_turns[j+1][2] then
@@ -4811,7 +4831,7 @@ function helpers.bookWhatCircle()
 	local _circle = false;
 	if     math.sqrt((x+235-mX)^2+(y+140-70-mY)^2) < 55 then
 		_circle = 1;
-	elseif math.sqrt((x+385-mX)^2+(y+140-70-mY)^2) < 55 then	
+	elseif math.sqrt((x+385-mX)^2+(y+140-70-mY)^2) < 55 then
 		_circle = 2;
 	elseif math.sqrt((x+385-mX)^2+(y+268-70-mY)^2) < 55 then
 		_circle = 3;
@@ -4899,7 +4919,7 @@ function helpers.clearHlandscapeUnderMobs()
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].motion == "walking" then
 			helpers.clearHlandscape(chars_mobs_npcs[i].x,chars_mobs_npcs[i].y);
-		end; 
+		end;
 	end;
 end;
 
@@ -4943,7 +4963,7 @@ function helpers.turnMob (index) --FIXME 2hex
 		end;
 		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y>chars_mobs_npcs[index].y then
 			chars_mobs_npcs[index].rot=3;
-		end; 
+		end;
 		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y== chars_mobs_npcs[index].y then
 			chars_mobs_npcs[index].rot=2;
 		end;
@@ -5089,16 +5109,16 @@ function helpers.randomLimb(index,hex,healthy)
 	local limbs = {};
 	local limb = false;
 	for i=1,#chars_mobs_npcs[index]["hitzones"][hex] do
-		if chars_mobs_npcs[index]["hitzones"][hex][i] == "rh" 
+		if chars_mobs_npcs[index]["hitzones"][hex][i] == "rh"
 		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh"
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh1" 
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh2" 
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh3" 
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "rf" 
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf" 
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf1" 
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf2" 
-		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf3" 
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh1"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh2"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lh3"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "rf"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf1"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf2"
+		or chars_mobs_npcs[index]["hitzones"][hex][i] == "lf3"
 		then
 			if (healthy and chars_mobs_npcs[index][chars_mobs_npcs[index]["hitzones"][hex][i]] == 1) or not healthy then
 				table.insert(limbs,chars_mobs_npcs[index]["hitzones"][hex][i]);
@@ -5115,7 +5135,7 @@ function helpers.missleIsAweapon ()
 	if missle_type == "arrow" or missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery"
 	or missle_type == "parabolicshot" or missle_type == "maximumstreght" or missle_type == "eagleseye" or missle_type == "blinding"
 	or missle_type == "carefulaiming" or missle_type == "shieldpenetration" or missle_type == "nailing" or missle_type == "finishing"
-	or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingfan"	
+	or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingfan"
 	then
 		return true;
 	end;

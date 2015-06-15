@@ -52,16 +52,16 @@ function playingState.load()
 	require "data.threats"
 	require "data.npc"
 	love.audio.stop(media.sounds.mainmenu, 0);
-	
+
 	media.sounds.battle:setLooping( loop );
 	media.sounds.battle:setVolume(0.75);
-	
+
 	--currentState = loadingState;
 	--currentState.start(media, loadingFinished);
 	--blurv = love.graphics.newShader(love.filesystem.read("shader/blurv.glsl"),1)
 	--blurh = love.graphics.newShader(love.filesystem.read("shader/blurh.glsl"),1)
 	--color2bw = love.graphics.newShader("shader/color2bw.glsl")
-	
+
 	lightWorld = love.light.newWorld();
 	mainFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 10);
 	statFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
@@ -77,13 +77,13 @@ function playingState.load()
 	heroesSmallFont = love.graphics.newFont("fonts/HoMMSmallFontCyr.ttf", 12);
 	erathiaFont = love.graphics.newFont("fonts/Erathia.ttf", 20);
 	comicFont = love.graphics.newFont("fonts/HoMMFontCyr.ttf", 32);
-	
+
 	--global.use_walk_animation = true;
 	--global.walk_animation_speed = 0.25;
-	
+
 	global.use_walk_animation = false;
 	global.walk_animation_speed = 0.1;
-	
+
 	map_w = 100;
 	map_h = 100;
 	map_size=map_w*map_h;
@@ -98,7 +98,6 @@ function playingState.load()
 	global.screenHeight = love.graphics.getHeight();
 	map_display_w = math.ceil(global.screenWidth/tile_w)+1;
 	map_display_h = math.ceil(global.screenHeight/tile_h*1.5)+1;
-	print(map_display_w,map_display_h);
 	tile_row_check=0;
 	left_space=20;
 	top_space=20;
@@ -106,17 +105,17 @@ function playingState.load()
 	--inv_add_x = 92;
 	--inv_add_y = 155;
 	--inv_part2 = 734;
-	
-	
+
+
 	inv_add_x = 92;
 	inv_add_y = 155;
 	inv_part2 = 734;
-	
+
 	inv_page = 1;
-	
+
 	current_comic = 1;
 	page=1;
-	
+
 	--[[charfaces={};
 	for i=1,12 do
 		for h=1,12 do
@@ -124,8 +123,8 @@ function playingState.load()
 			charfaces[tmpf] = love.graphics.newQuad((i-1)*80, (h-1)*90, 80,90, media.images.charfaces:getWidth(), media.images.charfaces:getHeight());
 		end;
 	end;]]
-	--spelliconcoods={{180,108},{340,108},{340,238},{180,238},{180,368},{340,368},{550,108},{710,108},{550,238},{710,238},{550,368},{710,368},{550,368},{710,368}};	
-	
+	--spelliconcoods={{180,108},{340,108},{340,238},{180,238},{180,368},{340,368},{550,108},{710,108},{550,238},{710,238},{550,368},{710,368},{550,368},{710,368}};
+
 	all_ground_hexes={};
 	holding_smth=0;
 
@@ -157,17 +156,17 @@ function playingState.load()
 	vagrants={party=0,greens=0,bandidos=0,vagrants = 100,merchants=0},
 	merchants={party=0,greens=0,bandidos=0,vagrants = 0,merchants=0},
 	};
-	
+
 	mob_w=32
 	mob_h=64
 
 	hexes_to_sense={}
-	
+
 	irradiations={"dawn","day","afterglow", "twilight", "night","dungeon","firelight"};
 	areaEffectsPriority = {"fire","ice","mud","acid","poison"};
-	
+
 	hang = 0;
- 
+
 	tempbb={};
 	tmp_ppoint={};
 	tmp_ppoint2={};
@@ -209,7 +208,7 @@ function playingState.load()
 	rlandscape_obj={} -- radiation
 	rlandscape_power={}
 	rlandscape_duration={}
-	
+
 	vlandscape_obj={} -- void
 	vlandscape_id={}
 	vlandscape_duration={}
@@ -218,7 +217,7 @@ function playingState.load()
 	mlandscape_power={}
 	mlandscape_duration={}
 	mlandscape_id={}
-	
+
 	xlandscape = {}; --traps;
 
 	elandscape={} -- temporary explosion effects
@@ -230,7 +229,7 @@ function playingState.load()
 	hlandscape={}; -- harvest, herbs, minerals,food
 
 	slandscape={}; -- shadows
-	
+
 	plandscape={}; -- switch level
 
 	arrays_of_tmp_landscape ();
@@ -320,28 +319,28 @@ function playingState.load()
 	global.lookaround = true;
 	global.weathers = {"shiny","rain"};
 	global.weather = math.random(1,#global.weathers);
-	
+
 	chars_mobs_npcs={};
 	if global.first_load then
 		table.insert(chars_mobs_npcs,{uid=-1,person="char",control="player",party=1,x=15,y=10,rot=1}); --battle
 		--table.insert(chars_mobs_npcs,{uid=-1,person="char",control="player",party=1,x=28,y=14,rot=1}); --shops
 		--table.insert(chars_mobs_npcs,{uid=-1,person="char",control="player",party=1,x=46,y=56,rot=1}); --grass
-		
+
 		table.insert(chars_mobs_npcs,{uid=-2,erson="char",control="player",party=1,x=12,y=13,rot=3 });
 		table.insert(chars_mobs_npcs,{uid=-3,person="char",control="player",party=1,x=7,y=7,rot=3 });
 		table.insert(chars_mobs_npcs,{uid=-4,person="char",control="player",party=1,x=10,y=14,rot=3 });
-	   
+
 		--table.insert(chars_mobs_npcs,{person="char",control="player",x=16,y=38,rot=1});
 		--table.insert(chars_mobs_npcs,{person="char",control="player",x=16,y=28,rot=3 });
 		--table.insert(chars_mobs_npcs,{person="char",control="player",x=19,y=30,rot=5 });
 		--table.insert(chars_mobs_npcs,{person="char",control="player",x=18,y=32,rot=3 });
-		
+
 		for i = 1,chars do
 			helpers.addMob(i,"char");
 		end;
 	end;
 	current_mob = 1;
-	
+
 	global_irr=2;
 	irradiation=irradiations[global_irr];
 --NEW LEVEL
@@ -355,14 +354,14 @@ function playingState.load()
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=16,y=5,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=14,y=7,rot=1,class="naga",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});
-		
+
 		for i=(chars+1),#chars_mobs_npcs do
 			helpers.addMob(i,"mob");
 		end;
-		
+
 		local totalmobs = #chars_mobs_npcs;
-		
-		table.insert(chars_mobs_npcs,{uid=1,person="npc",control="ai",defaultai="cruiser",ai="cruiser",dangerai="away",waypoint={{16,11},{13,11},{8,11},{8,5},{13,4},{17,6}},nextpoint=2,x=16,y=11,rot=5,class="goblin",fraction="vagrants", party=2, name="Nils Larsen", chat=2, face = 8, 
+
+		table.insert(chars_mobs_npcs,{uid=1,person="npc",control="ai",defaultai="cruiser",ai="cruiser",dangerai="away",waypoint={{16,11},{13,11},{8,11},{8,5},{13,4},{17,6}},nextpoint=2,x=16,y=11,rot=5,class="goblin",fraction="vagrants", party=2, name="Nils Larsen", chat=2, face = 8,
 		personality={
 		current={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblins"},{"elfs"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		default={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblins"},{"elfs"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
@@ -421,11 +420,11 @@ function playingState.load()
 		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
-		
+
 		for i=(totalmobs+1),#chars_mobs_npcs do
 			helpers.addMob(i,"npc");
 		end;
-		
+
 		sort_switcher=0;
 		sorttarget="char";
 		oldsorttarget="char";
@@ -440,7 +439,7 @@ function playingState.load()
 			end
 			helpers.resort_inv(h);
 		end;
-		
+
 		bags_list={};
 		bags={};
 		bagid=false;
@@ -470,54 +469,54 @@ function playingState.load()
 		x=17,y=14, xi=17, yi=15, typ="chest", opened=false, material=70, locked=true, locktype=3, lockcode=7457612465, traped = true, inspected = false, trapcode="333062520", triggers="0100010001", trapmodel="firebomb", trappower = 5, dir=3, img=chest_img[1],
 		{ttxid=2,q=1,w=0,e=0,r=0,h=0},
 		};
-		
+
 		bags_list[5]={
 		x=11,y=8, xi=11, yi=8, typ="bag", opened=false, locked=false, dir=0, img=bag_img,
 		{ttxid=1,q=1,w=0,e=0,r=0,h=0},
 		};
-		
+
 		bags_list[6]={
 		x=11,y=8, xi=11, yi=8, typ="bag", opened=false, locked=false, dir=0, img=bag_img,
 		{ttxid=62,q=1,w=0,e=0,r=0,h=0},
 		{ttxid=379,q=5,w=0,e=0,r=1,h=0},
 		};
-		
+
 		bags_list[7]={
-		x=10,y=11, xi=10, yi=11, typ="trap", mask=40, detected=false, opened=false, locked=true, locktype=0, lockcode=999999999, dir=0, traped = true, inspected = false, trapcode="204056305", trapmodel="firebomb", trappower = 5, img=trap_img, 
+		x=10,y=11, xi=10, yi=11, typ="trap", mask=40, detected=false, opened=false, locked=true, locktype=0, lockcode=999999999, dir=0, traped = true, inspected = false, trapcode="204056305", trapmodel="firebomb", trappower = 5, img=trap_img,
 		--{ttxid=303,q=32,w=0,e=0,r=1,h=0},
 		};
-		
+
 		bags_list[8]={
-		x=48,y=37, xi=48, yi=37, typ="door", mask=40, detected=false, opened=false, locked=true, locktype=2, lockcode=1234512345, dir=0, traped = true, inspected = false, trapcode="204056305", trapmodel="firebomb", trappower = 5, dir=3, img_index = 1, img=door_img[1], 
+		x=48,y=37, xi=48, yi=37, typ="door", mask=40, detected=false, opened=false, locked=true, locktype=2, lockcode=1234512345, dir=0, traped = true, inspected = false, trapcode="204056305", trapmodel="firebomb", trappower = 5, dir=3, img_index = 1, img=door_img[1],
 		--{ttxid=303,q=32,w=0,e=0,r=1,h=0},
 		};
-		
+
 		bags_list[9]={
 		x=34,y=18, xi=34, yi=18, typ="well", opened=false, locked=false, dir=0, img=well_img,
 		{ttxid=72,q=10,w=0,e=0,r=1,h=0},
 		{ttxid=202,q=5,w=0,e=0,r=1,h=0},
 		};
-		
+
 		bags_list[10]={
 		x=16,y=25, xi=16, yi=25, typ="crystals", charged = true, power = 25, opened=false, locked=false, img=crystals_img,
 		{ttxid=429+math.random(1,6),q=1,w=0,e=0,r=1,h=0},
 		};
-		
+
 		bags_list[11]={
 		x=31,y=9, xi=31, yi=9, typ="trashheap", condition_lvl=1,condition_num=5, opened=false, locked=false, img=trashheap_img,
 		{ttxid=1+math.random(1,10*5),q=math.random(1,10),w=0,e=0,r=1,h=0},
 		};
-		
+
 		bags_list[12]={
 		x=15,y=36, xi=15, yi=36, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img,
 		{ttxid=440,q=math.random(1,10),w=0,e=0,r=1,h=0},
 		};
-		
+
 		--31x9,15x36
 		--52,35,3
-		
+
 		objects_list={};
-		
+
 		objects_list[1]={x=6, y=8, xi=6, yi=8, typ="barrel", subtyp=1, img=barrel_img[2]};
 		objects_list[2]={x=7, y=10, xi=7, yi=10, typ="cauldron", subtyp=1, img=cauldron_img[2]};
 		objects_list[3]={x=42, y=30, xi=42, yi=30, typ="obelisk", subtyp=1, img=obelisk_img};
@@ -530,81 +529,81 @@ function playingState.load()
 			if objects_list[i].typ == "cauldron" then
 				boomareas.ashGround (objects_list[i].xi,objects_list[i].yi);
 			end;
-		end;	
-		
+		end;
+
 		bars_list = {};
 		bars_list[1]={};
 		bars_list[2]={};
 		bars_list[3]={};
 		bars_list[4]={};
-		
+
 		armor_assortiment={
 		{171,171,172,176},
 		{186,186,191,251},
 		{201,221,231},
 		};
-		
+
 		melee_assortiment={
 		{1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96,101,106},
 		{1,6,11,16,21,26,31,36,41,46,51,56,61,66,71,76,81,86,91,96,101,106},
 		};
-		
+
 		modifers_assortiment={
 		{1,4,7,10,13,16,19,22,25,28,31,34,37,40,43,46,49,52,671,64},
 		};
-		
+
 		alchemy_assortiment={
 		{423,424,425,426,427,469,470,471,472,473},
 		{1,2,3,4}, --recepies, id 409
 		{460,460,463,463,463,465},
 		};
-		
+
 		for i=1,4 do
 			local rndid = armor_assortiment[1][math.random(1,#armor_assortiment[1])];
 			table.insert(bars_list[1],{ttxid=rndid,q=inventory_ttx[rndid].material,w=0,e=0,r=1,h=0});
 		end;
-		
+
 		for i=1,4 do
 			local rndid = armor_assortiment[2][math.random(1,#armor_assortiment[2])];
 			table.insert(bars_list[1],{ttxid=rndid,q=inventory_ttx[rndid].material,w=0,e=0,r=1,h=0});
 		end;
-		
+
 		for i=1,8 do
 			local rndid = armor_assortiment[3][math.random(1,#armor_assortiment[3])];
 			table.insert(bars_list[1],{ttxid=rndid,q=inventory_ttx[rndid].material,w=0,e=0,r=1,h=0});
 		end;
-		
+
 		for i=1,8 do
 			local rndid = melee_assortiment[1][math.random(1,#melee_assortiment[1])];
 			table.insert(bars_list[2],{ttxid=rndid,q=inventory_ttx[rndid].material,w=0,e=0,r=1,h=0});
 		end;
-		
+
 		for i=1,8 do
 			local rndid = alchemy_assortiment[1][math.random(1,#alchemy_assortiment[1])];
 			table.insert(bars_list[3],{ttxid=rndid,q=math.random(5,10),w=0,e=0,r=1,h=0});
 		end;
-		
+
 		for i=1,8 do
 			local rndid = alchemy_assortiment[2][math.random(1,#alchemy_assortiment[2])];
 			table.insert(bars_list[3],{ttxid=409,q=rndid,w=0,e=0,r=1,h=0});
 		end;
-		
+
 		for i=1,8 do
 			local rndid = alchemy_assortiment[3][math.random(1,#alchemy_assortiment[3])];
 			table.insert(bars_list[3],{ttxid=rndid,q=math.random(5,10),w=0,e=0,r=1,h=0});
 		end;
-		
+
 		for i=1,8 do
 			local rndid = melee_assortiment[2][math.random(1,#melee_assortiment[2])];
 			local rndmod = modifers_assortiment[1][math.random(1,#modifers_assortiment[1])];
 			table.insert(bars_list[4],{ttxid=rndid,q=inventory_ttx[rndid].material,w=rndmod,e=0,r=1,h=0});
 		end;
-		
+
 		localtriggers={
 		{x=29,y=10,dir=6,id=1},
 		{x=37,y=13,dir=6,id=2},
 		};
-		
+
 		traders={
 		{typ="armor",bars={1,1,2,4},prices={1.5,0.5},assortiment=1
 		,classes={{"sword","axe","crushing","flagpole","staff","dagger","armor","helm","boots","gloves","belt","cloak","shield"}
@@ -617,7 +616,7 @@ function playingState.load()
 		,{"alchtool"}}
 		},
 		};
-		
+
 		for i=1,map_w do
 			for z=1,map_h do
 				if harvest_table[i][z][1] > 0 and math.random(1,100) <= harvest_table[i][z][2] then
@@ -637,10 +636,10 @@ function playingState.load()
 		end;
 	end;
 --/NEW LEVEL
-	
+
 	trace.chars_around();
 	--helpers.battleorder();
-		
+
 	local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
 	mob_walk = loadstring("return " .. tmp)();
 
@@ -688,7 +687,7 @@ function playingState.load()
 		mob_dmg = loadstring("return " .. tmp)();
 		animation_block[i] = anim8.newAnimation(mob_block[i]("1-8",1), 0.075, "pauseAtEnd");
 	end;
-	
+
 	for h = 1,#bags_list do
 		bags[h] = {};
 		for i = 1,15 do
@@ -698,7 +697,7 @@ function playingState.load()
 			end;
 		end;
 	end;
-	
+
 	for i=1,#chars_mobs_npcs do
 		helpers.recalcBattleStats (i);
 	end;
@@ -708,10 +707,10 @@ function playingState.load()
 	end;
 		trace.chars_around();
 		trace.clear_rounded();
-	
+
 	sorttarget = "char";
 	dragfrom = "char";
-			
+
 	global.start = false;
 	bagremoved = 0;
 	show_monsterid_tip = 0;
@@ -758,7 +757,7 @@ function playingState.load()
     	--table.insert(shadows,{x=chars_mobs_npcs[i].x,y=chars_mobs_npcs[i].y,shadow = lightWorld.newCircle(xx, yy, 20),typ="mob"});
     --end
     helpers.cam_to_mob ();
-		
+
 	sort_switcher = 1
 	sorttarget="char"
 	oldsorttarget="char"
@@ -773,13 +772,13 @@ function playingState.load()
 		end
 		helpers.resort_inv();
 	end
-		
+
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].motion == "walking" then
 			boomareas.trackGround (chars_mobs_npcs[i].x,chars_mobs_npcs[i].y,chars_mobs_npcs[i].track,chars_mobs_npcs[i].rot);
 		end;
 	end;
-	
+
 	for j=1, #objects_list do
 		local xx,yy = helpers.hexToPixels (objects_list[j].xi,objects_list[j].yi);
 		if objects_list[j].typ == "barrel" or  objects_list[j].typ == "cauldron" then
@@ -810,7 +809,7 @@ function playingState.load()
 end;
 
 --======================================================================
- 
+
 function playingState.update(dt)
 	global.timer = global.timer + dt;
 	--global.screenWidth = love.graphics.getWidth();
@@ -879,7 +878,7 @@ function playingState.update(dt)
 				global.mindgold = global.mindgold-mindgame.moneysums[mindgame.map[global.mindhero_x][global.mindhero_y]];
 				mindgame.map[global.mindhero_x][global.mindhero_y] = 0;
 			end;
-			
+
 			if mindgame.map[global.mindhero_x][global.mindhero_y] > 100 and mindgame.map[global.mindhero_x][global.mindhero_y] <= 165 then
 				local tmpx = global.mindhero_x;
 				local tmpy = global.mindhero_y;
@@ -942,7 +941,7 @@ function playingState.update(dt)
 					for i=1,10 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
-					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;	
+					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
 				elseif mindgame.map[global.mindhero_x][global.mindhero_y] == 109 then
 					local plusstatus = 8;
 					local plusnumber = 5;
@@ -983,7 +982,7 @@ function playingState.update(dt)
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
-				
+
 				elseif mindgame.map[global.mindhero_x][global.mindhero_y] == 114 then
 					local tmp = chars_mobs_npcs[victim]["personality"]["current"];
 					chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"]["alternative"];
@@ -1081,7 +1080,7 @@ function playingState.update(dt)
 		if game_status == "spellbook"
 		or game_status == "warbook"
 		or game_status == "questbook"
-		or game_status == "inventory" 
+		or game_status == "inventory"
 		or game_status == "alchemy"
 		or game_status == "picklocking"
 		or game_status == "crafting"
@@ -1090,8 +1089,8 @@ function playingState.update(dt)
 		or game_status == "literature"
 		or game_status == "map"
 		or game_status == "journal"
-		or game_status == "menu" 
-		or game_status == "stats" 
+		or game_status == "menu"
+		or game_status == "stats"
 		or game_status == "skills"
 		or mY > 820 or mY < 50 or darkness[chars_mobs_npcs[current_mob].party][cursor_world_y][cursor_world_x] == 2 then
 			love.mouse.setVisible(true);
@@ -1179,7 +1178,7 @@ function playingState.update(dt)
 			animation_mobility:update(dt);
 			animation_deadlyswarm:update(dt);
 		end;
-		if game_status == "damage" or game_status == "multidamage" or game_status == "attack" then 
+		if game_status == "damage" or game_status == "multidamage" or game_status == "attack" then
 			for i=1,6 do
 				animation_dmg[i]:update(dt);
 			end;
@@ -1219,7 +1218,7 @@ function playingState.update(dt)
 			animation_deathblossom:update(dt);
 			animation_comete:update(dt);
 		end;
-		if  chars_mobs_npcs[current_mob].control == "ai" 
+		if  chars_mobs_npcs[current_mob].control == "ai"
 		and game_status == "neutral" then
 			path_failed = 0;
 			ai.behavior();
@@ -1311,7 +1310,7 @@ function playingState.update(dt)
 			else
 				--global.multiattack = global.multiattack -1;
 				love.audio.stop(media.sounds.sword_miss,0);
-				love.audio.stop(media.sounds.block,0);	
+				love.audio.stop(media.sounds.block,0);
 				love.audio.stop(media.sounds.sword_crit,0);
 				love.audio.stop(media.sounds.sword_impact,0);
 				global.timers.a_timer=0;
@@ -1346,7 +1345,7 @@ function playingState.update(dt)
 
 		if game_status == "restoring" then
 			if global.lookaround then
-				for i = 1, chars do 
+				for i = 1, chars do
 					trace.first_watch(i);
 				end;
 				global.lookaround = false;
@@ -1390,7 +1389,7 @@ function playingState.update(dt)
 			or magic.spell_tips[missle_type].form == "path"
 			or magic.spell_tips[missle_type].form == "proactive"
 			or magic.spell_tips[missle_type].form == "direct"
-			or missle_type=="jump" 
+			or missle_type=="jump"
 			or missle_type=="torchlight"
 			or missle_type=="chainlightning"
 			or missle_type=="powerheal"
@@ -1415,7 +1414,7 @@ function playingState.update(dt)
 					boomx = cursor_world_x;
 				end;
 				draw.boom();
-			elseif magic.spell_tips[missle_type].form == "mine" 
+			elseif magic.spell_tips[missle_type].form == "mine"
 			or magic.spell_tips[missle_type].form == "enemy"
 			or missle_type=="freeze"
 			or missle_type=="earthquake"
@@ -1429,7 +1428,7 @@ function playingState.update(dt)
 		if game_status == "missle" then
 			if helpers.missleIsAweapon () then
 				missle_fly();
-			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball" 
+			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball"
 			or missle_type == "windfist"
 			or missle_type == "acidburst"
 			or missle_type=="icefield" then
@@ -1458,7 +1457,7 @@ function playingState.update(dt)
 			elseif magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy" or missle_type=="torchlight" or missle_type=="ritualofthevoid" then
 				game_status="damage";
 				damage.instantCast()
-			elseif magic.spell_tips[missle_type].form == "ring" or magic.spell_tips[missle_type].form == "proactive" 
+			elseif magic.spell_tips[missle_type].form == "ring" or magic.spell_tips[missle_type].form == "proactive"
 			or magic.spell_tips[missle_type].form == "wall" or magic.spell_tips[missle_type].form == "sight" or magic.spell_tips[missle_type].form == "breath"
 			or magic.spell_tips[missle_type].form == "rain" or magic.spell_tips[missle_type].form == "level" or magic.spell_tips[missle_type].form == "vray"
 			or magic.spell_tips[missle_type].form == "ray" or magic.spell_tips[missle_type].form == "trident" or magic.spell_tips[missle_type].form == "skyray" or magic.spell_tips[missle_type].form == "deathblossomk"
@@ -1510,10 +1509,10 @@ function array_of_map ()
 				visibility = 1;
 				pass = 2;
 			end;
-			
+
 			table.insert(all_ground_hexes,{id=tile_counter+1, type=map[my][mx], x=my,y=mx, pass=pass,visibility=visibility,stepsound=stepsound_table[map[mx][my]] });
 			tile_counter = tile_counter+1;
-		end; 
+		end;
 	end;
 end;
 
@@ -1580,15 +1579,15 @@ function playingState.keyreleased(key, unicode)
 end;
 
 function playingState.keypressed(key, unicode)
-	
+
 	if key == " " and chars_mobs_npcs[current_mob].control == "player" and game_status == "moving" then -- FIXME debug, for interrupt turn funtions
 		helper.interrupt();
 	end;
-	
+
 	if key == " " and game_status == "mindgame" then
 		mindgame.passTurn()
 	end;
-	
+
 	if key == "o" then
 		if game_status ~= "pause" then
 			tmp_game_status = game_status;
@@ -1597,11 +1596,11 @@ function playingState.keypressed(key, unicode)
 			game_status = tmp_game_status;
 	   end;
 	end;
-	
+
 	if key == "5" then
 		game_status = "obelisk"; --FIXME from diary
 	end;
-	
+
 	if chars_mobs_npcs[current_mob].control == "player" or game_status == "menu" then
 		if key == "lctrl" then
 		  love.mouse.setVisible(true);
@@ -1628,7 +1627,7 @@ function playingState.keypressed(key, unicode)
 					helpers.castShadows();
 				end;
 			end;
-			if key == "right" then 
+			if key == "right" then
 				if map_x <= (map_w-30) then
 					map_x = map_x+1;
 					helpers.castShadows();
@@ -1670,7 +1669,7 @@ function playingState.keypressed(key, unicode)
 			   game_status="neutral";
 			end;
 		end;
-			  
+
 		if key==" " and (game_status == "neutral" or game_status == "path_finding" or game_status == "sensing") and chars_mobs_npcs[current_mob].control == "player" and ignore_kb==0 then  --spacebar
 			utils.printDebug("spacebar");
 			local switch_level = helpers.ifSwitchLevel();
@@ -1682,8 +1681,8 @@ function playingState.keypressed(key, unicode)
 				game_status="restoring";
 				ignore_kb=1;
 			end;
-		end; 
-	   
+		end;
+
 		if key==" " and game_status == "comic" then
 			if page < #comics_ttx[current_comic] then
 				loveframes.util.RemoveAll();
@@ -1692,8 +1691,8 @@ function playingState.keypressed(key, unicode)
 				loveframes.util.RemoveAll();
 				game_status = "neutral"
 			end;
-		end;    
-	
+		end;
+
 		if key == "x" and find_the_path == 0 and (game_status == "neutral" or game_status == "sensing")then
 			for j=1,#chars_mobs_npcs do
 				if chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[j].control == "player" then
@@ -1703,15 +1702,15 @@ function playingState.keypressed(key, unicode)
 				end;
 			end;
 		end;
-	
+
 		if key == "0" then
 			global.draw_interface = -1*global.draw_interface;
 		end;
-		
+
 		if key == "9" then
 			global.draw_temphud = -1*global.draw_temphud;
 		end;
-	
+
 		if key == "f" and (game_status == "neutral" or game_status == "sensing") then
 			--global.free_hexes = helpers.find_free_hexes (current_mob); --FIXME LLLLAAAGGGSSS
 			find_the_path=1;
@@ -1726,7 +1725,7 @@ function playingState.keypressed(key, unicode)
 		   trace.chars_around();
 		   trace.clear_rounded();
 		end
-   
+
 		if key == "n" and (game_status == "sensing" or game_status == "path_finding") then
 		   find_the_path=0;
 		   path_status=0;
@@ -1759,19 +1758,19 @@ function playingState.keypressed(key, unicode)
 				end;
 			end;
 		end;
-		
+
 		if love.keyboard.isDown("lctrl") and key == "1" and global.status == "battle" then
 			if chars_mobs_npcs[current_mob].control == "player" then
 				helpers.dodgeIfPossible (current_mob);
 			end;
 		end;
-		
+
 		if love.keyboard.isDown("lctrl") and key == "2" and global.status == "battle" then
 			if chars_mobs_npcs[current_mob].control == "player" then
 				helpers.blockIfPossible (current_mob);
 			end;
 		end;
-		
+
 		if love.keyboard.isDown("lctrl") and key == "3"  then
 			if chars_mobs_npcs[current_mob].control == "player" and global.status == "battle" then
 				helpers.parryIfPossible (current_mob);
@@ -1783,15 +1782,15 @@ function playingState.keypressed(key, unicode)
 				helpers.handsIfPossible (current_mob);
 			end;
 		end;
-		
+
 		if key == "m" and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
 			game_status="map"
 			love.audio.play(media.sounds.paper,0);
 		elseif game_status == "map" then
-			game_status="neutral" 
+			game_status="neutral"
 			love.audio.play(media.sounds.paper,0);
 		end
-   
+
 		if key == "b"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
@@ -1806,7 +1805,7 @@ function playingState.keypressed(key, unicode)
 				game_status="neutral";
 			end;
 		end;
-		
+
 		if key == "q"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
@@ -1819,7 +1818,7 @@ function playingState.keypressed(key, unicode)
 				game_status="neutral";
 			end;
 		end;
-		
+
 		if key == "w"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
@@ -1832,7 +1831,7 @@ function playingState.keypressed(key, unicode)
 				game_status="neutral";
 			end;
 		end;
-		
+
 		if key == "c"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
@@ -1858,7 +1857,7 @@ function playingState.keypressed(key, unicode)
 				game_status="neutral";
 			end;
 		end;
-   
+
 		if key == "i" then
 			if chars_mobs_npcs[current_mob].person=="char"
 			and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" ) then
@@ -1870,7 +1869,7 @@ function playingState.keypressed(key, unicode)
 				game_status="neutral";
 			end;
 		end;
-   
+
 		if key == "a" then
 			if chars_mobs_npcs[current_mob].person=="char"
 			and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" ) then
@@ -1882,7 +1881,7 @@ function playingState.keypressed(key, unicode)
 				game_status="neutral";
 			end;
 		end;
-   
+
 		if key == "r" then
 			if global_irr<#irradiations then
 				global_irr=global_irr+1;
@@ -1895,17 +1894,17 @@ function playingState.keypressed(key, unicode)
 		end;
 
 		if key == "t"
-		and global.status == "peace" 
+		and global.status == "peace"
 		and chars_mobs_npcs[current_mob].person=="char"
 		and chars_mobs_npcs[current_mob].control=="player"
 		then
 			letaBattleBegin ();
 		end;
-		
+
 		if key == "e" and chars_mobs_npcs[current_mob].control=="player"
-		and (game_status == "neutral" 
-		or game_status == "sensing" 
-		or game_status == "path_finding" 
+		and (game_status == "neutral"
+		or game_status == "sensing"
+		or game_status == "path_finding"
 		or game_status == "menu"
 		or game_status == "inventory"
 		or game_status == "alchemy"
@@ -1913,7 +1912,7 @@ function playingState.keypressed(key, unicode)
 		or game_status == "crafting"
 		or (game_status == "spellbook" and global.status ~= "mindgame")
 		or game_status == "questbook"
-		or game_status == "warbook" 
+		or game_status == "warbook"
 		or game_status == "literature"
 		or game_status == "map"
 		or game_status == "inventory"
@@ -1932,16 +1931,16 @@ function playingState.keypressed(key, unicode)
 		then
 			game_status = "calendar";
 		end;
-		
+
 		if key == "escape" and (game_status == "spellbook" and global.status == "mindgame") then
 			game_status = "mindgame";
 			draw.mindgameButtons();
 		end;
-		
+
 		if key == "d" and chars_mobs_npcs[current_mob].control=="player"
-		and (game_status == "neutral" 
-		or game_status == "sensing" 
-		or game_status == "path_finding" 
+		and (game_status == "neutral"
+		or game_status == "sensing"
+		or game_status == "path_finding"
 		or game_status == "menu"
 		or game_status == "inventory"
 		or game_status == "alchemy"
@@ -1949,7 +1948,7 @@ function playingState.keypressed(key, unicode)
 		or game_status == "crafting"
 		or (game_status == "spellbook" and global.status ~= "mindgame")
 		or game_status == "questbook"
-		or game_status == "warbook" 
+		or game_status == "warbook"
 		or game_status == "literature"
 		or game_status == "map"
 		or game_status == "inventory"
@@ -1967,16 +1966,16 @@ function playingState.keypressed(key, unicode)
 		then
 			game_status = "log";
 		end;
-		
+
 		if key == "escape" and (game_status == "spellbook" and global.status == "mindgame") then
 			game_status = "mindgame";
 			draw.mindgameButtons();
 		end;
-	   
+
 		if key == "escape"
-		and (game_status == "neutral" 
-		or game_status == "sensing" 
-		or game_status == "path_finding" 
+		and (game_status == "neutral"
+		or game_status == "sensing"
+		or game_status == "path_finding"
 		or game_status == "menu"
 		or game_status == "inventory"
 		or game_status == "alchemy"
@@ -1984,7 +1983,7 @@ function playingState.keypressed(key, unicode)
 		or game_status == "crafting"
 		or (game_status == "spellbook" and global.status ~= "mindgame")
 		 or game_status == "questbook"
-		or game_status == "warbook" 
+		or game_status == "warbook"
 		or game_status == "literature"
 		or game_status == "map"
 		or game_status == "inventory"
@@ -2003,7 +2002,7 @@ function playingState.keypressed(key, unicode)
 		or game_status == "obelisk"
 		or game_status == "well"
 		)
-		and   chars_mobs_npcs[current_mob].control=="player" 
+		and   chars_mobs_npcs[current_mob].control=="player"
 		and holding_smth==0
 		then
 			tmp_mob = current_mob;
@@ -2017,38 +2016,38 @@ function playingState.keypressed(key, unicode)
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y] = inv_quad_y*10000+inv_quad_x;
 				oil_smth=0
 			end;
-		 
+
 			if drink_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = drink_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y] = inv_quad_y*10000+inv_quad_x;
 				drink_smth = 0
 			end;
-		   
+
 			if bomb_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = bomb_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 				bomb_smth = 0;
 			end;
-			
+
 			if scroll_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = scroll_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 				scroll_smth = 0;
 			end;
-			
+
 			if use_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = use_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 				use_smth = 0;
 			end;
-   
-			if game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" then 
+
+			if game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" then
 				love.audio.play(media.sounds.bookclose,0);
 			elseif  game_status == "inventory" then
 				love.audio.play(media.sounds.invclose,0);
-			elseif game_status == "stats" then 
+			elseif game_status == "stats" then
 				love.audio.play(media.sounds.bookclose,0);
-			elseif game_status == "map" then 
+			elseif game_status == "map" then
 				love.audio.play(media.sounds.paper,0);
 			end;
 			game_status="neutral"
@@ -2059,7 +2058,7 @@ function playingState.keypressed(key, unicode)
 			trace.clear_rounded();
 			hang = 0;
 		end;
-   
+
 		if global.status == "peace" then
 			for i=1,chars do
 				if key == tostring(i) and game_status ~= "moving" and chars_mobs_npcs[i].status == 1 then
@@ -2068,7 +2067,7 @@ function playingState.keypressed(key, unicode)
 						find_the_path = 0;
 						path_status = 0;
 						current_mob = i;
-						for i = 1, chars do 
+						for i = 1, chars do
 							trace.first_watch(current_mob);
 						end;
 						trace.chars_around();
@@ -2079,14 +2078,14 @@ function playingState.keypressed(key, unicode)
 						current_mob = i;
 						chats.load ();
 					end;
-				end	
+				end
 			end;
 		end;
-   
+
 		if key == "g" and game_status == "path_finding" then
 			modepf=-1*modepf;
 		end;
-		  
+
 		if key == "v" and game_status == "sensing" then --FIXME DEBUG hurt
 			for i=1,chars do
 				damage.HPminus(i,10);
@@ -2096,13 +2095,13 @@ function playingState.keypressed(key, unicode)
 end;
 
 function playingState.mousereleased (x,y,button)
-	
+
 	if (button == "l" or button == "r") and (game_status == "inventory" or game_status == "alchemy"  or game_status == "picklocking" or game_status == "crafting") then
 		x,y = helpers.centerObject(media.images.inv1);
 		inv_add_x = x+12;
-		inv_add_y = y-25;	
+		inv_add_y = y-25;
 	end;
-	
+
 	if button == "r"  then
 		show_inventory_tips = 0;
 		show_monsterid_tip = 0;
@@ -2110,7 +2109,7 @@ function playingState.mousereleased (x,y,button)
 		show_warbook_tips = 0;
 		loveframes.util.RemoveAll();
 	end;
-	
+
 	if button == "l" and game_status == "mindgame" then
 		local x,y = helpers.centerObject(media.images.map);
 		local chatlog_height = 0;
@@ -2130,11 +2129,11 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 	end;
-	
+
 	--if button == "l" and game_status == "skills" and mX >= 600 and mX <= 690 and mY >= 600 and mY <= 630 then
 		--helpers.applySkills (current_mob);
 	--end;
-	
+
 	 if button == "l" and game_status == "comic" then
 		if page < #comics_ttx[current_comic] then
 			loveframes.util.RemoveAll();
@@ -2144,7 +2143,7 @@ function playingState.mousereleased (x,y,button)
 			game_status = "neutral"
 		end;
     end;
-	
+
 	if button == "l" and game_status == "chat" then
 		local function clearText()
 			chat_log = {};
@@ -2253,15 +2252,15 @@ function playingState.mousereleased (x,y,button)
 					price = price*math.ceil(math.max(1000,chars_mobs_npcs[current_mob].lvl_trading*chars_mobs_npcs[current_mob].num_trading/50));
 					if helpers.payGold(price) then
 						calendar.add_time_interval(calendar.delta_temple_heals);
-						
+
 						love.audio.play(media.sounds["spell_heal"], 0);
 						helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.healed[chars_mobs_npcs[current_mob].gender]);
-						
+
 						chars_mobs_npcs[current_mob].hp = chars_mobs_npcs[current_mob].hp_max;
 						chars_mobs_npcs[current_mob].sp = chars_mobs_npcs[current_mob].sp_max;
 						chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st_max;
 						chars_mobs_npcs[current_mob].rt = 200;
-						
+
 						chars_mobs_npcs[current_mob].bleeding = 0;
 						chars_mobs_npcs[current_mob].flame_power=0;
 						chars_mobs_npcs[current_mob].flame_dur=0;
@@ -2287,7 +2286,7 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[current_mob].blind_dur = 0;
 						chars_mobs_npcs[current_mob].curse = 0;
 						chars_mobs_npcs[current_mob].deadlyswarm = 0;
-						
+
 						chars_mobs_npcs[current_mob].mgt_debuff_power=0;
 						chars_mobs_npcs[current_mob].mgt_debuff_dur=0;
 						chars_mobs_npcs[current_mob].enu_debuff_power=0;
@@ -2310,7 +2309,7 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[current_mob].luk_debuff_dur=0;
 						chars_mobs_npcs[current_mob].ac_debuff_power=0;
 						chars_mobs_npcs[current_mob].ac_debuff_dur=0;
-						
+
 						chars_mobs_npcs[current_mob].reye = 1;
 						chars_mobs_npcs[current_mob].leye = 1;
 						chars_mobs_npcs[current_mob]["arms_health"].rh = 1;
@@ -2469,7 +2468,7 @@ function playingState.mousereleased (x,y,button)
 					global.current_nlp = 1;
 					global.current_connection = 1;
 					global.mindgame_attempts = mindgame.attempts[chars_mobs_npcs[current_mob].lvl_diplomacy] + math.ceil(chars_mobs_npcs[current_mob].chr/20);
-					global.mindgame_counter = 0; 
+					global.mindgame_counter = 0;
 					game_status = "mindgame";
 					draw.mindgameButtons();
 				elseif chats.rules[index][current_questions[linenumber]].answer == 7001 then
@@ -2481,7 +2480,7 @@ function playingState.mousereleased (x,y,button)
 					--global.status = "battle"; --time to charm stun sleep paralyse
 					--call guards
 					--may be per party?
-				elseif chats.rules[index][current_questions[linenumber]].answer == 7777 then 
+				elseif chats.rules[index][current_questions[linenumber]].answer == 7777 then
 					loveframes.util.RemoveAll();
 					chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"]["default"];
 					game_status = "neutral";
@@ -2492,13 +2491,13 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 	end;
-	
+
 	if button == "l"  and game_status == "warbook" then
 		blockturn = 10;
 		local x,y = helpers.centerObject(media.images.sbook);
 		missle_type = helpers.bookCircles(page);
 		if missle_type then
-			helpers.ifTrickIsCastable ();	
+			helpers.ifTrickIsCastable ();
 		end;
 		if mX>x+8 and mX<x+100 and mY>y and mY<y+50 then
 			utils.printDebug("sword axe falgpole");
@@ -2518,13 +2517,13 @@ function playingState.mousereleased (x,y,button)
 			love.audio.play(media.sounds.bookpage, 0);
 		end;
 	end;
-	
+
 	if button == "l"  and game_status == "spellbook" then
 		blockturn = 10;
 		local x,y = helpers.centerObject(media.images.sbook);
 		missle_type = helpers.bookCircles(page);
 		if missle_type then
-			helpers.ifSpellIsCastable ("spellbook");	
+			helpers.ifSpellIsCastable ("spellbook");
 		end;
 		--140,180
 		if mX>x+8 and mX<x+100 and mY>y and mY<y+50 then
@@ -2597,18 +2596,18 @@ function playingState.mousereleased (x,y,button)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "thsword" or chars_mobs_npcs[current_mob]["equipment"].lh==0)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "poleaxe"  or chars_mobs_npcs[current_mob]["equipment"].lh==0)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "staff"  or chars_mobs_npcs[current_mob]["equipment"].lh==0)
-		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "flagpole" or chars_stats[current_mob].lvl_flagpoles>=3) 
+		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "flagpole" or chars_stats[current_mob].lvl_flagpoles>=3)
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "cantbeequiped"
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "none"
-		and inventory_ttx[list[holding_smth].ttxid].skill ~= "alchemy" 
+		and inventory_ttx[list[holding_smth].ttxid].skill ~= "alchemy"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local hasskill = 0;
 			local tmpskill = "chars_stats[" .. current_mob .. "].lvl_" .. inventory_ttx[list[holding_smth].ttxid].skill;
 			local tmpskillname=inventory_ttx[list[holding_smth].ttxid].skill;
 			local tmpskillname2=loadstring("return " .. "lognames.skillsr." .. tmpskillname)();
 			local needskill = loadstring("return " .. tmpskill)();
-			if chars_mobs_npcs[current_mob]["equipment"].rh == 0 and needskill > 0 
-			and (tmpskillname == "sword" or tmpskillname == "axe" or tmpskillname == "flagpole" or tmpskillname == "crushing" 
+			if chars_mobs_npcs[current_mob]["equipment"].rh == 0 and needskill > 0
+			and (tmpskillname == "sword" or tmpskillname == "axe" or tmpskillname == "flagpole" or tmpskillname == "crushing"
 			or tmpskillname == "dagger" or tmpskillname == "stuff") then
 				local tmphold = chars_mobs_npcs[current_mob]["equipment"].rh
 				if dragfrom == "char" then
@@ -2725,7 +2724,7 @@ function playingState.mousereleased (x,y,button)
 		if helpers.inSlot("armor") and chars_mobs_npcs[current_mob]["equipment"].armor == 0
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "cantbeequiped"
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "none"
-		and inventory_ttx[list[holding_smth].ttxid].skill ~= "alchemy" 
+		and inventory_ttx[list[holding_smth].ttxid].skill ~= "alchemy"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local hasskill = 0;
 			local tmpskill = "chars_stats[" .. current_mob .. "].lvl_" .. inventory_ttx[list[holding_smth].ttxid].skill;
@@ -2795,7 +2794,7 @@ function playingState.mousereleased (x,y,button)
 		end;
 --helm
 		if helpers.inSlot("head") and chars_mobs_npcs[current_mob]["equipment"].head == 0
-		and (inventory_ttx[list[holding_smth].ttxid].class == "helm" or inventory_ttx[list[holding_smth].ttxid].class == "hat" or inventory_ttx[list[holding_smth].ttxid].class == "crown") 
+		and (inventory_ttx[list[holding_smth].ttxid].class == "helm" or inventory_ttx[list[holding_smth].ttxid].class == "hat" or inventory_ttx[list[holding_smth].ttxid].class == "crown")
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			local tmpclass = inventory_ttx[list[holding_smth].ttxid].class;
 			local tmpsubclass = inventory_ttx[list[holding_smth].ttxid].subclass;
@@ -2880,7 +2879,7 @@ function playingState.mousereleased (x,y,button)
 			local tmpsubclass = inventory_ttx[list[holding_smth].ttxid].subclass;
 			if chars_mobs_npcs[current_mob]["equipment"].cloak == 0 then
 				tmphold = chars_mobs_npcs[current_mob]["equipment"].cloak;
-				if dragfrom == "char" then	
+				if dragfrom == "char" then
 					chars_mobs_npcs[current_mob]["equipment"].cloak = holding_smth;
 				elseif dragfrom == "bag" then
 					from_bag_to_equip();
@@ -2903,7 +2902,7 @@ function playingState.mousereleased (x,y,button)
 			local tmpsubclass = inventory_ttx[list[holding_smth].ttxid].subclass;
 			if chars_mobs_npcs[current_mob]["equipment"].belt == 0 then
 				tmphold = chars_mobs_npcs[current_mob]["equipment"].belt;
-				if dragfrom == "char" then	
+				if dragfrom == "char" then
 					chars_mobs_npcs[current_mob]["equipment"].belt = holding_smth;
 				elseif dragfrom == "bag" then
 					from_bag_to_equip();
@@ -2983,7 +2982,7 @@ function playingState.mousereleased (x,y,button)
 				holding_smth = 0;
 			end;
 		end;
-		
+
 		if  helpers.inSlot("ring2") and chars_mobs_npcs[current_mob]["equipment"].ring2
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
@@ -3004,7 +3003,7 @@ function playingState.mousereleased (x,y,button)
 				holding_smth = 0;
 			end;
 		end;
-		
+
 		if  helpers.inSlot("ring3") and chars_mobs_npcs[current_mob]["equipment"].ring3
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
@@ -3025,7 +3024,7 @@ function playingState.mousereleased (x,y,button)
 				holding_smth = 0;
 			end;
 		end;
-		
+
 		if helpers.inSlot("ring4") and chars_mobs_npcs[current_mob]["equipment"].ring4
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
@@ -3046,7 +3045,7 @@ function playingState.mousereleased (x,y,button)
 				holding_smth = 0;
 			end;
 		end;
-		
+
 		if helpers.inSlot("ring5") and chars_mobs_npcs[current_mob]["equipment"].ring5
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
@@ -3067,7 +3066,7 @@ function playingState.mousereleased (x,y,button)
 				holding_smth = 0;
 			end;
 		end;
-		
+
 		if helpers.inSlot("ring6") and chars_mobs_npcs[current_mob]["equipment"].ring6
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "ring"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
@@ -3107,7 +3106,7 @@ function playingState.mousereleased (x,y,button)
 			holding_smth = 0;
 			slot = 0;
 		end;
---add tool to picklocking	
+--add tool to picklocking
 		if helpers.inSlot("picklock") and picklock[current_mob].picklock == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "picklock"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1
@@ -3123,7 +3122,7 @@ function playingState.mousereleased (x,y,button)
 			holding_smth=0;
 			slot=0;
 		end;
---add tool to picklocking	
+--add tool to picklocking
 		if helpers.inSlot("traptool") and picklock[current_mob].traptool == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "traptool"
 		and picklock[current_mob].traptool==0
@@ -3138,7 +3137,7 @@ function playingState.mousereleased (x,y,button)
 			holding_smth=0;
 			slot=0;
 		end;
---add tool to picklocking	
+--add tool to picklocking
 		if helpers.inSlot("forcer") and picklock[current_mob].forcer == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "forcer"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1
@@ -3162,7 +3161,7 @@ function playingState.mousereleased (x,y,button)
 		if helpers.inSlot("tool1") --anyone can use cauldron
 		and alchlab[current_mob].tool1==0
 		and inventory_ttx[list[holding_smth].ttxid].class == "alchtool"
-		and inventory_ttx[list[holding_smth].ttxid].subclass == "cauldron" 
+		and inventory_ttx[list[holding_smth].ttxid].subclass == "cauldron"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1
 		then
 			if dragfrom=="char" then
@@ -3210,7 +3209,7 @@ function playingState.mousereleased (x,y,button)
 			holding_smth=0;
 			slot=0;
 		end;
---mill  
+--mill
 		if helpers.inSlot("tool2")
 		and alchlab[current_mob].tool2 == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "alchtool"
@@ -3278,7 +3277,7 @@ function playingState.mousereleased (x,y,button)
 			holding_smth = 0;
 			slot = 0;
 		end;
--- components	
+-- components
 		if helpers.inSlot("comp7") --anyone can use mills
 		and alchlab[current_mob].comp7 == 0 and alchlab[current_mob].comp8 == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "component"
@@ -3392,7 +3391,7 @@ function playingState.mousereleased (x,y,button)
 			holding_smth = 0;
 			slot = 0;
 		end;
-	
+
 		if helpers.inSlot("comp3")
 		and alchlab[current_mob].comp3 == 0 and inventory_ttx[list[holding_smth].ttxid].class == "component" and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			if dragfrom == "char" then
@@ -3431,7 +3430,7 @@ function playingState.mousereleased (x,y,button)
 			holding_smth = 0;
 			slot = 0;
 		end;
-	
+
 		if helpers.inSlot("comp6")
 		and alchlab[current_mob].comp6 == 0 and inventory_ttx[list[holding_smth].ttxid].class == "component" and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			if dragfrom == "char" then
@@ -3452,10 +3451,10 @@ function playingState.mousereleased (x,y,button)
 		end;
 		helpers.findNonFreeSpaceAtInv (current_mob,dragfrom,false,false);
 	end;
-  
+
 	if button == "l" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting") and holding_smth>0 --wrong area
 	--and ((mX<=inv_add_x and mY <= y + 720) or (mX >= x+1102 and mY <= y+720) or (mX <= x-40)
-	--or mY<=(inv_add_y-16) or (mY >= y + 502 and mY <= y+720) or (mX >= x+458 and mY >= y + 720)) 
+	--or mY<=(inv_add_y-16) or (mY >= y + 502 and mY <= y+720) or (mX >= x+458 and mY >= y + 720))
 	and (mX < x or mX > x + media.images.inv1:getWidth () or mY < y-50 or mY > y-50+media.images.inv1:getHeight ())
 	then
 		utils.printDebug("wrong area");
@@ -3483,10 +3482,10 @@ function playingState.mousereleased (x,y,button)
 			end;
 		end;
 	end;
-	
-	
 
-	if button == "l" and (game_status == "inventory" or game_status == "alchemy"  or game_status == "picklocking" or game_status == "crafting" ) and holding_smth>0 
+
+
+	if button == "l" and (game_status == "inventory" or game_status == "alchemy"  or game_status == "picklocking" or game_status == "crafting" ) and holding_smth>0
 	and mX>inv_add_x and mX<=inv_add_x+11*32 and mY>inv_add_y and mY<=inv_add_y+15*32 then
 		some_crap_under_cursor=0;
 		inv_quad_new_x = math.ceil((mX-inv_add_x)/32);
@@ -3535,7 +3534,7 @@ function playingState.mousereleased (x,y,button)
 						bag_found = true;
 					end
 				end]]
-				
+
 				bagid = helpers.whatBag(current_mob)
 				if not bagid then
 					bagid = helpers.trapInFrontOf(current_mob)
@@ -3543,7 +3542,7 @@ function playingState.mousereleased (x,y,button)
 				if bagid then
 					bag_found = true;
 				end;
-				
+
 				table.insert(chars_mobs_npcs[current_mob]["inventory_list"], {ttxid=bags_list[bagid][holding_smth].ttxid, q=bags_list[bagid][holding_smth].q,w=bags_list[bagid][holding_smth].w,e=bags_list[bagid][holding_smth].e,r=bags_list[bagid][holding_smth].r,h=bags_list[bagid][holding_smth].h})
 				helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.taken[chars_mobs_npcs[current_mob].gender] .. inventory_ttx[bags_list[bagid][holding_smth].ttxid].title .. helpers.takenFromWhere(bags_list[bagid].typ));
 				inventory_bag[current_mob][inv_quad_new_y][inv_quad_new_x] = #chars_mobs_npcs[current_mob]["inventory_list"];
@@ -3575,7 +3574,7 @@ function playingState.mousereleased (x,y,button)
 			helpers.renumber (holding_smth,current_mob);
 			holding_smth = 0;
 		elseif some_crap_under_cursor ~= 0 then
-			if dragfrom == "char" then  
+			if dragfrom == "char" then
 				if slot ~= 0 then
 					chars_mobs_npcs[current_mob]["equipment"][slot] = holding_smth;
 				else
@@ -3615,7 +3614,7 @@ function playingState.mousereleased (x,y,button)
 				bag_found = true;
 			end;
 		end;]]
-		
+
 		bagid = helpers.whatBag(current_mob)
 		if not bagid then
 			bagid = helpers.trapInFrontOf(current_mob)
@@ -3623,7 +3622,7 @@ function playingState.mousereleased (x,y,button)
 		if bagid then
 			bag_found = true;
 		end;
-		
+
 		if bagid then
 		else
 			some_crap_under_cursor=0;
@@ -3687,7 +3686,7 @@ function playingState.mousereleased (x,y,button)
 		end;
 	end;
 --/drop
-	if button == "l" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status =="crafting") and holding_smth>0 
+	if button == "l" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status =="crafting") and holding_smth>0
 	and mY>850 and mX>40 and mX<538
 	then --trading among chars
 		helpers.select_portrait();
@@ -3740,13 +3739,13 @@ function playingState.mousereleased (x,y,button)
 			love.audio.play(media.sounds.drink,0);
 			helpers.addToActionLog( chars_stats[current_mob].name .. " " ..
 			lognames.actions.drinked[chars_mobs_npcs[current_mob].gender] .. " «"
-			.. inventory_ttx[list[holding_smth].ttxid].title .. "» " 
+			.. inventory_ttx[list[holding_smth].ttxid].title .. "» "
 			.. lognames.actions.ofpower .. " " .. list[holding_smth].q);
 			table.remove(list,holding_smth);
 			for i=1,11 do
-				for h=1,15 do 
+				for h=1,15 do
 					if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i]<10000 then
-						bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1; 
+						bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1;
 					end;
 				end;
 			end;
@@ -3767,7 +3766,7 @@ function playingState.mousereleased (x,y,button)
 			sorttarget = dragfrom;
 			game_status = "inventory";
 		end;
-		
+
 		if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- eat smth
 		and inventory_ttx[list[holding_smth].ttxid].class == "food" then
 			holding_smth = 0;
@@ -3777,9 +3776,9 @@ function playingState.mousereleased (x,y,button)
 			helpers.addSatiation(index,value);
 			table.remove(list,holding_smth);
 			for i=1,11 do
-				for h=1,15 do 
+				for h=1,15 do
 					if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i]<10000 then
-						bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1; 
+						bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1;
 					end;
 				end;
 			end;
@@ -3790,7 +3789,7 @@ function playingState.mousereleased (x,y,button)
 				game_status = "restoring";
 			end;
 		end;
-		
+
 		if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- bomb
 		and inventory_ttx[list[holding_smth].ttxid].subclass == "bomb" then
 			bomb_smth = holding_smth;
@@ -3968,13 +3967,13 @@ function playingState.mousereleased (x,y,button)
 end;
 
 function  playingState.mousepressed(x,y,button)
-	
+
 	if (button == "l" or button == "r") and (game_status == "inventory" or game_status == "alchemy"  or game_status == "picklocking" or game_status == "crafting") then
 		x,y = helpers.centerObject(media.images.inv1);
 		inv_add_x = x+12;
 		inv_add_y = y-25;
 	end;
-	
+
 	local cursor_near = helpers.ifCursorIsNear ();
 	if button == "l" then
 		show_inventory_tips = 0;
@@ -3990,12 +3989,13 @@ function  playingState.mousepressed(x,y,button)
 			current_mob = helpers.cursorAtMobID (cursor_world_x,cursor_world_y);
 			helpers.cam_to_mob ();
 		else
-			helpers.cam_to_hex (cursor_world_x,cursor_world_y);
+		   ---- kstn
+		   helpers.cam_to_hex (cursor_world_x,cursor_world_y);
 		end;
 	end;
 	--mindgame
 	if button == "l" and game_status == "mindgame" and mindmissle then
-		if	global.mindgame_counter < global.mindgame_attempts then	
+		if	global.mindgame_counter < global.mindgame_attempts then
 			local array =  boomareas.smallRingArea(global.mindhero_x,global.mindhero_y); -- FIXME while not array
 			local x,y = helpers.centerObject(media.images.map);
 			for i=1,#array do
@@ -4061,7 +4061,7 @@ function  playingState.mousepressed(x,y,button)
 								phrase1 = chars_mobs_npcs[current_mob].name .. ": " .. chats.questionPerEtiquette("illkillyou",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette);
 							end;
 							--FIXME: tags needed. lich jars, exorcisms, etc.
-							if global.threats_level < _level and chars_mobs_npcs[current_mob].nature ~= "undead" and chars_mobs_npcs[current_mob].nature ~= "elemental" and chars_mobs_npcs[current_mob].nature ~= "golem" then 
+							if global.threats_level < _level and chars_mobs_npcs[current_mob].nature ~= "undead" and chars_mobs_npcs[current_mob].nature ~= "elemental" and chars_mobs_npcs[current_mob].nature ~= "golem" then
 								global.threats_level = _level;
 								mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle;
 								--local index = mindmissle - 9;
@@ -4075,7 +4075,7 @@ function  playingState.mousepressed(x,y,button)
 								end;
 								phrase2 = helpers.mobName(victim) .. ": " .. mindgame["flags_threat"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["threat"]][4];
 							else
-								local _rnd_emo = {3,3,3,4,3,3,3,3,3,10}; 
+								local _rnd_emo = {3,3,3,4,3,3,3,3,3,10};
 								_emo = math.random(1,#_rnd_emo);
 								local _power = 1;
 								if _emo == 1 then --FIXME add phrases
@@ -4104,7 +4104,7 @@ function  playingState.mousepressed(x,y,button)
 									love.audio.play(media.sounds.mindgame_shame,0);
 								end;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
-								phrase2 = "...";	
+								phrase2 = "...";
 							end;
 						elseif mindmissle == 31 then --info secrets
 							local _interested = false;
@@ -4142,13 +4142,13 @@ function  playingState.mousepressed(x,y,button)
 									break;
 								end;
 							end;
-							
+
 							for i=1,#chars_mobs_npcs[victim]["personality"]["current"]["secrets"]["known_secrets"] do
 								if chars_mobs_npcs[victim]["personality"]["current"]["secrets"]["known_secrets"][i] == global.secret_index then
 									_interested = false;
 								end;
 							end;
-							
+
 							if interested then
 								mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle;
 								if _emo == 1 then
@@ -4181,7 +4181,7 @@ function  playingState.mousepressed(x,y,button)
 								love.audio.play(media.sounds.mindgame_boring,0);
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3]+1;
 							end;
-							
+
 							table.remove(global.secrets_pull,global.current_secret);
 							if _remove then
 								table.remove(chars_mobs_npcs[victim]["personality"]["current"]["secrets"]["rumours"],_remove);
@@ -4245,7 +4245,7 @@ function  playingState.mousepressed(x,y,button)
 									break;
 								end;
 							end;
-							if _joke_unknown then --fixme 
+							if _joke_unknown then --fixme
 								table.insert(chars_mobs_npcs[victim]["personality"]["current"]["humor"]["known_jokes"],global.joke_index);
 								if chars_mobs_npcs[victim]["personality"]["alternative"] then
 									table.insert(chars_mobs_npcs[victim]["personality"]["alternative"]["humor"]["known_jokes"],global.joke_index);
@@ -4344,7 +4344,7 @@ function  playingState.mousepressed(x,y,button)
 										love.audio.play(media.sounds.mindgame_shame,0);
 									end;
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
-									
+
 								end;
 							else
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3]+1;
@@ -4399,7 +4399,7 @@ function  playingState.mousepressed(x,y,button)
 										if affronts_ttx[global.affront_index]["races"][i] == chars_mobs_npcs[victim]["personality"]["current"]["affronts"]["additional_tags"][h] then
 											_power = _power + 1;
 										end;
-									end;	
+									end;
 								end;
 								--profession
 								--guild
@@ -4414,7 +4414,7 @@ function  playingState.mousepressed(x,y,button)
 									end;
 								end;
 								if _power > 0 then
-									
+
 									mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle; --FIXME: 2 variants
 									local _emo = chars_mobs_npcs[victim]["personality"]["current"]["affronts"]["emo"];
 									if _emo == 1 then
@@ -4440,11 +4440,11 @@ function  playingState.mousepressed(x,y,button)
 									elseif _emo == 11 then
 										love.audio.play(media.sounds.mindgame_pity,0);
 									elseif _emo == 12 then
-										love.audio.play(media.sounds.mindgame_shame,0);	
+										love.audio.play(media.sounds.mindgame_shame,0);
 									end;
 									_power = math.ceil(_power*chars_mobs_npcs[victim]["personality"]["current"]["affronts"]["modifer"]);
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
-									
+
 								end;
 							else
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3]+1;
@@ -4495,7 +4495,7 @@ function  playingState.mousepressed(x,y,button)
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
 								phrase2 = ""; -- this person is...
 							elseif chars_mobs_npcs[victim].uid == _uid then
-								local _same_name_emo = {3,2,3,4,5,6,3,3,3,10}; 
+								local _same_name_emo = {3,2,3,4,5,6,3,3,3,10};
 								_emo = math.random(1,#_same_name_emo);
 								local _power = 1;
 								if _emo == 1 then --FIXME add phrases
@@ -4531,7 +4531,7 @@ function  playingState.mousepressed(x,y,button)
 								phrase2 = ""; --do not know him!
 							end;
 						elseif mindmissle == 36 then --music
-							
+
 						end;
 						table.insert(mindgame_log,phrase1);
 						if #mindgame_log > 6 then
@@ -4566,7 +4566,7 @@ function  playingState.mousepressed(x,y,button)
 			show_warbook_tips = 1;
 		end;
 	end;
-	
+
 	if  button == "l" and mX>global.screenWidth-180 and mX<global.screenWidth-130 and mY>global.screenHeight-110 and mY<global.screenHeight and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
 		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
 			game_status = "inventory";
@@ -4591,7 +4591,7 @@ function  playingState.mousepressed(x,y,button)
 			game_status="neutral";
 		end;
 	end;
-	
+
 	if  button == "l" and mX>=global.screenWidth-335 and mX<global.screenWidth-220 and mY>global.screenHeight-35 and mY<global.screenHeight and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
 		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
 			game_status="picklocking";
@@ -4613,7 +4613,7 @@ function  playingState.mousepressed(x,y,button)
 			game_status="neutral";
 		end;
 	end;
-	
+
 	if button == "r" and game_status == "buying" then
 		tip_title = "";
 		tip_classtitle = "";
@@ -4790,7 +4790,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 		end;
 	end;
-	
+
 	if button == "l" and game_status == "buying" then
 		if wares == "armor" then
 			local x,y = helpers.centerObject(media.images.shoparmor);
@@ -4818,7 +4818,7 @@ function  playingState.mousepressed(x,y,button)
 			for i =1,8 do
 				if mX > x+part*(i-1)+borders and mX < x+part*i-borders and mY > y and mY < y + 200 then
 					list = bars_list[current_bar];
-					tmpinv = 8+i;				
+					tmpinv = 8+i;
 					local price,preprice = helpers.countPrice(helpers.countModifiedPrice(inventory_ttx[bars_list[current_bar][tmpinv].ttxid].price),current_mob,victim,1,nil,nil,1,1);
 					if list[current_bar][tmpinv] ~= "none" and helpers.payGold(price) then
 						table.insert(bags_list,{x=chars_mobs_npcs[current_mob].x,y=chars_mobs_npcs[current_mob].y,xi= chars_mobs_npcs[current_mob].x,yi= chars_mobs_npcs[current_mob].y,typ="bag",opened=false,locked=false,dir=0,img=bag_img});
@@ -4832,7 +4832,7 @@ function  playingState.mousepressed(x,y,button)
 						end;
 						bars_list[current_bar][tmpinv] = "none";
 					end;
-					
+
 				end;
 			end;
 			if wares == "melee" then
@@ -5127,7 +5127,7 @@ function  playingState.mousepressed(x,y,button)
 		if bagid then
 			bag_found = true;
 		end;
-		
+
 		count_inv_tips = 0;
 		if mX > inv_add_x and mX < inv_add_x+11*32 and mY>inv_add_y and mY < inv_add_y+15*32 then
 			inv_quad_y = math.ceil((mX-inv_add_x)/32);
@@ -5207,7 +5207,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 		end;
 	end;
-	
+
 --btns under inventory frame
 
 	local x,y = helpers.centerObject(media.images.inv1);
@@ -5246,7 +5246,7 @@ function  playingState.mousepressed(x,y,button)
 		if bagid then
 			bag_found = true;
 		end;
-		
+
 		helpers.repackBag();
 	end;
 
@@ -5277,19 +5277,19 @@ function  playingState.mousepressed(x,y,button)
 --btns at alchemy --FIXME: btns at alchemy picklocking traptools
 
 
-	
+
 	sometable = {
 	x+520,y+100,
 	x+580,y+145
 	}
 	love.graphics.line(sometable);
-	
+
 	sometable = {
 	x+520,y+215,
 	x+580,y+260
 	}
 	love.graphics.line(sometable);
-	
+
 	sometable = {
 	x+520,y+330,
 	x+580,y+375
@@ -5517,13 +5517,13 @@ function  playingState.mousepressed(x,y,button)
 						if chanceToMakePicklock < rollChance then
 							local roll = math.random(1,3);
 							if roll == 1 and i > 1 and math.abs(keycode[i]-keycode[i-1])<=2 then
-								keycode[i-1] = math.max(0,tonumber(keycode[i-1]) - 1);	
+								keycode[i-1] = math.max(0,tonumber(keycode[i-1]) - 1);
 							end;
 							if roll == 2 and i < 10 and math.abs(keycode[i]-keycode[i+1])<=2 then
-								keycode[i+1] = math.max(0,tonumber(keycode[i+1]) - 1);	
+								keycode[i+1] = math.max(0,tonumber(keycode[i+1]) - 1);
 							end;
 							if roll == 3 and i < 10 and keycode[i] > 0 then
-								keycode[i] = math.max(0,tonumber(keycode[i]) - 1);	
+								keycode[i] = math.max(0,tonumber(keycode[i]) - 1);
 							end;
 						end;
 						--/low skill
@@ -5537,7 +5537,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 		end;
-	
+
 		if button == "l" and game_status == "picklocking" and helpers.whatBag (current_mob) and bags_list[helpers.whatBag(current_mob)].locktype == 2 and picklock[current_mob].picklock > 0 and inventory_ttx[list[picklock[current_mob].picklock].ttxid].subclass == "cpicklock" then
 			local lockcode = {};
 			local code = bags_list[bagid].lockcode;
@@ -5572,7 +5572,7 @@ function  playingState.mousepressed(x,y,button)
 					if successFactor >= opened_fingers*10 then
 						success = true;
 					end;
-					
+
 					if lock_elements[i] == 1 and success then
 						lock_elements[i] = 0;
 						love.audio.play(media.sounds.click,0);
@@ -5595,7 +5595,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 		end;
-		
+
 		if button == "wd" and game_status == "picklocking" and helpers.whatBag (current_mob) and bags_list[helpers.whatBag(current_mob)].locktype == 3 and picklock[current_mob].picklock > 0 and inventory_ttx[list[picklock[current_mob].picklock].ttxid].subclass == "dpicklock" then
 			local lockcode = {};
 			local code = bags_list[bagid].lockcode;
@@ -5661,7 +5661,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 			helpers.breakAllPicklocks (current_mob);
 		end;
-		
+
 		if button == "wu" and game_status == "picklocking" and helpers.whatBag (current_mob) and bags_list[helpers.whatBag(current_mob)].locktype == 3 and picklock[current_mob].picklock > 0 and inventory_ttx[list[picklock[current_mob].picklock].ttxid].subclass == "dpicklock" then
 			local lockcode = {};
 			local code = bags_list[bagid].lockcode;
@@ -5730,7 +5730,7 @@ function  playingState.mousepressed(x,y,button)
 			helpers.breakAllPicklocks (current_mob);
 		end;
 		-- use forcer
-		if button == "l" and game_status == "picklocking" and helpers.whatBag (current_mob) and bags_list[helpers.whatBag(current_mob)].locked 
+		if button == "l" and game_status == "picklocking" and helpers.whatBag (current_mob) and bags_list[helpers.whatBag(current_mob)].locked
 		and mX > x+395 and mX < x+425 and mY > y+155 and mY < y+185 then
 			local chance = chars_mobs_npcs[current_mob].mgt;
 			if picklock[current_mob].forcer > 0 then
@@ -5756,7 +5756,7 @@ function  playingState.mousepressed(x,y,button)
 			else
 				calendar.add_time_interval(calendar.delta_picklocking);
 				helpers.addToActionLog( lognames.actions.notenoughmight);
-			end;	
+			end;
 		end;
 		--disarming --FIXME: chest door ground, remove ground trap at disarming
 		if button == "l" and game_status == "picklocking" and ((helpers.whatBag (current_mob) and bags_list[helpers.whatBag(current_mob)].traped) or helpers.trapInFrontOf(current_mob)) then --and picklock[current_mob].picklock > 0 and inventory_ttx[list[picklock[current_mob].picklock].ttxid].subclass == "dpicklock" then
@@ -5803,7 +5803,7 @@ function  playingState.mousepressed(x,y,button)
 							trapcode[counter] = 0;
 							local tmp_trapcode = "";
 							for k=1,complication^2 do
-								tmp_trapcode = tmp_trapcode .. tostring(trapcode[k]);	
+								tmp_trapcode = tmp_trapcode .. tostring(trapcode[k]);
 							end;
 							bags_list[bagid].trapcode = tmp_trapcode;
 							if helpers.ifTrapDisarmed(bags_list[bagid].trapcode) then
@@ -5867,12 +5867,12 @@ function  playingState.mousepressed(x,y,button)
 						if temp_skillpoints >=	needpoints then
 							temporal_skills[i] = temporal_skills[i] + 1;
 							temp_skillpoints = temp_skillpoints - needpoints;
-						end;	
+						end;
 					end;
 				end;
 			end;
 		end;
-		
+
 		if button == "l" and game_status == "skills" then
 			local counter=0;
 			local counter2 = 0;
@@ -5928,12 +5928,12 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 		end;
-		
+
 	--/--btns at skills
 		if button == "l" -- pass turn
 		and mX>=global.screenWidth-50 and mX<=global.screenWidth
 		and mY>=global.screenHeight-160 and mY<=global.screenHeight-60
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding") 
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding")
 		and chars_mobs_npcs[current_mob].person=="char"
 		and chars_mobs_npcs[current_mob].control=="player"
 		then
@@ -5950,7 +5950,7 @@ function  playingState.mousepressed(x,y,button)
 
 		if button == "l"
 		and ((mX>=1100 and mX<=1220 and mY>=900 and mY<=1000) or (mX>=1150 and mX<=1190 and mY>=820 and mY<=880))
-		and global.status == "peace" 
+		and global.status == "peace"
 		and chars_mobs_npcs[current_mob].person=="char"
 		and chars_mobs_npcs[current_mob].control=="player"
 		then
@@ -5977,7 +5977,7 @@ function  playingState.mousepressed(x,y,button)
 			game_status = "neutral";
 			helpers.neutralWatch ();
 		end;
-		
+
 		if button == "l"  and mX > global.screenWidth-180 and mX < global.screenWidth-80 and mY > global.screenHeight-160 and mY < global.screenHeight-110 and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
 			helpers.harvestOne ();
 		end;
@@ -5995,7 +5995,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 		end;
-		
+
 		if button == "r"  and love.keyboard.isDown("lctrl") then
 			for i=1,chars do
 				if mX>i*125-95 and mX<i*125-95+80+40 and mY>global.screenHeight-110 and mY<=global.screenHeight then
@@ -6009,7 +6009,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 		end;
-		
+
 		if button == "l"  and global.status == "peace" then
 			local selected_portrait,trash = helpers.select_portrait();
 			if selected_portrait > 0 then
@@ -6024,9 +6024,9 @@ function  playingState.mousepressed(x,y,button)
 		end;
 
 		if button == "l"
-		and mX>=global.screenWidth-255 and mX<=global.screenWidth-170  
+		and mX>=global.screenWidth-255 and mX<=global.screenWidth-170
 		and mY >= global.screenHeight-160 and mY<=global.screenHeight-60
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook") 
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
 		and chars_mobs_npcs[current_mob].person == "char"
 		and chars_mobs_npcs[current_mob].control == "player"
 		and chars_stats[current_mob].spellbook == 1 then
@@ -6038,11 +6038,11 @@ function  playingState.mousepressed(x,y,button)
 				game_status = "neutral" ;
 			end;
 		end;
-		
+
 		if button == "l"
 		and mX>= global.screenWidth-330 and mX<=global.screenWidth-280
 		and mY>=global.screenHeight-160 and mY<=global.screenHeight-80
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook") 
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
 		and chars_mobs_npcs[current_mob].person == "char"
 		and chars_mobs_npcs[current_mob].control == "player" then
 			if game_status ~= "questbook" then
@@ -6053,11 +6053,11 @@ function  playingState.mousepressed(x,y,button)
 				game_status = "neutral" ;
 			end;
 		end;
-		
+
 		if button == "l"
 		and mX>=global.screenWidth-280 and mX<=global.screenWidth-230
 		and mY>=global.screenHeight-180 and mY<=global.screenHeight-160
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook") 
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
 		and chars_mobs_npcs[current_mob].person == "char"
 		and chars_mobs_npcs[current_mob].control == "player" then
 			if game_status ~= "warbook" then
@@ -6075,7 +6075,7 @@ function  playingState.mousepressed(x,y,button)
 			for i=1,#chars_mobs_npcs do
 				if chars_mobs_npcs[current_mob].control == "player" and chars_mobs_npcs[i].x == cursor_world_x and chars_mobs_npcs[i].y == cursor_world_y then
 					cursor_on_mob = 1;
-					previctim = chars_mobs_npcs[i].id	 ;	 
+					previctim = chars_mobs_npcs[i].id	 ;
 				else
 				end;
 			end;
@@ -6099,7 +6099,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 		--close combat
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 )) 
+		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 ))
 		and not love.keyboard.isDown("lctrl") then
 			helpers.turnMob(current_mob);
 			if chars_mobs_npcs[current_mob].rot==1 then
@@ -6122,13 +6122,13 @@ function  playingState.mousepressed(x,y,button)
 				chat (previctim);
 			end;
 		end;
-		
+
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 )) 
+		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 ))
 		and love.keyboard.isDown("lctrl") and chars_mobs_npcs[current_mob].num_thievery > 0 and global.status == "peace" then
 			steal(previctim);
 		end;
-		
+
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear() and helpers.cursorAtMob (cursor_world_x,cursor_world_y) --FIXME neutral is not neutral
 		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and game_status == "neutral" and global.status == "battle" then
 			helpers.turnMob(current_mob);
@@ -6148,8 +6148,8 @@ function  playingState.mousepressed(x,y,button)
 			game_status="attack";
 			damage.meleeAttack (damage.meleeAttackTool (current_mob));
 		end;
-		
-		if button == "r" and (game_status == "inventory" or game_status == "alchemy") and holding_smth>0 
+
+		if button == "r" and (game_status == "inventory" or game_status == "alchemy") and holding_smth>0
 		and mY>global.screenHeight-110 and mX>40 and mX<global.screenWidth-745
 		then
 			helpers.select_portrait();
@@ -6196,14 +6196,14 @@ function  playingState.mousepressed(x,y,button)
 					chars_mobs_npcs[previctim][tmp]=0;
 				end;
 				helpers.limitStats() love.audio.play(media.sounds.drink,0);
-				helpers.addToActionLog( chars_stats[previctim].name .. " " .. 
+				helpers.addToActionLog( chars_stats[previctim].name .. " " ..
 				lognames.actions.drinked[chars_mobs_npcs[previctim].gender] .. " «"
-				.. inventory_ttx[list[drink_smth].ttxid].title .. "» " 
+				.. inventory_ttx[list[drink_smth].ttxid].title .. "» "
 				.. lognames.actions.ofpower .. " " .. list[drink_smth].q);
 				table.remove(list,drink_smth);
 				for i=1,11 do
-					for h=1,15 do 
-						if bag[tmp_bagid][h][i]>drink_smth and bag[tmp_bagid][h][i]>0 and 
+					for h=1,15 do
+						if bag[tmp_bagid][h][i]>drink_smth and bag[tmp_bagid][h][i]>0 and
 							bag[tmp_bagid][h][i]<10000 then bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1;
 						end;
 					end;
@@ -6219,7 +6219,7 @@ function  playingState.mousepressed(x,y,button)
 
 		if button=="wu" then
 			if game_status == "path_finding" or (game_status == "sensing" and (missle_type=="spikes" or missle_type=="razors")) then
-				if cursor_on_mob==1 then 
+				if cursor_on_mob==1 then
 					global.wheeled=1;
 					if atk_direction>1 then
 						atk_direction=atk_direction-1;
@@ -6282,7 +6282,7 @@ function  playingState.mousepressed(x,y,button)
 		if love.mouse.isDown("l") and mY < global.screenHeight-160 and chars_mobs_npcs[current_mob].control=="player" and path_status==1 and game_status == "path_finding" and aim_on_mob==0  then --GO!
 			tmp= chars_mobs_npcs[current_mob].sprite .. "_walk"
 			mob_walk=loadstring("return " .. tmp)()
-			animation_walk = anim8.newAnimation(mob_walk[way_of_the_mob[#way_of_the_mob][6] ]("5-8",1), 0.075, "pauseAtEnd") 
+			animation_walk = anim8.newAnimation(mob_walk[way_of_the_mob[#way_of_the_mob][6] ]("5-8",1), 0.075, "pauseAtEnd")
 			if cursor_on_mob==1 and chars_mobs_npcs[previctim].status==1 then
 				going_to_hit=1
 			elseif cursor_on_mob==0 or chars_mobs_npcs[previctim].status<1 then
@@ -6302,7 +6302,7 @@ function  playingState.mousepressed(x,y,button)
 		   end;
 		end;
 --tricks
-					
+
 		if love.mouse.isDown("l") and mY < global.screenHeight-160
 		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 		and game_status == "sensing"
@@ -6329,14 +6329,14 @@ function  playingState.mousepressed(x,y,button)
 			if missle_type == "evilswarm" or missle_type == "bitingfan" then
 				helpers.beforeShoot();
 				game_status="shot";
-				damage.shoot();	
+				damage.shoot();
 			else
 				helpers.beforeShoot();
 				game_status="shot";
-				damage.shoot();	
+				damage.shoot();
 			end;
 		end;
---/tricks	
+--/tricks
 --spells
 		if missle_drive ~= "muscles" then
 			if global.status ~= "mindgame" then
@@ -6347,7 +6347,7 @@ function  playingState.mousepressed(x,y,button)
 					game_status="shot";
 					damage.shoot();
 				end;
-				
+
 				if love.mouse.isDown("l") and mY < global.screenHeight-160 and game_status == "sensing" and missle_type=="ritualofthevoid" then
 					helpers.beforeShoot();
 					boomx=cursor_world_x;
@@ -6515,7 +6515,7 @@ function  playingState.mousepressed(x,y,button)
 					helpers.beforeShoot();
 					damage.shoot();
 				end;
-				
+
 				if love.mouse.isDown("l") and mY < global.screenHeight-160
 				and chars_mobs_npcs[current_mob].control == "player"
 				and game_status == "sensing" and missle_type=="armageddon" then
@@ -6527,7 +6527,7 @@ function  playingState.mousepressed(x,y,button)
 					helpers.beforeShoot();
 					damage.shoot();
 				end;
-				
+
 				if love.mouse.isDown("l") and mY < global.screenHeight-160
 				and chars_mobs_npcs[current_mob].control == "player" and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
 				and game_status == "sensing" and missle_type=="roots" then
@@ -6581,7 +6581,7 @@ function  playingState.mousepressed(x,y,button)
 					damage.shoot();
 				end;
 			elseif global.status ~= "mindgame" then
-				
+
 			end;
 		end;
 --//spells
@@ -6590,15 +6590,15 @@ function  playingState.mousepressed(x,y,button)
 	if love.mouse.isDown("l") and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking") and holding_smth==0 and oil_smth==0 and drink_smth == 0 and bomb_smth == 0 and use_smth == 0 and scroll_smth == 0 then
 		for i=1,#global.slots do
 			local present = nil;
-			
+
 			if i <= 18 and game_status == "inventory" then
 				slotset="equipment";
-				present = chars_mobs_npcs[current_mob]["equipment"][global.slots[i]];	
+				present = chars_mobs_npcs[current_mob]["equipment"][global.slots[i]];
 			elseif i > 18 and i <= 36 and game_status == "alchemy" then
 				slotset="alchlab";
 				present = alchlab[current_mob][global.slots[i]];
 			elseif i > 36 and i <= 40 and game_status == "picklocking" then
-				
+
 				present = picklock[current_mob][global.slots[i]];
 			end;
 			if present and present > 0 and helpers.inSlot(global.slots[i]) then
@@ -6608,7 +6608,7 @@ function  playingState.mousepressed(x,y,button)
 				dragfrom = "char";
 				holding_smth = present;
 				if i <= 18 and game_status == "inventory" then
-					chars_mobs_npcs[current_mob]["equipment"][slot] = 0;	
+					chars_mobs_npcs[current_mob]["equipment"][slot] = 0;
 				elseif i > 18 and i <= 36 and game_status == "alchemy" then
 					alchlab[current_mob][slot] = 0;
 				elseif i > 36 and i <= 40 and game_status == "picklocking" then
@@ -6632,7 +6632,7 @@ function  playingState.mousepressed(x,y,button)
 	and mX<inv_add_x+11*32
 	and mY>inv_add_y
 	and mY<inv_add_y+15*32
-	then 
+	then
 		sorttarget="char";
 		oldsorttarget="char";
 		find_nonfree_space_at_inv ();
@@ -6654,7 +6654,7 @@ function  playingState.mousepressed(x,y,button)
 		local inv_quad_x=math.ceil((mY-inv_add_y)/32);
 		helpers.idAndRepair("char");
 	end;
-	
+
 	if love.mouse.isDown("r") --repairing and id at bag
 	and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "show_inventory")
 	and (helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) and not bags_list[bagid].locked)
@@ -6713,7 +6713,7 @@ function  playingState.mousepressed(x,y,button)
 			sfx.soundsOfInv("take","char");
 		end;
 	end;
-	
+
 	if love.mouse.isDown("l") -- splitting ammo
 	and love.keyboard.isDown("lctrl","rctrl")
 	and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting")
@@ -6754,7 +6754,7 @@ function  playingState.mousepressed(x,y,button)
 			sfx.soundsOfInv("take","bag");
 		end;
 	end;
- -- 
+ --
  	if love.mouse.isDown("l")
 	and game_status == "showinventory"
 	and mX > global.screenWidth/2 - 100
@@ -6763,7 +6763,7 @@ function  playingState.mousepressed(x,y,button)
 	and mY <= 400 then
 		global.showinventory_flag = "sell";
 	end;
-	
+
 	if love.mouse.isDown("l")
 	and game_status == "showinventory"
 	and mX > global.screenWidth/2 - 100
@@ -6772,7 +6772,7 @@ function  playingState.mousepressed(x,y,button)
 	and mY <= 500 then
 		global.showinventory_flag = "id";
 	end;
-	
+
 	if love.mouse.isDown("l")
 	and game_status == "showinventory"
 	and mX > global.screenWidth/2 - 100
@@ -6781,7 +6781,7 @@ function  playingState.mousepressed(x,y,button)
 	and mY <= 600 then
 		global.showinventory_flag = "repair";
 	end;
-	
+
 	if love.mouse.isDown("l") --selling from inventory
 	and game_status == "showinventory"
 	and mX>inv_add_x
@@ -6804,7 +6804,7 @@ function  playingState.mousepressed(x,y,button)
 				sell_smth=tmp12;
 			elseif global.showinventory_flag == "id" then
 				id_smth=tmp12;
-			elseif global.showinventory_flag == "repair" then 
+			elseif global.showinventory_flag == "repair" then
 				repair_smth=tmp12;
 			end;
 		elseif tmp12>10000 then
@@ -6819,15 +6819,15 @@ function  playingState.mousepressed(x,y,button)
 				sell_smth = bag[tmp_bagid][tmpxi][tmpyi];
 			elseif global.showinventory_flag == "id" then
 				id_smth = bag[tmp_bagid][tmpxi][tmpyi];
-			elseif global.showinventory_flag == "repair" then 
+			elseif global.showinventory_flag == "repair" then
 				repair_smth = bag[tmp_bagid][tmpxi][tmpyi];
 			end;
-			
+
 			inv_quad_x=tmpxi;
 			inv_quad_y=tmpyi;
 		end;
 		if sell_smth > 0 then
-			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][sell_smth].ttxid].class;		
+			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][sell_smth].ttxid].class;
 			tmpinv=sell_smth;
 			helpers.inv_tips_add();
 			if global.price > 0 and helpers.tradersBuysThisItem(victim,class) then
@@ -6847,7 +6847,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 		end;
 		if id_smth > 0 then
-			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][id_smth].ttxid].class;		
+			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][id_smth].ttxid].class;
 			tmpinv=id_smth;
 			helpers.inv_tips_add();
 			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][id_smth].ttxid].class;
@@ -6861,11 +6861,11 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			else
 				helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-				love.audio.play(media.sounds.error,0);	
-			end;	
+				love.audio.play(media.sounds.error,0);
+			end;
 		end;
 		if repair_smth > 0 then
-			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][repair_smth].ttxid].class;		
+			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][repair_smth].ttxid].class;
 			tmpinv=repair_smth;
 			helpers.inv_tips_add();
 			local class = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][repair_smth].ttxid].class;
@@ -6880,14 +6880,14 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			else
 				helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-				love.audio.play(media.sounds.error,0);	
+				love.audio.play(media.sounds.error,0);
 			end;
 		end;
 	end;
-	
+
 	if love.mouse.isDown("l") --selling from bag
-	and game_status == "showinventory" 
-	and global.showinventory_flag == "sell" 
+	and game_status == "showinventory"
+	and global.showinventory_flag == "sell"
 	and (helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) and not bags_list[bagid].locked)
 	and mX>inv_add_x+inv_part2
 	and mX<inv_add_x+11*32+inv_part2
@@ -6931,7 +6931,7 @@ function  playingState.mousepressed(x,y,button)
 				inv_quad_y=tmpyi;
 			end;
 			if sell_smth > 0 then
-				local class = inventory_ttx[list[sell_smth].ttxid].class;		
+				local class = inventory_ttx[list[sell_smth].ttxid].class;
 				tmpinv=sell_smth;
 				helpers.inv_tips_add();
 				if global.price > 0 and helpers.tradersBuysThisItem(victim,class) then
@@ -6954,7 +6954,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 			if id_smth > 0 then
-				local class = inventory_ttx[bags_list[bagid][id_smth].ttxid].class;		
+				local class = inventory_ttx[bags_list[bagid][id_smth].ttxid].class;
 				tmpinv=id_smth;
 				helpers.inv_tips_add();
 				local class = inventory_ttx[bags_list[bagid][id_smth].ttxid].class;
@@ -6968,11 +6968,11 @@ function  playingState.mousepressed(x,y,button)
 					end;
 				else
 					helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-					love.audio.play(media.sounds.error,0);	
-				end;	
+					love.audio.play(media.sounds.error,0);
+				end;
 			end;
 			if repair_smth > 0 then
-				local class = inventory_ttx[bags_list[bagid][repair_smth].ttxid].class;		
+				local class = inventory_ttx[bags_list[bagid][repair_smth].ttxid].class;
 				tmpinv=repair_smth;
 				helpers.inv_tips_add();
 				local class = inventory_ttx[bags_list[bagid][repair_smth].ttxid].class;
@@ -6987,12 +6987,12 @@ function  playingState.mousepressed(x,y,button)
 					end;
 				else
 					helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-					love.audio.play(media.sounds.error,0);	
+					love.audio.play(media.sounds.error,0);
 				end;
 			end;
 		end;
 	end;
-   
+
 	if love.mouse.isDown("l") --start dragging from inventory
 	and not love.keyboard.isDown("lctrl","rctrl")
 	and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting")
@@ -7009,7 +7009,7 @@ function  playingState.mousepressed(x,y,button)
 		sorttarget="char";
 		oldsorttarget="char";
 		dragfrom="char";
-		
+
 		local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
 		inv_quad_y=math.ceil((mX-inv_add_x)/32);
 		inv_quad_x=math.ceil((mY-inv_add_y)/32);
@@ -7079,7 +7079,7 @@ function  playingState.mousepressed(x,y,button)
 		if bagid then
 			bag_found = true;
 		end;
-		
+
 		local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
 		if tmp_bagid>0 then
 			inv_quad_y=math.ceil((mX-inv_part2-inv_add_x)/32);
@@ -7130,7 +7130,7 @@ function  playingState.mousepressed(x,y,button)
 	end;
 
 	if love.mouse.isDown("l")
-	and chars_mobs_npcs[current_mob].control=="player"	
+	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
 	and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
 	and trace.arrowStatus(current_mob)
@@ -7169,10 +7169,10 @@ function  playingState.mousepressed(x,y,button)
 	end;
 
 	if love.mouse.isDown("l") -- potion of curing sleep, charm, berserk, enslave, paralyze, stone, stun, freeze; resurrection, restoration; douse as bomb now BOMB
-	and chars_mobs_npcs[current_mob].control=="player"	
+	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
 	and trace.arrowStatus(current_mob)
-	and missle_type=="bottle" 
+	and missle_type=="bottle"
 	and bomb_smth > 0
 	and helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y)
 	and  helpers.ifCursorIsNear()
@@ -7184,9 +7184,9 @@ function  playingState.mousepressed(x,y,button)
 		bomb_smth = 0;
 		damage.shoot();
 	end;
-	
+
 	if love.mouse.isDown("l") --bombs
-	and chars_mobs_npcs[current_mob].control=="player"	
+	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
 	and  missle_type=="bottle"
 	and bomb_smth > 0
@@ -7200,7 +7200,7 @@ function  playingState.mousepressed(x,y,button)
 	end;
 
 	if love.mouse.isDown("l")
-	and chars_mobs_npcs[current_mob].control=="player"	
+	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
 	and math.sqrt((chars_mobs_npcs[current_mob].x-cursor_world_x)^2+(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<=5+chars_mobs_npcs[current_mob].lvl_air --not too far!
 	and missle_type=="jump"
@@ -7213,7 +7213,7 @@ function  playingState.mousepressed(x,y,button)
 		game_status="shot";
 		damage.shoot();
 	end;
-	 
+
 	if love.mouse.isDown("l")
 	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
@@ -7231,7 +7231,7 @@ function  playingState.mousepressed(x,y,button)
 		boomy = cursor_world_y;
 		damage.shoot();
 	end;
- 
+
 	if love.mouse.isDown("l")
 	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
@@ -7256,8 +7256,8 @@ function  playingState.mousepressed(x,y,button)
 	and helpers.cursorIsNear(cursor_world_x,cursor_world_y,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y)
 	and dlandscape_obj[cursor_world_x][cursor_world_y]~="fire"
 	and mlandscape_obj[cursor_world_x][cursor_world_y]==0
-	and heights_table[map[cursor_world_y][cursor_world_x] ]==0 
-	then 
+	and heights_table[map[cursor_world_y][cursor_world_x] ]==0
+	then
 		minecanbeinstalled=1; --FIXME to function
 		for i=1,6 do
 			if cursor_world_y/2==math.ceil(cursor_world_y/2) then
@@ -7289,7 +7289,7 @@ function  playingState.mousepressed(x,y,button)
 		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w==0
 		then
 			sorttarget=dragfrom;
-			
+
 			local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
 			if list[oil_smth].q<=50 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
 				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].e=list[oil_smth].q;
@@ -7319,7 +7319,7 @@ function  playingState.mousepressed(x,y,button)
 			if dragfrom=="char" then
 				helpers.renumber(oil_smth,current_mob);
 			end;
-			table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r = 1}); 
+			table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r = 1});
 			bag[tmp_bagid][inv_quad_x][inv_quad_y]=#list bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 			oil_smth=0;
 			if global.status == "battle" then
@@ -7376,7 +7376,7 @@ function  playingState.mousepressed(x,y,button)
 	and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w==0
 	then
 		sorttarget=dragfrom;
-		
+
 		local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
 		local oilpower = list[oil_smth].q;
 		if inventory_ttx[list2[tmp_bagid2][tmp_thing].ttxid].class == "ammo" then
@@ -7439,7 +7439,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 
 			sorttarget=dragfrom;
-			
+
 			local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
 			local tmp_inbag_id=bag2[tmp_bagid2][inv_quad_x2][inv_quad_y2];
 			if tmp_inbag_id>0 and tmp_inbag_id<10000 then
@@ -7547,7 +7547,7 @@ function find_free_space_at_inv ()
 					end;
 				end;
 			end;
- --/buggy 
+ --/buggy
 			if exchange == 1 then
 				helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.gave .. chars_stats[selected_char].name .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][holding_smth].ttxid].title);
 				table.remove(chars_mobs_npcs[tmp_bagid]["inventory_list"],holding_smth);
@@ -7559,8 +7559,8 @@ function find_free_space_at_inv ()
 					end;
 				end;
 				helpers.renumber(holding_smth,current_mob);
-				if sorttarget == "char" then 
-					for key,value in pairs(chars_mobs_npcs[tmp_bagid]["equipment"]) do 
+				if sorttarget == "char" then
+					for key,value in pairs(chars_mobs_npcs[tmp_bagid]["equipment"]) do
 						if value > holding_smth then
 							chars_mobs_npcs[tmp_bagid]["equipment"].value = chars_mobs_npcs[tmp_bagid]["equipment"].value-1;
 						end;
@@ -7570,12 +7570,12 @@ function find_free_space_at_inv ()
 			holding_smth=0;
 			find_nonfree_space_at_inv();
 		else
-	
+
 		end;
 	end;
 	holding_smth=0;
 end;
-  
+
 function potion_in_inventory_ttx ()
 	print("potion_in_inventory_ttx called");
 	for i = 1,#inventory_ttx do
@@ -7904,7 +7904,7 @@ function mob_moving()
 					chars_mobs_npcs[current_mob].rt = math.max(chars_mobs_npcs[current_mob].rt-standart_rtadd,0);
 					mob_plus ();
 				elseif global.status == "battle" or mob_range == 0 then --FIX LATER
-					if mob_is_going_to_hit==1 and helpers.ifMobIsNear (current_mob,previctim) and previctim ~= 0 
+					if mob_is_going_to_hit==1 and helpers.ifMobIsNear (current_mob,previctim) and previctim ~= 0
 					and chars_mobs_npcs[current_mob] ~= previctim and chars_mobs_npcs[previctim].status == 1 then
 						global.multiattack = damage.countMultiattack(current_mob);
 						game_status = "attack";
@@ -7967,7 +7967,7 @@ function steal (index)
 		steal_dir_coff=2;
 	end;
 	local chance_not_to_be_noticed = math.ceil(steal_dir_coff*chars_mobs_npcs[current_mob].dex) - delta_spd + math.ceil(chars_mobs_npcs[index].sns*penalty);
-	
+
 	if chars_mobs_npcs[index].blind > 0 or chars_mobs_npcs[index].sleep > 0 or chars_mobs_npcs[index].dark_gasp > 0 or (chars_mobs_npcs[index].reye == 0 and chars_mobs_npcs[index].leye == 0) then
 		chance_not_to_be_noticed = chance_not_to_be_noticed*2;
 	end;
@@ -7984,7 +7984,7 @@ function steal (index)
 	if roll <= chance_to_steal then
 		local items_to_remove = {};
 		if chars_mobs_npcs[current_mob].num_thievery >= 1 then
-		--gold	
+		--gold
 			local gold = chars_mobs_npcs[victim].gold;
 			if gold > 0 then
 				party.gold = party.gold + gold;
@@ -8026,7 +8026,7 @@ function steal (index)
 		if chars_mobs_npcs[current_mob].lvl_thievery >= 5 then
 			--gems,books,gobelens
 			for i=1,#chars_mobs_npcs[index].inventory_list do
-				if helpers.isBook(chars_mobs_npcs[index].inventory_list[i].ttxid) 
+				if helpers.isBook(chars_mobs_npcs[index].inventory_list[i].ttxid)
 				or helpers.isArt(chars_mobs_npcs[index].inventory_list[i].ttxid)
 				or helpers.isGem(chars_mobs_npcs[index].inventory_list[i].ttxid)
 				then
@@ -8104,13 +8104,13 @@ function missle_fly ()
 			elseif missle_type == "bottle" then
 			elseif magic.spell_tips[missle_type].form == "ball"
 			or magic.spell_tips[missle_type].form == "arrow" then
-			--or missle_type == "toxiccloud" then		
+			--or missle_type == "toxiccloud" then
 				boomx = missle_x;
 				boomy = missle_y; --lala
 				draw.boom();
 				fly_count = 1;
 			end
-	
+
 		end
 		if fly_count == #shot_line then
 			if missle_type == "bottle" then
@@ -8209,7 +8209,7 @@ function restoreRT ()
 	missle_type = "none";
 	missle_drive = "muscles";
 	trapped = 0;
-	ai_called = 0; 
+	ai_called = 0;
 	mob_is_going_to_hit = 0;
 	walked_before = 0;
 	global.timer200 = global.timer200+1;
@@ -8224,7 +8224,7 @@ function restoreRT ()
 			end;
 			if global.timer200 >= 200 then
 				if chars_mobs_npcs[i].person == "char" then -- oil at stuff expires while equiped
-					for key,value in pairs(chars_mobs_npcs[i]["equipment"]) do 
+					for key,value in pairs(chars_mobs_npcs[i]["equipment"]) do
 						if chars_mobs_npcs[i]["equipment"][key] > 0 then
 							if chars_mobs_npcs[i]["inventory_list"][chars_mobs_npcs[i]["equipment"][key]].e > 0 and chars_mobs_npcs[i]["inventory_list"][chars_mobs_npcs[i]["equipment"][key]].e < 1000 then
 								chars_mobs_npcs[i]["inventory_list"][chars_mobs_npcs[i]["equipment"][key]].e = chars_mobs_npcs[i]["inventory_list"][chars_mobs_npcs[i]["equipment"][key]].e-1;
@@ -8635,7 +8635,7 @@ function restoreRT ()
 					dlandscape_obj[a][b] = 0;
 					dlandscape_power[a][b] = 0;
 				end;
-				
+
 				if alandscape_duration[a][b] == 0 then
 					if alandscape_obj[a][b] == "poison" then
 						alandscape[a][b] = 0;
@@ -8644,8 +8644,8 @@ function restoreRT ()
 					alandscape_obj[a][b] = 0;
 					alandscape_power[a][b] = 0;
 				end;
-				
-				
+
+
 				if mlandscape_duration[a][b] > 0 then
 					mlandscape_duration[a][b] = mlandscape_duration[a][b]-1;
 				end;
@@ -8750,12 +8750,12 @@ function restoreRT ()
 					local demoralEffect = math.random(1,6);
 					if demoralEffect == 1 then -- panic
 						chars_mobs_npcs[i].control = "ai";
-						chars_mobs_npcs[i].panic = 3+math.abs(moral); 
+						chars_mobs_npcs[i].panic = 3+math.abs(moral);
 					elseif demoralEffect == 2 and chars_mobs_npcs[i].fear == 0 then --  dumbfounded (petrified)
 						chars_mobs_npcs[i].control = "ai";
 						chars_mobs_npcs[i].ai = "stay";
 					elseif demoralEffect == 3 and chars_mobs_npcs[i].fear == 0 then --fear
-						chars_mobs_npcs[i].fear = 3+math.abs(moral); 
+						chars_mobs_npcs[i].fear = 3+math.abs(moral);
 					end;
 				elseif moral > chars_mobs_npcs[i].base_moral*2 then
 					local roll = math.random(1,2);
@@ -8992,7 +8992,7 @@ function from_bag_to_equip()
 				bags[bagid][h][i]=bags[bagid][h][i]-1;
 			end;
 		end;
-	end; 
+	end;
 	if #bags_list[bagid] == 0 then
 		table.remove(bags_list,bagid);
 		table.remove(bags,bagid);
@@ -9057,7 +9057,7 @@ function playingState.draw()
 		--local x,y =  helpers.hexToPixels(shadows[i].x,shadows[i].y);
 		--love.graphics.circle("fill", x, y, 20);
 	--end;
-	
+
 	lightWorld.drawShadow();
 	lightWorld.drawGlow();
 	if global.weather == "rain" then
@@ -9066,7 +9066,7 @@ function playingState.draw()
 	if global.draw_temphud == 1 then --FIXME
 		love.graphics.draw(media.images.hud, 0,0);
 	end;
-	
+
 	if global.draw_interface == 1 then
 		draw.ui();
 	end;
@@ -9082,7 +9082,7 @@ function playingState.draw()
 		picklockJustBroken = picklockJustBroken - 1;
 		--love.graphics.draw(psPicklockBroken[1].ps, 550, 400);
     end;
-    
+
 	sometable = {
 
 	global.screenWidth/2 - 100 ,350,
@@ -9094,7 +9094,7 @@ function playingState.draw()
 
 	--love.graphics.line(sometable)
 
-		
+
 	 sometable = {
 
 	global.screenWidth/2 - 100 ,450,
@@ -9106,7 +9106,7 @@ function playingState.draw()
 
 	--love.graphics.line(sometable)
 
-		
+
 	sometable = {
 
 	global.screenWidth/2 - 285 ,250,
@@ -9118,9 +9118,9 @@ function playingState.draw()
 
 	--love.graphics.line(sometable)
 	loveframes.draw();
-	
+
 	local x,y = helpers.centerObject(media.images.inv1);
-	
+
  end;
 
 return playingState
