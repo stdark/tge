@@ -3774,7 +3774,9 @@ function playingState.mousereleased (x,y,button)
 			--love.audio.play(media.sounds.yami,0);
 			helpers.addToActionLog(chars_stats[current_mob].name .. lognames.actions.eaten[chars_mobs_npcs[current_mob].gender]);
 			local value = inventory_ttx[list[holding_smth].ttxid].a;
-			helpers.addSatiation(index,value);
+			if chars_mobs_npcs[index].basiliskbreath == 0 then
+				helpers.addSatiation(index,value);
+			end;
 			table.remove(list,holding_smth);
 			for i=1,11 do
 				for h=1,15 do 

@@ -1874,6 +1874,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].darkcontamination = 0;
 	chars_mobs_npcs[i].fingerofdeath = 0;
 	chars_mobs_npcs[i].curse = 0;
+	chars_mobs_npcs[i].basiliskbreath = 0;
 	
 	chars_mobs_npcs[i].flame_power = 0;
 	chars_mobs_npcs[i].flame_dur = 0;
