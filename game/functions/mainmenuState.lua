@@ -47,25 +47,32 @@ function mainmenuState.load()
 end;
 
 function mainmenuState.drawButtons ()
-	global.buttons.start_button = loveframes.Create("imagebutton");
-	global.buttons.start_button:SetImage(media.images.button10);
-	--global.buttons.start_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth(),200);
-	global.buttons.start_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth() - 250 ,200);
-	global.buttons.start_button:SizeToImage()
-	global.buttons.start_button:SetText(lognames.buttons.startgame);
-	global.buttons.start_button.OnClick = function(object)
-		global.grail_level,global.grail_x,global.grail_y,global.grail_maparray =  utils.generateHolyGrail ();
-		mainmenuState.startGame ();
-			end;
-	global.buttons.create_button = loveframes.Create("imagebutton");
-	global.buttons.create_button:SetImage(media.images.button10);
-	--global.buttons.create_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth(),350);
-	global.buttons.create_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth() - 250,350);
-	global.buttons.create_button:SizeToImage()
-	global.buttons.create_button:SetText(lognames.buttons.createparty);
-	global.buttons.create_button.OnClick = function(object)
-		mainmenuState.createParty ();
-			end;
+   local background_image = media.images.button10;                            -- background image for menu buttons
+   local x_position = (global.screenWidth - background_image:getWidth()) / 2; -- x position for menu images
+
+   -- start game
+   global.buttons.start_button = loveframes.Create("imagebutton");
+   global.buttons.start_button:SetImage(background_image);
+   --global.buttons.start_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth(),200);
+   -- global.buttons.start_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth() - 250 ,200);))
+   global.buttons.start_button:SetPos(x_position, 200);
+   global.buttons.start_button:SizeToImage()
+   global.buttons.start_button:SetText(lognames.buttons.startgame);
+   global.buttons.start_button.OnClick = function(object)
+      global.grail_level,global.grail_x,global.grail_y,global.grail_maparray =  utils.generateHolyGrail ();
+      mainmenuState.startGame ();
+   end;
+   -- create party
+   global.buttons.create_button = loveframes.Create("imagebutton");
+   global.buttons.create_button:SetImage(background_image);
+   --global.buttons.create_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth(),350);
+   -- global.buttons.create_button:SetPos(global.screenWidth - margin - media.images.button1:getWidth() - 250,350);
+   global.buttons.create_button:SetPos(x_position, 350);
+   global.buttons.create_button:SizeToImage()
+   global.buttons.create_button:SetText(lognames.buttons.createparty);
+   global.buttons.create_button.OnClick = function(object)
+      mainmenuState.createParty ();
+   end;
 end;
 
 function mainmenuState.update (dt)
