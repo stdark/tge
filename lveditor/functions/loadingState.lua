@@ -61,6 +61,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "hud_right_wall_tile", "img/hud/hud_right_wall_tile.png");
 			loader.newImage(media.images, "harvest", "img/harvest.dds");
 			loader.newImage(media.images, "img", "img/hex_landscape.dds");
+			loader.newImage(media.images, "imgsub", "img/hex_landscape.dds");
 			loader.newImage(media.images, "img_obj", "img/hex_foreground.dds");
 			loader.newImage(media.images, "img_back", "img/background.dds");
 			loader.newImage(media.images, "img_map", "img/map.png");

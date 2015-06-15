@@ -9014,6 +9014,7 @@ function playingState.draw()
 	lightWorld.update();
 	love.graphics.setFont(mainFont);
 	draw.background();
+	draw.submap();
 	draw.map();
 	--draw.numbers();
 	if chars_mobs_npcs[current_mob].control=="player" then --FIXME

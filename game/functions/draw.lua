@@ -46,6 +46,17 @@ function draw.map()
 	end;
 	love.graphics.setColor(255, 255, 255);
  end;
+
+function draw.submap()
+	for my=1, math.min(map_display_h, map_h-map_y) do
+		for mx=1, math.min(map_display_w, map_w-map_x) do
+			if submap[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] <= 20 then
+				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]]);
+			end;	        	
+		end;
+	end;
+	love.graphics.setColor(255, 255, 255);
+ end; 
  
 function draw.numbers()
 	for my=1, math.min(map_display_h, map_h-map_y) do

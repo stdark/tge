@@ -21,6 +21,7 @@ function playingState.load()
 		image_names[1] = "img/background.dds";
 		image_names[2] = "img/hex_landscape.dds";
 		image_names[3] = "img/hex_foreground.dds";
+		image_names[4] = "img/hex_landscape.dds";
 	end;
 	
 	--img_hud =  love.graphics.newImage("img/hud.png");
@@ -169,6 +170,7 @@ function playingState.load()
 	global.ctrl = -1;
 	global.hex = 1;
 	global.homeland = 0;
+	global.subhex = 1;
 	
 	global.homelands_colors = {};
 	
@@ -214,6 +216,15 @@ function playingState.load()
 	--for i=1,#visibility_table do
 		--print("VT",i,visibility_table[i])
 	--end;
+	--[[
+	submap={};
+	for mx = 1,map_w do
+		submap[mx] = {};
+		for my = 1,map_h do
+			submap[mx][my] = 41;
+		end;
+	end;
+	]]
 	drawnumbers = false;
 	love.window.setMode(1920, 1080, {resizable=false});
 	drawUIButtons();
@@ -328,6 +339,28 @@ function draw_hexbuttons ()
 		love.graphics.draw(media.images.img, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
 	end;
 	
+	if editor_status == "subhexes" then
+		for j=1,10 do
+			love.graphics.draw(media.images.imgsub, tile[row_status*10+j], btn_x+2, 240+(j-1)*40);
+			love.graphics.line( btn_x,  240+(j-1)*40-2,
+			btn_x+tile_w+8,  240+(j-1)*40-2,
+			btn_x+tile_w+8,  240+(j-1)*40-2+36,
+			btn_x,  240+(j-1)*40-2+36,
+			btn_x,  240+(j-1)*40-2);
+			if current_hex_type==j then
+				love.graphics.line( btn_x-2,  240+(j-1)*40,
+				btn_x+tile_w+10,  240+(j-1)*40,
+				btn_x+tile_w+10,  240+(j-1)*40+36,
+				btn_x-2,  240+(j-1)*40+36,
+				btn_x-2,  240+(j-1)*40);
+			end;
+			if row_status*10+current_hex_type>120 then
+				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-120], global.screenWidth-150, global.screenHeight-300);
+			end;
+		end;
+		love.graphics.draw(media.images.img, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
+	end;
+	
 	if editor_status == "background" then
 		for j=1,8 do
 			love.graphics.draw(media.images.img_back, background_[(row_back-1)*8+j], btn_x+2, 150+(j-1)*60,0,0.2 ,0.2);
@@ -343,12 +376,30 @@ function draw_hexbuttons ()
 end;
 
 function draw_buttons ()
-	if editor_status == "hexes" then
+	if editor_status == "hexes" or editor_status == "subhexes" then
 		cc=4;
 	elseif editor_status == "background" then
 		cc=2;
 	elseif editor_status == "help" then
 		cc=0;
+	end;
+	
+	if editor_status == "subhexes" then
+		local togglebuttons = {};
+		for i=1,cc do
+			for h=1,5 do        
+				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
+				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1],  row_buttons[(i-1)*5+h][2]);
+				togglebuttons[#togglebuttons]:SetHeight(40);
+				togglebuttons[#togglebuttons]:SetWidth(40);
+				togglebuttons[#togglebuttons]:SetText(5*(i-1)+h);
+				togglebuttons[#togglebuttons].OnClick = function(object)
+					row_status=(i-1)*5+h-1;
+					boxes();
+					draw_hexbuttons ();
+				end;
+			end;
+		end;
 	end;
 	
 	if editor_status == "hexes" then
@@ -361,12 +412,10 @@ function draw_buttons ()
 				togglebuttons[#togglebuttons]:SetWidth(40);
 				togglebuttons[#togglebuttons]:SetText(5*(i-1)+h);
 				togglebuttons[#togglebuttons].OnClick = function(object)
-					if editor_status == "hexes" then
-						row_status=(i-1)*5+h-1;
-						boxes();
-						draw_hexbuttons ();
-					elseif editor_status == "background" then
-					end;
+					row_status=(i-1)*5+h-1;
+					boxes();
+					draw_hexbuttons ();
+
 				end;
 			end;
 		end;
@@ -503,7 +552,7 @@ function centerObject(sprite)
 end;
 
 function draw_map()
-	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands") and hexes_status==1 then
+	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") and hexes_status==1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				if show_invisible and map[my+map_y][mx+map_x]<20  and map[my+map_y][mx+map_x]<300 then
@@ -516,17 +565,33 @@ function draw_map()
 	end;
  end;
  
+function draw_submap()
+	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") and global.subhex == 1 then
+		for my=1, math.min(map_display_h, map_h-map_y) do
+			for mx=1, math.min(map_display_w, map_w-map_x) do	
+				if show_invisible and submap[my+map_y][mx+map_x]<20  and submap[my+map_y][mx+map_x]<300 then
+					drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]]);
+				elseif submap[my+map_y][mx+map_x]>20 and submap[my+map_y][mx+map_x]<300 then
+					drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]]);
+				end;
+			end;
+		end;
+	end;
+ end;
+ 
 function resize_map ()
 	for my=1, map_h do
 		for mx=1, map_w do
 			if not map[my] then
 				map[my] = {};
+				submap[my] = {};
 				harvest_table[my] = {};
 				buildings_table[my] = {};
 				homelands_table = {};
 			end;
 			if not map[my][mx] then
 				map[my][mx] = current_hex_type;
+				submap[my][mx] = current_hex_type;
 				harvest_table[my][mx] = {0,0,{}};
 				buildings_table[my][mx] = 0;
 				homelands_table = 0;
@@ -542,6 +607,7 @@ function resize_map_lesser ()
 	for my=_limit1,1,-1 do
 		if my > map_h then
 			table.remove(map,my);
+			table.remove(submap,my);
 			table.remove(harvest_table,my);
 			table.remove(buildings_table,my);
 			table.remove(homelands_table,my);
@@ -551,6 +617,7 @@ function resize_map_lesser ()
 			for mx=_limit2,1,-1 do
 				if mx > map_w then
 					table.remove(map[my],mx);
+					table.remove(submap[my],mx);
 					table.remove(harvest_table[my],mx);
 					table.remove(buildings_table[my],mx);
 					table.remove(homelands_table[my],mx);
@@ -595,7 +662,7 @@ function passCheck (x,y)
 end;
 
 function draw_objects ()
-	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands") then
+	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") then
 		if map_x < 12 then
 			mxx = 1
 		else
@@ -690,7 +757,7 @@ function playingState.keypressed(key, unicode)
 	end;
 	
 	if  mX< global.screenWidth-274 then
-		if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" then
+		if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" then
 			if key == 'up' then
 				if map_y>2 then
 					map_y = map_y-2;
@@ -748,7 +815,11 @@ function playingState.keypressed(key, unicode)
 		boxes();
 	end;
     if love.keyboard.isDown("lctrl") and key == 'x'  then
-		hexes_status=-1*hexes_status;
+		if editor_status == "hexes" then
+			hexes_status=-1*hexes_status;
+		elseif editor_status == "subhexes" then
+			global.subhex = -1*global.subhex;
+		end;
 	end;
 	if love.keyboard.isDown("lctrl") and key == 'o'  then
 		object_status=-1*object_status;
@@ -958,9 +1029,20 @@ function playingState.keypressed(key, unicode)
 			current_building=math.min(2,tonumber(key));
 		end;
      end;
-	if love.keyboard.isDown("lctrl") and key == 'f' and editor_status == "hexes" then
-		flood_map();
+	if love.keyboard.isDown("lctrl") and key == 'f' then
+		if editor_status = "hexes" then
+			flood_map();
+		elseif editor_status = "subhexes" then
+			flood_submap();
+		end;
 	end;
+	if love.keyboard.isDown("lctrl") and key == 'u' then
+		loveframes.util.RemoveAll();
+		editor_status = "subhexes";
+		drawUIButtons();
+		draw_buttons ();
+	end;
+	
 	if love.keyboard.isDown("lctrl") and key == 'd' and editor_status == "background" then
 		flood_back();
 	end;
@@ -1152,6 +1234,129 @@ function playingState.mousepressed(x, y, button)
 			--global.digger = -1;
 	end;
 	
+	---SUBHEXES
+		
+	if love.mouse.isDown("r") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "subhexes" and global.copy == 1 then
+		global.copied = {};
+		if brush == 0 then
+			table.insert(global.copied,submap[cursor_world_y][cursor_world_x]);
+		elseif brush == 1 or brush == 2 or brush == 3 then
+			local rings = ringArea(cursor_world_x,cursor_world_y);
+			table.insert(global.copied,submap[cursor_world_y][cursor_world_x]);
+			for h=1,brush do
+				for i=1,#rings[h] do
+					if insideMap(rings[h][i].y,rings[h][i].x) then
+						table.insert(global.copied,submap[rings[h][i].y][rings[h][i].x]);
+					end;
+				end;
+			end;
+		elseif brush >= 4 and brush <= 10 then
+			local boomarea = squareArea(cursor_world_x,cursor_world_y,brush);
+			for i=1,#boomarea do
+				if insideMap(boomarea[i].y,boomarea[i].x) then
+					table.insert(global.copied,submap[boomarea[i].y][boomarea[i].x]);
+				end;
+			end;
+		
+		end;
+	end;
+		
+	if love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "subhexes" and global.copy == 1 and #global.copied > 0 and global.digger == -1 then
+		if brush == 0 then
+			if insideMap(cursor_world_y,cursor_world_x) then
+				submap[cursor_world_y][cursor_world_x] = global.copied[1];
+			end;
+		elseif brush == 1 or brush == 2 or brush == 3 then
+			local rings = ringArea(cursor_world_x,cursor_world_y);
+			local _tmp_array = global.copied;
+			if global.randomize_hexes == 1 then
+				_tmp_array = randomizeArray(global.copied);
+			end;
+			submap[cursor_world_y][cursor_world_x] = _tmp_array[1];
+			local counter = 2;
+			for h=1,brush do
+				for i=1,#rings[h] do
+					if insideMap(rings[h][i].y,rings[h][i].x) and _tmp_array[counter] then	
+						submap[rings[h][i].y][rings[h][i].x] = _tmp_array[counter];
+					end;
+					counter = counter + 1;
+				end;
+			end;
+		elseif brush >= 4 and brush <= 10 then
+			local boomarea = squareArea(cursor_world_x,cursor_world_y,brush);
+			local _tmp_array = global.copied;
+			if global.randomize_hexes == 1 then
+				_tmp_array = randomizeArray(global.copied);
+			end;
+			local counter = 1;
+			for i=1,#boomarea do
+				if insideMap(boomarea[i].y,boomarea[i].x) and _tmp_array[counter] then
+					submap[boomarea[i].y][boomarea[i].x] = _tmp_array[counter];
+				end;
+				counter = counter + 1;
+			end;
+		
+		end;
+	end;
+	
+	if love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "subhexes" and global.digger == -1 and global.copy == -1 then
+		local mapvalue = 1;
+		if brush == 0 then
+			if global.randomize_hexes == -1 then
+				map_value = current_hex_type+row_status*10;
+			else
+				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+				map_value = current_hex_type+rnd+row_status*10;
+			end;
+			if insideMap(cursor_world_y,cursor_world_x) then
+				submap[cursor_world_y][cursor_world_x] = map_value;
+			end;
+		elseif brush == 1 or brush == 2 or brush == 3 then
+			if global.randomize_hexes == -1 then
+				map_value = current_hex_type+row_status*10;
+			else
+				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+				map_value = current_hex_type+rnd+row_status*10;
+			end;
+			if insideMap(cursor_world_y,cursor_world_x) then
+				submap[cursor_world_y][cursor_world_x] = map_value;
+			end;
+			local rings = ringArea(cursor_world_x,cursor_world_y);
+			for h=1,brush do
+				for i=1,#rings[h] do
+					if global.randomize_hexes == -1 then
+						map_value = current_hex_type+row_status*10;
+					else
+						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+						map_value = current_hex_type+rnd+row_status*10;
+					end;
+					if insideMap(rings[h][i].y,rings[h][i].x) then
+						submap[rings[h][i].y][rings[h][i].x] = map_value;
+					end;
+				end;
+			end;
+		elseif brush >= 4 and brush <= 10 then
+			local boomarea = squareArea(cursor_world_x,cursor_world_y,brush);
+			for i=1,#boomarea do
+				if insideMap(boomarea[i].y,boomarea[i].x) then
+					if global.randomize_hexes == -1 then
+						map_value = current_hex_type+row_status*10;
+					else
+						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+						map_value = current_hex_type+rnd+row_status*10;
+					end;
+					submap[boomarea[i].y][boomarea[i].x] = map_value;
+				end;
+			end;
+		end;
+	elseif love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "subhexes" and global.digger == 1 then
+			startDiggers(cursor_world_x,cursor_world_y,global.moles,true);
+			--global.digger = -1;
+	end;
+		
+		
+	----SUBHEXES/
+	
 	if love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "buildings" then
 		map[cursor_world_y][cursor_world_x] = 300+current_building;
 		if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
@@ -1217,6 +1422,16 @@ function playingState.mousepressed(x, y, button)
 				boxes();
 			end;
 		end;
+	elseif editor_status == "subhexes" then
+		for j=1,10 do
+			if love.mouse.isDown("l") and mX > global.screenWidth-274 and mY<650 and mX>btn_x and mY>240+(j-1)*40-2 and mX<btn_x+tile_w+8 and mY<240+(j-1)*40-2+36 then
+				current_hex_type=j;
+				current_area_type=area_table[row_status*10+current_hex_type];
+				current_minimap_hex = minimap_table[row_status*10+current_hex_type];
+				current_area_stepsound = stepsound_table[row_status*10+current_hex_type];
+				boxes();
+			end;
+		end
 	elseif editor_status == "background" then
 		for j=1,8 do
 			if love.mouse.isDown("l") and mX>global.screenWidth-274 and mX>btn_x and mY>150+(j-1)*60 and mX<btn_x+tile_w and mY<150+(j-1)*60+back_size/5 then
@@ -1224,7 +1439,7 @@ function playingState.mousepressed(x, y, button)
 			end;
 		end;
 	end;
-	if global.ctrl == -1 and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "homelands") and global.digger == -1 then
+	if global.ctrl == -1 and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") and global.digger == -1 then
 		if button=="wd" then
 			global.copied = {};
 			if brush < 10 then
@@ -1240,7 +1455,7 @@ function playingState.mousepressed(x, y, button)
 			end;
 		end;
 	end;
-	if global.randomize_hexes == 1 and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "homelands") then
+	if global.randomize_hexes == 1 and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") then
 		if global.ctrl == 1 then
 			if button=="wu" then
 				if global.rnd_value < 10 then
@@ -1256,7 +1471,7 @@ function playingState.mousepressed(x, y, button)
 		end;
 	end;
 	
-	if global.ctrl == -1 and editor_status == "hexes" and global.digger == 1 then
+	if global.ctrl == -1 and (editor_status == "hexes" or editor_status == "subhexes") and global.digger == 1 then
 		if button=="wu" then
 			if global.moles < 6 then
 				global.moles = global.moles + 1;
@@ -1317,7 +1532,37 @@ function flood_map ()
 		end;
 	end;
 	array_of_map();
-	editor_status='hexes';
+end;
+
+
+function flood_submap ()
+	map_w=tonumber(input_size_w);
+	map_h=tonumber(input_size_h);
+	tile_counter=0;
+	while #all_ground_>0 do
+		table.remove(all_ground_,1);
+	end;
+	while #map>0 do
+		table.remove(map,1);
+	end;
+	for i=1, map_w do
+		submap[i]={};
+		for z=1, map_h do
+			if global.randomize_hexes == -1 and global.copy == -1 then
+				submap[i][z]= current_hex_type+row_status*10;
+			elseif global.randomize_hexes == 1 and global.copy == -1 then
+				local _rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+				submap[i][z]= current_hex_type+row_status*10+_rnd;
+			elseif global.copy == 1 and #global.copied > 0 then
+				local _tmp_array = global.copied;
+				if global.randomize_hexes == 1 then
+					_tmp_array = randomizeArray(global.copied);
+				end;
+				submap[i][z] = _tmp_array[1];--lala
+			end;
+		end;
+	end;
+	--array_of_map();
 end;
 
 function draw_cursor ()
@@ -1371,6 +1616,7 @@ function save()
 	 .. "\r\n" .. "leveltype=" .. '"' .. leveltype .. '"'
 	 .. "\r\n" .. "images_table=" .. Tserial.pack(image_names, true, false)
 	 .. "\r\n" .. "map=" .. Tserial.pack(map, true, false)
+	 .. "\r\n" .. "submap=" .. Tserial.pack(submap, true, false)
 	 .. "\r\n" .. "bgmap=" .. Tserial.pack(bgmap, true, false)
 	 .. "\r\n" .. "objects_table=" .. Tserial.pack(objects_table, true, false)
 	 .. "\r\n" .. "heights_table=" .. Tserial.pack(heights_table, true, false)
@@ -1904,7 +2150,11 @@ function drawUIButtons()
 	uibuttons[17]:SetWidth(100);
 	uibuttons[17]:SetText("flood_map");
 	uibuttons[17].OnClick = function(object)
-		flood_map();
+		if editor_status == "hexes" then
+			flood_map();
+		elseif editor_status == "subhexes" then
+			flood_submap();
+		end;
 	end;
 
 	uibuttons[18] = loveframes.Create("button")
@@ -1953,12 +2203,12 @@ function drawUIButtons()
 		global.copy = -1*global.copy;
 	end;
 	
-	uibuttons[20] = loveframes.Create("button")
-	uibuttons[20]:SetPos(1360,global.screenHeight-60);
-	uibuttons[20]:SetHeight(40);
-	uibuttons[20]:SetWidth(100);
-	uibuttons[20]:SetText("areas");
-	uibuttons[20].OnClick = function(object)
+	uibuttons[21] = loveframes.Create("button")
+	uibuttons[21]:SetPos(1360,global.screenHeight-60);
+	uibuttons[21]:SetHeight(40);
+	uibuttons[21]:SetWidth(100);
+	uibuttons[21]:SetText("areas");
+	uibuttons[21].OnClick = function(object)
 		editor_status = "homelands";
 		loveframes.util.RemoveAll();
 		drawUIButtons();
@@ -1966,9 +2216,30 @@ function drawUIButtons()
 		draw_homelands_buttons();
 	end;
 	
+	uibuttons[22] = loveframes.Create("button")
+	uibuttons[22]:SetPos(1480,global.screenHeight-120);
+	uibuttons[22]:SetHeight(40);
+	uibuttons[22]:SetWidth(100);
+	uibuttons[22]:SetText("subhex");
+	uibuttons[22].OnClick = function(object)
+		loveframes.util.RemoveAll();
+		editor_status = "subhexes";
+		drawUIButtons();
+		draw_buttons ();
+	end;
+	
+	uibuttons[23] = loveframes.Create("button")
+	uibuttons[23]:SetPos(1480,global.screenHeight-60);
+	uibuttons[23]:SetHeight(40);
+	uibuttons[23]:SetWidth(100);
+	uibuttons[23]:SetText("shubhex s/h");
+	uibuttons[23].OnClick = function(object)
+		global.subhex = -1*global.subhex;
+	end;
+	
 end;
 
-function startDiggers(x,y,count,flag)
+function startDiggers(x,y,count,flag) --FIXME submap only
 	if insideMap(cursor_world_x,cursor_world_y) then
 		if global.randomize_hexes == -1 then
 			map[cursor_world_y][cursor_world_x] = row_status*10+current_hex_type;
@@ -2083,7 +2354,6 @@ function flood_back()
 	end;
 end;
 
-
 function draw_papermap ()
 	local x,y = centerObject(media.images.img_map);
 	love.graphics.draw(media.images.img_map, x-120,y-50)
@@ -2113,9 +2383,6 @@ function draw_papermap ()
 		end;
 	end;
 end;
-
-
-
 
 function draw_papermap_ ()
 	local x,y = centerObject(media.images.img_map);
@@ -2273,12 +2540,13 @@ end;
 function playingState.draw()
 	love.graphics.setFont(mainFont);
 	draw_background();
+	draw_submap();
 	draw_map();
 	if find_the_path==1 then
 		path_finding(chars_mobs_npcs[current_mob][4],chars_mobs_npcs[current_mob][5]);
 	end;
 	draw_cursor();
-	if drawnumbers and (editor_status == "hexes" or editor_status == "buildings") then
+	if drawnumbers and (editor_status == "hexes" or editor_status == "subhexes" or editor_status == "buildings") then
 		draw_numbers();
 	end;
 	
@@ -2325,7 +2593,7 @@ function playingState.draw()
 		love.graphics.print("[LCTRL]+[J]/[ESC] - hex editor mode (режим редактирования гексагональной сетки)", 40,150);
 		love.graphics.print("[LCTRL]+[K] - background tile editor mode (режим редактирования подложки)", 40,170);
 		love.graphics.print("[LCTRL]+[B] - buildings mode (режим расстановки зданий)", 40,190);
-		love.graphics.print("[LCTRL]+[X] - hide/view hexes (показать/спрятать гексы)", 40,210);
+		love.graphics.print("[LCTRL]+[X] - hide/view (sub)hexes (показать/спрятать (суб)гексы)", 40,210);
 		love.graphics.print("[LCTRL]+[O] - hide/view objects (показать/спрятать объекты)", 40,230);
 		love.graphics.print("[LCTRL]+[V] - hide/view not rendering hexes (показать/спрятать невидимые гексы)", 40,250);
 		love.graphics.print("[LCTRL]+[Z] - randomize hexes (случайные гексы)", 40,270);
@@ -2343,7 +2611,8 @@ function playingState.draw()
 		love.graphics.print("can be used with randomize hexes (можно использовать со случайными гексами)");
 		love.graphics.print("[LCTRL]+WheelUp/WheelDown - quantity of randomizing hexes (количество рандомизируемых гекс)", 40,530);
 		love.graphics.print("[LCTRL]+[P] - mob areas (территории мобов)", 40,550);
-		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,570);
+		love.graphics.print("[LCTRL]+[U] - sub-hexmode (режим правки подкарты)", 40,550);
+		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,590);
 	end;
 	if editor_status == "background" then
 		love.graphics.print("tile type selected:", 100, 10);
@@ -2512,7 +2781,6 @@ end;
 function clearHerb(x,y)
 	harvest_table[y][x] = {0,0,{}};
 end;
-
 
 function checkHerbs()
 	for i=1,map_w do

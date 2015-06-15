@@ -6134,16 +6134,19 @@ function damage.damageOfLandscape(index,x,y)
 		local dmgland = dlandscape_power[y][x];
 		local name = helpers.mobName(index);
 		local dmg = damage.magicalRes (index,dmgland,"light");
-		if chars_mobs_npcs[index].locomotion == "walk" then
-			damage.HPminus(index,dmg);
-			helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[index].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.fire);
+		if chars_mobs_npcs[index].locomotion == "walk" and chars_mobs_npcs[index].nature == "undead" then
+			damage.HPminus(index,dmg,false);
+			helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[index].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.light);
 			dlandscape_duration[y][x] = dlandscape_duration[y][x] - 1;
-			if dlandscape_duration[y][x] == 0 then
-				dlandscape_power[y][x] = 0;
-				dlandscape_obj[y][x] = 0;
-				--boomareas.ashGround (a,b)
-				--helpers.clearLights (a,b);
-			end;
+		else
+			damage.HPplus(index,dmg,true);
+			dlandscape_duration[y][x] = dlandscape_duration[y][x] - 1;
+		end;
+		if dlandscape_duration[y][x] == 0 then
+			dlandscape_power[y][x] = 0;
+			dlandscape_obj[y][x] = 0;
+			--boomareas.ashGround (a,b)
+			--helpers.clearLights (a,b);
 		end;
 	end;
 	if dlandscape_obj[y][x] == "twister" or dlandscape_obj[y][x] == "twisterpart" then
