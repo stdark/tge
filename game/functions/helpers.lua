@@ -1955,6 +1955,8 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].painreflection=0;
 	chars_mobs_npcs[i].waterwalking=0;
 	chars_mobs_npcs[i].levitation=0;
+	chars_mobs_npcs[i].holyblood_power=0;
+	chars_mobs_npcs[i].holyblood_dur=0;
 	
 	chars_mobs_npcs[i].might_power = 0;
 	chars_mobs_npcs[i].might_dur = 0;

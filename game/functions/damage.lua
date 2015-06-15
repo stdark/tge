@@ -1494,6 +1494,15 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
+	if missle_type == "holyground" then
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for h=1,3 do
+			for i=1,#rings[h] do	
+				boomareas.holyGround (rings[h].x,rings[h],y,1,lvl[1],num[2])
+			end;
+		end;
+	end;
+	
 	if missle_type == "comete" then
 		if helpers.cursorAtCurrentMob (j,cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 			local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
@@ -1691,6 +1700,26 @@ function damage.multidamage () --FIXME two hexes
 							chars_mobs_npcs[j].flame_dur = dot_dur;
 							helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.flamed[chars_mobs_npcs[j].gender]);
 						end;
+					end;
+				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "friendlyfire" then -- add dmg
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for i=h,#rings do
+			for i=1,#rings[h] do
+				for j=1,#chars_mobs_npcs do
+					local relations = ai.fractionRelations (current_mob,j);
+					if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and relations < 0 then	
+						local dmg1 = math.ceil(damage.magicalRes (j,num[1]*lvl[1],"light")*math.abs(relations)/100);
+						local dmg2 = math.ceil(damage.magicalRes (j,num[1]*lvl[1],"fire")*math.abs(relations)/100);
+						local damageHP = dmg1+dmg2;
+						damage.HPminus(j,damageHP,true);
+						table.insert(damaged_mobs,j);
+						damage.mobDamaged(j,current_mob,damageHP);
+						exp_for_what(damageHP,current_mob);
 					end;
 				end;
 			end;
@@ -2301,6 +2330,10 @@ function damage.multidamage () --FIXME two hexes
 								chars_mobs_npcs[j].regeneration_dur = 0;
 								chars_mobs_npcs[j].regeneration_power = 0;
 								counter = counter - 1;
+							elseif chars_mobs_npcs[j].holyblood_dur > 0 then
+								chars_mobs_npcs[j].holyblood_dur = 0;
+								chars_mobs_npcs[j].holyblood_power = 0;
+								counter = counter - 1;	
 							end;
 							if chars_mobs_npcs[j].nature == "elemental" then
 								local dmg = math.min(dmg,chars_mobs_npcs[j].hp);
@@ -3706,6 +3739,21 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		--helpers.countMoral(i);
 	--end;
 	a_timer = 0;
+	
+	if chars_mobs_npcs[victim].holyblood_dur>0 and chars_mobs_npcs[current_mob].nature == "undead" then
+		local predmg = damage.magicalRes (current_mob,chars_mobs_npcs[victim].holyblood_power,"light");
+		local dmg = predmg;
+		if predmg >= chars_mobs_npcs[current_mob].hp then
+			dmg = chars_mobs_npcs[current_mob].hp - 1;
+		end;
+		damage.HPminus(i,dmg,true);
+		local power,dur = damage.applyConditionTwoFactors (index,math.random(1,chars_mobs_npcs[victim].holyblood_power),math.random(1,chars_mobs_npcs[victim].holyblood_dur),"holyblood","element",false,false,1,true);
+		if power > 0 and dur > 0 then
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].holyblood_power,power);
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].holyblood_dur,dur);
+		end;
+	end;
+	
 	local damaged_mobs = {};
 	table.insert(damaged_mobs,victim);
 	--damage.deathsWatcher(damaged_mobs);
@@ -4459,9 +4507,14 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.likeahero[chars_mobs_npcs[current_mob].gender]);
 	end;
 
-	if chars_mobs_npcs[current_mob].person=="char" then
-	
-	end
+	if missle_type=="holyblood" then
+		local dur = chars_mobs_npcs[current_mob].num_water+chars_mobs_npcs[current_mob].num_light;
+		local power = chars_mobs_npcs[current_mob].lvl_light + chars_mobs_npcs[current_mob].lvl_water;
+		chars_mobs_npcs[victim].holyblood_dur=dur;
+		chars_mobs_npcs[victim].holyblood_power=power;
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
+		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.likeasaint[chars_mobs_npcs[current_mob].gender]);
+	end;
 
 	if missle_type=="resurrect" then
 		love.audio.play(media.sounds.spell_resurrect,0);
@@ -5449,6 +5502,8 @@ function damage.deadNow (index)
 	chars_mobs_npcs[index].deadlyswarm = 0;
 	chars_mobs_npcs[index].darkcontamination = 0;
 	chars_mobs_npcs[index].fingerofdeath = 0;	
+	chars_mobs_npcs[index].holyblood_dur = 0;
+	chars_mobs_npcs[index].holyblood_power = 0;
 	if chars_mobs_npcs[index].person == "char" then
 		tmp_name_dead = chars_stats[index].name;
 	elseif chars_mobs_npcs[index].person=="mob" then
@@ -6041,4 +6096,59 @@ function damage.falseDamager(x,y,r)
 		new_damager_id = shored[math.random(1,#shored)];
 	end;
 	return id;
+end;
+
+function damage.damageOfLandscape(index,x,y)
+	if dlandscape_obj[y][x] == "fire" and dlandscape_duration[y][x] > 0 then
+		local dmgland = dlandscape_power[y][x];
+		local name = helpers.mobName(index);
+		local dmg = damage.magicalRes (index,dmgland,"fire");
+		damage.HPminus(index,dmg);
+		dlandscape_duration[y][x] = dlandscape_duration[y][x] - 1;
+		if dlandscape_duration[y][x] == 0 then
+			dlandscape_power[y][x] = 0;
+			dlandscape_obj[y][x] = 0;
+			boomareas.ashGround (a,b)
+			helpers.clearLights (a,b);
+		end;
+		helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[index].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.fire);
+	end;
+	if alandscape_obj[y][x] == "poison" then
+		local dmg=alandscape_power[y][x]
+		local name = helpers.mobName(index);
+		if chars_mobs_npcs[index].poison_power <= alandscape_power[y][x] then
+			chars_mobs_npcs[index].poison_power = alandscape_power[y][x];
+			chars_mobs_npcs[index].poison_dur = chars_mobs_npcs[index].poison_dur + 3;
+			helpers.addToActionLog( name .. lognames.actions.poisoned[chars_mobs_npcs[index].gender])
+		end;
+		alandscape_duration[y][x]=alandscape_duration[y][x] - 1;
+		if alandscape_duration[y][x] == 0 then
+			alandscape_power[y][x] = 0;
+			alandscape_obj[y][x] = 0;
+			boomareas.ashGround (a,b)
+			helpers.clearLights (a,b);
+		end;
+	end;
+	if dlandscape_obj[y][x] == "holy" and dlandscape_duration[y][x] > 0 then
+		local dmgland = dlandscape_power[y][x];
+		local name = helpers.mobName(index);
+		local dmg = damage.magicalRes (index,dmgland,"light");
+		if chars_mobs_npcs[index].locomotion == "walk" then
+			damage.HPminus(index,dmg);
+			helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[index].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.fire);
+			dlandscape_duration[y][x] = dlandscape_duration[y][x] - 1;
+			if dlandscape_duration[y][x] == 0 then
+				dlandscape_power[y][x] = 0;
+				dlandscape_obj[y][x] = 0;
+				--boomareas.ashGround (a,b)
+				--helpers.clearLights (a,b);
+			end;
+		end;
+	end;
+	if dlandscape_obj[y][x] == "twister" or dlandscape_obj[y][x] == "twisterpart" then
+		trapped  = 1;
+		chars_mobs_npcs[index].immobilize = chars_mobs_npcs[index].immobilize + 5;
+		local name = helpers.mobName(index);
+		helpers.addToActionLog( name .. lognames.actions.immobilized[chars_mobs_npcs[index].gender]);
+	end;
 end;
