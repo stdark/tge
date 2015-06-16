@@ -2829,6 +2829,18 @@ function draw.objects ()
 				if missle_type=="bolt" then 
 					animation_bolt = anim8.newAnimation(bolt[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
 					animation_bolt:draw(media.images.missl, misto_hex_x-64,misto_hex_y);
+				elseif missle_type=="arrow" then 
+					animation_bolt = anim8.newAnimation(bolt[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
+					animation_bolt:draw(media.images.missl, misto_hex_x-64,misto_hex_y);
+				elseif missle_type=="battery" then
+					--FIXME different missle types
+				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow") then
+					animation_bolt = anim8.newAnimation(bolt[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
+					animation_bolt:draw(media.images.missl, misto_hex_x-64,misto_hex_y);
+				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing" then
+					--FIXME knives, surikense,axes,chakras, boomerangs					
+					--animation_bolt = anim8.newAnimation(bolt[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
+					--animation_bolt:draw(media.images.missl, misto_hex_x-64,misto_hex_y);
 				elseif missle_type=="bottle" then
 					animation_grenade = anim8.newAnimation(grenade[atk_direction]("1-6",1), 0.02,"pauseAtEnd");
 					animation_grenade:draw(media.images.missl, misto_hex_x-64,misto_hex_y);
@@ -3106,7 +3118,9 @@ function draw.objects ()
 					elseif game_status == "shot" and i == current_mob then
 						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_rng";
 						local img_mob_rng=loadstring("return " .. tmpi)();
-						if missle_type == "bolt" or missle_type == "arrow" then
+						if missle_type == "bolt" or missle_type == "arrow" 
+						or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
+						then
 							animation_sht1:draw(img_mob_rng, mobto_hex_x-tile_w*1.5,mobto_hex_y);
 						elseif missle_type == "bottle" then
 							animation_sht1:draw(media.images.rogue_rng2, mobto_hex_x-tile_w*1.5,mobto_hex_y);
@@ -4153,11 +4167,19 @@ function draw.ui ()
 		local drt2s = 0;
 		
 		local add_effect_st = 0;
+		local add_effect_rt = 0;
 		
 		local addx = 10; --125 for six in party!
 		if i == current_mob and chars_mobs_npcs[current_mob].control == "player" then
-			if missle_effect ~= "none" then
-				add_effect_st = hold_tips[missle_effect].stamina;			
+			--if missle_effect ~= "none" then
+				--add_effect_st = hold_tips[missle_effect].stamina;			
+			--end;
+			
+			if missle_drive == "muscles" and helpers.missleAtWarBook() then
+				delta_st2spend = delta_st2spend + price_in_st/chars_mobs_npcs[i].st_max;
+				add_effect_st = delta_st2spend;
+				delta_rt2spend = delta_rt2spend + price_in_rt/200;
+				add_effect_rt = delta_rt2spend;
 			end;
 			
 			if game_status == "path_finding" then
@@ -4174,14 +4196,13 @@ function draw.ui ()
 			elseif game_status == "sensing" then
 				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
 					local recovery = 0;
-					if missle_type == "arrow" or missle_type == "bolt" or missle_type == "throwing" or missle_type == "bullet" or missle_type == "battery" then
-						if chars_mobs_npcs[current_mob].person == "char" then
-							recovery = helpers.countRangeRecoveryChar (current_mob);
-							delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max + add_effect_st;
-						else
-							recovery = helpers.countRangeRecoveryMob (current_mob);
-							delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max + add_effect_st;
-						end;
+					if missle_type == "arrow" or missle_type == "bolt" or missle_type == "throwing" or missle_type == "bullet" or missle_type == "battery" 
+					or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
+					or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing")
+					then
+						recovery = helpers.countRangeRecoveryChar (current_mob);
+						delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max + add_effect_st;
+						delta_rt2spend = delta_rt2spend + add_effect_rt;
 					end;
 					if missle_type == "bottle" then
 						recovery = helpers.countBottleRecovery (current_mob);
@@ -4200,12 +4221,14 @@ function draw.ui ()
 						delta_sp2spend = 1;
 					end;
 					dsp2s = screen_mod_y-100*(delta_sp2spend-1);
-				elseif missle_drive == "muscles" and helpers.missleAtWarBook() then
-					delta_st2spend = delta_st2spend + price_in_st/chars_mobs_npcs[i].st_max;
-					dst2s = screen_mod_y-100*(delta_st2spend-1);
 				end;
 			end;
 		end;
+		
+		delta_sp2spend = math.min(delta_sp2spend,chars_mobs_npcs[i].sp_max);
+		delta_st2spend = math.min(delta_st2spend,chars_mobs_npcs[i].st_max);
+		delta_rt2spend = math.min(delta_rt2spend,200);
+		
 		love.graphics.draw(media.images.ui, bl_indic, i*125-addx, screen_mod_y,0, 1, 1);
 		love.graphics.draw(media.images.ui, bl_indic, i*125+10-addx, screen_mod_y,0, 1, 1);
 		love.graphics.draw(media.images.ui, bl_indic, i*125+20-addx, screen_mod_y,0, 1, 1);
@@ -4413,7 +4436,9 @@ function draw.ui ()
 		love.graphics.draw(media.images.map, x,y-50);
 	end;
 	local _txt = cursor_world_x .. "x" .. cursor_world_y;
-	love.graphics.print(_txt,30,10);
+	love.graphics.print(_txt,50,10);
+	--love.graphics.print(missle_type,100,10);
+	--love.graphics.print(missle_drive,150,10);
 end;
 
 function draw.lineOfOrder ()

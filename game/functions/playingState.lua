@@ -1367,7 +1367,10 @@ function playingState.update(dt)
 
 			sfx.castSound ();
 
-			if missle_type=="bolt" or missle_type=="arrow" or missle_type=="throwing" or missle_type=="bottle" or missle_type=="bullet" or missle_type=="battery" then
+			if missle_type=="bolt" or missle_type=="arrow" or missle_type=="throwing" or missle_type=="bottle" or missle_type=="bullet" or missle_type=="battery" 
+			or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
+			or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing")
+			then
 				game_status="missle";
 				in_fly=0;
 			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball"
@@ -6404,13 +6407,13 @@ function  playingState.mousepressed(x,y,button)
 				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
 				and not chars_mobs_npcs[previctim].summoned
 				and missle_type=="raisedead" then
-					point_to_go_x=cursor_world_x
-					point_to_go_y=cursor_world_y
-					helpers.turnMob()
+					point_to_go_x=cursor_world_x;
+					point_to_go_y=cursor_world_y;
+					helpers.turnMob(current_mob);
 					if helpers.deadMobUnderCursor () then
 						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
 						helpers.beforeShoot();
-						game_status="shot"
+						game_status = "shot";
 						damage.shoot();
 					end;
 				end
@@ -6425,8 +6428,8 @@ function  playingState.mousepressed(x,y,button)
 					point_to_go_x=cursor_world_x;
 					point_to_go_y=cursor_world_y;
 					helpers.turnMob(current_mob);
-					mbund_cursor();
-					if control_under_cursor_is == "player" or person_under_cursor_is == "char" then
+					if helpers.mobPersonUnderCursor (cursor_world_x,cursor_world_y) == "char" or helpers.mobControlUnderCursor (cursor_world_x,cursor_world_y) == "player" then
+						previctim = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
 						helpers.beforeShoot();
 						game_status="shot";
 						damage.shoot();
@@ -6490,7 +6493,7 @@ function  playingState.mousepressed(x,y,button)
 					boomx = cursor_world_x;
 					boomy = cursor_world_y;
 					helpers.turnMob(current_mob);
-					mbund_cursor();
+					previctim = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
 					helpers.beforeShoot();
 					game_status="shot";
 					damage.shoot();
@@ -7143,13 +7146,15 @@ function  playingState.mousepressed(x,y,button)
 	then
 		point_to_go_x=cursor_world_x
 		point_to_go_y=cursor_world_y
-		helpers.turnMob()
-		mbund_cursor()
+		helpers.turnMob(current_mob);
+		previctim = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
 		if (missle_type=="bolt"
 		or missle_type=="arrow"
 		or missle_type=="bullet"
 		or missle_type == "battery"
 		or missle_type == "throwing"
+			or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
+			or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing")
 		) and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2) <= chars_mobs_npcs[current_mob].rng --not too far!
 		and chars_mobs_npcs[current_mob]["equipment"].ranged ~=0 and chars_mobs_npcs[current_mob]["equipment"].ammo ~=0
 		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q > 0 then
@@ -7795,9 +7800,6 @@ function mob_moving()
 			trace.chars_around();
 			trace.first_watch(current_mob);
 			trace.clear_rounded();
-			if cursor_on_mob==6-atk_direction then
-				global.wheeled=0;
-			end;
 			if chars_mobs_npcs[current_mob].control == "player" then
 				helpers.cam_to_mob (current_mob);
 			end;
@@ -7813,11 +7815,7 @@ function mob_moving()
 				if global.status == "battle" and (chars_mobs_npcs[previctim].person ~= "char" or chars_mobs_npcs[previctim].berserk > 0 or chars_mobs_npcs[previctim].control > 0) then
 					helpers.turnMob (current_mob);
 					local recovery = 0;
-					if chars_mobs_npcs[current_mob].person == "char" then
-						recovery = helpers.countMeleeRecoveryChar (current_mob);
-					else
-						recovery = helpers.countMeleeRecoveryMob (current_mob);
-					end;
+					recovery = helpers.countMeleeRecoveryChar (current_mob);
 					if chars_mobs_npcs[current_mob].rt >= recovery then
 						global.multiattack = damage.countMultiattack(current_mob);
 						game_status = "attack";
@@ -8205,6 +8203,9 @@ function restoreRT ()
 						end;
 					end;
 				end;
+				if chars_mobs_npcs[i].stealth > 0 then
+					chars_mobs_npcs[i].stealth =  chars_mobs_npcs[i].stealth - ai.enemyWatchesTheMobNum ();
+				end;
 				if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "humanoid" then
 					damage.HPminus(i,10);
 				end;
@@ -8229,20 +8230,20 @@ function restoreRT ()
 				if chars_mobs_npcs[i].stone > 0 then
 					chars_mobs_npcs[i].stone = chars_mobs_npcs[i].stone-1;
 				end;
-				if chars_mobs_npcs[j].disease > 0 then
-					if chars_mobs_npcs[j].disease > chars_mobs_npcs[j].rez_disease and chars_mobs_npcs[j].disease < 100 then
-						chars_mobs_npcs[j].disease = chars_mobs_npcs[j].disease + 1;
-					elseif chars_mobs_npcs[j].disease < chars_mobs_npcs[j].rez_disease then
-						chars_mobs_npcs[j].disease = chars_mobs_npcs[j].disease - 1;
+				if chars_mobs_npcs[i].disease > 0 then
+					if chars_mobs_npcs[i].disease > chars_mobs_npcs[i].rez_disease and chars_mobs_npcs[i].disease < 100 then
+						chars_mobs_npcs[i].disease = chars_mobs_npcs[i].disease + 1;
+					elseif chars_mobs_npcs[i].disease < chars_mobs_npcs[i].rez_disease then
+						chars_mobs_npcs[i].disease = chars_mobs_npcs[i].disease - 1;
 					end;
 				end;
-				if chars_mobs_npcs[j].disease > 0 then
-					local x = chars_mobs_npcs[j].x;
-					local y = chars_mobs_npcs[j].y;
+				if chars_mobs_npcs[i].disease > 0 then
+					local x = chars_mobs_npcs[i].x;
+					local y = chars_mobs_npcs[i].y;
 					local ring = boomareas.smallRingArea(x,y);
 					for k=1,#chars_mobs_npcs do
 						if helpers.aliveNature(k) and helpers.mobIsAlive (k) and helpers.cursorAtCurrentMob (k,x,y) then
-							local disease = damage.applyCondition (k,1,chars_mobs_npcs[j].disease,"disease","disease",false,false,1,true);
+							local disease = damage.applyCondition (k,1,chars_mobs_npcs[i].disease,"disease","disease",false,false,1,true);
 							chars_mobs_npcs[k].disease = disease;
 						end;
 					end;
@@ -8837,24 +8838,6 @@ function attack_direction ()
 	end;
 	if chars_mobs_npcs[mob_under_cursor].x== chars_mobs_npcs[current_mob].x and chars_mobs_npcs[mob_under_cursor].y<chars_mobs_npcs[current_mob].y and chars_mobs_npcs[mob_under_cursor].y/2~=math.ceil(chars_mobs_npcs[mob_under_cursor].y/2) then
 		atk_direction=3;
-	end;
-end;
-
-function mbund_cursor ()
-	--print("mbund called")
-	mob_under_cursor=0;
-	for i=1,#chars_mobs_npcs do
-	 --if chars_mobs_npcs[current_mob].control=="player" and chars_mobs_npcs[i].x==point_to_go_x and chars_mobs_npcs[i].y==point_to_go_y  and chars_mobs_npcs[previctim].status==1 then
-		if chars_mobs_npcs[i].x == point_to_go_x and chars_mobs_npcs[i].y == point_to_go_y  and chars_mobs_npcs[previctim].status == 1 then
-			cursor_on_mob=1;
-			mob_under_cursor = chars_mobs_npcs[i].id;
-			previctim = mob_under_cursor;
-			control_under_cursor_is = chars_mobs_npcs[i].control;
-			person_under_cursor_is = chars_mobs_npcs[i].person;
-		else
-		--control_under_cursor_is="none"
-		--person_under_cursor_is="none"
-		end;
 	end;
 end;
 

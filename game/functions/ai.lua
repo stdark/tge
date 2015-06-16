@@ -284,7 +284,7 @@ function ai.behavior()
 				and chars_mobs_npcs[l].y == rings[1][i].y
 				and chars_mobs_npcs[l].status == 1
 				and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[l].x][chars_mobs_npcs[l].y] == 0
-				and chars_mobs_npcs[l].invisibility == 0 and chars_mobs_npcs[j].stealth == 0
+				and chars_mobs_npcs[l].invisibility == 0 and chars_mobs_npcs[l].stealth == 0
 				then
 					table.insert(mob_detects_enemies, l)
 				end;

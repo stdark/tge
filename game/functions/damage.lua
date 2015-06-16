@@ -773,8 +773,8 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - 1;
 			elseif helpers.missleIsAweapon () then
 				local _ammo = 0;
-				if tricks.tricks_tips[_missle_name].ammo and tricks.tricks_tips[_missle_name].ammo > 0 then
-					_ammo = tricks.tricks_tips[_missle_name].ammo;
+				if tricks.tricks_tips[missle_type].ammo and tricks.tricks_tips[missle_type].ammo > 0 then
+					_ammo = tricks.tricks_tips[missle_type].ammo;
 				end;
 				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - _ammo;
 			end;
@@ -5220,10 +5220,20 @@ function damage.weaponPassives(current_mob,victim,attack)
  else
 	if missle_type == "bolt" or missle_type == "arrow" or missle_type == "bullet" or missle_type == "battery" then
 		weaponClass = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class;
+		weaponSubClass = missle_type; 
+	elseif missle_drive == "muscles" and  helpers.missleAtWarBook() then
+		weaponClass = tricks.tricks_tips[missle_type].skill;
+		if weaponClass == "bow" then
+			weaponSubClass = "arrow";
+		elseif weaponClass == "crossbow" then
+			weaponSubClass = "bolt";
+		elseif weaponClass == "thrownig" then
+			--weaponSubClass = FIXME should keep in memory like global.missle
+		end;
 	else
 		weaponClass = missle_type;
-	end;
-	weaponSubClass = missle_type; 
+		weaponSubClass = missle_type; 
+	end;	
  end;
  local randomEffect = math.random(1,#damage.weaponPassivesArray[weaponSubClass]);
  local effect = damage.weaponPassivesArray[weaponSubClass][randomEffect];
@@ -5349,7 +5359,7 @@ function damage.STminus(index,damageST)
 	chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - realdamage;
 	helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.lost[chars_mobs_npcs[index].gender] .. realdamage .. lognames.actions.metr .. lognames.actions.ofst);
 	if chars_mobs_npcs[index].st == 0 and chars_mobs_npcs[index].status == 1 and helpers.aliveNature(index) then
-		chars_mobs_npcs[index].weakness = damage - realdamage;
+		chars_mobs_npcs[index].weakness = damageST - realdamage;
 		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.desponded[chars_mobs_npcs[index].gender]);
 	end;
 end;
@@ -5769,6 +5779,8 @@ function damage.calcArmorStats(index,hitzone,attacked_from)
 end;
 
 function damage.weaponpEffect(index,hitzone,wpEffect)
+	local victim_name = helpers.mobName(victim);
+	print(">>>",index,victim_nam);
 	if wpEffect == "hit" then
 		if hitzone == "head" then
 			local effect  = math.random(1,5);

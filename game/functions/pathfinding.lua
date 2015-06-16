@@ -144,8 +144,8 @@ function path_finding (mode,ignore_mobs)
 			global.wheeled = 1;
 		end;
 		counter = 1;
-		while (helpers.isAimOnMob (rings[1][counter].x,rings[1][counter].y)  or not helpers.passWalk(rings[1][counter].x,rings[1][counter].y)) do
-		--while (helpers.isAimOnMob (rings[1][counter].x,rings[1][counter].y)  or not helpers.passMove(rings[1][counter].x,rings[1][counter].y,current_mob)) do
+		--while (helpers.isAimOnMob (rings[1][counter].x,rings[1][counter].y)  or not helpers.passWalk(rings[1][counter].x,rings[1][counter].y)) do
+		while (helpers.isAimOnMob (rings[1][atk_direction].x,rings[1][atk_direction].y)  or not helpers.passWalk(rings[1][atk_direction].x,rings[1][atk_direction].y)) do
 			aim_on_mob = 0;
 			atk_direction = atk_direction+1;
 			
@@ -454,7 +454,6 @@ function path_finding (mode,ignore_mobs)
 	return way_of_the_mob;
 end;
 
-
 function findAltWayToHex(x,y)
 	local newx = nil;
 	local newy = nil;
@@ -495,44 +494,3 @@ function findAltWayToHex(x,y)
 		end;
 	end;
 end;
-
---[[
-function findAltWayToHex()
-	local rings = boomareas.smallRingArea(point_to_go_x,point_to_go_y);
-	if global.wheeled == 0 then
-		atk_direction = helpers.bestAttackDirection (current_mob,point_to_go_x,point_to_go_y);
-		chars_mobs_npcs[current_mob].rot = helpers.antiDirection(atk_direction);
-	end;
-	point_to_go_x = rings[atk_direction].x;
-	point_to_go_y = rings[atk_direction].y;
-	if aim_on_mob == 1 and global.wheeled == 0 then
-		counter = 1;
-		global.wheeled = 1;
-	end;
-	counter = 1;
-	while (helpers.isAimOnMob (rings[counter].x,rings[counter].y)  or not helpers.passWalk(rings[counter].x,rings[counter].y)) do
-		aim_on_mob = 0;
-		atk_direction = atk_direction+1;
-		
-		if atk_direction > 6 then
-			atk_direction = 1;
-		end;
-		if not helpers.isAimOnMob (rings[counter].x,rings[counter].y) and helpers.passWalk(rings[counter].x,rings[counter].y) then
-			point_go_x = rings[atk_direction].x;
-			point_to_go_y = rings[atk_direction].y;
-			path_can_be_found = 1;
-			break;
-		end;
-		counter=counter+1;
-		if counter >= 6 then
-			path_status = 0;
-			path_print = "path not found (char)!";
-			hang = 0;
-			damage.RTminus(current_mob,100,false);
-			game_status = "restoring";
-			print ("alt way problem");
-			break;
-		end;
-	end;
-end;
-]]

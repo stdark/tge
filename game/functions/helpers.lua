@@ -589,6 +589,25 @@ function helpers.mobIDUnderCursor (x,y)
 			return i;
 		end;
 	end;
+	return false;
+end;
+
+function helpers.mobControlUnderCursor (x,y)
+	for i=1,#chars_mobs_npcs do
+		if chars_mobs_npcs[i].x == x and chars_mobs_npcs[i].y == y then
+			return chars_mobs_npcs[i].control;
+		end;
+	end;
+	return false;
+end;
+
+function helpers.mobPersonUnderCursor (x,y)
+	for i=1,#chars_mobs_npcs do
+		if chars_mobs_npcs[i].x == x and chars_mobs_npcs[i].y == y then
+			return chars_mobs_npcs[i].person;
+		end;
+	end;
+	return false;
 end;
 
 function helpers.someOneUnderCursor ()
@@ -2573,14 +2592,6 @@ function helpers.countMeleeRecoveryChar (index)
 	return recovery;
 end;
 
-function helpers.countMeleeRecoveryMob (index)
-	local recovery = 0;
-	local speedrecovery = 0;
-	recovery = chars_mobs_npcs[index].recmel;
-	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
-	return recovery;
-end;
-
 function helpers.countRangeRecoveryChar (index)
 	local recovery = 0;
 	local skillweaponrecovery = 0;
@@ -2645,14 +2656,6 @@ function helpers.countBottleRecovery (index)
 		skillweaponrecovery = chars_mobs_npcs[index].num_throwing;
 	end;
 	local recovery = math.max(20,50 - math.ceil(chars_mobs_npcs[index].spd/10) - skillweaponrecovery);
-	return recovery;
-end;
-
-function helpers.countRangeRecoveryMob (index)
-	local recovery = 0;
-	local speedrecovery = 0;
-	recovery = chars_mobs_npcs[index].recrng;
-	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
 	return recovery;
 end;
 
@@ -4403,7 +4406,7 @@ end;
 
 function helpers.castReady (drive)
 	price_in_mana = magic.spell_tips[missle_type].mana;
-	rec = magic.spell_tips[missle_type].recovery;
+	price_in_rt = magic.spell_tips[missle_type].recovery;
 	if magic.spell_tips[missle_type].form == "sight" or magic.spell_tips[missle_type].form == "ray" or magic.spell_tips[missle_type].form == "vray" or magic.spell_tips[missle_type].form == "skyray" or magic.spell_tips[missle_type].form == "trident" or magic.spell_tips[missle_type].form == "level" then
 		boomx = 1;
 		boomy = 1;
@@ -4420,11 +4423,30 @@ function helpers.ifTrickIsCastable ()
 	local stamina_check = false;
 	local recovery_check = false;
 	local weapon_check = false;
-
-	if chars_mobs_npcs[current_mob].st >= tricks.tricks_tips[missle_type].stamina then
+	local needst = 0;
+	local needrt = 0;
+	
+	if (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
+	or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing") then
+		needrt = helpers.countRangeRecoveryChar (current_mob);
+		needst = helpers.countRangeRecoveryChar (current_mob);
+	end;
+	
+	if missle_drive == "muscles" and helpers.missleAtWarBook() 
+	and (tricks.tricks_tips[missle_type].skill == "sword" or tricks.tricks_tips[missle_type].skill == "axe" or tricks.tricks_tips[missle_type].skill == "flagpole"
+	or tricks.tricks_tips[missle_type].skill == "crushing" or tricks.tricks_tips[missle_type].skill == "staff" or tricks.tricks_tips[missle_type].skill == "dagger"
+	or tricks.tricks_tips[missle_type].skill == "unarmed") then
+		needrt = helpers.countMeleeRecoveryChar (current_mob);
+		needst = helpers.countMeleeRecoveryChar (current_mob);
+	end;
+	
+	needst = needst + tricks.tricks_tips[missle_type].stamina;
+	needrt = needrt + tricks.tricks_tips[missle_type].recovery;
+	
+	if chars_mobs_npcs[current_mob].st >= needst then
 		stamina_check = true;
 	end;
-	if chars_mobs_npcs[current_mob].rt >= tricks.tricks_tips[missle_type].recovery then
+	if chars_mobs_npcs[current_mob].rt >= needrt then
 		recovery_check = true;
 	end;
 	local _tipskill = tricks.tricks_tips[missle_type].skill;
@@ -4455,7 +4477,7 @@ end;
 
 function helpers.trickReady ()
 	price_in_st = tricks.tricks_tips[missle_type].stamina;
-	rec = tricks.tricks_tips[missle_type].recovery;
+	price_in_rt = tricks.tricks_tips[missle_type].recovery;
 	missle_drive = "muscles";
 	game_status = "sensing";
 end;
