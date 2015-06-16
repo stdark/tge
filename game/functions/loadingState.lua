@@ -338,6 +338,9 @@ function loadingState.start(media, finishCallback)
 			loader.newSource(media.sounds, "mindgame_shame", "sounds/mindgame_shame.ogg");
 			loader.newSource(media.sounds, "mindgame_mindcured", "sounds/mindgame_mindcured.ogg");
 			loader.newSource(media.sounds, "mindgame_mymaster", "sounds/mindgame_mymaster.ogg");
+			
+			loader.newSource(media.sounds, "teleport", "sounds/teleport.ogg");
+			loader.newSource(media.sounds, "altar", "sounds/altar.ogg");
 		end;
 	end;
 	utils.printDebug("started loading")

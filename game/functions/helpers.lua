@@ -1639,7 +1639,7 @@ function helpers.addMob(i,person)
 		chars_mobs_npcs[i]["personality"] = {};
 		chars_mobs_npcs[i]["personality"]["current"] = {};
 		chars_mobs_npcs[i]["personality"]["current"].etiquette=chars_stats[i].etiquette;
-		chars_mobs_npcs[i].skillpoints = 50; --FIXME DEBUG
+		chars_stats[i].skillpoints = 50; --FIXME DEBUG
 		if chars_mobs_npcs[i].class == "acolyte" or
 			chars_mobs_npcs[i].class == "mage" or
 			chars_mobs_npcs[i].class == "archmage" or
@@ -2142,14 +2142,14 @@ function helpers.countSkills (index)
 		local tmpnum2 = loadstring("return " .. tmpnum1)();
 		temporal_skills[i] = tmpnum2;
 	end;
-	temp_skillpoints = chars_mobs_npcs[index].skillpoints;
+	temp_skillpoints = chars_stats[index].skillpoints;
 end;
 
 function helpers.applySkills (index)
 	for i=1,40 do
 		chars_mobs_npcs[index]["num_" .. skills[i]] = temporal_skills[i];
 	end;
-	chars_mobs_npcs[index].skillpoints = temp_skillpoints;
+	chars_stats[index].skillpoints = temp_skillpoints;
 	game_status = "neutral";
 	loveframes.util.RemoveAll();
 end;
@@ -2863,6 +2863,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		if objects_list[global.object].effect2 then
 			chars_mobs_npcs[current_mob][objects_list[global.object].effect2] = chars_mobs_npcs[current_mob][objects_list[global.object].value2];
 			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.usedpedestal[chars_mobs_npcs[current_mob].gender]); --FIXME type of pedestal
+			love.audio.play(media.sounds.altar,0);
 		end;
 		global.object = 0;
 	elseif objects_list[global.object].typ == "altar" then
@@ -2871,6 +2872,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			for i=1, #objects_list[global.object].uids do
 				if objects_list[global.object].uids[i] == chars_mobs_npcs[current_mob].uid then
 					used_before = true;
+					love.audio.play(media.sounds.altar,0);
 				end;
 			end;
 		end;
@@ -2890,6 +2892,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			chars_mobs_npcs[current_mob].x = objects_list[global.object].outx;
 			chars_mobs_npcs[current_mob].y = objects_list[global.object].outy;
 			helpers.cam_to_mob(current_mob);
+			love.audio.play(media.sounds.teleport,0);
 			if chars_mobs_npcs[current_mob].torchlight_dur > 0 then
 				for i=1,#lights do
 					if lights[i].typ == "mob" and lights[i].index == current_mob then
@@ -2913,6 +2916,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 				chars_stats[current_mob].skillpoints = chars_stats[current_mob].skillpoints + objects_list[global.object].bonus;
 				table.insert(objects_list[global.object].uids,chars_mobs_npcs[current_mob].uid);
 			end;
+			love.audio.play(media.sounds.altar,0);
 		end;
 	end;
 end;
