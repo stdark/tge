@@ -2159,7 +2159,7 @@ function helpers.interrupt ()
 	game_status = "neutral";
 	helpers.neutralWatch ();
 	path_status = 0;
-	hang = 0;
+	global.hang = false;
 	mob_is_goung_to_hit = 0;
 end;
 

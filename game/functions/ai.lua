@@ -382,7 +382,7 @@ function ai.behavior()
 	end;
 --MOVING TO AN ENEMY
 		if chars_mobs_npcs[current_mob].ai == "toenemy" then
-			if hang == 0 then
+			if not global.hang then
 				local roll_point = 1;
 				local free_hexes = helpers.find_free_hexes (current_mob);
 				if #free_hexes > 0 then

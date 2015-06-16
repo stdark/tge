@@ -165,7 +165,7 @@ function playingState.load()
 	irradiations={"dawn","day","afterglow", "twilight", "night","dungeon","firelight"};
 	areaEffectsPriority = {"fire","ice","mud","acid","poison"};
 
-	hang = 0;
+	global.hang = false;
 
 	tempbb={};
 	tmp_ppoint={};
@@ -264,6 +264,7 @@ function playingState.load()
 	global.timers.bm_timer=0;
 	global.timers.p_timer=0;
 	global.timer=0;
+	global.mindtimer = 0;
 	global.multiattack = 1;
 	global.price = 0;
 	global.preprice = 0;
@@ -869,7 +870,8 @@ function playingState.update(dt)
 				selected_mob = order_of_turns[j][1];
 			end;
 		end;
-		if game_status == "mindgame" and global.mindway and #global.mindway > 0 and (global.mindhero_x ~= global.mindway[#global.mindway][1] or global.mindhero_y ~= global.mindway[#global.mindway][2]) then
+		if game_status == "mindgame" and global.mindtimer <= 0 and global.mindway and #global.mindway > 0 and (global.mindhero_x ~= global.mindway[#global.mindway][1] or global.mindhero_y ~= global.mindway[#global.mindway][2]) then
+			global.hang = false;
 			global.mindhero_x = global.mindway[#global.mindway][1];
 			global.mindhero_y = global.mindway[#global.mindway][2];
 			if mindgame.map[global.mindhero_x][global.mindhero_y] >= 1 and mindgame.map[global.mindhero_x][global.mindhero_y] <= 7 then -- opponent ignores money
@@ -1266,6 +1268,9 @@ function playingState.update(dt)
 		if game_status == "sensing" then
 			tmp_current_mob = current_mob;
 		end;
+		if game_status == "mindgame" and global.mindtimer > 0 then
+			global.mindtimer = global.mindtimer - dt;
+		end;
 		if global.timers.m_timer >= 1 then
 			if  cursor_world_x > map_limit_w and cursor_world_x < map_display_w - map_limit_w and cursor_world_y > map_limit_h and cursor_world_y < map_display_h - map_limit_h and heights_table[map[cursor_world_y][cursor_world_x]] == 0 then
 				cursor_world_x = cursor_world_x;
@@ -1278,9 +1283,9 @@ function playingState.update(dt)
 			chars_mobs_npcs[current_mob].rot=way_of_the_mob[#way_of_the_mob][6];
 		end;
 		if game_status == "moving" then
-			if hang == 0 then
+			if not global.hang then
 				path_counter = #way_of_the_mob
-				hang = 1;
+				global.hang = true;
 				if #way_of_the_mob > 0 then --dirty fix
 					rot = way_of_the_mob[#way_of_the_mob][6] -- nil
 					chars_mobs_npcs[current_mob].rot = rot;
@@ -2059,7 +2064,7 @@ function playingState.keypressed(key, unicode)
 			end;
 			trace.chars_around();
 			trace.clear_rounded();
-			hang = 0;
+			global.hang = false;
 		end;
 
 		if global.status == "peace" then
@@ -3999,7 +4004,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 	end;
 	--mindgame
-	if button == "l" and game_status == "mindgame" and mindmissle then
+	if button == "l" and game_status == "mindgame" and not global.hang and mindmissle then
 		if	global.mindgame_counter < global.mindgame_attempts then
 			local array =  boomareas.smallRingArea(global.mindhero_x,global.mindhero_y); -- FIXME while not array
 			local x,y = helpers.centerObject(media.images.map);
@@ -4008,6 +4013,8 @@ function  playingState.mousepressed(x,y,button)
 					if mindgame.map[global.mindcursor_x][global.mindcursor_y] == 0 then
 						local phrase1 = "";
 						local phrase1 = "";
+						global.mindtimer = 1;
+						global.hang = true;
 						if mindmissle >=1 and mindmissle <= 7 and #global.mindgold_array > 0 then	--gold
 							local index = mindmissle;
 							mindgame.map[global.mindcursor_x][global.mindcursor_y] = index;
@@ -7742,7 +7749,7 @@ function mob_moving()
 			helpers.groundTrapActivated (bagid);
 			trapped = 1;
 			path_counter=0;
-			hang = 0;
+			global.hang = false;
 		end;
 		if mlandscape_obj[b][a] == "firemine" then  -- FIXME agro and fractions!
 			utils.printDebug("mine boom!");
@@ -7760,7 +7767,7 @@ function mob_moving()
 			mlandscape_duration[b][a] = 0;
 			helpers.addToActionLog( magic.spell_tips.firemine.title .. lognames.actions.activated);
 			path_counter=0;
-			hang = 0;
+			global.hang = false;
 		end;
 		damage.damageOfLandscape(current_mob,a,b);
 		local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
@@ -7796,7 +7803,7 @@ function mob_moving()
 				game_status = "neutral";
 				--helpers.neutralWatch();
 				path_status = 0;
-				hang = 0;
+				global.hang = false;
 			elseif  chars_mobs_npcs[current_mob].control=="player" and going_to_hit==1 and previctim ~=0
 			and chars_mobs_npcs[current_mob].id ~= previctim
 			and chars_mobs_npcs[previctim].status == 1 then
@@ -7820,12 +7827,12 @@ function mob_moving()
 					chars_mobs_npcs[previctim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
 					chat (previctim);
 					path_status = 0;
-					hang = 0;
+					global.hang = false;
 					global.steal = false;
 				elseif global.status == "peace" and chars_mobs_npcs[previctim].person ~= "char" and global.steal then
 					steal(previctim);
 					path_status = 0;
-					hang = 0;
+					global.hang = false;
 					global.steal = false;
 				end;
 			elseif chars_mobs_npcs[current_mob].control == "player" and going_to_hit == 1 and previctim ~= 0 and mob_is_going_to_picklock == 0
@@ -7841,17 +7848,17 @@ function mob_moving()
 				inventory_bag_call ();
 				game_status = "inventory";
 				path_status = 0;
-				hang = 0;
+				global.hang = false;
 			elseif chars_mobs_npcs[current_mob].control == "player" and mob_is_going_to_useobject == 1 then
 				helpers.turnMob (current_mob);
 				game_status = "neutral";
 				helpers.useObject();
 				path_status = 0;
-				hang = 0;
+				global.hang = false;
 			elseif chars_mobs_npcs[current_mob].control == "player" and mob_is_going_to_knock == 1 then
 				helpers.knockToDoor ();
 				path_status = 0;
-				hang = 0;
+				global.hang = false;
 			elseif chars_mobs_npcs[current_mob].control == "ai" then
 				if global.status == "peace" then
 					chars_mobs_npcs[current_mob].rt = math.max(chars_mobs_npcs[current_mob].rt-standart_rtadd,0);
@@ -7870,7 +7877,7 @@ function mob_moving()
 					end;
 				end;
 				path_status = 0;
-				hang = 0;
+				global.hang = false;
 			end;
 			for f=1,#way_of_the_mob do
 				table.remove(way_of_the_mob,1);
@@ -7891,7 +7898,7 @@ function chat (index)
 	helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.startedchatting[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
 	calendar.add_time_interval(calendar.delta_chat);
 	game_status="chat";
-	hang = 0;
+	global.hang = false;
 end;
 
 function steal (index)
@@ -8014,7 +8021,7 @@ function steal (index)
 	end;
 	helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.didntrob[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
 	calendar.add_time_interval(calendar.delta_thievery);
-	hang = 0;
+	global.hang = false;
 end;
 
 function exp_for_what(alldmg,index)

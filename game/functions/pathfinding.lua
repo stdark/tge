@@ -113,7 +113,7 @@ function path_finding (mode,ignore_mobs)
 		path_status = 0;
 		--print ("path not found (char)!");
 		--find_the_path = 0;
-		hang = 0;
+		global.hang = false;
 		game_status = "path_finding";--do not move if neutral
 	end;
 --just walk or hit for a char
@@ -162,7 +162,7 @@ function path_finding (mode,ignore_mobs)
 			if counter >= 6 then
 				path_status = 0;
 				path_print = "path not found (char)!";
-				hang = 0;
+				global.hang = false;
 				damage.RTminus(current_mob,100,false);
 				game_status = "restoring";
 				print ("alt way problem");
@@ -486,7 +486,7 @@ function findAltWayToHex(x,y)
 		if counter >= 6 then
 			path_status = 0;
 			path_print = "path not found (char)!";
-			hang = 0;
+			global.hang = false;
 			damage.RTminus(current_mob,100,false);
 			game_status = "restoring";
 			print ("alt way problem");
