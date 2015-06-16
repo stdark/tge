@@ -1030,9 +1030,9 @@ function playingState.keypressed(key, unicode)
 		end;
      end;
 	if love.keyboard.isDown("lctrl") and key == 'f' then
-		if editor_status = "hexes" then
+		if editor_status == "hexes" then
 			flood_map();
-		elseif editor_status = "subhexes" then
+		elseif editor_status == "subhexes" then
 			flood_submap();
 		end;
 	end;
