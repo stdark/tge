@@ -5281,27 +5281,6 @@ function  playingState.mousepressed(x,y,button)
 
 --btns at alchemy --FIXME: btns at alchemy picklocking traptools
 
-
-
-	sometable = {
-	x+520,y+100,
-	x+580,y+145
-	}
-	love.graphics.line(sometable);
-
-	sometable = {
-	x+520,y+215,
-	x+580,y+260
-	}
-	love.graphics.line(sometable);
-
-	sometable = {
-	x+520,y+330,
-	x+580,y+375
-	}
-	love.graphics.line(sometable);
-
-
 --mills
 	if button == "l"  and game_status == "alchemy" and mX > x+520 and mX < x +580 and mY > y+100 and mY < y+145  then-- mill components
 		alchstatus="millcomponents"
@@ -6022,9 +6001,18 @@ function  playingState.mousepressed(x,y,button)
 				if chars_mobs_npcs[tmp_mob].status == 1 then
 					current_mob = tmp_mob;
 				end;
-			end;
-			if game_status == "chat" then --FIXME chats inside of party here
-				chats.load ();
+				if game_status == "chat" then --FIXME chats inside of party here
+					
+					local index = chars_mobs_npcs[victim]["personality"]["current"].chat;
+					local def_array = {};
+					for i=1, #chats.rules[index] do
+						table.insert(def_array,chats.rules[index][i].default)
+					end;
+					chats.load (); --FIXME chats should use previous results
+					for i=1, #def_array do
+						chats.rules[index][i].default = def_array[i];
+					end;
+				end;
 			end;
 		end;
 
