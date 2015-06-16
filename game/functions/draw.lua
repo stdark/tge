@@ -2472,7 +2472,8 @@ function draw.objects ()
 					love.graphics.setColor(255, 255, 255);
 				elseif map[my+map_y][mx+map_x] > 300 then
 					local index = map[my+map_y][mx+map_x] - 300;
-					local img = media.images[buildings_stats[index].img];
+					--local img = media.images[buildings_stats[index].img];
+					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
@@ -2482,7 +2483,7 @@ function draw.objects ()
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0, 0,0);
 					end;
-					love.graphics.draw(img, sprite, ((mx-1+addx)*tile_w+left_space)-tile_w+top_space, (my-1+addy)*tile_h*0.75+top_space);
+					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+top_space+addy);
 					love.graphics.setColor(255, 255, 255);
 				end;      
 			else
@@ -2497,7 +2498,8 @@ function draw.objects ()
 					love.graphics.setColor(255, 255, 255);
 				elseif map[my+map_y][mx+map_x] > 300 then
 					local index = map[my+map_y][mx+map_x] - 300;
-					local img = media.images[buildings_stats[index].img];
+					--local img = media.images[buildings_stats[index].img];
+					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
@@ -2507,7 +2509,7 @@ function draw.objects ()
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0, 0,0);
 					end;
-					love.graphics.draw(img, sprite, ((mx-1+addx)*tile_w+left_space+tile_hw)-tile_w+top_space, (my-1+addy)*tile_h*0.75+top_space);
+					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space, (my-1)*tile_h*0.75+top_space+addy);
 					love.graphics.setColor(255, 255, 255);	
 				end;  
 			end;

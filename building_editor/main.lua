@@ -3,7 +3,10 @@ function love.load()
 	require("loveframes");
 	require 'Tserial';
 	
-	love.mouse.setVisible(false);
+	media = {};
+	media.images={};
+	
+	love.mouse.setVisible(true);
 	showmouse = -1;
 	
 	mainFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
@@ -11,7 +14,7 @@ function love.load()
 	
 	img_hud =  love.graphics.newImage("img/hud.png");
 	img_hex =  love.graphics.newImage("img/hex_landscape.png");
-	buildings1 = love.graphics.newImage("img/buildings1.png");
+	media.images.buildings1 = love.graphics.newImage("img/buildings1.png");
 	img_back = love.graphics.newImage("img/back.jpg");
 	
 	editor_status = "normal";
@@ -163,8 +166,10 @@ function love.keypressed(key, unicode)
 	
 	if love.keyboard.isDown("lctrl") and key == 's'  then
 		local door_coords = find_door();
-		local addx,addy = count_add();
-		save(-1*(buildings_x-frame_x1),-1*(buildings_y-frame_y1),(frame_x2-frame_x1),(frame_y2-frame_y1),addx,addy,door_coords[1],door_coords[2],door_coords[3],door_coords[4],count_hexes (0),count_hexes (1));
+		local hexarray1 = count_hexes (true);
+		local hexarray2 = count_hexes (false);
+		local addx,addy = count_add(hexarray1);
+		save(-1*(buildings_x-frame_x1),-1*(buildings_y-frame_y1),(frame_x2-frame_x1),(frame_y2-frame_y1),addx,addy,door_coords[1],door_coords[2],door_coords[3],door_coords[4],hexarray1,hexarray2);
 	end;
 	
 	if key == 'right'  then
@@ -240,6 +245,42 @@ function love.mousereleased(x, y, button)
     loveframes.mousereleased(x, y, button);
 end;
 
+function love.mousereleased(x, y, button)
+	if not love.keyboard.isDown("lctrl") and not love.keyboard.isDown("lshift") and not love.keyboard.isDown("rctrl") then
+		if hex_table[cursor_world_x][cursor_world_y] == 0 then
+			hex_table[cursor_world_x][cursor_world_y] = 1;
+		else
+			hex_table[cursor_world_x][cursor_world_y] = 0;
+		end;
+	elseif not love.keyboard.isDown("lshift") and not love.keyboard.isDown("rctrl") then
+		central_hex_x = cursor_world_x;
+		central_hex_y = cursor_world_y;
+		for my=1, 30 do
+			for mx=1, 20 do	
+				if hex_table[mx][my] == 2 then
+					hex_table[mx][my] = 0;
+				end;
+			end;
+		end;
+	elseif not love.keyboard.isDown("rctrl") then
+		if door_hex_x ~= cursor_world_x or door_hex_y ~= cursor_world_y then
+			door_hex_x = cursor_world_x;
+			door_hex_y = cursor_world_y;
+		else
+			door_hex_x = nil;
+			door_hex_y = nil;
+		end;
+		for my=1, 30 do
+			for mx=1, 20 do	
+				if hex_table[mx][my] == 3 then
+					hex_table[mx][my] = 0;
+				end;
+			end;
+		end;
+	end;
+    loveframes.mousereleased(x, y, button);
+end;
+
 function love.textinput(text)
     -- your code
     loveframes.textinput(text); 
@@ -273,7 +314,7 @@ function save(x,y,w,h,addx,addy,doorev_x,doorev_y,doorne_x,doorne_y,hexesev,hexe
 	local addx_hex = math.ceil(addx/32);
 	local addy_hex = math.ceil(addy/16);
 	love.filesystem.write( savename, 
-	 "\r\n" .. ",{img=buildings1,sprite=love.graphics.newQuad(" .. x .. "," .. y .. "," .. w .. "," .. h .. ", buildings1:getWidth(), buildings1:getHeight()),addx=" .. addx_hex .. ",addy=" .. addy_hex .. ","
+	 "\r\n" .. ",{img=media.images.buildings1,sprite=love.graphics.newQuad(" .. x .. "," .. y .. "," .. w .. "," .. h .. ", media.images.buildings1:getWidth(), media.images.buildings1:getHeight()),addx=" .. addx_hex .. ",addy=" .. addy_hex .. ","
   .. "\r\n" .. "door_ev={" .. doorev_x .. "," .. doorev_y .. "},door_ne={" .. doorne_x .. "," .. doorne_y .. "},"
   .. "\r\n" .. "hexes_ne=" .. Tserial.pack(hexesev, true, false) .. ",hexes_ev=" .. Tserial.pack(hexesne, true, false) .. "}"
 	 );
@@ -351,35 +392,30 @@ function find_door ()
 	return door_coords;
 end;
 
-function count_hexes (evenornot) --0/1
+function count_hexes (evenornot)
 	local addx = 0;
-	local add = evenornot;
+	local add = 0;
 	local hex_array = {};
 	add = 0;
 	for my=1, 30 do
 		for mx=1, 20 do
-			if hex_table[mx][my] > 0 and (central_hex_x ~= mx or central_hex_y ~= my) then
-				if central_hex_y/2 ~= math.ceil(central_hex_y/2) then
-					if my/2 == math.ceil(my/2) then
-						addx = central_hex_x-mx + add;
-					else
-						addx = central_hex_x-mx;
-					end;
+			if hex_table[mx][my] > 0 then
+				if not evenornot then
+					addx = central_hex_x-mx;
 				else
 					if my/2 ~= math.ceil(my/2) then
-						addx = central_hex_x-mx - add;
+						addx = central_hex_x-mx - 1;
 					else
 						addx = central_hex_x-mx;
 					end;
 				end;
-				--table.insert(hex_array,{addx,central_hex_y-my});
-				table.insert(hex_array,{central_hex_y-my,addx});
+				table.insert(hex_array,{addx,central_hex_y-my});
 			end;
 		end;
 	end;
 	return hex_array;
 end;
- 
+
 function drawNumberHex (x,y,add,txt)
 	moveto_hex_y = math.ceil((y-1)*tile_h*0.75+top_space)+8;
 	if y/2 == math.ceil(y/2) then
@@ -390,16 +426,27 @@ function drawNumberHex (x,y,add,txt)
 	love.graphics.print(txt,moveto_hex_x,moveto_hex_y);
 end;
 
-function count_add ()
+function count_add (hex_array)
 	local addx = 0;
 	local addy = 0;
-	central_hex_x=10;
-	addy = math.ceil(frame_y1 - (central_hex_y-1)*tile_h+tile_h/2);
-	if central_hex_y/2 == math.ceil(central_hex_y/2) then
-		addx = math.ceil(frame_x1 - (central_hex_x-1)*tile_w+tile_w/2);
-	else
-		addx = math.ceil(frame_x1 - (central_hex_x-1)*tile_w+tile_w);
+	local min_hex_x = 0;
+	local max_hex_x = 0;
+	local min_hex_y = 0;
+	local max_hex_y = 0;
+	for i=1,#hex_array do
+		if hex_array[i][1] < min_hex_x then
+			min_hex_x = hex_array[i][1];
+		elseif hex_array[i][1] > max_hex_x then
+			max_hex_x = hex_array[i][1];
+		end;
+		if hex_array[i][2] < min_hex_y then
+			min_hex_y = hex_array[i][2];
+		elseif hex_array[i][2] > max_hex_y then
+			max_hex_y = hex_array[i][2];
+		end;
 	end;
+	local addx = -1*math.abs(max_hex_x-min_hex_x)/2;
+	local addy = -1*math.abs(max_hex_y-min_hex_y)/2;
 	return addx,addy;
 end;
 
@@ -407,7 +454,7 @@ function love.draw()
 	love.graphics.setFont(mainFont);
 	if editor_status == "normal" then
 		love.graphics.draw(img_back, 0,0);
-		love.graphics.draw(buildings1, buildings_x,buildings_y);
+		love.graphics.draw(media.images.buildings1, buildings_x,buildings_y);
 		draw_hexfield();
 		draw_numbers();
 		 sometable = {
@@ -432,7 +479,8 @@ function love.draw()
 		love.graphics.print("[SAME]+[LSHIFT] - speed x10 (скорость x10)", 40,130);
 		love.graphics.print("[SAME]+[LCTRL]+[LSHIFT] - speed x100 (скорость x100)", 40,150);
 		love.graphics.print("[LCTRL]+[S] - save (сохранить)", 40,170);
-		love.graphics.print("[ESC] - quit help (выйти из справки)", 40,190);
+		love.graphics.print("[RCTRL] - mark quad (разметить спрайт)", 40,190);
+		love.graphics.print("[ESC] - quit help (выйти из справки)", 40,210);
 	end;
 
 	love.graphics.draw(img_hud, 0,0);
@@ -447,9 +495,9 @@ function love.draw()
     local addx = 1025;
     local addy = 30;
     local scale = 0.1;
-    local wxh = buildings1:getWidth()*scale;
+    local wxh = media.images.buildings1:getWidth()*scale;
 	
-	love.graphics.draw(buildings1,addx,addy,0,scale,scale);
+	love.graphics.draw(media.images.buildings1,addx,addy,0,scale,scale);
 	sometable = {
 	addx,addy,
 	addx+wxh,addy,
@@ -472,6 +520,7 @@ function love.draw()
 	love.graphics.setColor(255, 0, 0);
 	love.graphics.line(sometable);
 	love.graphics.setColor(255, 255, 255);
-
+	local hexarray = count_hexes (true);
+	love.graphics.print(#hexarray,250,10);
     loveframes.draw();
 end;

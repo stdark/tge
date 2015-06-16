@@ -16,10 +16,6 @@ Use love 0.9.1, becose love 0.9.2 uses lua5.3 which has no luajit support
 ===
 Используйте love 0.9.1, поскольку love 0.9.2 использует lua5.3, у которого нет поддержки luajit
 
-Copy files from levels to same folders in game and lveditor.
-===
-Скопируйте файлы из каталога levels в соответствующий каталог game и lveditor.
-
 You can pack game, lveditor or building editor to a zip-archive so, that main.lua is in the root of the archive, then change archive`s extension from ".zip" to "love". After that you`ll be able  to start game/editor with double clicking.
 ===
 Вы можете упаковать каталоги game, lveditor или building editor в zip-архив так, чтобы файл main.lua оказался в корне архива, после этого изменить расширение .zip на .love. Это даст возможность запускать игру и редакторы двойным кликом по пиктограмме архива.

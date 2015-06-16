@@ -685,7 +685,7 @@ function draw_objects ()
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					love.graphics.draw(media.images.buildings1, sprite, ((mx-1+addx)*tile_w+left_space)-tile_w+top_space, (my-1+addy)*tile_h*0.75+top_space)
+					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
 				end;
 			else
 				if map[my+map_y][mx+map_x]>120 and  map[my+map_y][mx+map_x]<=220 then
@@ -697,7 +697,7 @@ function draw_objects ()
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					love.graphics.draw(media.images.buildings1, sprite, ((mx-1+addx)*tile_w+left_space+tile_hw)-tile_w+top_space, (my-1+addy)*tile_h*0.75+top_space)
+					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
 				end;   
 			end;
 			if editor_status == "harvest" and harvest_table[my+map_y][mx+map_x][1] ~= 0 then --harvest
@@ -1357,19 +1357,25 @@ function playingState.mousepressed(x, y, button)
 		
 	----SUBHEXES/
 	
-	if love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "buildings" then
-		map[cursor_world_y][cursor_world_x] = 300+current_building;
+	if love.mouse.isDown("l") and insideMap(cursor_world_x,cursor_world_y) and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "buildings" then
+		map[cursor_world_y][cursor_world_x] = 300 + current_building;
 		if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
 			hexes = "hexes_ev";
 		else
 			hexes = "hexes_ne";
 		end;
 		for i=1,#buildings_stats[current_building][hexes] do	
-			if buildings_stats[current_building][hexes][i][2]+cursor_world_y > 0 and buildings_stats[current_building][hexes][i][2]+cursor_world_y <= map_h
-			and buildings_stats[current_building][hexes][i][1]+cursor_world_x > 0 and buildings_stats[current_building][hexes][i][1]+cursor_world_x <= map_w then
-				map[buildings_stats[current_building][hexes][i][2]+cursor_world_y][buildings_stats[current_building][hexes][i][1]+cursor_world_x] = 10;
-				buildings_table[buildings_stats[current_building][hexes][i][2]+cursor_world_y][buildings_stats[current_building][hexes][i][1]+cursor_world_x] = {cursor_world_y,cursor_world_x};
+			if cursor_world_y-buildings_stats[current_building][hexes][i][2] > 0 and cursor_world_y-buildings_stats[current_building][hexes][i][2] <= map_h
+			and cursor_world_x-buildings_stats[current_building][hexes][i][1] > 0 and cursor_world_x-buildings_stats[current_building][hexes][i][1] <= map_w 
+			then
+				local mapx = cursor_world_y-buildings_stats[current_building][hexes][i][2];
+				local mapy = cursor_world_x-buildings_stats[current_building][hexes][i][1]
+				if buildings_stats[current_building][hexes][i][2] ~= 0 or buildings_stats[current_building][hexes][i][1] ~= 0 then
+					map[mapx][mapy] = 10;
+				end;
+				buildings_table[mapy][mapx] = {cursor_world_y,cursor_world_x};
 			end;
+			
 		end;
 	end;
 	
@@ -1603,7 +1609,7 @@ function draw_cursor ()
 			hexes = "hexes_ne";
 		end;
 		for i=1,#buildings_stats[current_building][hexes] do
-			drawHex(buildings_stats[current_building][hexes][i][1]+cursor_world_x,buildings_stats[current_building][hexes][i][2]+cursor_world_y,tile_cursor_empty);
+			drawHex(cursor_world_x-buildings_stats[current_building][hexes][i][1],cursor_world_y-buildings_stats[current_building][hexes][i][2],tile_cursor_empty);
 		end;
 	end;
 end;

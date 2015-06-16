@@ -601,8 +601,8 @@ function playingState.load()
 		end;
 
 		localtriggers={
-		{x=29,y=10,dir=6,id=1},
-		{x=37,y=13,dir=6,id=2},
+		{x=28,y=10,dir=6,id=1},
+		{x=34,y=16,dir=6,id=2},
 		};
 
 		traders={
