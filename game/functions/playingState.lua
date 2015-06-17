@@ -1649,7 +1649,7 @@ function playingState.keypressed(key, unicode)
 			love.audio.resume(media.sounds.battle, 0);
 		end;
 		if key=="l" then
-			love.audio.play(media.sounds.battle, 0);
+			--love.audio.play(media.sounds.battle, 0);
 		end;
 		if key=="h" and chars_mobs_npcs[current_mob].person == "char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
 			helpers.harvestOne ();
@@ -7286,7 +7286,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 	end;
 
-	if love.mouse.isDown("l") and game_status == "inventory" and holding_smth==0 and oil_smth > 0 then --modifing equipment
+	if love.mouse.isDown("l") and game_status == "inventory" and holding_smth==0 and oil_smth > 0 then --modifing equipment FIXME slot class rh/lh/ammo (rh/lh/ranged/armor/helm/gloves/cloak/boots/belt/amulet/6 rings) --> hardened
 		if mX>452 and mX<566 and mY>300 and mY<620 and inv_page==1 and chars_mobs_npcs[current_mob]["equipment"].rh>0
 		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w==0
 		then
@@ -7329,7 +7329,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 		end;
 
-		if mX>680 and mX<814 and mY>276 and mY<500 and inv_page==1 and chars_mobs_npcs[current_mob]["equipment"].lh>0>0
+		if mX>680 and mX<814 and mY>276 and mY<500 and inv_page==1 and chars_mobs_npcs[current_mob]["equipment"].lh>0
 		and (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].class == "sword"
 		or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].class == "dagger")
 		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w==0
@@ -8143,6 +8143,7 @@ function letaBattleBegin ()
 		helpers.addToActionLog( lognames.actions.battlestarted);
 		global.status="battle";
 		global.battle_start = true;
+		love.audio.play(media.sounds.battle, 0);
 		helpers.battleorder();
 	end;
 end;
@@ -8153,6 +8154,7 @@ function letaBattleFinishes ()
 		love.audio.play(media.sounds.battle_finishes,0);
 		helpers.addToActionLog(lognames.actions.battlefinished);
 		global.status = "peace";
+		love.audio.stop(media.sounds.battle, 0);
 		for i=1,#chars_mobs_npcs do
 			chars_mobs_npcs[i].enslave = 0;
 			if chars_mobs_npcs[i].summoned then

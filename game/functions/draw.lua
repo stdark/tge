@@ -1306,7 +1306,7 @@ function draw.stats(index)
 	love.graphics.draw(media.images.stats, x,y-70);
 	--402x254
 	love.graphics.setFont(statFont);
-	love.graphics.draw(media.images.charfaces, charfaces[current_mob], x+390, y-50);
+	love.graphics.draw(media.images.charfaces, charfaces[chars_mobs_npcs[current_mob].face], x+390, y-50);
 	love.graphics.setColor(0, 0, 0);
 	love.graphics.print(lognames.stats.name, x+475,y-50);
 	love.graphics.print(chars_mobs_npcs[index].name, x+595,y-50);
@@ -2203,9 +2203,6 @@ function draw.equipment ()
 	local x,y = helpers.centerObject(media.images.inv1);
 	love.graphics.draw(media.images.charfaces, charfaces[chars_mobs_npcs[current_mob].face], x+390, y-20);
 	love.graphics.print(chars_stats[current_mob].name, x+365+math.ceil(#chars_stats[current_mob].name/2)*10, y+75);
-
-		
-		
 	local tempeq1 = nil;
 	local tempeq2 = nil;
 	if inv_page == 1 then

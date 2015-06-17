@@ -3899,6 +3899,8 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	local tmpclass2 = nil;
 	local poison_mod1 = 1;
 	local poison_mod2 = 1;
+	local add_atkm = 0;
+	local add_atkr = 0;
 	if chars_mobs_npcs[index].person == "mob" then
 		tmpclass="mobs_stats." .. chars_mobs_npcs[index].class;
 		tmpclass2=loadstring("return " .. tmpclass)();
@@ -3956,7 +3958,7 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 		chars_mobs_npcs[index].block=0;
 		chars_mobs_npcs[index].parry=0;]]
 	end;
-	add_atkm=0;
+
 	if chars_mobs_npcs[index].fear > 0 then --FEAR
 		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_buff_power + math.ceil(0.2*chars_mobs_npcs[index].mgt);
 		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_buff_power + math.ceil(0.2*chars_mobs_npcs[index].spd);
@@ -4040,6 +4042,29 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 			poison_mod2 = 0.75-chars_mobs_npcs[index].poison_power/100;
 		end;
 	end;
+	
+	for e=1,#chars_mobs_npcs[index]["equipment"] do
+		if chars_mobs_npcs[current_mob]["equipment"][e] > 0 then
+			for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].atkadd) do
+				if key == add_atkm then
+					add_atkm = add_atkm + value;
+				elseif key == add_atkr then
+					add_atkr = add_atkr + value;
+				end;
+			end;
+		end;
+	end;
+	
+	for e=1,#chars_mobs_npcs[index]["equipment"] do
+		if chars_mobs_npcs[current_mob]["equipment"][e] > 0 then
+			for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].selfstatbuffs) do
+				if key then
+					chars_mobs_npcs[index][tostring(key)] = chars_mobs_npcs[index][tostring(key)] + value;
+				end;
+			end;
+		end;
+	end;
+	
 	chars_mobs_npcs[index].mgt=math.ceil(math.max(1,chars_mobs_npcs[index].mgt*poison_mod1+chars_mobs_npcs[index].mgt_buff_power-chars_mobs_npcs[index].mgt_debuff_power));
 	chars_mobs_npcs[index].enu=math.ceil(math.max(1,chars_mobs_npcs[index].enu*poison_mod1+chars_mobs_npcs[index].enu_buff_power-chars_mobs_npcs[index].enu_debuff_power));
 	chars_mobs_npcs[index].dex=math.ceil(math.max(1,chars_mobs_npcs[index].dex*poison_mod1+chars_mobs_npcs[index].dex_buff_power-chars_mobs_npcs[index].dex_debuff_power));
@@ -4060,16 +4085,6 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	chars_mobs_npcs[index].int=math.ceil(chars_mobs_npcs[index].int+chars_mobs_npcs[index].hourofpower_power);
 	chars_mobs_npcs[index].spr=math.ceil(chars_mobs_npcs[index].spr+chars_mobs_npcs[index].hourofpower_power);
 
-	--if chars_mobs_npcs[index].person=="char" then
-	for e=1,#chars_mobs_npcs[index]["equipment"] do
-		if chars_mobs_npcs[current_mob]["equipment"] > 0 then
-			for f=1,#items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].effects do
-				if items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].typ == "buff" or items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][e]].w].typ == "debuff" then
-					chars_mobs_npcs[items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].effects[f][1]] = chars_mobs_npcs[items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].effects[f][1]] + items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].effects[f][2];
-				end;
-			end;
-		end;
-	end;
 	--MELEE
 	for i=1, #chars_mobs_npcs[index].arms do
 		local hand = chars_mobs_npcs[index]["arms"][i];
@@ -4121,7 +4136,6 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	end;
 	--RANGED
 	if chars_mobs_npcs[index]["equipment"].ranged ~= 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].q > 0 and chars_mobs_npcs[index]["equipment"].ammo ~= 0 then
-		add_atkr=0;
 		if chars_mobs_npcs[index].lvl_bow >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].class == "bow" then
 			add_atkr = chars_mobs_npcs[index].num_bow;
 		end;
@@ -4239,6 +4253,16 @@ function helpers.recalcResistances (index)
 		chars_mobs_npcs[index].rezspirit= chars_mobs_npcs[index].rezspirit+chars_mobs_npcs[index].protofspirit_power;
 	else
 		chars_mobs_npcs[index].protofspirit_power=0;
+	end;
+	
+	for e=1,#chars_mobs_npcs[index]["equipment"] do
+		if chars_mobs_npcs[current_mob]["equipment"][e] > 0 then
+			for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].selfrezbuffs) do
+				if key then
+					chars_mobs_npcs[index][tostring(key)] = chars_mobs_npcs[index][tostring(key)] + value;
+				end;
+			end;
+		end;
 	end;
 end;
 
@@ -4923,17 +4947,19 @@ end;
 function helpers.addHunger(index,value)
 	if helpers.aliveNature(index) then
 		chars_mobs_npcs[index].satiation = chars_mobs_npcs[index].satiation - value;
-		if chars_mobs_npcs[index].satiation < 0 and chars_mobs_npcs[index].hp > 0 and not helpers.mobHasPerk(index,"ascetic") then
-			chars_mobs_npcs[index].weakness = 5;
-			local mob_name = helpers.mobName(index);
-			helpers.addToActionLog( mob_name .. lognames.actions.starves[chars_mobs_npcs[current_mob].gender]);
+		if global.status == "peace" then
+			if chars_mobs_npcs[index].satiation < 0 and chars_mobs_npcs[index].hp > 0 and not helpers.mobHasPerk(index,"ascetic") then
+				chars_mobs_npcs[index].weakness = 5;
+				local mob_name = helpers.mobName(index);
+				helpers.addToActionLog( mob_name .. lognames.actions.starves[chars_mobs_npcs[current_mob].gender]);
+			end;
+			if chars_mobs_npcs[index].satiation < -chars_mobs_npcs[index].enu and chars_mobs_npcs[index].status == 1 then
+				chars_mobs_npcs[index].hp = 0;
+				local mob_name = helpers.mobName(index);
+				helpers.addToActionLog( mob_name .. lognames.actions.uncondfstarve[chars_mobs_npcs[current_mob].gender]);
+			end;
+			damage.HPcheck(index);
 		end;
-		if chars_mobs_npcs[index].satiation < -chars_mobs_npcs[index].enu and chars_mobs_npcs[index].status == 1 then
-			chars_mobs_npcs[index].hp = 0;
-			local mob_name = helpers.mobName(index);
-			helpers.addToActionLog( mob_name .. lognames.actions.uncondfstarve[chars_mobs_npcs[current_mob].gender]);
-		end;
-		damage.HPcheck(index);
 	end;
 end;
 
