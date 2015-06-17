@@ -164,12 +164,20 @@ function love.keypressed(key, unicode)
 		end;
 	end;
 	
-	if love.keyboard.isDown("lctrl") and key == 's'  then
+	if love.keyboard.isDown("lctrl") and not love.keyboard.isDown("lshift") and key == 's'  then
 		local door_coords = find_door();
 		local hexarray1 = count_hexes (true);
 		local hexarray2 = count_hexes (false);
 		local addx,addy = count_add(hexarray1);
-		save(-1*(buildings_x-frame_x1),-1*(buildings_y-frame_y1),(frame_x2-frame_x1),(frame_y2-frame_y1),addx,addy,door_coords[1],door_coords[2],door_coords[3],door_coords[4],hexarray1,hexarray2);
+		save(false,-1*(buildings_x-frame_x1),-1*(buildings_y-frame_y1),(frame_x2-frame_x1),(frame_y2-frame_y1),addx,addy,door_coords[1],door_coords[2],door_coords[3],door_coords[4],hexarray1,hexarray2);
+	end;
+	
+	if love.keyboard.isDown("lctrl") and love.keyboard.isDown("lshift") and key == 's'  then
+		local door_coords = find_door();
+		local hexarray1 = count_hexes (true);
+		local hexarray2 = count_hexes (false);
+		local addx,addy = count_add(hexarray1);
+		save(true,-1*(buildings_x-frame_x1),-1*(buildings_y-frame_y1),(frame_x2-frame_x1),(frame_y2-frame_y1),addx,addy,door_coords[1],door_coords[2],door_coords[3],door_coords[4],hexarray1,hexarray2);
 	end;
 	
 	if key == 'right'  then
@@ -310,14 +318,17 @@ function draw_cursor ()
 	end;
 end;
 
-function save(x,y,w,h,addx,addy,doorev_x,doorev_y,doorne_x,doorne_y,hexesev,hexesne)
+function save(create_new_file,x,y,w,h,addx,addy,doorev_x,doorev_y,doorne_x,doorne_y,hexesev,hexesne)
 	local addx_hex = math.ceil(addx/32);
 	local addy_hex = math.ceil(addy/16);
-	love.filesystem.write( savename, 
-	 "\r\n" .. ",{img=media.images.buildings1,sprite=love.graphics.newQuad(" .. x .. "," .. y .. "," .. w .. "," .. h .. ", media.images.buildings1:getWidth(), media.images.buildings1:getHeight()),addx=" .. addx_hex .. ",addy=" .. addy_hex .. ","
+	local data = "\r\n" .. "{img=media.images.buildings1,sprite=love.graphics.newQuad(" .. x .. "," .. y .. "," .. w .. "," .. h .. ", media.images.buildings1:getWidth(), media.images.buildings1:getHeight()),addx=" .. addx_hex .. ",addy=" .. addy_hex .. ","
   .. "\r\n" .. "door_ev={" .. doorev_x .. "," .. doorev_y .. "},door_ne={" .. doorne_x .. "," .. doorne_y .. "},"
-  .. "\r\n" .. "hexes_ne=" .. Tserial.pack(hexesev, true, false) .. ",hexes_ev=" .. Tserial.pack(hexesne, true, false) .. "}"
-	 );
+  .. "\r\n" .. "hexes_ne=" .. Tserial.pack(hexesev, true, false) .. ",hexes_ev=" .. Tserial.pack(hexesne, true, false) .. "},";
+	if create_new_file then
+		love.filesystem.write(savename,data);
+	 else
+		love.filesystem.append(savename,data);
+	 end;
 	print("SAVED!");
 	editor_status = "saved";
 end;
@@ -478,9 +489,10 @@ function love.draw()
 		love.graphics.print("[UP]/[DOWN]/[LEFT]/[RIGHT] - move image (движение изображения)", 40,110);
 		love.graphics.print("[SAME]+[LSHIFT] - speed x10 (скорость x10)", 40,130);
 		love.graphics.print("[SAME]+[LCTRL]+[LSHIFT] - speed x100 (скорость x100)", 40,150);
-		love.graphics.print("[LCTRL]+[S] - save (сохранить)", 40,170);
-		love.graphics.print("[RCTRL] - mark quad (разметить спрайт)", 40,190);
-		love.graphics.print("[ESC] - quit help (выйти из справки)", 40,210);
+		love.graphics.print("[LCTRL]+[S] - save-append (сохранить, дописать)", 40,170);
+		love.graphics.print("[LCTRL]+[LSHIFT]+[S] - save-rewrite (сохранить, переписать)", 40,190);
+		love.graphics.print("[RCTRL] - mark quad (разметить спрайт)", 40,210);
+		love.graphics.print("[ESC] - quit help (выйти из справки)", 40,230);
 	end;
 
 	love.graphics.draw(img_hud, 0,0);
