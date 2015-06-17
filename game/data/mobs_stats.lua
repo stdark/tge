@@ -3,7 +3,7 @@ function mobs_data ()
 mobs_stats={}
 mobs_stats.goblin={class="goblin", subclass=1, race="goblin",  sprite = "goblin", name="aarrrgh", face=5, lv=1, nature="humanoid", size="normal", gender=1, motion="walking", track=2, hexes=1,
             mgt=10,enu=15,dex=15,spd=15,acu=15,sns=15,int=5,spr=5,chr=5,luk=5, --stats
-            hp_base = 12, sp_base = 0, st_base = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 12, sp_base_mod = 0, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 30, fov = 180, nightvision = 1, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=100,
             perks={},
@@ -26,7 +26,7 @@ mobs_stats.goblin={class="goblin", subclass=1, race="goblin",  sprite = "goblin"
                    };
 mobs_stats.rogue={class="rogue", subclass=1, race="human",  sprite = "rogue", name="nonameandnick", face=5, lv=1, nature="humanoid", size="normal", gender=1, motion="walking",  track=1, hexes=1,
             mgt=10,enu=15,dex=20,spd=20,acu=55,sns=55,int=5,spr=5,chr=5,luk=25, --stats
-            hp_base = 12, sp_base = 0, st_base = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 12, sp_base_mod = 0, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0, moral = 30, fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             mvcoff=1, recmel=50, recrng=50, recmag=0, expa=100,
             perks={},
@@ -49,7 +49,7 @@ mobs_stats.rogue={class="rogue", subclass=1, race="human",  sprite = "rogue", na
                    };
 mobs_stats.mage={class="mage", subclass=1, race="human",  sprite = "rogue", name="nonameandnick", face=5, lv=1, nature="humanoid", size="normal", gender=1, motion="walking",  track=1, hexes=1,
             mgt=5,enu=10,dex=5,spd=5,acu=5,sns=15,int=55,spr=0,chr=0,luk=25, --stats
-            hp_base = 12, sp_base = 25, st_base = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 12, sp_base_mod = 25, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0, moral = 30, fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             mvcoff=1, recmel=50, recrng=50, recmag=0, expa=100,
             perks={},
@@ -71,7 +71,7 @@ mobs_stats.mage={class="mage", subclass=1, race="human",  sprite = "rogue", name
                    };
 mobs_stats.golem={class="golem", subclass=1, race="golem",  sprite = "golem", name="гркх", face=9, lv=1, nature="golem", size="normal", gender=1, motion="walking",  track=9, hexes=1,--personalities
             mgt=20,enu=35,dex=15,spd=10,acu=10,sns=10,int=1,spr=0,chr=0,luk=0, --stats
-            hp_base = 25, sp_base = 0, st_base = 0,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 25, sp_base_mod = 0, st_base_mod = 15,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 0,fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
@@ -115,7 +115,7 @@ mobs_stats.fireelemental={class="fireelemental", subclass=1, race="elemental",  
                    };
 mobs_stats.airelemental={class="airelemental", subclass=1, race="elemental",  sprite = "airelemental", name="фью", face=9, lv=1, nature="elemental", size="normal", gender=1, motion="levitation",  track=9, hexes=1,--personalities
             mgt=10,enu=25,dex=15,spd=15,acu=15,sns=10,int=50,spr=0,chr=0,luk=0, --stats
-            hp_base = 25, sp_base = 100, st_base = 0,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 0,fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},hitzones={{"head","rh","lh","body","body","body","body","tail","tail"}},
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
@@ -137,7 +137,7 @@ mobs_stats.airelemental={class="airelemental", subclass=1, race="elemental",  sp
                    };
 mobs_stats.waterelemental={class="waterelemental", subclass=1, race="elemental",  sprite = "waterelemental", name="буль", face=9, lv=1, nature="elemental", size="normal", gender=1, motion="walking",  track=9, hexes=1,--personalities
             mgt=10,enu=25,dex=15,spd=15,acu=15,sns=10,int=50,spr=0,chr=0,luk=0, --stats
-            hp_base = 25, sp_base = 100, st_base = 0,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 0,fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},hitzones={{"head","rh","lh","body","body","body","body","tail","tail"}},
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
@@ -159,7 +159,7 @@ mobs_stats.waterelemental={class="waterelemental", subclass=1, race="elemental",
                    };
 mobs_stats.earthelemental={class="earthelemental", subclass=1, race="elemental",  sprite = "elemental", name="гркх", face=9, lv=1, nature="elemental", size="normal", gender=1, motion="walking",  track=9, hexes=1,--personalities
             mgt=20,enu=35,dex=15,spd=10,acu=10,sns=10,int=1,spr=0,chr=0,luk=0, --stats
-            hp_base = 25, sp_base = 0, st_base = 0,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 0,fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
@@ -181,7 +181,7 @@ mobs_stats.earthelemental={class="earthelemental", subclass=1, race="elemental",
                    };
 mobs_stats.naga={class="naga", subclass=1, race="naga",  sprite = "golem", name="нья", face=5, lv=1, nature="hybrid", size="normal", gender=2, motion="walking", track=7, hexes=1,--personalities
             mgt=25,enu=40,dex=25,spd=10,acu=35,sns=10,int=20,spr=0,chr=0,luk=20, --stats
-            hp_base = 35, sp_base = 0, st_base = 0,hp_coff = 1, sp_coff = 0, st_coff = 1,
+            hp_base_mod = 12, sp_base_mod = 0, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 0,fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 1, head = 1, arms={"rh","lh","rh1","lh1","rh2","lh2"},hitzones={{"head","rh","lh","rh1","lh1","rh2","lh2","body","body","body","tail","tail","tail"}},
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=350,
             perks={},

@@ -1640,29 +1640,33 @@ function helpers.addMob(i,person)
 		chars_mobs_npcs[i]["personality"]["current"] = {};
 		chars_mobs_npcs[i]["personality"]["current"].etiquette=chars_stats[i].etiquette;
 		chars_stats[i].skillpoints = 50; --FIXME DEBUG
-		if chars_mobs_npcs[i].class == "acolyte" or
-			chars_mobs_npcs[i].class == "mage" or
-			chars_mobs_npcs[i].class == "archmage" or
-			chars_mobs_npcs[i].class == "necromancer" or
-			chars_mobs_npcs[i].class == "lich" or
-			chars_mobs_npcs[i].class == "rogue" then
+		if chars_mobs_npcs[i].class == "acolyte"
+		or chars_mobs_npcs[i].class == "mage"
+		or chars_mobs_npcs[i].class == "archmage"
+		or chars_mobs_npcs[i].class == "necromancer"
+		or chars_mobs_npcs[i].class == "lich"
+		or chars_mobs_npcs[i].class == "rogue" --FIXME: debug
+		or chars_mobs_npcs[i].class == "battlemage"
+		then
 			chars_mobs_npcs[i].sp_stat	= chars_mobs_npcs[i].int;
-		elseif chars_mobs_npcs[i].class == "novice" or
-			chars_mobs_npcs[i].class == "monk" or
-			chars_mobs_npcs[i].class == "ieromonk" or
-			chars_mobs_npcs[i].class == "paladin" or
-			chars_mobs_npcs[i].class == "crusader" or
-			chars_mobs_npcs[i].class == "cleric" or
-			chars_mobs_npcs[i].class == "bishop" or
-			chars_mobs_npcs[i].class == "deathknight" or
-			chars_mobs_npcs[i].class == "crusinant" then
+		elseif chars_mobs_npcs[i].class == "novice"
+		or chars_mobs_npcs[i].class == "cleric"
+		or chars_mobs_npcs[i].class == "priest"
+		or chars_mobs_npcs[i].class == "heretic"
+		or chars_mobs_npcs[i].class == "heresyarch"
+		or chars_mobs_npcs[i].class == "monk"
+		or chars_mobs_npcs[i].class == "ieromonk"
+		or chars_mobs_npcs[i].class == "paladin"
+		or chars_mobs_npcs[i].class == "deathknight"
+		then
 			chars_mobs_npcs[i].sp_stat	= chars_mobs_npcs[i].spr;
-		elseif chars_mobs_npcs[i].class == "druid" or
-			chars_mobs_npcs[i].class == "archdruid" or
-			chars_mobs_npcs[i].class == "sorcerer" or
-			chars_mobs_npcs[i].class == "warlock" or
-			chars_mobs_npcs[i].class == "shaman" or
-			chars_mobs_npcs[i].class == "ubershaman" then
+		elseif chars_mobs_npcs[i].class == "druid"
+		or chars_mobs_npcs[i].class == "archdruid"
+		or chars_mobs_npcs[i].class == "sorcerer"
+		or chars_mobs_npcs[i].class == "warlock"
+		or chars_mobs_npcs[i].class == "shaman"
+		or chars_mobs_npcs[i].class == "ubershaman"
+		then
 			chars_mobs_npcs[i].sp_stat	= math.max(chars_mobs_npcs[i].int,chars_mobs_npcs[i].spr);
 		end;
 	end;
@@ -1687,12 +1691,14 @@ function helpers.addMob(i,person)
 
 	--chars_mobs_npcs[i].class = tmpclass2.class;
 
-	chars_mobs_npcs[i].hp_base = tmpclass2.hp_base;
-	chars_mobs_npcs[i].sp_base = tmpclass2.sp_base;
-	chars_mobs_npcs[i].st_base = tmpclass2.st_base;
+	chars_mobs_npcs[i].hp_base = tmpclass2.lv*tmpclass2.hp_base_mod;
+	chars_mobs_npcs[i].sp_base = tmpclass2.lv*tmpclass2.sp_base_mod;
+	chars_mobs_npcs[i].st_base = tmpclass2.lv*tmpclass2.st_base_mod;
+	
 	chars_mobs_npcs[i].hp_coff = tmpclass2.hp_coff;
 	chars_mobs_npcs[i].sp_coff = tmpclass2.sp_coff;
 	chars_mobs_npcs[i].st_coff = tmpclass2.st_coff;
+	
 	chars_mobs_npcs[i].spells = tmpclass2.spells;
 	chars_mobs_npcs[i].spellbook=tmpclass2.spellbook;
 	chars_mobs_npcs[i].warbook = tmpclass2.warbook;
@@ -2090,10 +2096,12 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].rezlight=tmpclass2.rezlight;
 	chars_mobs_npcs[i].rezdarkness=tmpclass2.rezdarkness;
 	chars_mobs_npcs[i].rezzero=0; -- hack for non elemental damage
-
-	chars_mobs_npcs[i].hp_max = chars_mobs_npcs[i].hp_base + chars_mobs_npcs[i].hp_coff * chars_mobs_npcs[i].enu + chars_mobs_npcs[i].num_bodybuilding*chars_mobs_npcs[i].lvl_bodybuilding;
-	chars_mobs_npcs[i].sp_max = chars_mobs_npcs[i].sp_base + chars_mobs_npcs[i].sp_coff * chars_mobs_npcs[i].sp_stat + chars_mobs_npcs[i].num_mysticism*chars_mobs_npcs[i].lvl_mysticism;
-	chars_mobs_npcs[i].st_max = 200 + chars_mobs_npcs[i].st_base + chars_mobs_npcs[i].st_coff * chars_mobs_npcs[i].enu;
+	
+	local bodybuilding_bonus = chars_mobs_npcs[i].num_bodybuilding*chars_mobs_npcs[i].lvl_bodybuilding;
+	local mysticism_bonus = chars_mobs_npcs[i].num_mysticism*chars_mobs_npcs[i].lvl_mysticism;
+	chars_mobs_npcs[i].hp_max = chars_mobs_npcs[i].hp_base + chars_mobs_npcs[i].hp_coff * chars_mobs_npcs[i].enu + bodybuilding_bonus;
+	chars_mobs_npcs[i].sp_max = chars_mobs_npcs[i].sp_base + chars_mobs_npcs[i].sp_coff * chars_mobs_npcs[i].sp_stat + mysticism_bonus;
+	chars_mobs_npcs[i].st_max = 200 + chars_mobs_npcs[i].st_base + chars_mobs_npcs[i].st_coff * chars_mobs_npcs[i].enu + bodybuilding_bonus;
 
 	chars_mobs_npcs[i].hp = chars_mobs_npcs[i].hp_max;
 	chars_mobs_npcs[i].sp = chars_mobs_npcs[i].sp_max;
