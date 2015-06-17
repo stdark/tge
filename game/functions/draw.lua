@@ -2483,7 +2483,7 @@ function draw.objects ()
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0, 0,0);
 					end;
-					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+top_space+addy);
+					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					love.graphics.setColor(255, 255, 255);
 				end;      
 			else
@@ -2509,7 +2509,7 @@ function draw.objects ()
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0, 0,0);
 					end;
-					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space, (my-1)*tile_h*0.75+top_space+addy);
+					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
 					love.graphics.setColor(255, 255, 255);	
 				end;  
 			end;
