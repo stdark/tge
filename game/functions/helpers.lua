@@ -5259,3 +5259,54 @@ function helpers.itemIsAtFile1(id)
 	end;
 	return false;
 end;
+
+function helpers.oilItemInSlot(index,slot,oiltype,oilpower,oileffect)
+	local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
+	if oiltype == "trioil" then
+		if list[oil_smth].q <= 50 then
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e = oilpower;
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].w = oileffect;
+		elseif list[oil_smth].q > 50 and list[oil_smth].q <= 75 then
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e = oilpower;
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].w = oileffect+1;
+		elseif list[oil_smth].q >= 100 then
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e = oilpower;
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].w = oileffect+2;
+		end;
+	elseif oiltype == "oil" then
+		chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e = oilpower;
+		chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].w = oileffect;
+	elseif oiltype == "hardoil" then
+		chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].h = oilpower;
+	elseif oiltype == "resetoil" then
+		if chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].w > 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e  < 1000 then
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e = math.max(0,chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e-oilpower);
+			if chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e == 0 then
+				chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].w = 0;
+			end;
+		end;
+	elseif oiltype == "eternaloil" then
+		if chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].w > 0 then
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].e = 1000;
+		end;
+		if chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].h > 0 then
+			chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].h = 1000;
+		end;
+	elseif oiltype == "chargeoil" then
+		chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].q = chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][slot]].q + oilpower;
+	end;
+	local tmp = inventory_ttx[list[oil_smth].ttxid].a;
+	local q = list[oil_smth].q;
+	love.audio.play(media.sounds.grease,0);
+	helpers.addToActionLog( chars_stats[index].name .. " " .. lognames.actions.greased[chars_mobs_npcs[index].gender] .. lognames.actions.someequipment);
+	table.remove(list,oil_smth) ;
+	if dragfrom == "char" then
+		helpers.renumber(oil_smth,index);
+	end;
+	table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r = 1});
+	bag[tmp_bagid][inv_quad_x][inv_quad_y]=#list bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
+	oil_smth = 0;
+	if global.status == "battle" then
+		damage.RTminus(index,10,false);
+	end;
+end;

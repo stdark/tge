@@ -3459,22 +3459,24 @@ function playingState.mousereleased (x,y,button)
 		end;
 		helpers.findNonFreeSpaceAtInv (current_mob,dragfrom,false,false);
 	end;
-
-	if button == "l" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting") and holding_smth>0 --wrong area
-	--and ((mX<=inv_add_x and mY <= y + 720) or (mX >= x+1102 and mY <= y+720) or (mX <= x-40)
-	--or mY<=(inv_add_y-16) or (mY >= y + 502 and mY <= y+720) or (mX >= x+458 and mY >= y + 720))
+	
+	--FIXME add empty area
+	selected_portrait,trash = helpers.select_portrait();
+	if button == "l" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting") and holding_smth > 0 --wrong area
+	and selected_portrait ~= current_mob
 	and (mX < x or mX > x + media.images.inv1:getWidth () or mY < y-50 or mY > y-50+media.images.inv1:getHeight ())
 	then
 		utils.printDebug("wrong area");
 		local list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false);
 		local selected_char,trash = helpers.select_portrait()
-		if tmp_bagid > 0 and selected_char > 0 and selected_char ~= current_mob then
-			selected_char = tmp_bagid;
-			find_free_space_at_inv();
-		else
+		print("WRN",tmp_bagid,selected_char);
+		if tmp_bagid > 0 then
+		--if tmp_bagid > 0 and selected_char > 0 and selected_char ~= current_mob then
+			--selected_char = tmp_bagid;
+			--find_free_space_at_inv();
+		--else
 			if slot == 0 then
 				if bag[tmp_bagid][inv_quad_x][inv_quad_y] == 0 then
-					print("HWG");
 					bag[tmp_bagid][inv_quad_x][inv_quad_y] = holding_smth;
 					helpers.repackBag();
 				else -- splitted ammo
@@ -3694,260 +3696,266 @@ function playingState.mousereleased (x,y,button)
 		end;
 	end;
 --/drop
-	if button == "l" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status =="crafting") and holding_smth>0
-	and mY>850 and mX>40 and mX<538
-	then --trading among chars
-		helpers.select_portrait();
-		list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false,bagid);
-		if selected_portrait>0 and char_for_trading_is_near==1 and selected_portrait~=current_mob then
-			helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.gave[chars_mobs_npcs[current_mob].gender] .. chars_stats[selected_portrait].name .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][holding_smth].ttxid].title);
-			exchange=1;
-		elseif selected_portrait>0 and char_for_trading_is_near==0 and  selected_portrait~=current_mob  then
-			helpers.addToActionLog( lognames.actions.charistoofar);
-		end;
-		if selected_portrait > 0 and selected_portrait == current_mob -- drink a potion
-		and inventory_ttx[list[holding_smth].ttxid].subclass == "drink"
-		and chars_stats[current_mob].nature=="humanoid" then
-			local tmp=inventory_ttx[list[holding_smth].ttxid].a .. add;
-			local q=list[holding_smth].q;
-			if inventory_ttx[list[holding_smth].ttxid].b=="plus" then
-				chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]+list[holding_smth].q;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="minus" then
-				chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]-list[holding_smth].q;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="zero" then
-				chars_mobs_npcs[current_mob][tmp]=0;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="equal" then
-				chars_mobs_npcs[current_mob][tmp]=chars_mobs_npcs[current_mob][tmp]-list[holding_smth].q;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="permanentplus" then
-				chars_stats[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]+list[holding_smth].q;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="permanentminus" then
-				chars_stats[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]-list[holding_smth].q;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="twinbuff" then
-				local tmp2 = tmp .. "_power";
-				local tmp2 = tmp .. "_dur";
-				chars_stats[current_mob][tmp2]= list[holding_smth].q;
-				chars_stats[current_mob][tmp3]= list[holding_smth].q;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="twindebuff" then
-				local tmp2 = tmp .. "_power";
-				local tmp2 = tmp .. "_dur";
-				chars_stats[current_mob][tmp2]= list[holding_smth].q;
-				chars_stats[current_mob][tmp3]= list[holding_smth].q;
-			elseif inventory_ttx[list[holding_smth].ttxid].b=="convertor" then
-				if inventory_ttx[list[holding_smth].ttxid].a == 1 then
-					local convertation = math.min(chars_mobs_npcs[current_mob].hp-1,list[holding_smth].q);
-					damage.SPplus(current_mob,convertation,false);
-					damage.HPminus(current_mob,convertation,false);
-				elseif inventory_ttx[list[holding_smth].ttxid].a == 2 then
-					local convertation = math.min(chars_mobs_npcs[current_mob].sp-1,list[holding_smth].q);
-					damage.HPplus(current_mob,convertation,false);
-					damage.SPminus(current_mob,convertation,false);
-				end;
+--mouse up at portraits, reading, using potions
+	if button == "l" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status =="crafting") and holding_smth > 0 then
+		selected_portrait,char_for_trading_is_near = helpers.select_portrait();
+		if selected_portrait == current_mob then
+			list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false,bagid);
+			if selected_portrait > 0 and char_for_trading_is_near==1 and selected_portrait~=current_mob then
+				helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.gave[chars_mobs_npcs[current_mob].gender] .. chars_stats[selected_portrait].name .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][holding_smth].ttxid].title);
+				exchange=1;
+			elseif selected_portrait>0 and char_for_trading_is_near==0 and  selected_portrait~=current_mob  then
+				helpers.addToActionLog( lognames.actions.charistoofar);
 			end;
-			helpers.limitStats();
-			love.audio.play(media.sounds.drink,0);
-			helpers.addToActionLog( chars_stats[current_mob].name .. " " ..
-			lognames.actions.drinked[chars_mobs_npcs[current_mob].gender] .. " «"
-			.. inventory_ttx[list[holding_smth].ttxid].title .. "» "
-			.. lognames.actions.ofpower .. " " .. list[holding_smth].q);
-			table.remove(list,holding_smth);
-			for i=1,11 do
-				for h=1,15 do
-					if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i]<10000 then
-						bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1;
+			if selected_portrait > 0 and selected_portrait == current_mob -- drink a potion
+			and inventory_ttx[list[holding_smth].ttxid].subclass == "drink"
+			and chars_stats[current_mob].nature=="humanoid" then
+				local tmp=inventory_ttx[list[holding_smth].ttxid].a .. add;
+				local q=list[holding_smth].q;
+				if inventory_ttx[list[holding_smth].ttxid].b=="plus" then
+					chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]+list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="minus" then
+					chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]-list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="zero" then
+					chars_mobs_npcs[current_mob][tmp]=0;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="equal" then
+					chars_mobs_npcs[current_mob][tmp]=chars_mobs_npcs[current_mob][tmp]-list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="permanentplus" then
+					chars_stats[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]+list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="permanentminus" then
+					chars_stats[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]-list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="twinbuff" then
+					local tmp2 = tmp .. "_power";
+					local tmp2 = tmp .. "_dur";
+					chars_stats[current_mob][tmp2]= list[holding_smth].q;
+					chars_stats[current_mob][tmp3]= list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="twindebuff" then
+					local tmp2 = tmp .. "_power";
+					local tmp2 = tmp .. "_dur";
+					chars_stats[current_mob][tmp2]= list[holding_smth].q;
+					chars_stats[current_mob][tmp3]= list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="convertor" then
+					if inventory_ttx[list[holding_smth].ttxid].a == 1 then
+						local convertation = math.min(chars_mobs_npcs[current_mob].hp-1,list[holding_smth].q);
+						damage.SPplus(current_mob,convertation,false);
+						damage.HPminus(current_mob,convertation,false);
+					elseif inventory_ttx[list[holding_smth].ttxid].a == 2 then
+						local convertation = math.min(chars_mobs_npcs[current_mob].sp-1,list[holding_smth].q);
+						damage.HPplus(current_mob,convertation,false);
+						damage.SPminus(current_mob,convertation,false);
 					end;
 				end;
-			end;
-			helpers.renumber(holding_smth,current_mob);
-			table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r=0});
-			bag[tmp_bagid][inv_quad_x][inv_quad_y] = #list;
-			bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x holding_smth = 0;
-			if global.status == "battle" then
-				chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-10;
-				game_status = "restoring";
-			end;
-		end;
-		if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- oil a weapon
-		and (inventory_ttx[list[holding_smth].ttxid].subclass == "trioil" or inventory_ttx[list[holding_smth].ttxid].subclass =="oil") then
-			oil_smth = holding_smth;
-			holding_smth = 0;
-			love.audio.play(media.sounds.chpok,0);
-			sorttarget = dragfrom;
-			game_status = "inventory";
-		end;
-
-		if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- eat smth
-		and inventory_ttx[list[holding_smth].ttxid].class == "food" then
-			holding_smth = 0;
-			--love.audio.play(media.sounds.yami,0);
-			helpers.addToActionLog(chars_stats[current_mob].name .. lognames.actions.eaten[chars_mobs_npcs[current_mob].gender]);
-			local value = inventory_ttx[list[holding_smth].ttxid].a;
-			if chars_mobs_npcs[index].basiliskbreath == 0 then
-				helpers.addSatiation(index,value);
-			end;
-			table.remove(list,holding_smth);
-			for i=1,11 do
-				for h=1,15 do
-					if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i]<10000 then
-						bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1;
-					end;
-				end;
-			end;
-			helpers.renumber(holding_smth,current_mob);
-			if global.status == "battle" then
-				chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-10;
-				sorttarget = dragfrom;
-				game_status = "restoring";
-			end;
-		end;
-
-		if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- bomb
-		and inventory_ttx[list[holding_smth].ttxid].subclass == "bomb" then
-			bomb_smth = holding_smth;
-			love.audio.play(media.sounds.inv_bottle_put,0);
-			potionname = inventory_ttx[list[holding_smth].ttxid].title;
-			missle_subtype = inventory_ttx[list[holding_smth].ttxid].a;
-			bombpower = list[holding_smth].q;
-			holding_smth = 0;
-			missle_type = "bottle";
-			game_status = "sensing";
-		end;
-		if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- allieshelp
-		and inventory_ttx[list[holding_smth].ttxid].subclass == " allieshelp" then
-			use_smth = holding_smth;
-			love.audio.play(media.sounds.inv_bottle_put,0);
-			potionname = inventory_ttx[list[holding_smth].ttxid].title;
-			missle_subtype = inventory_ttx[list[holding_smth].ttxid].a;
-			bombpower = list[holding_smth].q;
-			holding_smth = 0;
-			missle_type = "bottle";
-			game_status = "sensing";
-		end;
-		if holding_smth>0 and selected_portrait>0 and selected_portrait==current_mob --read a spellbok
-		and inventory_ttx[list[holding_smth].ttxid].class == "spellbook"
-		and  chars_stats[current_mob].spellbook==1
-		and  chars_mobs_npcs[current_mob].status==1
-		and  chars_mobs_npcs[current_mob].stone==0
-		and  chars_mobs_npcs[current_mob].freeze==0
-		and  chars_mobs_npcs[current_mob].paralyze==0
-		and  chars_mobs_npcs[current_mob].insane==0
-		and  chars_mobs_npcs[current_mob].control=="player" then
-			local bookcanberead = 1;
-			for i = 1,chars do
-				local tmpskill = magic.spell_tips[list[holding_smth].w].skill[i];
-				local tmplevel = magic.spell_tips[list[holding_smth].w].level[i];
-				if tmpskill == "none" or chars_stats[current_mob][tmpskill] >= tmplevel then
-				else
-					bookcanberead = 0;
-				end;
-			end;
-			local tmpspell=list[holding_smth].w;
-			local tmpspellname=typo[1] .. magic.spell_tips[tmpspell].title .. typo[2];
-			if bookcanberead == 1 then
-				if chars_mobs_npcs[current_mob].spells[magic.spell_tips[list[holding_smth].w].school][magic.spell_tips[list[holding_smth].w].spell] == 0 then
-					chars_mobs_npcs[current_mob].spells[magic.spell_tips[list[holding_smth].w].school][magic.spell_tips[list[holding_smth].w].spell] = 1
-					table.remove(list,holding_smth);
-					helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.examined[chars_mobs_npcs[current_mob].gender] .. tmpspellname)
-					for i=1,11 do
-						for h=1,15 do
-							if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i] < 10000 then
-								bag[tmp_bagid][h][i] = bag[tmp_bagid][h][i]-1;
-							end;
+				helpers.limitStats();
+				love.audio.play(media.sounds.drink,0);
+				helpers.addToActionLog( chars_stats[current_mob].name .. " " ..
+				lognames.actions.drinked[chars_mobs_npcs[current_mob].gender] .. " «"
+				.. inventory_ttx[list[holding_smth].ttxid].title .. "» "
+				.. lognames.actions.ofpower .. " " .. list[holding_smth].q);
+				table.remove(list,holding_smth);
+				for i=1,11 do
+					for h=1,15 do
+						if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i]<10000 then
+							bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1;
 						end;
 					end;
-				else
-				--char knows the spell already
-					helpers.addToActionLog( chars_stats[current_mob] .. " " .. lognames.actions.alreadyknown .. tmpspellname);
 				end;
-			else
-			--cant read this!
-				helpers.addToActionLog( chars_stats[current_mob] .. " " .. lognames.actions.cantreadthis);
+				helpers.renumber(holding_smth,current_mob);
+				table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r=0});
+				bag[tmp_bagid][inv_quad_x][inv_quad_y] = #list;
+				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x holding_smth = 0;
+				if global.status == "battle" then
+					chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-10;
+					game_status = "restoring";
+				end;
 			end;
-			holding_smth = 0;
-		end;
-		if holding_smth>0 and selected_portrait>0 and selected_portrait==current_mob --read a book, letter, message
-		and (inventory_ttx[list[holding_smth].ttxid].class == "book" or inventory_ttx[list[holding_smth].ttxid].class == "message" or inventory_ttx[list[holding_smth].ttxid].class == "letter" or inventory_ttx[list[holding_smth].ttxid].class == "map"  or inventory_ttx[list[holding_smth].ttxid].class == "gobelen")
-		and  chars_mobs_npcs[current_mob].status==1
-		and  chars_mobs_npcs[current_mob].stone==0
-		and  chars_mobs_npcs[current_mob].freeze==0
-		and  chars_mobs_npcs[current_mob].paralyze==0
-		and  chars_mobs_npcs[current_mob].insane==0
-		and  chars_mobs_npcs[current_mob].control=="player"
-		then
-			if inventory_ttx[list[holding_smth].ttxid].class == "book" then
-				pagebook=1;
-				littype="book";
-				game_status="literature";
-				tmp_book=holding_smth;
-				holding_smth=0;
-				bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book
-				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-				bag[tmp_bagid][inv_quad_x][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
-				bag[tmp_bagid][inv_quad_x+1][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
-				love.audio.play(media.sounds.bookopen, 0);
-			elseif inventory_ttx[list[holding_smth].ttxid].class == "message" then
-				littype="message";
-				game_status="literature";
-				tmp_book=holding_smth;
-				bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
-				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-				holding_smth=0;
-				love.audio.play(media.sounds.paper, 0);
-			elseif inventory_ttx[list[holding_smth].ttxid].class == "letter" then
-				littype="letter";
-				game_status="literature";
-				tmp_book=holding_smth;
-				bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
-				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-				holding_smth=0;
-				love.audio.play(media.sounds.paper, 0);
-			elseif inventory_ttx[list[holding_smth].ttxid].class == "map" then
-				littype="map";
-				game_status="literature";
-				tmp_book=holding_smth;
-				bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
-				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-				holding_smth=0;
-				love.audio.play(media.sounds.paper, 0);
-			elseif inventory_ttx[list[holding_smth].ttxid].class == "gobelen" then
-				littype="gobelen";
-				game_status="literature";
-				tmp_book=holding_smth;
-				bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
-				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-				holding_smth=0;
-				love.audio.play(media.sounds.inv_cloth_take, 0);
+			
+			print("OIL:",selected_portrait,holding_smth,inventory_ttx[list[holding_smth].ttxid].subclass);
+			if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- oil a weapon
+			and (inventory_ttx[list[holding_smth].ttxid].subclass == "trioil" or inventory_ttx[list[holding_smth].ttxid].subclass =="oil"
+			or inventory_ttx[list[holding_smth].ttxid].subclass == "chargeoil" or inventory_ttx[list[holding_smth].ttxid].subclass == "hardoil"
+			or inventory_ttx[list[holding_smth].ttxid].subclass == "resetoil" or inventory_ttx[list[holding_smth].ttxid].subclass == "eternaloil"
+			) then
+				oil_smth = holding_smth;
+				holding_smth = 0;
+				love.audio.play(media.sounds.chpok,0);
+				sorttarget = dragfrom;
+				game_status = "inventory";
 			end;
-		end;
-		if holding_smth > 0 and selected_portrait > 0 and selected_portrait == current_mob --read a scroll
-		and inventory_ttx[list[holding_smth].ttxid].class == "scroll"
-		and  chars_mobs_npcs[current_mob].status == 1
-		and  chars_mobs_npcs[current_mob].stone == 0
-		and  chars_mobs_npcs[current_mob].freeze == 0
-		and  chars_mobs_npcs[current_mob].paralyze == 0
-		and  chars_mobs_npcs[current_mob].insane == 0
-		and  chars_mobs_npcs[current_mob].control == "player" then
-			love.audio.play(media.sounds.paper,0);
-			missle_drive = "scroll";
-			missle_type = list[holding_smth].w;
-			game_status = "sensing";
-			scroll_smth=holding_smth;
-			holding_smth = 0;
-		end;
-		if (holding_smth > 0 and selected_portrait > 0 and selected_portrait ~= current_mob and char_for_trading_is_near == 1) then
-			sorttarget="char";
-			oldsorttarget="char";
-			selected_char=selected_portrait;
-			find_free_space_at_inv();
-		elseif (holding_smth > 0 and selected_portrait > 0 and selected_portrait ~= current_mob and char_for_trading_is_near == 0) then
-			if slot==0 then
-				inventory_bag[current_mob][inv_quad_x][inv_quad_y]=holding_smth;
-				holding_smth=0;
-			else
-				chars_mobs_npcs[current_mob]["equipment"].slot=holding_smth;
-				holding_smth=0;
+
+			if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- eat smth
+			and inventory_ttx[list[holding_smth].ttxid].class == "food" then
+				holding_smth = 0;
+				--love.audio.play(media.sounds.yami,0);
+				helpers.addToActionLog(chars_stats[current_mob].name .. lognames.actions.eaten[chars_mobs_npcs[current_mob].gender]);
+				local value = inventory_ttx[list[holding_smth].ttxid].a;
+				if chars_mobs_npcs[index].basiliskbreath == 0 then
+					helpers.addSatiation(index,value);
+				end;
+				table.remove(list,holding_smth);
+				for i=1,11 do
+					for h=1,15 do
+						if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i]<10000 then
+							bag[tmp_bagid][h][i]=bag[tmp_bagid][h][i]-1;
+						end;
+					end;
+				end;
+				helpers.renumber(holding_smth,current_mob);
+				if global.status == "battle" then
+					chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-10;
+					sorttarget = dragfrom;
+					game_status = "restoring";
+				end;
 			end;
+
+			if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- bomb
+			and inventory_ttx[list[holding_smth].ttxid].subclass == "bomb" then
+				bomb_smth = holding_smth;
+				love.audio.play(media.sounds.inv_bottle_put,0);
+				potionname = inventory_ttx[list[holding_smth].ttxid].title;
+				missle_subtype = inventory_ttx[list[holding_smth].ttxid].a;
+				bombpower = list[holding_smth].q;
+				holding_smth = 0;
+				missle_type = "bottle";
+				game_status = "sensing";
+			end;
+			if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- allieshelp
+			and inventory_ttx[list[holding_smth].ttxid].subclass == " allieshelp" then
+				use_smth = holding_smth;
+				love.audio.play(media.sounds.inv_bottle_put,0);
+				potionname = inventory_ttx[list[holding_smth].ttxid].title;
+				missle_subtype = inventory_ttx[list[holding_smth].ttxid].a;
+				bombpower = list[holding_smth].q;
+				holding_smth = 0;
+				missle_type = "bottle";
+				game_status = "sensing";
+			end;
+			if holding_smth>0 and selected_portrait>0 and selected_portrait==current_mob --read a spellbok
+			and inventory_ttx[list[holding_smth].ttxid].class == "spellbook"
+			and  chars_stats[current_mob].spellbook==1
+			and  chars_mobs_npcs[current_mob].status==1
+			and  chars_mobs_npcs[current_mob].stone==0
+			and  chars_mobs_npcs[current_mob].freeze==0
+			and  chars_mobs_npcs[current_mob].paralyze==0
+			and  chars_mobs_npcs[current_mob].insane==0
+			and  chars_mobs_npcs[current_mob].control=="player" then
+				local bookcanberead = 1;
+				for i = 1,chars do
+					local tmpskill = magic.spell_tips[list[holding_smth].w].skill[i];
+					local tmplevel = magic.spell_tips[list[holding_smth].w].level[i];
+					if tmpskill == "none" or chars_stats[current_mob][tmpskill] >= tmplevel then
+					else
+						bookcanberead = 0;
+					end;
+				end;
+				local tmpspell=list[holding_smth].w;
+				local tmpspellname=typo[1] .. magic.spell_tips[tmpspell].title .. typo[2];
+				if bookcanberead == 1 then
+					if chars_mobs_npcs[current_mob].spells[magic.spell_tips[list[holding_smth].w].school][magic.spell_tips[list[holding_smth].w].spell] == 0 then
+						chars_mobs_npcs[current_mob].spells[magic.spell_tips[list[holding_smth].w].school][magic.spell_tips[list[holding_smth].w].spell] = 1
+						table.remove(list,holding_smth);
+						helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.examined[chars_mobs_npcs[current_mob].gender] .. tmpspellname)
+						for i=1,11 do
+							for h=1,15 do
+								if bag[tmp_bagid][h][i] > holding_smth and bag[tmp_bagid][h][i] > 0 and bag[tmp_bagid][h][i] < 10000 then
+									bag[tmp_bagid][h][i] = bag[tmp_bagid][h][i]-1;
+								end;
+							end;
+						end;
+					else
+					--char knows the spell already
+						helpers.addToActionLog( chars_stats[current_mob] .. " " .. lognames.actions.alreadyknown .. tmpspellname);
+					end;
+				else
+				--cant read this!
+					helpers.addToActionLog( chars_stats[current_mob] .. " " .. lognames.actions.cantreadthis);
+				end;
+				holding_smth = 0;
+			end;
+			if holding_smth>0 and selected_portrait>0 and selected_portrait==current_mob --read a book, letter, message
+			and (inventory_ttx[list[holding_smth].ttxid].class == "book" or inventory_ttx[list[holding_smth].ttxid].class == "message" or inventory_ttx[list[holding_smth].ttxid].class == "letter" or inventory_ttx[list[holding_smth].ttxid].class == "map"  or inventory_ttx[list[holding_smth].ttxid].class == "gobelen")
+			and  chars_mobs_npcs[current_mob].status==1
+			and  chars_mobs_npcs[current_mob].stone==0
+			and  chars_mobs_npcs[current_mob].freeze==0
+			and  chars_mobs_npcs[current_mob].paralyze==0
+			and  chars_mobs_npcs[current_mob].insane==0
+			and  chars_mobs_npcs[current_mob].control=="player"
+			then
+				if inventory_ttx[list[holding_smth].ttxid].class == "book" then
+					pagebook=1;
+					littype="book";
+					game_status="literature";
+					tmp_book=holding_smth;
+					holding_smth=0;
+					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book
+					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
+					bag[tmp_bagid][inv_quad_x][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
+					bag[tmp_bagid][inv_quad_x+1][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
+					love.audio.play(media.sounds.bookopen, 0);
+				elseif inventory_ttx[list[holding_smth].ttxid].class == "message" then
+					littype="message";
+					game_status="literature";
+					tmp_book=holding_smth;
+					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
+					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
+					holding_smth=0;
+					love.audio.play(media.sounds.paper, 0);
+				elseif inventory_ttx[list[holding_smth].ttxid].class == "letter" then
+					littype="letter";
+					game_status="literature";
+					tmp_book=holding_smth;
+					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
+					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
+					holding_smth=0;
+					love.audio.play(media.sounds.paper, 0);
+				elseif inventory_ttx[list[holding_smth].ttxid].class == "map" then
+					littype="map";
+					game_status="literature";
+					tmp_book=holding_smth;
+					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
+					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
+					holding_smth=0;
+					love.audio.play(media.sounds.paper, 0);
+				elseif inventory_ttx[list[holding_smth].ttxid].class == "gobelen" then
+					littype="gobelen";
+					game_status="literature";
+					tmp_book=holding_smth;
+					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
+					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
+					holding_smth=0;
+					love.audio.play(media.sounds.inv_cloth_take, 0);
+				end;
+			end;
+			if holding_smth > 0 and selected_portrait > 0 and selected_portrait == current_mob --read a scroll
+			and inventory_ttx[list[holding_smth].ttxid].class == "scroll"
+			and  chars_mobs_npcs[current_mob].status == 1
+			and  chars_mobs_npcs[current_mob].stone == 0
+			and  chars_mobs_npcs[current_mob].freeze == 0
+			and  chars_mobs_npcs[current_mob].paralyze == 0
+			and  chars_mobs_npcs[current_mob].insane == 0
+			and  chars_mobs_npcs[current_mob].control == "player" then
+				love.audio.play(media.sounds.paper,0);
+				missle_drive = "scroll";
+				missle_type = list[holding_smth].w;
+				game_status = "sensing";
+				scroll_smth=holding_smth;
+				holding_smth = 0;
+			end;
+			if (holding_smth > 0 and selected_portrait > 0 and selected_portrait ~= current_mob and char_for_trading_is_near == 1) then
+				sorttarget="char";
+				oldsorttarget="char";
+				selected_char=selected_portrait;
+				find_free_space_at_inv();
+			elseif (holding_smth > 0 and selected_portrait > 0 and selected_portrait ~= current_mob and char_for_trading_is_near == 0) then
+				if slot==0 then
+					inventory_bag[current_mob][inv_quad_x][inv_quad_y]=holding_smth;
+					holding_smth=0;
+				else
+					chars_mobs_npcs[current_mob]["equipment"].slot=holding_smth;
+					holding_smth=0;
+				end;
+			end;
+			helpers.recalcBattleStats (current_mob);
 		end;
-		helpers.recalcBattleStats (current_mob);
 	end;
 
 	if mX > x+372 and mX < x+740 and mY > y-40 and mY < y+490 and holding_smth>0 then --area of equipment, but wrong slot or wrong item
@@ -7286,237 +7294,88 @@ function  playingState.mousepressed(x,y,button)
 			damage.shoot();
 		end;
 	end;
---zazaza
-	if love.mouse.isDown("l") and game_status == "inventory" and holding_smth==0 and oil_smth > 0 then --modifing equipment FIXME slot class rh/lh/ammo (rh/lh/ranged/armor/helm/gloves/cloak/boots/belt/amulet/6 rings) --> hardened
-		if mX>452 and mX<566 and mY>300 and mY<620 and inv_page==1 and chars_mobs_npcs[current_mob]["equipment"].rh>0
-		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w==0
+	
+--modifing equipment
+	if love.mouse.isDown("l") and game_status == "inventory" and holding_smth == 0 and oil_smth > 0 then
+		sorttarget = dragfrom;
+		local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
+		local oiltype = inventory_ttx[list[oil_smth].ttxid].subclass;
+		local oileffect = inventory_ttx[list[oil_smth].ttxid].a;
+		local oilpower = inventory_ttx[list[oil_smth].ttxid].q;
+		if helpers.inSlot("rh")
+		and chars_mobs_npcs[current_mob]["equipment"].rh > 0
+		and (oiltype == "trioil" or oiltype == "oil")
 		then
-			sorttarget=dragfrom;
-
-			local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
-			if list[oil_smth].q<=50 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].e=list[oil_smth].q;
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w=inventory_ttx[list[oil_smth].ttxid].a;
-			elseif list[oil_smth].q>50 and list[oil_smth].q<=75 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].e=list[oil_smth].q;
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w=inventory_ttx[list[oil_smth].ttxid].a+1;
-			elseif list[oil_smth].q>75 and list[oil_smth].q<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].e=list[oil_smth].q;
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w=inventory_ttx[list[oil_smth].ttxid].a+2;
-			elseif list[oil_smth].q>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].e=1000;
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w=inventory_ttx[list[oil_smth].ttxid].a+2;
-			end;
-			if list[oil_smth].q<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].e=list[oil_smth].q;
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w=inventory_ttx[list[oil_smth].ttxid].a;
-			elseif chars_mobs_npcs[current_mob]["inventory_list"][oil_smth].q>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].e=1000;
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w=inventory_ttx[list[oil_smth].ttxid].a;
-			end;
-			local tmp=inventory_ttx[list[oil_smth].ttxid].a;
-			local q=list[oil_smth].q;
-			love.audio.play(media.sounds.grease,0);
-			helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.greased[chars_mobs_npcs[current_mob].gender] .. lognames.actions.someequipment);
-			table.remove(list,oil_smth) ;
-			if dragfrom=="char" then
-				helpers.renumber(oil_smth,current_mob);
-			end;
-			table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r = 1});
-			bag[tmp_bagid][inv_quad_x][inv_quad_y]=#list bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-			oil_smth=0;
-			if global.status == "battle" then
-				chars_mobs_npcs[current_mob].rt= chars_mobs_npcs[current_mob].rt-10;
-			end;
-		end;
-
-		if mX>680 and mX<814 and mY>276 and mY<500 and inv_page==1 and chars_mobs_npcs[current_mob]["equipment"].lh>0
+			helpers.oilItemInSlot(current_mob,"rh",oiltype,oilpower,oileffect);
+		elseif helpers.inSlot("lh")
+		and chars_mobs_npcs[current_mob]["equipment"].lh > 0
 		and (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].class == "sword"
 		or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].class == "dagger")
-		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w==0
+		and (oiltype == "trioil" or oiltype == "oil")
 		then
-			sorttarget=dragfrom;
-			local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
-		if list[oil_smth].q<=50 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].e=list[oil_smth].q;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w=inventory_ttx[list[oil_smth].ttxid].a;
-		elseif list[oil_smth].q>50 and list[oil_smth].q<=75 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].e=list[oil_smth].q;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w=inventory_ttx[list[oil_smth].ttxid].a+1;
-		elseif list[oil_smth].q>75 and list[oil_smth].q<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].e=list[oil_smth].q;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w=inventory_ttx[list[oil_smth].ttxid].a+2;
-		elseif list[oil_smth].q>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].e=1000;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w=inventory_ttx[list[oil_smth].ttxid].a+2;
+			helpers.oilItemInSlot(current_mob,"lh",oiltype,oilpower,oileffect);
+		elseif helpers.inSlot("ammo")
+		and chars_mobs_npcs[current_mob]["equipment"].ammo > 0
+		and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class ~= "battery"
+		and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class ~= "bullet"
+		and (oiltype == "trioil" or oiltype == "oil")
+		and (oiltype == "trioil" or oiltype == "oil")
+		then
+			helpers.oilItemInSlot(current_mob,"ammo",oiltype,oilpower,oileffect);
+		elseif helpers.inSlot("ranged")
+		and chars_mobs_npcs[current_mob]["equipment"].ranged > 0
+		and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class == "wand"
+		and oiltype == "chargeoil"
+		then
+			helpers.oilItemInSlot(current_mob,"ammo",oiltype,oilpower,oileffect);
 		end;
-
-		if list[oil_smth].q<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].e=list[oil_smth].q;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w=inventory_ttx[list[oil_smth].ttxid].a;
-		elseif chars_mobs_npcs[current_mob]["inventory_list"][oil_smth].q>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-		chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].e=1000;
-		chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].w=inventory_ttx[list[oil_smth].ttxid].a;
-		end
-		local tmp=inventory_ttx[list[oil_smth].ttxid].a;
-		local q=list[oil_smth].q;
-		love.audio.play(media.sounds.grease,0);
-		helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.greased[chars_mobs_npcs[current_mob].gender] .. lognames.actions.someequipment);
-		table.remove(list,oil_smth);
-		if dragfrom=="char" then
-			helpers.renumber(oil_smth,current_mob);
-		end
-		table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r=0}) bag[tmp_bagid][inv_quad_x][inv_quad_y]=#list bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-		oil_smth=0;
-		if global.status == "battle" then
-			chars_mobs_npcs[current_mob].rt= chars_mobs_npcs[current_mob].rt-10;
-		end;
-	end;
-
-	if mX>700 and mX<830 and mY>278 and mY<500 and inv_page==2 and chars_mobs_npcs[current_mob]["equipment"].ammo>0>0
-	and (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class == "sword"
-	or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class == "dagger")
-	and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w==0
-	then
-		sorttarget=dragfrom;
-
-		local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
-		local oilpower = list[oil_smth].q;
-		if inventory_ttx[list2[tmp_bagid2][tmp_thing].ttxid].class == "ammo" then
-			oilpower = math.max(1,math.ceil(oilpower/list2[tmp_bagid2][tmp_thing].q));
-		end;
-
-		if oilpower<=50 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].e=oilpower;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w=inventory_ttx[list[oil_smth].ttxid].a;
-		elseif oilpower>50 and oilpower<=75 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].e=oilpower;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w=inventory_ttx[list[oil_smth].ttxid].a+1;
-		elseif oilpower>75 and oilpower<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].e=oilpower;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w=inventory_ttx[list[oil_smth].ttxid].a+2;
-		elseif oilpower>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].e=1000;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w=inventory_ttx[list[oil_smth].ttxid].a+2;
-		end;
-
-		if oilpower<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].e=oilpower;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w=inventory_ttx[list[oil_smth].ttxid].a;
-		elseif chars_mobs_npcs[current_mob]["inventory_list"][oil_smth].q>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].e=1000;
-			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].w=inventory_ttx[list[oil_smth].ttxid].a;
-		end;
-
-		local tmp=inventory_ttx[list[oil_smth].ttxid].a;
-		local q=oilpower;
-
-		love.audio.play(media.sounds.grease,0);
-		helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.greased[chars_mobs_npcs[current_mob].gender] .. lognames.actions.someequipment);
-		table.remove(list,oil_smth);
-
-		if dragfrom=="char" then
-			helpers.renumber(oil_smth,current_mob);
-		end
-		table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r=0}) bag[tmp_bagid][inv_quad_x][inv_quad_y]=#list bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-		oil_smth=0;
-			if global.status == "battle" then
-				chars_mobs_npcs[current_mob].rt= chars_mobs_npcs[current_mob].rt-10;
+		
+		local hardslots = {"rh","lh","ranged","armor","helm","boots","gloves","belt","cloak","amulet","ring1","ring2","ring3","ring4","ring5","ring6"};
+		if oil_smth > 0 then
+			for i=1,#hardslots do
+				slot = hardslots[i]
+				if helpers.inSlot(slot)
+				and chars_mobs_npcs[current_mob]["equipment"][slot] > 0
+				and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][slot]].ttxid].class ~= "wand"
+				and (oiltype == "hardoil")
+				then
+					helpers.oilItemInSlot(current_mob,slot,oiltype,oilpower,oileffect);
+					break;
+				end;
 			end;
 		end;
+		
+		local resetslots = {"rh","lh"};
+		if oil_smth > 0 then
+			for i=1,#resetslots do
+				slot = resetslots[i]
+				if helpers.inSlot(slot)
+				and chars_mobs_npcs[current_mob]["equipment"][slot] > 0
+				and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][slot]].ttxid].class ~= "wand"
+				and (oiltype == "resetoil")
+				then
+					helpers.oilItemInSlot(current_mob,slot,oiltype,oilpower,oileffect);
+					break;
+				end;
+			end;
+		end;
+		
+		local eternalslots = {"rh","lh","ranged","armor","helm","boots","gloves","belt","cloak","amulet","ring1","ring2","ring3","ring4","ring5","ring6"};
+		if oil_smth > 0 then
+			for i=1,#eternalslots do
+				slot = eternalslots[i]
+				if helpers.inSlot(slot)
+				and chars_mobs_npcs[current_mob]["equipment"][slot] > 0
+				and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][slot]].ttxid].class ~= "wand"
+				and (oiltype == "eternaloil")
+				then
+					helpers.oilItemInSlot(current_mob,slot,oiltype,oilpower,oileffect);
+					break;
+				end;
+			end;
+		end;	
+	end;
 --/
-		if (mX>inv_add_x and mX<inv_add_x+11*32 and mY>inv_add_y and mY<inv_add_y+15*32)
-		or ( mX>inv_add_x+inv_part2 and mX<=inv_add_x+11*32+inv_part2 and mY>inv_add_y and mY<=inv_add_y+15*32) then
-			if mX>inv_add_x and mX<inv_add_x+11*32 and mY>inv_add_y and mY<inv_add_y+15*32 then
-				tmp_bagid2=selected_portrait;
-				list2=loadstring("return " .. "chars_mobs_npcs[" .. tmp_bagid2 .. ']["inventory_list"]')();
-				bag2=loadstring("return " .. "inventory_bag")();
-				inv_quad_y2=math.ceil((mX-inv_add_x)/32);
-				inv_quad_x2=math.ceil((mY-inv_add_y)/32);
-			elseif mX>inv_add_x+inv_part2 and mX<=inv_add_x+11*32+inv_part2 and mY>inv_add_y and mY<=inv_add_y+15*32 then
-				tmp_bagid2=bagid;
-				list2=loadstring("return " .. "bags_list")();
-				bag2=loadstring("return " .. "bags")();
-				inv_quad_y2=math.ceil((mX-inv_add_x-inv_part2)/32);
-				inv_quad_x2=math.ceil((mY-inv_add_y)/32);
-			end;
-
-			sorttarget=dragfrom;
-
-			local list,bag,tmp_bagid = helpers.whatSortTarget(sorttarget,false,false);
-			local tmp_inbag_id=bag2[tmp_bagid2][inv_quad_x2][inv_quad_y2];
-			if tmp_inbag_id>0 and tmp_inbag_id<10000 then
-				tmp_thing=tmp_inbag_id;
-			elseif tmp_inbag_id>10000 then
-				local tmp_s=tostring(tmp_inbag_id);
-				if (tmp_inbag_id-10000)<10 then
-					tmpxi2=tonumber(string.sub(tmp_s, 5,6));
-				else
-					tmpxi2=tonumber(string.sub(tmp_s, 4,6));
-				end;
-				local tmpyi2=math.floor((tmp_inbag_id-tmpxi2)/10000);
-				tmp_thing=bag[tmp_bagid][tmpxi2][tmpyi2];
-			elseif tmp_inbag_id==0 then
-				tmp_thing=0;
-			end;
-
-			if tmp_thing>0 and
-			chars_mobs_npcs[current_mob]["inventory_list"][tmp_thing].w==0
-			and (inventory_ttx[list2[tmp_thing].ttxid].class == "sword"
-			or inventory_ttx[list2[tmp_thing].ttxid].class == "axe"
-			or inventory_ttx[list2[tmp_thing].ttxid].class == "dagger"
-			or inventory_ttx[list2[tmp_thing].ttxid].class == "flagpole"
-			or inventory_ttx[list2[tmp_thing].ttxid].class == "crushing"
-			or inventory_ttx[list2[tmp_thing].ttxid].class == "staff"
-			or inventory_ttx[list2[tmp_thing].ttxid].class == "ammo"
-			or inventory_ttx[list2[tmp_thing].ttxid].class == "throwing") then
-				local oilpower = list[oil_smth].q;
-				if inventory_ttx[list2[tmp_thing].ttxid].class == "ammo" then
-					oilpower = math.max(1,math.ceil(oilpower/list2[tmp_thing].q));
-				end;
-				if oilpower<=50 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-					list2[tmp_thing].e=oilpower;
-					list2[tmp_thing].w=inventory_ttx[list[oil_smth].ttxid].a;
-				elseif oilpower>50 and oilpower<=75 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-					list2[tmp_thing].e=oilpower;
-					list2[tmp_thing].w=inventory_ttx[list[oil_smth].ttxid].a+1;
-				elseif oilpower>75 and oilpower<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-					list2[tmp_thing].e=oilpower;
-					list2[tmp_thing].w=inventory_ttx[list[oil_smth].ttxid].a+2;
-				elseif oilpower>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "trioil" then
-					list2[tmp_thing].e=1000;
-					list2[tmp_thing].w=inventory_ttx[list[oil_smth].ttxid].a+2;
-				end;
-
-				if oilpower<=100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-					list2[tmp_thing].e=oilpower;
-					list2[tmp_thing].w=inventory_ttx[list[oil_smth].ttxid].a;
-				elseif chars_mobs_npcs[current_mob]["inventory_list"][oil_smth].q>100 and inventory_ttx[list[oil_smth].ttxid].subclass == "oil" then
-					list2[tmp_thing].e=1000;
-					list2[tmp_thing].w=inventory_ttx[list[oil_smth].ttxid].a;
-				end;
-				love.audio.play(media.sounds.grease,0);
-				helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.greased[chars_mobs_npcs[current_mob].gender] .. lognames.actions.someequipment);
-				table.remove(list,oil_smth) ;
-
-				if dragfrom=="char" then
-					helpers.renumber(oil_smth,current_mob);
-				end;
-				table.insert(list,{ttxid=raws.tare,q=1,w=0,e=0,r = 1});
-				if slot==0 then
-				bag[tmp_bagid][inv_quad_x][inv_quad_y]=#list;
-				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
-				else
-				alchlab[current_mob][slot]=#list;
-				end;
-				oil_smth=0 ;
-				if global.status == "battle" then
-					chars_mobs_npcs[current_mob].rt= chars_mobs_npcs[current_mob].rt-10;
-				end;
-			end;
-		end;
---
-	end;
 end;
 
 function find_free_space_at_inv ()
@@ -7528,7 +7387,7 @@ function find_free_space_at_inv ()
 		if holding_smth > 0 then
 			for a = ccx,math.min(11,inventory_ttx[list[holding_smth].ttxid].w+ccx) do
 				for b = ccy,math.min(15,inventory_ttx[list[holding_smth].ttxid].h+ccy) do
-					if bag[selected_char][b][a] > 0 or ccx>(11-(inventory_ttx[list[holding_smth].ttxid].w-1)) or ccy>(15-(inventory_ttx[list[holding_smth].ttxid].h-1)) then
+					if bag[selected_char][b][a] > 0 or ccx>(11-(inventory_ttx[list[holding_smth].ttxid].w-1)) or ccy>(15-(inventory_ttx[list[holding_smth].ttxid].h-1)) then --NIL
 						some_crap_under_cursor = 1;
 					end;
 				end;
