@@ -6,7 +6,7 @@ function sprites.load()
 		imgtiley = inventory_ttx[i].y*32;
 		imgtilew = inventory_ttx[i].w*32;
 		imgtileh = inventory_ttx[i].h*32;
-		tiles_items[i] = love.graphics.newQuad(imgtilex, imgtiley, imgtilew,imgtileh, media.images.items:getWidth(), media.images.items:getHeight());
+		tiles_items[i] = love.graphics.newQuad(imgtilex, imgtiley, imgtilew,imgtileh, media.images.items1:getWidth(), media.images.items1:getHeight());
 	end
 	mindgame_icons = {};
 	for i=1,8 do

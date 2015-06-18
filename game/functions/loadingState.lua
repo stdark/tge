@@ -124,8 +124,8 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "wbpage_3", "img/warbook/warbook_3.dds");
 			loader.newImage(media.images, "wbpage_4", "img/warbook/warbook_4.dds");
 			
-			
-			loader.newImage(media.images, "items", "img/img_items.dds");
+			loader.newImage(media.images, "items1", "img/img_items_1.dds");
+			loader.newImage(media.images, "items2", "img/img_items_2.dds");
 			loader.newImage(media.images, "tmpobjs", "img/img_tmpobjs.dds");
 			loader.newImage(media.images, "harvest", "img/harvest.dds");
 			loader.newImage(media.images, "boom", "img/sprites_boom.dds");

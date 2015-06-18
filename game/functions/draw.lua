@@ -1990,13 +1990,12 @@ function draw.mindgame()
 		local counter = 0;
 		for i=1,#chars_mobs_npcs[current_mob].inventory_list do
 			if chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid == raws.buz then
-				--love.graphics.draw(media.images.items, tiles_items[raws.buz],345+counter*40,750);
 				counter = counter+1;
 			end;
 		end;
 		for i=1,#chars_mobs_npcs[current_mob].inventory_list do
 			if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].class == "food" then
-				love.graphics.draw(media.images.items, tiles_items[raws.buz],345+counter*200,550);--FIXME
+				love.graphics.draw(media.images.items2, tiles_items[raws.buz],345+counter*200,550);--FIXME
 				counter = counter+1;
 			end;
 		end;
@@ -2047,7 +2046,7 @@ function draw.mindgameCycle(before)
 				elseif mindgame.map[i][h] == 12 then
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_death_icon,i,h,-350,-160);
 				elseif mindgame.map[i][h] == 13 then
-					draw.drawMindObject(media.images.items,tiles_items[raws.buz],i,h,-355,-125);
+					draw.drawMindObject(media.images.items2,tiles_items[raws.buz],i,h,-355,-125);
 				elseif mindgame.map[i][h] == 9 then
 				elseif mindgame.map[i][h] == 8 then
 					draw.drawMindObject(media.images.mindgame_icons_img,mindbarrier,i,h,-350,-140);
@@ -2268,7 +2267,7 @@ function draw.equipment ()
 			tempeq1 = chars_mobs_npcs[current_mob]["equipment"].ammo
 			tempeq2 = chars_stats[current_mob]["inventory_list"][tempeq1].ttxid
 			if inventory_ttx[tempeq2].class == "ammo" or inventory_ttx[tempeq2].class == "throwing" then
-				love.graphics.draw(media.images.items, tiles_items[tempeq2],x+634+inventory_ttx[tempeq2].w/2*32,y+170);
+				love.graphics.draw(media.images.items1, tiles_items[tempeq2],x+634+inventory_ttx[tempeq2].w/2*32,y+170); --q means quantity, so not from draw.drawItem
 			end;
 		end;
 		if chars_mobs_npcs[current_mob]["equipment"].amulet ~= 0 then
@@ -2334,92 +2333,92 @@ function draw.alchemy ()
 	if alchlab[current_mob].tool1~=0 then
 		local tempeq1=alchlab[current_mob].tool1;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+395,y+185);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+395,y+185);
 	end
 	if alchlab[current_mob].tool2~=0 then
 		local tempeq1=alchlab[current_mob].tool2;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+415,y+105);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+415,y+105);
 	end
 	if alchlab[current_mob].tool3~=0 then
 		local tempeq1=alchlab[current_mob].tool3;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+415,y+345);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+415,y+345);
 	end
 	if alchlab[current_mob].tool4~=0 then
 		local tempeq1=alchlab[current_mob].tool4;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+405,y+470);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+405,y+470);
 	end
 	if alchlab[current_mob].tool5~=0 then
 		local tempeq1=alchlab[current_mob].tool5;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+520,y+450);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+520,y+450);
 	end
 	if alchlab[current_mob].tool6~=0 then
 		local tempeq1=alchlab[current_mob].tool6;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+630,y+450);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+630,y+450);
 	end
 	if alchlab[current_mob].bottle1~=0 then
 		local tempeq1=alchlab[current_mob].bottle1;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+660,y+205);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+660,y+205);
 	end
 	if alchlab[current_mob].bottle2~=0 then
 		local tempeq1=alchlab[current_mob].bottle2;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+630,y+325);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+630,y+325);
 	end
 	if alchlab[current_mob].bottle3~=0 then
 		local tempeq1=alchlab[current_mob].bottle3;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+690,y+325);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+690,y+325);
 	end
 	if alchlab[current_mob].comp1~=0 then
 		local tempeq1=alchlab[current_mob].comp1;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+625,y+190);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+625,y+190);
 	end
 	if alchlab[current_mob].comp2~=0 then
 		local tempeq1=alchlab[current_mob].comp2;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+625,y+230);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+625,y+230);
 	end
 	if alchlab[current_mob].comp3~=0 then
 		local tempeq1=alchlab[current_mob].comp3;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+625,y+270);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+625,y+270);
 	end
 	if alchlab[current_mob].comp4~=0 then
 		local tempeq1=alchlab[current_mob].comp4
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+700,y+190)
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+700,y+190)
 	end
 	if alchlab[current_mob].comp5~=0 then
 		local tempeq1=alchlab[current_mob].comp5;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+700,y+230);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+700,y+230);
 	end
 	if alchlab[current_mob].comp6~=0 then
 		local tempeq1=alchlab[current_mob].comp6;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+700,y+270);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+700,y+270);
 	end
 	if alchlab[current_mob].comp7~=0 then
 		tempeq1=alchlab[current_mob].comp7;
 		tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+625,y+105);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+625,y+105);
 	end
 	if alchlab[current_mob].comp8~=0 then
 		local tempeq1=alchlab[current_mob].comp8;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+660,y+105);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+660,y+105);
 	end
 	if alchlab[current_mob].comp9~=0 then
 		local tempeq1=alchlab[current_mob].comp9;
 		local tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+695,y+105);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+695,y+105);
 	end;
 end;
 
@@ -4504,22 +4503,22 @@ function draw.picklock () --chest/door/groundtrap
 	if picklock[current_mob].key ~= 0 then
 		tempeq1=picklock[current_mob].key;
 		tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+450,y+205);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+450,y+205);
 	end;
 	if picklock[current_mob].picklock ~= 0 then
 		tempeq1=picklock[current_mob].picklock;
 		tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+400,y+205);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+400,y+205);
 	end;
 	if picklock[current_mob].traptool ~= 0 then
 		tempeq1=picklock[current_mob].traptool;
 		tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+455,y+325);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+455,y+325);
 	end;
 	if picklock[current_mob].forcer ~= 0 then
 		tempeq1=picklock[current_mob].forcer;
 		tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
-		love.graphics.draw(media.images.items, tiles_items[tempeq2],x+393,y+100);
+		love.graphics.draw(media.images.items2, tiles_items[tempeq2],x+393,y+100);
 	end;
 	
 	if condition and bags_list[bagid].locktype == 1 then
@@ -4930,14 +4929,14 @@ function draw.trading ()
 			if bars_list[bagid][i] ~= "none" then
 				local id = bars_list[bagid][i]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+220);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+220);
 			end;
 		end;
 		for i=1,8 do
 			if bars_list[bagid][8+i] ~= "none" then
 				local id = bars_list[bagid][i+8]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+100);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+100);
 			end;
 		end;
 	elseif wares == "melee" then
@@ -4949,7 +4948,7 @@ function draw.trading ()
 			if bars_list[bagid][i] ~= "none" then
 				local id = bars_list[bagid][i]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+200-math.ceil(inventory_ttx[id].h/2*32));
+				love.graphics.draw(media.images.items1, tiles_items[id],64+x+(i-1)*part-dcpl,y+200-math.ceil(inventory_ttx[id].h/2*32));
 			end;
 		end;
 	elseif wares == "ranged" then
@@ -4965,7 +4964,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -4973,7 +4972,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+8]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -4981,7 +4980,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+16]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
 			end;
 		end;
 	elseif wares == "magic" then
@@ -4994,7 +4993,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -5002,7 +5001,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+8]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -5010,7 +5009,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+16]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
 			end;
 		end;
 	elseif wares == "jewelry" then
@@ -5023,7 +5022,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -5031,7 +5030,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+8]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -5039,7 +5038,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+16]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
 			end;
 		end;
 	elseif wares == "alchemy" then
@@ -5052,7 +5051,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+150-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -5060,7 +5059,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+8]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+300-item_height);
 			end;
 		end;
 		for i=1,8 do
@@ -5068,7 +5067,7 @@ function draw.trading ()
 				local id = bars_list[bagid][i+16]["ttxid"];
 				local dcpl = math.ceil(inventory_ttx[id].w/2*32);
 				local item_height = math.ceil(inventory_ttx[id].h*32);
-				love.graphics.draw(media.images.items, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
+				love.graphics.draw(media.images.items2, tiles_items[id],64+x+(i-1)*part-dcpl,y+430-item_height);
 			end;
 		end;
 	elseif wares == "criminal" then
@@ -5153,7 +5152,7 @@ function draw.mindway ()
 	end;
 end;
 
-function draw.fog_of_war()
+function draw.fogOfWar()
 	if game_status ~= "sensing" then
 		trace.wizardEye ();
 	end;
@@ -5208,7 +5207,11 @@ function draw.drawItem(index,id,x,y,ifbag,bagid)
 	elseif helpers.ifItemIsNotBroken(index,ifbag,bagid) then
 		love.graphics.setColor(0, 255, 0);
 	end;
-	love.graphics.draw(media.images.items, tiles_items[id],x,y);
+	if helpers.itemIsAtFile1(id) then
+		love.graphics.draw(media.images.items1, tiles_items[id],x,y);
+	else
+		love.graphics.draw(media.images.items2, tiles_items[id],x,y);
+	end;
 	love.graphics.setColor(255, 255, 255);
 end;
 

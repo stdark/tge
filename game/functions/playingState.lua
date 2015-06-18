@@ -2821,7 +2821,7 @@ function playingState.mousereleased (x,y,button)
 				sfx.soundsOfInv("put",dragfrom);
 				holding_smth = 0;
 			elseif chars_stats[current_mob].horns >= 0 then
-				noslot_func();
+				helpers.noSkillToUseThisItem();
 				inventory_bag[current_mob][inv_quad_x][inv_quad_y] = holding_smth;
 				sfx.soundsOfInv("put",dragfrom);
 				holding_smth = 0;
@@ -2849,7 +2849,7 @@ function playingState.mousereleased (x,y,button)
 				sfx.soundsOfInv("put",dragfrom);
 				holding_smth = 0;
 			elseif chars_stats[current_mob].feet~=2 or chars_stats[current_mob].hoofs > 0 then
-				noslot_func();
+				helpers.noSkillToUseThisItem();
 				inventory_bag[current_mob][inv_quad_x][inv_quad_y] = holding_smth;
 				sfx.soundsOfInv("put",dragfrom);
 				holding_smth = 0;
@@ -3600,7 +3600,7 @@ function playingState.mousereleased (x,y,button)
 	and mX <= inv_add_x+11*32+inv_part2
 	and mY > inv_add_y
 	and mY <= inv_add_y+15*32
-	and (not helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) or not bags_list[bagid].locked)
+	and (not helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) or (helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) and not bags_list[bagid].locked))
 	then
 	print("DROP");
 		inv_quad_new_x = math.ceil((mX-inv_part2-inv_add_x)/32);
@@ -6657,7 +6657,7 @@ function  playingState.mousepressed(x,y,button)
 
 	if love.mouse.isDown("r") --repairing and id at bag
 	and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "show_inventory")
-	and (helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) and not bags_list[bagid].locked)
+	and (helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y)	and not bags_list[bagid].locked)
 	and mX>inv_add_x+inv_part2
 	and mX<inv_add_x+11*32+inv_part2
 	and mY>inv_add_y
@@ -7050,11 +7050,12 @@ function  playingState.mousepressed(x,y,button)
 
 	if love.mouse.isDown("l") --start dragging from bag
 	and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting")
-	and (helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) and not bags_list[bagid].locked)
+	and (helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y)
 	and mX>inv_add_x+inv_part2
 	and mX<inv_add_x+11*32+inv_part2
 	and mY>inv_add_y
 	and mY<inv_add_y+15*32
+	and not bags_list[bagid].locked)
 	and holding_smth==0
 	and oil_smth==0
 	and drink_smth == 0
@@ -7285,7 +7286,7 @@ function  playingState.mousepressed(x,y,button)
 			damage.shoot();
 		end;
 	end;
-
+--zazaza
 	if love.mouse.isDown("l") and game_status == "inventory" and holding_smth==0 and oil_smth > 0 then --modifing equipment FIXME slot class rh/lh/ammo (rh/lh/ranged/armor/helm/gloves/cloak/boots/belt/amulet/6 rings) --> hardened
 		if mX>452 and mX<566 and mY>300 and mY<620 and inv_page==1 and chars_mobs_npcs[current_mob]["equipment"].rh>0
 		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].w==0
@@ -8984,11 +8985,6 @@ function find_nonfree_space_at_inv ()
 	bagremoved = 0;
 end;
 
-function noslot_func()
-	love.audio.play(media.sounds.cannotputon, 0);
-	helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.noskill2);
-end;
-
 function playingState.draw()
 	--currentState.draw();
 	lightWorld.update();
@@ -9003,7 +8999,7 @@ function playingState.draw()
 			--draw.reachableHexes(); --incorrect
 		end;
 	end;
-	draw.fog_of_war();
+	draw.fogOfWar();
 	draw.cursor();
 	draw.line();
 	draw.objects();

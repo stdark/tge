@@ -689,3 +689,198 @@ wellbad="Вода в колодце мутная от неё исходит си
 wellevil="Колодец будто заполнен смолой, чёрной и вязкой.",
 welldungeon="В колодцы нет воды, вы не видите в темноте дна. Туда, во тьму, спускается верёвка...",
 };
+
+lognames.modifers = {
+ofire="огня",
+offlame="пламени",
+ofinferno="испепеления",
+
+ofcold="холода",
+offrost="мороза",
+ofblizzard="стужи",
+
+ofsparks="искр",
+oflightning="молнии",
+ofthunderbolts="грозы",
+
+ofpoison="отравы",
+ofvenom="яда",
+oftoxicity="токсичности",
+
+ofcorrosion="коррозии",
+ofacid="кислоты",
+oferosion="растворения",
+
+ofpain="боли",
+ofdistress="страданий",
+ofsuffering="истязаний",
+
+ofspiritualess="бездуховност",
+ofunholiness="безблагодатности",
+ofsoulkilling="душегубства",
+
+ofsparkle="вспышки",
+oflight="света",
+sunshining="сияния",
+
+ofshadow="тени",
+oftwilight="сумерек",
+ofdarkness="тьмы",
+
+ofice="льда",
+ofglaciation="оледенения",
+ofpermalfrost="мерзлоты",
+
+ofstone="окаменения",
+ofmedusa="медузы",
+ofbasilisk="василиска",
+
+ofimmobilizing="обездвиживания",
+ofparesis="пареза",
+ofparalize="паралича",
+
+ofblooddropping="кровеотворения",
+ofbleeding="кровотечения",
+ofbloodloosing="кровепотери",
+
+ofshock="шока",
+ofdeafen="ошеломления",
+ofstun="оглушения",
+
+ofpacify="усмирения",
+ofpeacemakng="умиротворения",
+ofnirvana="нирваны",
+
+ofdoze="дремоты",
+ofsleeping="сна",
+ofmorpheus="морфея",
+
+offear="страха",
+ofpanic="паники",
+ofterror="террора",
+
+ofmanaburning="манасожжения",
+ofantimagic="антимагии",
+ofmagicless="безмагии",
+
+ofindisposition="недомогания",
+ofdisease="болезни",
+ofplague="чумы",
+
+ofdelay="замедления",
+ofslowing="медлительности",
+ofstopping="остановки",
+
+ofweakening="ослабления",
+ofweakness="слабости",
+ofweariness="изнеможения",
+
+ofvinocity="опьянения",
+ofdoping="одурманивания",
+ofthornapple="дурмана",
+
+ofarachnophobia="арахнофобии",
+ofherbicide="гербицида",
+ofantichimerism="антихимеризма",
+
+ofgiantomachia="гигантомахии",
+ofreptilehating="гадофобии",
+ofmisanthropy="мизантропии",
+
+ofdragonslaying="драконоборства",
+ofallaying="упокоения",
+ofsculpture="скульптуры",
+
+ofamorphism="аморфности",
+ofbeastslaying="звероборства",
+ofdemonslaying="демоноборства",
+
+ofvampirism="вампиризма",
+ofastralthievery="астрального воровства",
+ofstarvation="истощения",
+
+ofmight="мощи", --mgt
+ofthought="дум", --int
+ofvigor="бодрости", --enu
+ofprecision="прицеливания", --acu
+ofspeed="скорости", --spd
+ofluck="удачи", --luk
+ofcharm="шарма", --chr
+ofspirituality="духовности", --spr
+ofperseption="восприятия", --sns
+ofcoordination="координации", --dex
+
+ofwizards="волшебника", --int/spr
+ofwarriors="воина", --mgt/enu
+ofrogues="плута", --spd/dex
+ofarchers="лучника", --acu/sns
+ofbards="барда", --chr/luk
+
+ofsun="солнца", --mgt/spr
+ofmoon="луны", --int/luk
+ofstars="звёзд", --enu/acu
+ofsky="неба",--sns/spd
+ofgame="игры",--dex/chr
+
+ofgods="богов", --all
+
+offireresistance="устойчивости к огню",
+ofcoldreresistance="устойчивости к холоду",
+ofstaticreresistance="устойчивости к статике",
+ofpoisonreresistance="устойчивости к яду",
+ofacidreresistance="устойчивости к кислоте",
+ofdiseasereresistance="устойчивости к болезни",
+ofmindreresistance="устойчивости к разуму",
+ofspritreresistance="устойчивости к духу",
+oflightreresistance="устойчивости к свету",
+ofdarknessreresistance="устойчивости к тьме",
+ofelementsreresistance="устойчивости к элементам", --fire/cold/static
+ofegoreresistance="устойчивости к эго", --mind/spirit
+ofdualreresistance="устойчивости к двойственности", --light/darkness
+ofchemicalreresistance="устойчивости к химии", --acid/poison
+ofmagicalreresistance="устойчивости к магии", --all
+
+oflife="жизни",
+ofmana="маны",
+ofstamina="выносливости",
+ofregeneration="регенерации",
+ofmeditation="медитации",
+oftireless="неутомимости",
+
+ofalarms="тревоги", --sleep
+ofantidotes="антидота", --poison
+ofincombastibility="неопалимости", --flame
+ofunbelieving="безверья", --all types of curses (curse,misfortune,fingerofdeth,flith,darkcontamination,darkgasp,evileye*,basilisbreath*)
+ofantifreeze="антифриза", --freeze
+ofimmunity="иммунитета", --disease
+ofsanity="святости", --madness, obsession?
+ofselfcontrol="самоконтроля", --panic,berserk,control
+ofreedom="свободы", --paralyse
+ofmedusa="медузы", --stone
+ofbonehead="костяной башки", --stun
+
+ofdefence="защиты",
+ofshielding="щита",
+ofifrit="ифрита",
+offiretrack="огненного следа",
+officetrack="ледяного следа",
+ofpoisontrack="ядовитого следа",
+ofplaguetrack="чумного следа",
+ofpower="силы",
+ofrecovery="восстановления",
+ofsaintblood="святой крови",
+
+ofdoom="судьбы", 	--all stats +1
+
+ofpheonix="феникса", --fire rez +30, regen HP 	
+oftroll="тролля", 	--enu +15, regen HP
+ofgolem="голема", 	--AC +5, DT+5, DR+20
+ofunicorn="единорога", --luk +15, regen SP
+ofevileye="злобоглаза", --int/acu/sns
+oftitan="титана", --rez static +30, regen ST
+oficegiant="ледяного великана", --cold rez +30, mgt+15
+
+ofdrunkorc="пьяного орка", --перманентное опьянение
+ofbloodymadness="кровавого безумия", --перманентно жажда крови, постоянная потеря hp, периодические берсерки 
+--ofmagic * schools ?
+};

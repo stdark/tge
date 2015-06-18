@@ -738,7 +738,7 @@ function helpers.BagNear (x,y)
 	local at_door,doorid,locked,traped = helpers.cursorAtClosedDoor(x,y);
 	local at_mbag,mbagid = helpers.cursorAtMaterialBag(x,y);
 	for i=1, #bags_list do
-		if (x == bags_list[i].x and y == bags_list[i].y) or atdoor or at_mbag or helpers.trapInFrontOf(current_mob) then
+		if (x == bags_list[i].xi and y == bags_list[i].yi) or atdoor or at_mbag or helpers.trapInFrontOf(current_mob) then
 			return true;
 		end;
 	end;
@@ -1867,20 +1867,18 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].recrng=tmpclass2.recrng;
 	chars_mobs_npcs[i].recmag=tmpclass2.recmag;
 
-	chars_mobs_npcs[i].preservation=0;
-
 	chars_mobs_npcs[i].battleai=tmpclass2.battleai;
-	chars_mobs_npcs[i].freeze=0;
-	chars_mobs_npcs[i].stone=0;
-	chars_mobs_npcs[i].paralyze=0;
-	chars_mobs_npcs[i].stun=0;
-	chars_mobs_npcs[i].sleep=0;
+	chars_mobs_npcs[i].freeze = 0;
+	chars_mobs_npcs[i].stone = 0;
+	chars_mobs_npcs[i].paralyze = 0;
+	chars_mobs_npcs[i].stun = 0;
+	chars_mobs_npcs[i].sleep = 0;
 	chars_mobs_npcs[i].immobilize = 0;
-	chars_mobs_npcs[i].drunk=0;
-	chars_mobs_npcs[i].insane=0;
-	chars_mobs_npcs[i].charm=0;
-	chars_mobs_npcs[i].berserk=0;
-	chars_mobs_npcs[i].enslave=0;
+	chars_mobs_npcs[i].drunk = 0;
+	chars_mobs_npcs[i].insane = 0;
+	chars_mobs_npcs[i].charm = 0;
+	chars_mobs_npcs[i].berserk = 0;
+	chars_mobs_npcs[i].enslave = 0;
 	chars_mobs_npcs[i].fear = 0;
 	chars_mobs_npcs[i].panic = 0;
 	chars_mobs_npcs[i].silence = 0;
@@ -1908,14 +1906,15 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].fireprint_dur = 0;
 	chars_mobs_npcs[i].poison_power = 0;
 	chars_mobs_npcs[i].poison_dur = 0;
-	chars_mobs_npcs[i].poison_status=0;
+	chars_mobs_npcs[i].poison_status = 0;
 	chars_mobs_npcs[i].cold_power = 0;
 	chars_mobs_npcs[i].cold_dur = 0;
 	chars_mobs_npcs[i].acid_power = 0;
 	chars_mobs_npcs[i].acid_dur = 0;
-	chars_mobs_npcs[i].bleeding=0;
-	chars_mobs_npcs[i].pneumothorax=0;
-	chars_mobs_npcs[i].disease=0;
+	chars_mobs_npcs[i].bleeding = 0;
+	chars_mobs_npcs[i].pneumothorax = 0;
+	chars_mobs_npcs[i].disease = 0;
+	chars_mobs_npcs[i].slow = 0;
 
 	chars_mobs_npcs[i].protfromfire_power = 0;
 	chars_mobs_npcs[i].protfromfire_dur = 0;
@@ -1962,7 +1961,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].regen_dur = 0;
 	chars_mobs_npcs[i].healaura_power = 0;
 	chars_mobs_npcs[i].healaura_dur = 0;
-	chars_mobs_npcs[i].haste=0;
+	chars_mobs_npcs[i].haste = 0;
 	chars_mobs_npcs[i].mobility_dur = 0;
 	chars_mobs_npcs[i].mobility_power = 0;
 	chars_mobs_npcs[i].torchlight_dur = 0;
@@ -1973,15 +1972,14 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].hourofpower_power = 0;
 	chars_mobs_npcs[i].shieldoflight = 0;
 	chars_mobs_npcs[i].wingsoflight= 0;
-	chars_mobs_npcs[i].slow= 0;
 	chars_mobs_npcs[i].myrth_power = 0;
 	chars_mobs_npcs[i].myrth_dur = 0;
-	chars_mobs_npcs[i].invisibility=0;
-	chars_mobs_npcs[i].painreflection=0;
-	chars_mobs_npcs[i].waterwalking=0;
-	chars_mobs_npcs[i].levitation=0;
-	chars_mobs_npcs[i].holyblood_power=0;
-	chars_mobs_npcs[i].holyblood_dur=0;
+	chars_mobs_npcs[i].invisibility = 0;
+	chars_mobs_npcs[i].painreflection = 0;
+	chars_mobs_npcs[i].waterwalking = 0;
+	chars_mobs_npcs[i].levitation = 0;
+	chars_mobs_npcs[i].holyblood_power = 0;
+	chars_mobs_npcs[i].holyblood_dur = 0;
 	chars_mobs_npcs[i].might_power = 0;
 	chars_mobs_npcs[i].might_dur = 0;
 	chars_mobs_npcs[i].dash_power = 0;
@@ -1994,6 +1992,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].glamour_dur = 0;
 	chars_mobs_npcs[i].luckyday_power = 0;
 	chars_mobs_npcs[i].luckyday_dur = 0;
+	chars_mobs_npcs[i].preservation = 0;
 
 	chars_mobs_npcs[i].num_unarmed=tmpclass2.num_unarmed;
 	chars_mobs_npcs[i].lvl_unarmed=tmpclass2.lvl_unarmed;
@@ -5243,6 +5242,20 @@ function helpers.missleAtWarBook()
 				return true;
 			end;
 		end;
+	end;
+	return false;
+end;
+
+function helpers.noSkillToUseThisItem()
+	love.audio.play(media.sounds.cannotputon, 0);
+	helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.noskill2);
+end;
+
+function helpers.itemIsAtFile1(id)
+	local class = inventory_ttx[id].class;
+	if class == "sword" or class == "axe" or class == "flagpole" or class == "crushing" or class == "staff" or class == "dagger"
+	or class == "bow" or class == "crossbow" or class == "throwing" or class == "blaster" or class == "firearm" or class == "ammo" then
+		return true;
 	end;
 	return false;
 end;
