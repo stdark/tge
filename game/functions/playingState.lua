@@ -2028,25 +2028,29 @@ function playingState.keypressed(key, unicode)
 			if drink_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = drink_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y] = inv_quad_y*10000+inv_quad_x;
-				drink_smth = 0
+				drink_smth = 0;
+				helpers.resort_inv(current_mob);
 			end;
 
 			if bomb_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = bomb_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 				bomb_smth = 0;
+				helpers.resort_inv(current_mob);
 			end;
 
 			if scroll_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = scroll_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 				scroll_smth = 0;
+				helpers.resort_inv(current_mob);
 			end;
 
 			if use_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = use_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 				use_smth = 0;
+				helpers.resort_inv(current_mob);
 			end;
 
 			if game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" then
@@ -3469,7 +3473,6 @@ function playingState.mousereleased (x,y,button)
 		utils.printDebug("wrong area");
 		local list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false);
 		local selected_char,trash = helpers.select_portrait()
-		print("WRN",tmp_bagid,selected_char);
 		if tmp_bagid > 0 then
 		--if tmp_bagid > 0 and selected_char > 0 and selected_char ~= current_mob then
 			--selected_char = tmp_bagid;
