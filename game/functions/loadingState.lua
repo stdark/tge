@@ -123,15 +123,17 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "wbpage_2", "img/warbook/warbook_2.dds");
 			loader.newImage(media.images, "wbpage_3", "img/warbook/warbook_3.dds");
 			loader.newImage(media.images, "wbpage_4", "img/warbook/warbook_4.dds");
-			
+			--
 			loader.newImage(media.images, "items1", "img/img_items_1.dds");
 			loader.newImage(media.images, "items2", "img/img_items_2.dds");
 			loader.newImage(media.images, "tmpobjs", "img/img_tmpobjs.dds");
 			loader.newImage(media.images, "harvest", "img/harvest.dds");
-			loader.newImage(media.images, "boom", "img/sprites_boom.dds");
-			loader.newImage(media.images, "buff", "img/sprites_buff.dds");
-			loader.newImage(media.images, "missl", "img/sprites_missles.dds");
-			loader.newImage(media.images, "spells", "img/sprites_spells.dds");
+			loader.newImage(media.images, "boom", "img/effects/sprites_boom.dds");
+			loader.newImage(media.images, "buff", "img/effects/sprites_buff.dds");
+			loader.newImage(media.images, "missl", "img/effects/sprites_missles.dds");
+			loader.newImage(media.images, "spells", "img/effects/sprites_spells.dds");
+			loader.newImage(media.images, "waves", "img/effects/sprites_waves.dds");
+			--
 			loader.newImage(media.images, "buildings1", "img/buildings1.dds");
 			
 			loader.newImage(media.images, "button1", "img/buttons/button1.dds");

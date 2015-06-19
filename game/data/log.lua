@@ -690,8 +690,8 @@ wellevil="Колодец будто заполнен смолой, чёрной 
 welldungeon="В колодцы нет воды, вы не видите в темноте дна. Туда, во тьму, спускается верёвка...",
 };
 
-lognames.modifers = {
-ofire="огня",
+lognames.itemmodifers = {
+offire="огня",
 offlame="пламени",
 ofinferno="испепеления",
 
@@ -715,7 +715,7 @@ ofpain="боли",
 ofdistress="страданий",
 ofsuffering="истязаний",
 
-ofspiritualess="бездуховност",
+ofspiritless="бездуховност",
 ofunholiness="безблагодатности",
 ofsoulkilling="душегубства",
 
@@ -748,7 +748,7 @@ ofdeafen="ошеломления",
 ofstun="оглушения",
 
 ofpacify="усмирения",
-ofpeacemakng="умиротворения",
+ofpeacemaking="умиротворения",
 ofnirvana="нирваны",
 
 ofdoze="дремоты",
@@ -803,11 +803,11 @@ ofmight="мощи", --mgt
 ofthought="дум", --int
 ofvigor="бодрости", --enu
 ofprecision="прицеливания", --acu
-ofspeed="скорости", --spd
+offash="сипемительности", --spd
 ofluck="удачи", --luk
 ofcharm="шарма", --chr
 ofspirituality="духовности", --spr
-ofperseption="восприятия", --sns
+ofperception="восприятия", --sns
 ofcoordination="координации", --dex
 
 ofwizards="волшебника", --int/spr
@@ -837,7 +837,7 @@ ofdarknessreresistance="устойчивости к тьме",
 ofelementsreresistance="устойчивости к элементам", --fire/cold/static
 ofegoreresistance="устойчивости к эго", --mind/spirit
 ofdualreresistance="устойчивости к двойственности", --light/darkness
-ofchemicalreresistance="устойчивости к химии", --acid/poison
+ofchemistryreresistance="устойчивости к алхимии", --acid/poison
 ofmagicalreresistance="устойчивости к магии", --all
 
 oflife="жизни",

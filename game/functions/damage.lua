@@ -1631,6 +1631,7 @@ function damage.multidamage () --FIXME two hexes
 			for i=1,#rings[h] do
 				for j=1,#chars_mobs_npcs do
 					if (helpers.cursorAtCurrentMob (j,boomx,boomy)) or (helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y)) and helpers.mobDependsGround(j) then
+						local damageHP = 0;
 						local damageHPD = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[2]),"darkness",false);
 						local damageHPP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[2]),"poison",false);
 						local damageHP = damageHPD + damageHPP;

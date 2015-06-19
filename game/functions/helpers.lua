@@ -4043,7 +4043,7 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	end;
 	
 	for e=1,#chars_mobs_npcs[index]["equipment"] do
-		if chars_mobs_npcs[current_mob]["equipment"][e] > 0 then
+		if chars_mobs_npcs[index]["equipment"][e] > 0 then
 			for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].atkadd) do
 				if key == add_atkm then
 					add_atkm = add_atkm + value;
@@ -4055,7 +4055,7 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	end;
 	
 	for e=1,#chars_mobs_npcs[index]["equipment"] do
-		if chars_mobs_npcs[current_mob]["equipment"][e] > 0 then
+		if chars_mobs_npcs[index]["equipment"][e] > 0 then
 			for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].selfstatbuffs) do
 				if key then
 					chars_mobs_npcs[index][tostring(key)] = chars_mobs_npcs[index][tostring(key)] + value;

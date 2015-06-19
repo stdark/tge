@@ -1179,6 +1179,7 @@ function playingState.update(dt)
 			animation_startfireburn:update(dt);
 			animation_mobility:update(dt);
 			animation_deadlyswarm:update(dt);
+			animation_deadlywave:update(dt);
 		end;
 		if game_status == "damage" or game_status == "multidamage" or game_status == "attack" then
 			for i=1,6 do
@@ -8358,6 +8359,44 @@ function restoreRT ()
 					damage.SPplus(i,value,true);
 					helpers.addHunger(i,value);
 				end;
+				
+				for e=1,#chars_mobs_npcs[i]["equipment"] do
+					if chars_mobs_npcs[i]["equipment"][e] > 0 then
+						for key,value in pairs (items_modifers[chars_mobs_npcs[i]["inventory_list"][chars_mobs_npcs[i]["equipment"][e]].w].regeneration) do
+							if (chars_mobs_npcs[i].person == "char" and chars_mobs_npcs[i].status >= 0) or chars_mobs_npcs[i].status == 1 then
+								if key == hp then
+									if value > 0 then
+										damage.HPplus(i,value,false);
+									else
+										damage.HPminus(i,value,false);
+									end;
+								end;
+								if key == sp then
+									if value > 0 then
+										damage.SPplus(i,value,false);
+									else
+										damage.SPminus(i,value,false);
+									end;
+								end;
+								if key == st then
+									if value > 0 then
+										damage.STplus(i,value,false);
+									else
+										damage.STminus(i,value,false);
+									end;
+								end;
+								if key == rt then
+									if value > 0 then
+										damage.RTplus(i,value,false);
+									else
+										damage.RTminus(i,value,false);
+									end;
+								end;
+							end;
+						end;
+					end;
+				end;
+							
 				if chars_mobs_npcs[i].healaura_dur > 0 then --FIXME rewrite  need hunger or not?
 					if chars_mobs_npcs[i].y/2 == math.cail(chars_mobs_npcs[i].y/2) then
 						for j=1,#chars_movs_npcs do

@@ -719,6 +719,10 @@ function draw.boom ()
 		end;
 	end;
 	
+	if missle_type == "deadlywave" then
+		elandscape[boomy][boomx] = "deadlywave";
+	end;
+	
 	if missle_type == "friendlyfire" then
 		local xx,yy = helpers.hexToPixels (x,y);
 		table.insert(lights,{x=boomx,y=boomy,light=lightWorld.newLight(xx, yy, 255, 255, 255, 128),typ="boom"});
@@ -2716,12 +2720,20 @@ function draw.objects ()
 						animation_cold:draw(media.images.spells, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-56);
 					end;
 				end;
+				
+				if elandscape[my+map_y][mx+map_x] == "deadlywave" then
+					local addx = 0;
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						addx = tile_w/2
+					end;
+					animation_deadlywave:draw(media.images.waves,(mx+map_x)*tile_w-addx-448/2,(my+map_y)*tile_h*0.74-168/2);		
+				end;
+				
 		--effects  with irradiation    
 				love.graphics.setColor(255, 255, 255);
 				if dlandscape_obj[my+map_y][mx+map_x] == "fire" then  
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						animation_fireburn:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-106);
-						
+						animation_fireburn:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-106);		
 					else
 						animation_fireburn:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-106);
 					end;

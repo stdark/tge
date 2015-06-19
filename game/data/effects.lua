@@ -39,7 +39,7 @@
 	toxiccloud[6] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight(),0,1248,0);
 	toxiccloud[7] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight(),0,1344,0);
 	toxiccloud[8] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight(),0,1440,0);
-   
+	
 	windfist = {};
 	local addy = 768;
 	windfist[1] = anim8.newGrid(128, 96, media.images.spells:getWidth(), media.images.spells:getHeight(),0,768+addy,0);
@@ -231,6 +231,7 @@
 	acidrain = anim8.newGrid(75, 200, media.images.spells:getWidth(), media.images.spells:getHeight(),800,2350,0);
 	deathblossom = anim8.newGrid(150, 130, media.images.spells:getWidth(), media.images.spells:getHeight(),2370,2400,0);
 	comete = anim8.newGrid(75, 200, media.images.spells:getWidth(), media.images.spells:getHeight(),2140,2350,0);
+	waves = anim8.newGrid(448,168,media.images.waves:getWidth(), media.images.waves:getHeight(), 0,0,0);
 	
 	local atk_direction = 1;
 	animation_flamearrow = anim8.newAnimation(flamearrow[atk_direction]("1-3",1), 0.02,"pauseAtEnd");
@@ -259,7 +260,7 @@
 	animation_acidrain = anim8.newAnimation(acidrain("1-3",1), 0.02);
 	animation_deathblossom = anim8.newAnimation(deathblossom("1-1",1), 0.06);
 	animation_comete = anim8.newAnimation(comete("1-3",1), 0.02);
-
+	animation_deadlywave = anim8.newAnimation( waves:getFrames(1,1,1,2,1,3,1,4,1,5,1,6), 0.02, false);
 	toxicexplo=anim8.newGrid(128, 128, media.images.boom:getWidth(), media.images.boom:getHeight(),0,0,0,"pauseAtEnd");
 	animation_toxicexplo = anim8.newAnimation(toxicexplo("1-9",1), 0.075);
  
