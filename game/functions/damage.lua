@@ -131,7 +131,7 @@ function damage.applyCondition (index,lvl,num,condition,element,stat,skill,coff,
 		condition = 0;
 	end;
 	if condition > 0 then
-		chars_mobs_npcs[index][condition] = condtion;
+		chars_mobs_npcs[index][condition] = condtion; --FIXME
 	end;
 	return condition;
 end;
@@ -187,6 +187,7 @@ function damage.mobDamaged(index,damager,damage) -- FIXME: add var of damageHP r
 		local selfdamage = damage.magicalRes (damager,newDamage,"darkness")
 		damage.HPminus(damager,selfdamage,true);
 	end;
+	helpers.recalcBattleStats(index);
 	helpers.protectionOff (index);
 end;
 
@@ -2363,6 +2364,9 @@ function damage.multidamage () --FIXME two hexes
 							if chars_mobs_npcs[j].invisibility > 0 then	
 								chars_mobs_npcs[j].invisibility = 0;
 								counter = counter - 1;
+							elseif chars_mobs_npcs[j].dayofgods_dur > 0 then
+								chars_mobs_npcs[j].dayofgods_power = 0;
+								chars_mobs_npcs[j].dayofgods_dur = 0;
 							elseif chars_mobs_npcs[j].heroism_dur > 0 then
 								chars_mobs_npcs[j].heroism_dur = 0;
 								chars_mobs_npcs[j].heroism_power = 0;
@@ -4132,8 +4136,8 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 	
 	if missle_type == "executor" then
-		buff_dur = chars_mobs_npcs[vicim].lvl_light + chars_mobs_npcs[vicim].lvl_spirit;
-		buff_power = chars_mobs_npcs[vicim].num_spirit + chars_mobs_npcs[vicim].num_spirit;
+		buff_dur = lvl[1] + lvl[2];
+		buff_power = num[1] + num[2];
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		if chars_mobs_npcs[victim].nature ~= "undead" then
 			chars_mobs_npcs[vicim].executor_dur = buff_dur;
@@ -4155,7 +4159,7 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 
 	if missle_type == "haste" then
-		buff = math.ceil((chars_mobs_npcs[current_mob].num_body*chars_mobs_npcs[current_mob].lvl_body+chars_mobs_npcs[current_mob].num_mind*chars_mobs_npcs[current_mob].lvl_mind)/2);
+		buff = math.ceil((num[1]*lvl[2]+num[1]*lvl[1])/2);
 		chars_mobs_npcs[victim].haste = buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.inhaste);
@@ -4565,8 +4569,8 @@ function damage.instantCast () --FIXME use lvl, num
 	--FIXME
 	
 	if missle_type == "prayer" then
-		buff = chars_mobs_npcs[current_mob].num_air+chars_mobs_npcs[current_mob].lvl_spirit;
-		dur = chars_mobs_npcs[current_mob].num_air+chars_mobs_npcs[current_mob].num_spirit
+		buff = lvl[1];
+		dur = num[1];
 		chars_mobs_npcs[victim].prayer_power = buff;
 		chars_mobs_npcs[victim].prayer_dur = dur;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
@@ -4669,10 +4673,10 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.recalcResistances(victim);
 		prebuff=math.ceil(10+num[1]*lvl[1]/2);
 		dur=5+num[1]*lvl[1];
-		buff=math.ceil(math.min(prebuff,100-chars_mobs_npcs[victim].rezmind));
-		chars_mobs_npcs[victim].rezmind= chars_mobs_npcs[victim].rezmind+buff;
-		chars_mobs_npcs[victim].protofmind_power=buff;
-		chars_mobs_npcs[victim].protofmind_dur=dur;
+		buff = math.ceil(math.min(prebuff,100-chars_mobs_npcs[victim].rezmind));
+		chars_mobs_npcs[victim].rezmind = chars_mobs_npcs[victim].rezmind+buff;
+		chars_mobs_npcs[victim].protofmind_power = buff;
+		chars_mobs_npcs[victim].protofmind_dur = dur;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.got[chars_mobs_npcs[current_mob].gender] .. buff .. lognames.actions.rez .. types_of_damage.tomind);
 	end;
@@ -4691,7 +4695,7 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 
 	if missle_type=="shield" then
-		dur=5+chars_mobs_npcs[current_mob].num_air*chars_mobs_npcs[current_mob].lvl_air;
+		dur=5+num[1]*lvl[1];
 		chars_mobs_npcs[victim].shield_dur=dur;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.gotprot .. types_of_damage.torng);
@@ -4700,8 +4704,8 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type=="stoneskin" then
 		chars_mobs_npcs[victim].stoneskin_dur = 0;
 		helpers.recalcResistances(victim);
-		prebuff=10+chars_mobs_npcs[current_mob].num_earth;
-		dur=5+chars_mobs_npcs[current_mob].num_earth*chars_mobs_npcs[current_mob].lvl_earth;
+		prebuff=10+num[1];
+		dur=5+num[1]*lvl[1];
 		buff=math.ceil(math.min(prebuff,100-chars_mobs_npcs[victim].ac));
 		chars_mobs_npcs[victim].ac= chars_mobs_npcs[victim].ac+buff;
 		chars_mobs_npcs[victim].stoneskin_power=buff;
@@ -4711,17 +4715,26 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 
 	if missle_type=="heroism" then
-		local dur = 5+chars_mobs_npcs[current_mob].num_spirit*chars_mobs_npcs[current_mob].lvl_spirit;
-		local power = 5 + chars_mobs_npcs[current_mob].num_spirit;
-		chars_mobs_npcs[victim].heroism_dur=dur;
-		chars_mobs_npcs[victim].heroism_power=power;
+		local dur = 5 + lvl[1]*num[1];
+		local power = 5 + num[1];
+		chars_mobs_npcs[victim].heroism_dur = dur;
+		chars_mobs_npcs[victim].heroism_power = power;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.likeahero[chars_mobs_npcs[current_mob].gender]);
 	end;
+	
+	if missle_type=="dayofgods" then
+		local dur = lvl[1];
+		local power = math.ceil(num[2]+num[3]+num[4]/3);
+		chars_mobs_npcs[victim].dayofgods = dur;
+		chars_mobs_npcs[victim].dayofgods = power;
+		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
+		helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.likeahero[chars_mobs_npcs[current_mob].gender]);
+	end;
 
 	if missle_type=="holyblood" then
-		local dur = chars_mobs_npcs[current_mob].num_water+chars_mobs_npcs[current_mob].num_light;
-		local power = chars_mobs_npcs[current_mob].lvl_light + chars_mobs_npcs[current_mob].lvl_water;
+		local dur = num[1] + num[2];
+		local power = lvl[1] + lvl[2];
 		chars_mobs_npcs[victim].holyblood_dur=dur;
 		chars_mobs_npcs[victim].holyblood_power=power;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
@@ -4730,8 +4743,8 @@ function damage.instantCast () --FIXME use lvl, num
 
 	if missle_type=="resurrect" then
 		love.audio.play(media.sounds.spell_resurrect,0);
-		if chars_mobs_npcs[current_mob].lvl_body==5 then
-			buff=damage.damageRandomizator(current_mob,1,5)*chars_mobs_npcs[current_mob].num_body;
+		if lvl[1]==5 then
+			buff=damage.damageRandomizator(current_mob,1,5)*num[2];
 		else
 			buff=1;
 		end;
@@ -4768,11 +4781,11 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type=="sacrifice" then
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname)
 
-		if chars_mobs_npcs[current_mob].lvl_darkness == 3 then
+		if lvl[1] == 3 then
 			chars_mobs_npcs[victim].hp = -1*chars_mobs_npcs[victim].hp_max*3;
-		elseif chars_mobs_npcs[current_mob].lvl_darkness == 4 then
+		elseif lvl[1] == 4 then
 			chars_mobs_npcs[victim].hp = -1*chars_mobs_npcs[victim].hp_max;
-		elseif chars_mobs_npcs[current_mob].lvl_darkness == 5 then
+		elseif lvl[1]== 5 then
 			chars_mobs_npcs[victim].hp = 0;
 		end
 		helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.sacrificed[chars_mobs_npcs[current_mob].gender]);
@@ -4813,9 +4826,9 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"fear","mind",false,false,1,false);
 		if debuff > 0 then
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.scared[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.scared[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 	end;
 
@@ -4823,9 +4836,9 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"charm","mind",false,false,1,false);
 		if debuff > 0 then
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.charmed[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.charmed[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 	end;
 	
@@ -4833,9 +4846,9 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"feeblemind","mind",false,false,1,false);
 		if debuff > 0 then
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.feebleminded[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.feebleminded[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
@@ -4845,9 +4858,9 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"darkgasp","darkness",false,false,1,false);
 		if debuff > 0 then
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.darkgasped[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.darkgasped[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
@@ -4857,9 +4870,9 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"fingerofdeath","darkness",false,false,1,false);
 		if debuff > 0 then
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.fingerofdeathed[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.fingerofdeathed[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
@@ -4869,9 +4882,9 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"slow","light",false,false,1,false);
 		if debuff > 0 then
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.slowed[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.slowed[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
@@ -4881,20 +4894,20 @@ function damage.instantCast () --FIXME use lvl, num
 
 	if missle_type == "berserk" then
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
-		if chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind > chars_mobs_npcs[victim].rezmind
+		if lvl[1]*num[1] > chars_mobs_npcs[victim].rezmind
 		and chars_mobs_npcs[victim].sleep==0
 		and chars_mobs_npcs[victim].berserk==0 and chars_mobs_npcs[victim].stone==0
 		and chars_mobs_npcs[victim].freeze==0
 		then
-			debuff=10*chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind;
+			debuff=10+lvl[1]*num[1];
 			chars_mobs_npcs[victim].berserk=debuff;
 			chars_mobs_npcs[victim].fear = 0;
 			chars_mobs_npcs[victim].charm=0;
 			chars_mobs_npcs[victim].enslave=0;
 			chars_mobs_npcs[victim].battleai="melee";
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.berserk[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.berserk[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
@@ -4902,19 +4915,19 @@ function damage.instantCast () --FIXME use lvl, num
 
 	if missle_type == "enslave" then
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
-		if chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind>chars_mobs_npcs[victim].rezmind
+		if lvl[1]*num[1] > chars_mobs_npcs[victim].rezmind
 		and chars_mobs_npcs[victim].insane==0 and chars_mobs_npcs[victim].sleep==0
 		and chars_mobs_npcs[victim].enslave==0 and chars_mobs_npcs[victim].stone==0
 		and chars_mobs_npcs[victim].freeze==0
 		then
-			debuff=10*chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind;
+			debuff=10+lvl[1]*num[1];
 			chars_mobs_npcs[victim].enslave=debuff;
 			chars_mobs_npcs[victim].fear = 0;
 			chars_mobs_npcs[victim].charm=0;
 			chars_mobs_npcs[victim].berserk=0;
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.enslaved[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.enslaved[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
@@ -4922,17 +4935,17 @@ function damage.instantCast () --FIXME use lvl, num
 
 	if missle_type == "controlundead" then
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
-		if chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind>chars_mobs_npcs[victim].rezmind
+		if lvl[1]*num[1] > chars_mobs_npcs[victim].rezmind
 		and chars_mobs_npcs[victim].enslave==0 and chars_mobs_npcs[victim].stone==0
 		and chars_mobs_npcs[victim].freeze==0
 		then
-			debuff=10*chars_mobs_npcs[current_mob].lvl_darkness*chars_mobs_npcs[current_mob].num_darkness;
+			debuff=10 + lvl[1]*num[1];
 			chars_mobs_npcs[victim].enslave=debuff;
 			chars_mobs_npcs[victim].fear = 0;
 			chars_mobs_npcs[victim].berserk=0;
-			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.controlled[chars_mobs_npcs[current_mob].gender]);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.controlled[chars_mobs_npcs[current_mob].gender]);
 		else
-			helpers.addToActionLog( lognames.actions.noeffect);
+			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
@@ -5000,7 +5013,7 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 	
 	if missle_type == "telepathy" then
-		if chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind>chars_mobs_npcs[victim].rezmind then
+		if lvl[1]*num[1] > chars_mobs_npcs[victim].rezmind then
 			helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 			local phrase1,phrase2,phrase3 = helpers.detectAImode (victim);
 			helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.thinks[chars_mobs_npcs[victim].gender] .. phrase1);
@@ -5016,8 +5029,8 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 	
 	if missle_type	== "glamour" then
-		buff = chars_mobs_npcs[current_mob].num_mind;
-		dur = chars_mobs_npcs[current_mob].lvl_mind*10;
+		buff = num[1];
+		dur = lvl[1]+10;
 		chars_mobs_npcs[victim].chr_buff_power=buff;
 		chars_mobs_npcs[victim].chr_buff_dur=dur;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
@@ -5737,6 +5750,8 @@ function damage.deadNow (index)
 	chars_mobs_npcs[index].holyblood_dur = 0;
 	chars_mobs_npcs[index].holyblood_power = 0;
 	chars_mobs_npcs[index].basiliskbreath = 0;
+	chars_mobs_npcs[index].dayofgods_power = 0;
+	chars_mobs_npcs[index].dayofgods_dur = 0;
 	if chars_mobs_npcs[index].person == "char" then
 		tmp_name_dead = chars_stats[index].name;
 	elseif chars_mobs_npcs[index].person=="mob" then

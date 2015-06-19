@@ -8067,6 +8067,15 @@ function restoreRT ()
 				if chars_mobs_npcs[i].stealth > 0 then
 					chars_mobs_npcs[i].stealth =  chars_mobs_npcs[i].stealth - ai.enemyWatchesTheMobNum ();
 				end;
+				
+				if chars_mobs_npcs[i].dayofgods_dur > 0 then
+					chars_mobs_npcs[i].dayofgods_dur = chars_mobs_npcs[i].dayofgods_dur -1;
+					if chars_mobs_npcs[i].dayofgods_dur == 0 then
+						chars_mobs_npcs[i].dayofgods_power = 0;
+						helpers.recalcBattleStats(i);
+					end;
+				end;
+				
 				if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "humanoid" then
 					damage.HPminus(i,10);
 				end;

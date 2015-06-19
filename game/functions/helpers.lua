@@ -1993,6 +1993,8 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].luckyday_power = 0;
 	chars_mobs_npcs[i].luckyday_dur = 0;
 	chars_mobs_npcs[i].preservation = 0;
+	chars_mobs_npcs[i].dayofgods_power = 0;
+	chars_mobs_npcs[i].dayofgods_dur = 0;
 
 	chars_mobs_npcs[i].num_unarmed=tmpclass2.num_unarmed;
 	chars_mobs_npcs[i].lvl_unarmed=tmpclass2.lvl_unarmed;
@@ -4083,7 +4085,21 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	chars_mobs_npcs[index].sns=math.ceil(chars_mobs_npcs[index].sns+chars_mobs_npcs[index].hourofpower_power);
 	chars_mobs_npcs[index].int=math.ceil(chars_mobs_npcs[index].int+chars_mobs_npcs[index].hourofpower_power);
 	chars_mobs_npcs[index].spr=math.ceil(chars_mobs_npcs[index].spr+chars_mobs_npcs[index].hourofpower_power);
-
+	
+	if chars_mobs_npcs[index].dayofgods_dur > 0 then
+		chars_mobs_npcs[index].lv = tmpclass2.lv + chars_mobs_npcs[index].dayofgods_power;
+	else
+		chars_mobs_npcs[index].lv = tmpclass2.lv
+	end;
+	chars_mobs_npcs[index].hp_base = tmpclass2.lv*tmpclass2.hp_base_mod;
+	chars_mobs_npcs[index].sp_base = tmpclass2.lv*tmpclass2.sp_base_mod;
+	chars_mobs_npcs[index].st_base = tmpclass2.lv*tmpclass2.st_base_mod;
+	local bodybuilding_bonus = chars_mobs_npcs[index].num_bodybuilding*chars_mobs_npcs[index].lvl_bodybuilding;
+	local mysticism_bonus = chars_mobs_npcs[index].num_mysticism*chars_mobs_npcs[index].lvl_mysticism;
+	chars_mobs_npcs[index].hp_max = chars_mobs_npcs[index].hp_base + chars_mobs_npcs[index].hp_coff * chars_mobs_npcs[index].enu + bodybuilding_bonus;
+	chars_mobs_npcs[index].sp_max = chars_mobs_npcs[index].sp_base + chars_mobs_npcs[index].sp_coff * chars_mobs_npcs[index].sp_stat + mysticism_bonus;
+	chars_mobs_npcs[index].st_max = 200 + chars_mobs_npcs[index].st_base + chars_mobs_npcs[index].st_coff * chars_mobs_npcs[index].enu + bodybuilding_bonus;
+	
 	--MELEE
 	for i=1, #chars_mobs_npcs[index].arms do
 		local hand = chars_mobs_npcs[index]["arms"][i];

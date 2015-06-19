@@ -4607,7 +4607,7 @@ spell=8,
 };
 
 hourofpower = {
-title="палач",
+title="час силы",
 story="Временно повышает все параметры союзника кроме харизмы и удачи. По окончанию действия заклинания зачарованный гибнет.",
 dmg1="1",
 dmg2="2",
@@ -4623,11 +4623,11 @@ eff="radius",
 eff2="dur",
 eff3="",
 recovery=40,
-mana=1,
+mana=25,
 school=14,
 spell=9,
 skill = {"lvl_light","lvl_body","lvl_mind","lvl_spirit"},
-level = {4,4,0,0},
+level = {4,4,4,4},
 day=true,
 night=true,
 dungeon=true,
@@ -4636,9 +4636,34 @@ mindgame=false,
 form="ally"
 };
 
-saintbeacon = {
+dayofgods = {
+title="день богов",
+story="Временно повышает уровень.",
+dmg1="1",
+dmg2="2",
+dmg3="3",
+dmg4="4",
+dmg5="5",
+add1="100 + 1 на ед. навыка",
+add2="100 + 2 на ед. навыка",
+add3="100 + 3 на ед. навыка",
+add4="100 + 4 на ед. навыка",
+add5="100 + 5 на ед. навыка",
+eff="radius",
+eff2="dur",
+eff3="",
+recovery=40,
+mana=25,
 school=14,
 spell=10,
+skill = {"lvl_light","lvl_body","lvl_mind","lvl_spirit"},
+level = {5,5,5,5},
+day=true,
+night=true,
+dungeon=true,
+openair=true,
+mindgame=false,
+form="ally"
 };
 
 comete = {
@@ -4705,7 +4730,7 @@ form="party",
 {"despondency","precision","protfromdisease","weakness","sleep","concentration","haste","thirstofblood","myrth","resurrect","rage","spiritlash"},
 {"stonetoflesh","melt","boilingblood","deadlyswarm","turntostone","manaburn","wizardeye","clone","fireelemental","airelemental","waterelemental","earthelemental"},
 {"darkflame","shrapmetal","dragonbreath","toxiccloud","pandemia","restoreundead","obsession","darkcontamination","deadlywave","transfusion","moonlight","armageddon"},
-{"holyblood","holyground","wingsoflight","friendlyfire","revenger","executor","revelation","guardian","hourofpower","saintbeacon","comete","divineintervention"},
+{"holyblood","holyground","wingsoflight","friendlyfire","revenger","executor","revelation","guardian","hourofpower","dayofgods","comete","divineintervention"},
 	};
 
 end;
