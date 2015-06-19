@@ -166,7 +166,7 @@ function playingState.load()
 	areaEffectsPriority = {"fire","ice","mud","acid","poison"};
 
 	global.hang = false;
-
+	global.damageflag = false; --for charm,sleep,stun
 	tempbb={};
 	tmp_ppoint={};
 	tmp_ppoint2={};

@@ -163,9 +163,19 @@ function damage.applyConditionTwoFactors (index,lvl,num,condition,element,stat,s
 end;
 
 function damage.mobDamaged(index,damager,damage) -- FIXME: add var of damageHP real only for painreflection
-	chars_mobs_npcs[index].stun = 0;
-	chars_mobs_npcs[index].sleep = 0;
-	chars_mobs_npcs[index].charm = 0;
+	if global.damageflag ~= "sleep" then
+		chars_mobs_npcs[index].stun = 0;
+	end;
+	if global.damageflag ~= "stun" then
+		chars_mobs_npcs[index].sleep = 0;
+	end;
+	if global.damageflag ~= "charm" then
+		chars_mobs_npcs[index].charm = 0;
+	end;
+	if global.damageflag ~= "panic" then
+		chars_mobs_npcs[index].panic = 0;
+	end;
+	global.damageflag = false;
 	chars_mobs_npcs[index].invisibility = 0;
 	if chars_mobs_npcs[index].control == "ai" and chars_mobs_npcs[index].ai == "away" and chars_mobs_npcs[index].hp <= chars_mobs_npcs[index].hp_max*0.1 then
 		chars_mobs_npcs[index].ai = "agr";
@@ -729,6 +739,9 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 							local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
 							if power > 0 then
 								chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
+								if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
+									global.damageflag = tostring(key);
+								end;
 							end;
 						end;
 						--/conditions
@@ -833,6 +846,9 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 							local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
 							if power > 0 then
 								chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
+								if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
+									global.damageflag = tostring(key);
+								end;
 							end;
 						end;
 						--/conditions
@@ -1749,6 +1765,7 @@ function damage.multidamage () --FIXME two hexes
 					local debuff = damage.statRes (j,3 + lvl[1],"sns",true);
 					if chars_mobs_npcs[j].stun == 0 then
 						chars_mobs_npcs[j].stun = chars_mobs_npcs[j].stun + debuff;
+						global.damageflag = "stun";
 						chars_mobs_npcs[j].sleep = 0;
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.dmg[chars_mobs_npcs[j].gender] .. helpers.mobName(j) .. " " .. lognames.actions.stun[chars_mobs_npcs[j].gender]);
 						damage.mobDamaged(j,current_mob,damageHP);
@@ -3707,7 +3724,8 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			--tricks
 			if missle_type == "stunner" then
 				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
-					chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_crushing; 
+					chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_crushing;
+					global.damageflag = "stun";
 				end;
 			elseif missle_type == "decapitator" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 10 then
 				damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
@@ -3719,7 +3737,8 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 				end;
 			elseif missle_type == "sleepfinger" then
 				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
-					chars_mobs_npcs[victim].sleep = chars_mobs_npcs[current_mob].lvl_unarmed; 
+					chars_mobs_npcs[victim].sleep = chars_mobs_npcs[current_mob].lvl_unarmed;
+					global.damageflag = "sleep";
 				end;
 			elseif missle_type == "impale" then
 				if helpers.aliveNature(victim) then
@@ -3747,6 +3766,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 				chars_mobs_npcs[victim].feeblemind = chars_mobs_npcs[current_mob].lvl_staff;
 			elseif missle_type == "deafen" then	
 				chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_staff;
+				global.damageflag = "stun";
 			elseif missle_type == "bloodyhit" then
 				if helpers.traumaNature(victim) then
 					chars_mobs_npcs[victim].bleeding = chars_mobs_npcs[victim].bleeding + chars_mobs_npcs[current_mob].lvl_dagger;
@@ -3797,6 +3817,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 						local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
 						if power > 0 then
 							chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
+							if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
+								global.damageflag = tostring(key);
+							end;
 						end;
 					end;
 					--/conditions
@@ -4827,6 +4850,7 @@ function damage.instantCast () --FIXME use lvl, num
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"fear","mind",false,false,1,false);
 		if debuff > 0 then
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.scared[chars_mobs_npcs[current_mob].gender]);
+			global.damageflag = "panic";
 		else
 			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
@@ -4837,6 +4861,7 @@ function damage.instantCast () --FIXME use lvl, num
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"charm","mind",false,false,1,false);
 		if debuff > 0 then
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.charmed[chars_mobs_npcs[current_mob].gender]);
+			global.damageflag = "charm";
 		else
 			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
