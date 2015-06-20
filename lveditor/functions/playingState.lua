@@ -13,7 +13,7 @@ function playingState.load()
 	require 'lib.Tserial';
 	require 'data.buildings';
 	require "data.harvest"
-	
+
 	mX, mY = love.mouse.getPosition();
 	loveframes.util.SetActiveSkin("GreyStone");
 	if image_names == nil then
@@ -22,29 +22,48 @@ function playingState.load()
 		image_names[2] = "img/hex_landscape.dds";
 		image_names[3] = "img/hex_foreground.dds";
 		image_names[4] = "img/hex_landscape.dds";
+		image_names[5] = "/img/img_tmpobjs.dds";
 	end;
 	
-	--img_hud =  love.graphics.newImage("img/hud.png");
+	--specialobjects
+	obelisk_img = love.graphics.newQuad(0, 17*32, 64,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	altar_img = love.graphics.newQuad(64, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	competition_img = love.graphics.newQuad(64, 19*32, 32,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	pedestal_img = love.graphics.newQuad(128, 18*32, 32,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	portal_img = love.graphics.newQuad(32*5, 20*32, 64,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	well_img = love.graphics.newQuad(7*32, 17*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	trashheap_img = love.graphics.newQuad(32*5, 18*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	scullpile_img = love.graphics.newQuad(32*11, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	crystals_img = love.graphics.newQuad(32*11, 19*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	
-	--[[media = {};
-	media.images = {};
-	media.images.hud_bottom_left = love.graphics.newImage("img/hud/hud_bottom_left.png");
-	media.images.hud_bottom_right = love.graphics.newImage("img/hud/hud_bottom_right.png");
-	media.images.hud_bottom_tile = love.graphics.newImage("img/hud/hud_bottom_tile.png");		
-	media.images.hud_top_left = love.graphics.newImage("img/hud/hud_top_left.png");
-	media.images.hud_top_right = love.graphics.newImage("img/hud/hud_top_right.png");
-	media.images.hud_top_tile = love.graphics.newImage("img/hud/hud_top_tile.png");
-	media.images.hud_top_center = love.graphics.newImage("img/hud/hud_top_center.png");
-	media.images.hud_left_tile = love.graphics.newImage("img/hud/hud_left_tile.png");
-	media.images.hud_right_tile = love.graphics.newImage("img/hud/hud_right_tile.png");
-	media.images.hud_right_wall_tile = love.graphics.newImage("img/hud/hud_right_wall_tile.png");
-	media.images.harvest = love.graphics.newImage("img/harvest.png");
+	barrel_img = {};
+	for i=1,12 do
+		local _x = (i-1)*64;
+		table.insert(barrel_img,love.graphics.newQuad(_x, 320, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
+	end;
 	
-	img =  love.graphics.newImage(image_names[2]);
-	img_obj =  love.graphics.newImage(image_names[3]);
-	img_back = love.graphics.newImage(image_names[1]);
-	img_map =  love.graphics.newImage("img/map.png");
-	buildings1 = love.graphics.newImage("img/buildings1.png");]]
+	cauldron_img = {};
+	for i=1,11 do
+		local _x = (i-1)*64;
+		table.insert(cauldron_img,love.graphics.newQuad(_x, 384, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
+	end;
+	bag_img = love.graphics.newQuad(0, 0, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	trap_img = love.graphics.newQuad(224, 0, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	chest_img = {
+	love.graphics.newQuad(10, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
+	love.graphics.newQuad(182, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
+	love.graphics.newQuad(96, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
+	love.graphics.newQuad(10, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
+	love.graphics.newQuad(180, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
+	love.graphics.newQuad(100, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
+	};
+	door_img = {};
+	for i=1,4 do
+		local _x = (i-1)*64;
+		table.insert(door_img,love.graphics.newQuad(_x, 448, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
+	end;
+	--/special objects
+	
 	buildings_data ();
 	harvest_load ();
 	mainFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
@@ -151,8 +170,44 @@ function playingState.load()
 	current_building=1;
 	current_herb = 1;
 	current_herb_dencity = 100;
+	pedestal_buffs={
+		{"heroism","heroism_power","heroism_dur"},
+		{"prayer","prayer_power","prayer_dur"},
+		{"bless","bless",false},
+		{"fate","fateself",false},
+		{"thirstofblood","thirstofblood",false},
+		{"stoneskill","stoneskill_power","stoneskill_dur"},
+		{"shield","shield",false},
+		{"protfromfire","protfromfire_power","protfromfire_dur"},
+		{"protfromcold","protfromcold_power","protfromcold_dur"},
+		{"protfromstatic","protfromstatic_power","protfromstatic_dur"},
+		{"protfromacid","protfromacid_power","protfromacid_dur"},
+		{"protfrompoison","protfrompoison_power","protfrompoison_dur"},
+		{"protfromlight","protfromlight_power","protfromlight_dur"},
+		{"protfromdarkness","protfromdarkness_power","protfromdarkness_dur"},
+		{"protofmind","protofmind_power","protofmind_dur"},
+		{"protofspirit","protofspirit_power","protofspirit_dur"},
+		{"protfrodisease","protfrodisease_power","protfrodisease_dur"},
+		{"executor","executor_power","executor_dur"},
+		{"haste","haste",false},
+		{"hourofpower","hourofpower_power","hourofpower_dur"},
+		{"dayofgods","dayofgods_power","dayofgods_dur"},
+		{"dash","dash_power","dash_dur"},
+		{"might","might_power","might_dur"},
+		{"glamour","glamour_power","glamour_dur"},
+		{"concentration","concentration_power","concentration_dur"},
+		{"precision","precision_power","precision_dur"},
+		{"luckyday","luckyday_power","luckyday_dur"},
+		{"holyblood","holyblood_power","holyblood_dur"},
+		{"divineintervention","divineintervention"},
+		};
+	pedestal_current_buff_index = 1;
+	pedestal_current_buff_name = pedestal_buffs[pedestal_current_buff_index][1];
+	pedestal_current_buff_lvl = 3;
+	pedestal_current_buff_num = 10;
 	row_status=0;
 	rows_total=22;
+	special_objects_status = 0;
 	showhidden=1;
 	array_of_map ();
 	savename = "level1.lua";
@@ -225,6 +280,12 @@ function playingState.load()
 		end;
 	end;
 	]]
+	if not objects_list then
+		objects_list={};
+	end;
+	if not bags_list then
+		bags_list={};
+	end;
 	drawnumbers = false;
 	love.window.setMode(1920, 1080, {resizable=false});
 	drawUIButtons();
@@ -375,13 +436,122 @@ function draw_hexbuttons ()
 	end;
 end;
 
+function special_objects_parametres (special_objects_status)
+	if special_objects_status == "ob" then
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-100);
+		text:SetMaxWidth(230);
+		text:SetText("puzzle part");
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-100);
+		textinput:SetWidth(76);
+		textinput:SetText(1);
+		textinput:SetLimit(4);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				obelisk_puzzle_part=tonumber(text);
+			end;
+		end;
+	end;
+	if special_objects_status == "pd" then
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-100);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if pedestal_current_buff_index and pedestal_current_buff_index  > 1 then
+				pedestal_current_buff_index = pedestal_current_buff_index - 1;
+				pedestal_current_buff_name = pedestal_buffs[pedestal_current_buff_index][1];
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-100);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if pedestal_current_buff_index and pedestal_current_buff_index < #pedestal_buffs then
+				pedestal_current_buff_index = pedestal_current_buff_index + 1;
+				pedestal_current_buff_name = pedestal_buffs[pedestal_current_buff_index][1];
+			end;
+		end;
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-100);
+		text:SetMaxWidth(100);
+		text:SetText("buff");
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-80);
+		text:SetMaxWidth(100);
+		text:SetText("lvl");
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-80);
+		textinput:SetWidth(76);
+		textinput:SetText(pedestal_current_buff_lvl);
+		textinput:SetLimit(1);
+		textinput:SetUsable({"1","2","3","4","5"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				pedestal_lvl = tonumber(text);
+			end;
+		end;
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-60);
+		text:SetMaxWidth(230);
+		text:SetText("num");
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-60);
+		textinput:SetWidth(76);
+		textinput:SetText(pedestal_current_buff_num);
+		textinput:SetLimit(2);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				pedestal_num = math.min(20,tonumber(text));
+			end;
+		end;
+	end;
+end;
+
 function draw_buttons ()
 	if editor_status == "hexes" or editor_status == "subhexes" then
 		cc=4;
+	elseif editor_status == "objects" then
+		cc=5;
 	elseif editor_status == "background" then
 		cc=2;
 	elseif editor_status == "help" then
 		cc=0;
+	end;
+	
+	local special_objects_texts = {
+	"ob","al","pd","pr","pt",
+	"wl","br","cl","cn","tr",
+	"bg","ch","cr","th","sp",
+	"wb","sk","sc","ug","cf",
+	"dr","fn","?","?","?",
+	};
+	
+	if editor_status == "objects" then
+		local togglebuttons = {};
+		for i=1,cc do
+			for h=1,5 do        
+				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
+				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1],  row_buttons[(i-1)*5+h][2]);
+				togglebuttons[#togglebuttons]:SetHeight(40);
+				togglebuttons[#togglebuttons]:SetWidth(40);
+				togglebuttons[#togglebuttons]:SetText(special_objects_texts[5*(i-1)+h]);
+				togglebuttons[#togglebuttons].OnClick = function(object)
+					--special_objects_status=(i-1)*5+h-1;
+					special_objects_status=special_objects_texts[5*(i-1)+h]
+					loveframes.util.RemoveAll();
+					drawUIButtons();
+					draw_buttons();
+					special_objects_parametres(special_objects_status);
+				end;
+			end;
+		end;
 	end;
 	
 	if editor_status == "subhexes" then
@@ -552,7 +722,7 @@ function centerObject(sprite)
 end;
 
 function draw_map()
-	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") and hexes_status==1 then
+	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and hexes_status==1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				if show_invisible and map[my+map_y][mx+map_x]<20  and map[my+map_y][mx+map_x]<300 then
@@ -566,7 +736,7 @@ function draw_map()
  end;
  
 function draw_submap()
-	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") and global.subhex == 1 then
+	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and global.subhex == 1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				if show_invisible and submap[my+map_y][mx+map_x]<20  and submap[my+map_y][mx+map_x]<300 then
@@ -662,7 +832,7 @@ function passCheck (x,y)
 end;
 
 function draw_objects ()
-	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes") then
+	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") then
 		if map_x < 12 then
 			mxx = 1
 		else
@@ -699,6 +869,89 @@ function draw_objects ()
 					local addy = buildings_stats[index].addy;
 					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
 				end;   
+			end;
+			for j=1,#bags_list do
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and bags_list[j].typ ~= "well" and bags_list[j].typ ~= "crystals" and bags_list[j].typ ~= "scullpile" and bags_list[j].typ ~= "trashheap" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-12);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-16, (my-1)*tile_h*0.75+top_space-12);
+					end;
+				end;
+				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "door" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-64);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-64);
+					end;
+				end;
+				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "crystals" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-44);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-16, (my-1)*tile_h*0.75+top_space-44);
+					end;
+				end;
+				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "scullpile" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-32);
+					end;
+				end;
+				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "trashheap" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-32);
+					end;
+				end;
+				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "well" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-64, (my-1)*tile_h*0.75+top_space-96);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-64, (my-1)*tile_h*0.75+top_space-96);
+					end;
+				end;
+				
+			end;
+			for j=1, #objects_list do
+				local addx = 0;
+				local add y = 0;
+				if objects_list[j].typ == "barrel" or  objects_list[j].typ == "cauldron" then
+					addx = 32;
+					addy = 32;
+				elseif objects_list[j].typ == "obelisk" then
+					addx = 32;
+					addy = 96;
+				elseif objects_list[j].typ == "pedestal" then
+					addx = 16;
+					addy = 72;			
+				elseif objects_list[j].typ == "altar" then
+					addx = 32;
+					addy = 64;
+				elseif objects_list[j].typ == "competition" then
+					addx = 16;
+					addy = 40;
+				elseif objects_list[j].typ == "portal" then
+					addx = 32;
+					addy = 0;
+				elseif objects_list[j].typ == "well" then
+					addx = 64;
+					addy = 96;
+				end;
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
+					else  
+						love.graphics.draw(media.images.tmpobjs,objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
+					end;
+				end;
 			end;
 			if editor_status == "harvest" and harvest_table[my+map_y][mx+map_x][1] ~= 0 then --harvest
 				drawHarvest (mx+map_x,my+map_y,harvest_table[my+map_y][mx+map_x][1]);
@@ -858,6 +1111,13 @@ function playingState.keypressed(key, unicode)
 		love.mouse.setVisible(true);
 		draw_buttons();
 		boxes();
+	end;
+	
+	if love.keyboard.isDown("lctrl") and key == 't'  then
+		editor_status = "objects";
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		draw_buttons();
 	end;
 	
 	if love.keyboard.isDown("lctrl") and key == 'b'  then
@@ -1572,7 +1832,7 @@ function flood_submap ()
 end;
 
 function draw_cursor ()
-	if (mX < global.screenWidth-274 and mY < global.screenHeight-150) and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "buildings" or editor_status == "homelands") then
+	if (mX < global.screenWidth-274 and mY < global.screenHeight-150) and (editor_status == "hexes" or editor_status == "harvest" or editor_status == "buildings" or editor_status == "homelands" or editor_status == "objects") then
 		if not hex_mouse_visible then
 			love.mouse.setVisible(false);
 		else
@@ -2243,6 +2503,18 @@ function drawUIButtons()
 		global.subhex = -1*global.subhex;
 	end;
 	
+	uibuttons[24] = loveframes.Create("button")
+	uibuttons[24]:SetPos(1360,global.screenHeight-120);
+	uibuttons[24]:SetHeight(40);
+	uibuttons[24]:SetWidth(100);
+	uibuttons[24]:SetText("objects");
+	uibuttons[24].OnClick = function(object)
+		editor_status = "objects";
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		draw_buttons();
+	end;
+	
 end;
 
 function startDiggers(x,y,count,flag) --FIXME submap only
@@ -2608,17 +2880,19 @@ function playingState.draw()
 		love.graphics.print("[LCTRL]+[M] - show hexes coordinates of hexes (показать координаты гекс)", 40,330);
 		love.graphics.print("[LCTRL]+[I] - mouse cursor toggle in hex mode (отображение курсора мыши в режиме гекс)", 40,350);
 		love.graphics.print("[LCTRL]+[M] - show minimap (показать мини-карту)", 40,370);
-		love.graphics.print("[LCTRL]+[D] - fill background with first tile/заполнить подложку первым тайлом", 40,390);
+		love.graphics.print("[LCTRL]+[E] - fill background with first tile/заполнить подложку первым тайлом", 40,390);
 		love.graphics.print("[Up],[Down],[Left],[Right] - scroll map (прокрутка карты)", 40,410);
 		love.graphics.print("WheelUp/WheelDown - change brush (сменить кисть)", 40,430);
 		love.graphics.print("[LCTRL]+[R] - load next level (загрузить следующий уровень)", 40,450);
 		love.graphics.print("[LCTRL]+[G] - cave autogeneration, needs a click (автогенерация пещеры, работает по клику)", 40,470);
 		love.graphics.print("[LCTRL]+[C] - copy mode, RMB for copy, LMB for PASTE (режим копирования, ПКМ для копирования, ЛКМ для вставки)", 40,490);
-		love.graphics.print("can be used with randomize hexes (можно использовать со случайными гексами)");
+		love.graphics.print("can be used with randomize hexes (можно использовать со случайными гексами)", 40,510);
 		love.graphics.print("[LCTRL]+WheelUp/WheelDown - quantity of randomizing hexes (количество рандомизируемых гекс)", 40,530);
 		love.graphics.print("[LCTRL]+[P] - mob areas (территории мобов)", 40,550);
-		love.graphics.print("[LCTRL]+[U] - sub-hexmode (режим правки подкарты)", 40,550);
-		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,590);
+		love.graphics.print("[LCTRL]+[U] - sub-hexmode (режим правки подкарты)", 40,570);
+		love.graphics.print("[LCTRL]+[T] - special objects (специальные объекты) --under construction (в разработке)", 40,590);
+		love.graphics.print("[LCTRL]+[D] - decals (декали) --under construction (в разработке)", 40,610);
+		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,630);
 	end;
 	if editor_status == "background" then
 		love.graphics.print("tile type selected:", 100, 10);
@@ -2681,6 +2955,50 @@ function playingState.draw()
 				end;
 			end;
 			love.graphics.print(_str,global.screenWidth-130, 660);
+		end;
+	end;
+	
+	if editor_status == "objects" then
+		local addy = 300;
+		local addx = 150;
+		
+		local special_objects_texts = {
+		"ob","al","pd","pr","pt",
+		"wl","br","cl","cn","tr",
+		"bg","ch","cr","th","sp",
+		"wb","sk","sc","ug","cf",
+		"dr","fn","?","?","?",
+		};
+		
+		local sob_images = {
+		ob=obelisk_img,
+		al=altar_img,
+		pd=pedestal_img,
+		pr=competition_img,
+		pt=portal_img,
+		
+		wl=well_img,
+		br=barrel_img[1],
+		cl=cauldron_img[1],
+		cn=nil,
+		tr=trap_img,
+		
+		bg=bag_img,
+		ch=chest_img[1],
+		cr=crystals_img,
+		th=trashheap_img,
+		sp=scullpile_img,
+		
+		wc=well_img,
+		};
+		
+		if special_objects_status and  special_objects_status ~= 0 and sob_images[special_objects_status] then
+			love.graphics.draw(media.images.tmpobjs, sob_images[special_objects_status],global.screenWidth-addx, global.screenHeight-addy);
+		end;
+		if special_objects_status == "pd" then
+			love.graphics.setColor(0, 0, 0,255);
+			love.graphics.print(pedestal_current_buff_name,global.screenWidth-120, global.screenHeight-100);
+			love.graphics.setColor(255, 255, 255,255);
 		end;
 	end;
 	

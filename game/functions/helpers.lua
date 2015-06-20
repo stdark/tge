@@ -478,6 +478,13 @@ function helpers.cursorAtDeadEnemy (x,y)
 	return false;
 end;
 
+function helpers.mobIsPartyMemeber (index)
+	if chars_mobs_npcs[index].person == "char" then
+		return true;
+	end;
+	return false;
+end;
+
 function helpers.ifMobIsCastable (mob)
 	if mob.freeze == 0 and mob.stone == 0 then
 		return true;

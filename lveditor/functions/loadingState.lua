@@ -66,6 +66,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "img_back", "img/background.dds");
 			loader.newImage(media.images, "img_map", "img/map.png");
 			loader.newImage(media.images, "buildings1", "img/buildings1.dds");
+			loader.newImage(media.images, "tmpobjs","/img/img_tmpobjs.dds");
 		end;
 	end;
 	utils.printDebug("started loading")

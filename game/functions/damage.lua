@@ -4188,7 +4188,7 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.inhaste);
 	end;
 	
-	if missle_type == "hour_of_power" then
+	if missle_type == "hourofpower" then
 		buff_dur = chars_mobs_npcs[i].lvl_light + chars_mobs_npcs[i].lvl_spirit;
 		buff_power = chars_mobs_npcs[i].num_body + chars_mobs_npcs[i].num_body;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
@@ -4744,6 +4744,33 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[victim].heroism_power = power;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.likeahero[chars_mobs_npcs[current_mob].gender]);
+	end;
+		
+	if missle_type=="bless" then
+		buff = 5 + num[1];
+		chars_mobs_npcs[victim].bless = buff;
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
+		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.blessed[chars_mobs_npcs[current_mob].gender]);
+	end;
+	
+	if missle_type=="prayer" then
+		local dur = 5 + lvl[1]*num[1];
+		local power = 5 + num[1];
+		chars_mobs_npcs[victim].prayer_dur = dur;
+		chars_mobs_npcs[victim].prayer_power = power;
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
+		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.feelsprayer[chars_mobs_npcs[current_mob].gender]);
+	end;
+	
+	if missle_type=="fate" then
+		buff = 5 + num[1];
+		if helpers.mobIsPartyMemeber (victim)
+			chars_mobs_npcs[victim].fateself = buff;
+		else
+			chars_mobs_npcs[victim].fate = buff;
+		end;
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
+		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.feelsdestiny[chars_mobs_npcs[current_mob].gender]);
 	end;
 	
 	if missle_type=="dayofgods" then
