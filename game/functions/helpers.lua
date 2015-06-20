@@ -2888,7 +2888,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			for i=1, #objects_list[global.object].uids do
 				if objects_list[global.object].uids[i] == chars_mobs_npcs[current_mob].uid then
 					used_before = true;
-					chars_stats[current_mob][objects_list[global.object].stat] = chars_mobs_npcs[current_mob][objects_list[global.object].stat] = chars_stats[current_mob][objects_list[global.object].value];
+					chars_stats[current_mob][objects_list[global.object].stat] = chars_mobs_npcs[current_mob][objects_list[global.object].stat] + chars_stats[current_mob][objects_list[global.object].value];
 					helpers.recalcBattleStats(current_objects);
 					love.audio.play(media.sounds.altar,0);
 				end;

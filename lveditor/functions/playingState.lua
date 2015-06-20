@@ -212,8 +212,8 @@ function playingState.load()
 		};
 	pedestal_current_buff_index = 1;
 	pedestal_current_buff_name = pedestal_buffs[pedestal_current_buff_index][1];
-	pedestal_current_buff_lvl = 3;
-	pedestal_current_buff_num = 10;
+	pedestal_current_value1 = 10;
+	pedestal_current_value2= 5;
 	competition_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk"};
 	competition_current_stat_index = 1;
 	competition_current_stat = competition_stats[competition_current_stat_index];
@@ -558,12 +558,12 @@ function special_objects_parametres (special_objects_status)
 		local textinput = loveframes.Create("textinput");
 		textinput:SetPos(global.screenWidth-100, global.screenHeight-80);
 		textinput:SetWidth(76);
-		textinput:SetText(pedestal_current_buff_lvl);
-		textinput:SetLimit(1);
-		textinput:SetUsable({"1","2","3","4","5"});
+		textinput:SetText(pedestal_current_value1);
+		textinput:SetLimit(2);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 		textinput.OnEnter = function(object, text)
 			if text ~= nil then
-				pedestal_lvl = tonumber(text);
+				pedestal_current_value1 = tonumber(text);
 			end;
 		end;
 		local text = loveframes.Create("text");
@@ -573,12 +573,12 @@ function special_objects_parametres (special_objects_status)
 		local textinput = loveframes.Create("textinput");
 		textinput:SetPos(global.screenWidth-100, global.screenHeight-60);
 		textinput:SetWidth(76);
-		textinput:SetText(pedestal_current_buff_num);
+		textinput:SetText(pedestal_current_value2);
 		textinput:SetLimit(2);
 		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 		textinput.OnEnter = function(object, text)
 			if text ~= nil then
-				pedestal_num = math.min(20,tonumber(text));
+				edestal_current_value2 = math.min(20,tonumber(text));
 			end;
 		end;
 	end;
@@ -1069,7 +1069,7 @@ function draw_objects ()
 				end;   
 			end;
 			for j=1,#bags_list do
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and bags_list[j].typ ~= "well" and bags_list[j].typ ~= "crystals" and bags_list[j].typ ~= "scullpile" and bags_list[j].typ ~= "trashheap" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and bags_list[j].typ ~= "well" and bags_list[j].typ ~= "crystals" and bags_list[j].typ ~= "scullpile" and bags_list[j].typ ~= "trashheap" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-12);
 					else  
@@ -1077,7 +1077,7 @@ function draw_objects ()
 					end;
 				end;
 				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "door" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "door" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-64);
 					else  
@@ -1085,23 +1085,15 @@ function draw_objects ()
 					end;
 				end;
 				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "crystals" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "crystals" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-44);
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-36);
 					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-16, (my-1)*tile_h*0.75+top_space-44);
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-36);
 					end;
 				end;
 				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "scullpile" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
-					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-32);
-					end;
-				end;
-				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "trashheap" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "scullpile" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
 					else  
@@ -1109,7 +1101,15 @@ function draw_objects ()
 					end;
 				end;
 				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "well" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "trashheap" then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-32);
+					end;
+				end;
+				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "well" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-64, (my-1)*tile_h*0.75+top_space-96);
 					else  
@@ -1975,10 +1975,25 @@ function playingState.mousereleased(x, y, button)
 		elseif special_objects_status == "pt"  then
 			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="portal",outx=global.portal_current_out_x, outy=global.portal_current_out_y,img=portal_img});
 		elseif special_objects_status == "al"  then
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="altar",uids={},stat=altar_stats[altar_current_stat_index],value=altar_current_value,img=altar_img});
 		elseif special_objects_status == "pd"  then
+			if pedestal_buffs[pedestal_current_buff][3] then
+				pedestal_current_value2 = false;
+			end;
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="pedestal",effect1=pedestal_buffs[2],effect2=pedestal_buffs[3],value1=pedestal_current_value1,value2=pedestal_current_value2,img=pedestal_img});
 		elseif special_objects_status == "cm"  then
-		elseif special_objects_status == "br"  then
-		elseif special_objects_status == "cl"  then
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="competition",uids={},stat=competition_current_stat,limit=competition_current_limit,bonus=competition_current_bonus,img=competition_img});
+		elseif special_objects_status == "br" then
+		elseif special_objects_status == "cl" then
+		elseif special_objects_status == "wl" then
+		elseif special_objects_status == "cr" then
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="crystals",charged = true, power = 25, opened=false, locked=false, img=crystals_img});
+		elseif special_objects_status == "th"  then
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="trashheap", condition_lvl=1,condition_num=5, opened=false, locked=false, img=trashheap_img});
+		elseif special_objects_status == "sp" then
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img});
+		elseif special_objects_status == "bg" then
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="bag", opened=false, locked=false, dir=0, img=bag_img, img=bag_img});
 		end;
 	end;
 end;
