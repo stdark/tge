@@ -2549,9 +2549,8 @@ function damage.multidamage () --FIXME two hexes
 							elseif chars_mobs_npcs[j].haste > 0 then
 								chars_mobs_npcs[j].haste = 0;
 								counter = counter - 1;
-							elseif chars_mobs_npcs[j].prayer_dur > 0 then
-								chars_mobs_npcs[j].prayer_dur = 0;
-								chars_mobs_npcs[j].prayer_power = 0;
+							elseif chars_mobs_npcs[j].prayer > 0 then
+								chars_mobs_npcs[j].prayer = 0;
 								counter = counter - 1;
 							elseif chars_mobs_npcs[j].myrth_dur > 0 then
 								chars_mobs_npcs[j].myrth_dur = 0;
@@ -4737,14 +4736,6 @@ function damage.instantCast () --FIXME use lvl, num
 	
 	--FIXME
 	
-	if missle_type == "prayer" then
-		buff = lvl[1];
-		dur = num[1];
-		chars_mobs_npcs[victim].prayer_power = buff;
-		chars_mobs_npcs[victim].prayer_dur = dur;
-		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
-	end;
-	
 	if missle_type == "wingsoflight" then
 		buff= chars_mobs_npcs[current_mob].num_lvl+chars_mobs_npcs[current_mob].lvl_light;
 		chars_mobs_npcs[victim].wingsoflight=buff;
@@ -4900,10 +4891,8 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 	
 	if missle_type=="prayer" then
-		local dur = 5 + lvl[1]*num[1];
-		local power = 5 + num[1];
-		chars_mobs_npcs[victim].prayer_dur = dur;
-		chars_mobs_npcs[victim].prayer_power = power;
+		buff = lvl[1]*num[1];
+		chars_mobs_npcs[victim].prayer = buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.feelsprayer[chars_mobs_npcs[current_mob].gender]);
 	end;
@@ -5884,8 +5873,7 @@ function damage.deadNow (index)
 	chars_mobs_npcs[index].fateself = 0;
 	chars_mobs_npcs[index].rage = 0;
 	chars_mobs_npcs[index].haste = 0;
-	chars_mobs_npcs[index].prayer_dur = 0;
-	chars_mobs_npcs[index].prayer_power = 0;
+	chars_mobs_npcs[index].prayer = 0;
 	chars_mobs_npcs[index].myrth_dur = 0;
 	chars_mobs_npcs[index].myrth_power = 0;
 	chars_mobs_npcs[index].executor_dur = 0;
@@ -6049,8 +6037,7 @@ function damage.uncondNow (index)
 	chars_mobs_npcs[index].fateself = 0;
 	chars_mobs_npcs[index].rage = 0;
 	chars_mobs_npcs[index].haste = 0;
-	chars_mobs_npcs[index].prayer_dur = 0;
-	chars_mobs_npcs[index].prayer_power = 0;
+	chars_mobs_npcs[index].prayer = 0;
 	chars_mobs_npcs[index].myrth_dur = 0;
 	chars_mobs_npcs[index].myrth_power = 0;
 	chars_mobs_npcs[index].executor_dur = 0;
@@ -6606,9 +6593,12 @@ function damage.damageOfLandscape(index,x,y)
 end;
 
 function damage.damageRandomizator(index,minvalue,maxvalue)
-	local result = minvalue;
-	if chars_mobs_npcs[index].curse == 0 then
-		result = math.random(minvalue,maxvalue);
+	local result = math.random(minvalue,maxvalue);
+	if chars_mobs_npcs[index].curse > 0 and chars_mobs_npcs[index].prayer == 0 then
+		result = minvalue;
+	elseif chars_mobs_npcs[index].curse == 0 and chars_mobs_npcs[index].prayer > 0 then
+		result = maxvalue;
 	end;
+	chars_mobs_npcs[index].prayer = 0;
 	return result;
 end;

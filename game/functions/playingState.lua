@@ -8329,10 +8329,8 @@ function restoreRT ()
 				else
 					chars_mobs_npcs[i].heroism_power=0;
 				end;
-				if chars_mobs_npcs[i].prayer_dur>0 then
-					chars_mobs_npcs[i].prayer_dur= chars_mobs_npcs[i].prayer_dur-1;
-				else
-					chars_mobs_npcs[i].prayer_power=0;
+				if chars_mobs_npcs[i].prayer>0 then
+					chars_mobs_npcs[i].prayer= chars_mobs_npcs[i].prayer-1;
 				end;
 				if chars_mobs_npcs[i].myrth_dur>0 then
 					chars_mobs_npcs[i].myrth_dur= chars_mobs_npcs[i].myrth_dur-1;

@@ -181,7 +181,7 @@ function playingState.load()
 	
 	pedestal_buffs={
 		{"heroism","heroism_power","heroism_dur"},
-		{"prayer","prayer_power","prayer_dur"},
+		{"prayer","prayer",false},
 		{"bless","bless",false},
 		{"fate","fateself",false},
 		{"thirstofblood","thirstofblood",false},
@@ -991,6 +991,16 @@ function resize_map_lesser ()
 					table.remove(homelands_table[my],mx);
 				end;
 			end;
+		end;
+	end;
+	for i=1,#bags_list do
+		if not insideMap(bags_list[i][]x,bags_list[i][]y) or not insideMap(bags_list[i][]xi,bags_list[i][]yi) then
+			table.remove(bags_list,i);
+		end;
+	end;
+	for i=1,#objects_list do
+		if not insideMap(objects_list[i][]x,objects_list[i][]y) or not insideMap(objects_list[i][]xi,objects_list[i][]yi) then
+			table.remove(objects_list,i);
 		end;
 	end;
 end;
@@ -1969,7 +1979,7 @@ function playingState.mousereleased(x, y, button)
 		end;
 	end;
 	if mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "objects" then
-		--remove first
+		 findBagOrObject(cursor_world_x,cursor_world_xy);
 		if special_objects_status == "ob"  then
 			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="obelisk",part=obelisk_puzzle_part,img=obelisk_img});
 		elseif special_objects_status == "pt"  then
@@ -1994,6 +2004,19 @@ function playingState.mousereleased(x, y, button)
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img});
 		elseif special_objects_status == "bg" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="bag", opened=false, locked=false, dir=0, img=bag_img, img=bag_img});
+		end;
+	end;
+end;
+
+function findBagOrObject(x,y)
+	for i=1,#bags_list do
+		if (bags_list[i].x == x and bags_list[i].y == y) or (bags_list[i].x == xi and bags_list[i].yi == y) then
+			table.remove(bags_list,i);
+		end;
+	end;
+	for i=1,#objects_list do
+		if (objects_list[i].x == x and objects_list[i].y == y) or (objects_list[i].x == xi and objects_list[i].yi == y) then
+			table.remove(objects_list,i);
 		end;
 	end;
 end;

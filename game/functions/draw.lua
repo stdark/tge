@@ -1473,7 +1473,7 @@ function draw.stats(index)
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
 	end;
-	if chars_mobs_npcs[current_mob].prayer_dur > 0 then
+	if chars_mobs_npcs[current_mob].prayer > 0 then
 		local str = tips_conditions.prayer;
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;

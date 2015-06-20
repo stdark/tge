@@ -27,6 +27,7 @@ gnoll={index=23,active=false,skills={"crushing","shield","spothidden"},stats={mg
 kobold={index=24,active=false,skills={"spothidden","stealth","dagger"},stats={mgt=5,enu=6,spd=8,dex=8,acu=8,sns=5,int=8,spr=3,chr=3,luk=1},resistances={rezfire = 0, rezcold = 0, rezstatic = 0, rezpoison = 0, rezacid = 0, rezdisease = 0, rezmind = 0, rezspirit = 0, rezlight = 0, rezdarkness = 0}},
 kreegan={index=25,active=false,skills={"fire","unarmed","dodging"},stats={mgt=9,enu=9,spd=9,dex=9,acu=6,int=5,sns=5,spr=6,chr=1,luk=1},resistances={rezfire = 50, rezcold = 0, rezstatic = 0, rezpoison = 0, rezacid = 0, rezdisease = 0, rezmind = 0, rezspirit = 0, rezlight = 0, rezdarkness = 0}},
 demon={index=26,active=false,skills={"trading","diplomacy","leadership"},stats={mgt=7,enu=7,spd=7,dex=7,acu=7,sns=5,int=7,spr=7,chr=1,luk=5},resistances={rezfire = 20, rezcold = 0, rezstatic = 0, rezpoison = 0, rezacid = 0, rezdisease = 0, rezmind = 0, rezspirit = 0, rezlight = 0, rezdarkness = 0}},
+halfgeany={index=26,active=false,skills={"air","mysticism","trading"},stats={mgt=6,enu=6,spd=6,dex=6,acu=6,sns=5,int=9,spr=9,chr=3,luk=4},resistances={rezfire = 0, rezcold = 0, rezstatic = 20, rezpoison = 0, rezacid = 0, rezdisease = 0, rezmind = 0, rezspirit = 0, rezlight = 0, rezdarkness = 0}},
 };
 
 defaults.classstats = {
@@ -189,6 +190,7 @@ gnoll={{},{}},
 kobold={{},{}},
 kreegan={{},{}},
 demon={{},{}},
+halfgeany={{},{}},
 };
 
 defaults.etiquette={
@@ -217,6 +219,7 @@ gnoll="none",
 kobold="none",
 kreegan="none",
 demon="none",
+halfgeany="none",
 };
 
 defaults.weaponSetA={sword=1,axe=26,flagpole=46,crushing=66,staff=100,dagger=86,unarmed=440};

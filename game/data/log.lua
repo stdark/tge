@@ -229,7 +229,7 @@ elf_wood="лесной эльф",elf_dark="тёмный эльф",elf_snow="сн
 dwarf="гном",dwarf_dark="тёмный гном",halfling="полурослик", nordling="нордлинг",
 hobgoblin="хобгоблин",goblin="гоблин",ogre="огр",
 orc="орк", troll="тролль", minotaur="минотавр",
-gremlin="гремлин",kreegan="криганин", demon="демон",
+gremlin="гремлин",kreegan="криганин", demon="демон", halfgeany="полуджинн",
 lizardman="ящеролюд", gnoll="гнолл", kobold="кобольд", ratman="крысолюд"
 };
 

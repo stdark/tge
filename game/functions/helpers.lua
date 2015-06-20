@@ -1456,7 +1456,7 @@ function helpers.detectAImode (index)
 	elseif chars_mobs_npcs[index].enslave > 0 then
 		mind_condition = mind_status.enslave;
 	end;
-	if chars_mobs_npcs[index].heroism_power > 0 or chars_mobs_npcs[index].fateself > 0 or chars_mobs_npcs[index].prayer_power > 0 or chars_mobs_npcs[index].myrth_power > 0 or chars_mobs_npcs[index].bless > 0 or chars_mobs_npcs[index].haste > 0 then
+	if chars_mobs_npcs[index].heroism_power > 0 or chars_mobs_npcs[index].fateself > 0 or chars_mobs_npcs[index].prayer > 0 or chars_mobs_npcs[index].myrth_power > 0 or chars_mobs_npcs[index].bless > 0 or chars_mobs_npcs[index].haste > 0 then
 		mind_buff = mind_status.hoorah;
 	end;
 	if chars_mobs_npcs[index].rage > 0 or chars_mobs_npcs[index].thirstofblood > 0 then
@@ -1960,8 +1960,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].fateself = 0;
 	chars_mobs_npcs[i].heroism_power = 0;
 	chars_mobs_npcs[i].heroism_dur = 0;
-	chars_mobs_npcs[i].prayer_power = 0
-	chars_mobs_npcs[i].prayer_dur = 0
+	chars_mobs_npcs[i].prayer = 0
 	chars_mobs_npcs[i].rage = 0;
 	chars_mobs_npcs[i].thirstofblood = 0;
 	chars_mobs_npcs[i].regen_power = 0;
@@ -4010,21 +4009,12 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 			chars_mobs_npcs[index].chr_debuff_power = chars_mobs_npcs[index].chr_debuff_power + math.ceil(0.75*chars_mobs_npcs[index].chr);
 		end;
 	end;
-	if chars_mobs_npcs[index].drunk > 0 then --PRAYER
-		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].prayer_power;
-		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + chars_mobs_npcs[index].prayer_power;
-		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + chars_mobs_npcs[index].prayer_power;
-		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + chars_mobs_npcs[index].prayer_power;
-		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + chars_mobs_npcs[index].prayer_power;
-		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].spr_debuff_power + chars_mobs_npcs[index].prayer_power;
-		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].prayer_power;
-	end;
 	if chars_mobs_npcs[index].drunk > 0 then --HOUR OF POWER
-		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].howerofpower_power;
-		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + chars_mobs_npcs[index].howerofpower_power;
-		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + chars_mobs_npcs[index].howerofpower_power;
-		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + chars_mobs_npcs[index].howerofpower_power;
-		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].howerofpower_power;
+		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
+		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
+		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
+		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
+		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
 	end;
 	if chars_mobs_npcs[index].misfortune_dur > 0 then --MISFORTUNE
 		chars_mobs_npcs[index].luk_debuff_power = chars_mobs_npcs[index].luk_debuff_power + chars_mobs_npcs[index].misfortune_power;
