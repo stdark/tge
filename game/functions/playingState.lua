@@ -520,7 +520,7 @@ function playingState.load()
 
 		objects_list[1]={x=6, y=8, xi=6, yi=8, typ="barrel", subtyp=1, img=barrel_img[2]};
 		objects_list[2]={x=7, y=10, xi=7, yi=10, typ="cauldron", subtyp=1, img=cauldron_img[2]};
-		objects_list[3]={x=42, y=30, xi=42, yi=30, typ="obelisk", subtyp=1, img=obelisk_img};
+		objects_list[3]={x=42, y=30, xi=42, yi=30, typ="obelisk", part=1, img=obelisk_img};
 		objects_list[4]={x=31, y=14, xi=31, yi=14, typ="pedestal", effect1="heroism_power",effect2="heroism_dur",value1=10,value2=10, img=pedestal_img};
 		objects_list[5]={x=27, y=25, xi=27, yi=25, typ="competition", stat="mgt", limit=5, bonus=5, uids={}, img=competition_img};
 		objects_list[6]={x=38, y=18, xi=38, yi=18, outx=18, outy=25, typ="portal", subtyp=1, img=portal_img};
@@ -6338,7 +6338,7 @@ function  playingState.mousepressed(x,y,button)
 		and tricks.tricks_tips[missle_type].form == "ranged" then
 			boomx= chars_mobs_npcs[victim].x;
 			boomy= chars_mobs_npcs[victim].y;
-			if missle_type == "evilswarm" or missle_type == "bitingfan" then
+			if missle_type == "evilswarm" or missle_type == "bitingcloud" then
 				helpers.beforeShoot();
 				game_status="shot";
 				damage.shoot();
@@ -7917,7 +7917,7 @@ function missle_fly ()
 		missle_y = shot_line[fly_count][2];
 		if missle_x == chars_mobs_npcs[victim].x and missle_y == chars_mobs_npcs[victim].y then
 			--if missle_drive == "spellbook" or missle_drive=="scroll" or missle_drive=="wand" then
-			if helpers.missleIsAweapon () and missle_type ~= "bottle" and missle_type ~= "bitingfan" then
+			if helpers.missleIsAweapon () and missle_type ~= "bottle" and missle_type ~= "bitingcloud" then
 				game_status = "damage";
 				damage.singledamage();
 				fly_count = 1;

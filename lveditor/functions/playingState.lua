@@ -170,6 +170,15 @@ function playingState.load()
 	current_building=1;
 	current_herb = 1;
 	current_herb_dencity = 100;
+	
+	special_objects_texts = {
+		"ob","al","pd","cm","pt",
+		"wl","br","cl","cn","tr",
+		"bg","ch","cr","th","sp",
+		"wb","sk","sc","ug","cf",
+		"dr","fn","?","?","?",
+		};
+	
 	pedestal_buffs={
 		{"heroism","heroism_power","heroism_dur"},
 		{"prayer","prayer_power","prayer_dur"},
@@ -205,6 +214,67 @@ function playingState.load()
 	pedestal_current_buff_name = pedestal_buffs[pedestal_current_buff_index][1];
 	pedestal_current_buff_lvl = 3;
 	pedestal_current_buff_num = 10;
+	competition_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk"};
+	competition_current_stat_index = 1;
+	competition_current_stat = competition_stats[competition_current_stat_index];
+	competition_current_limit = 50;
+	competition_current_bonus = 5;
+	global.portal_current_out_x = math.ceil(map_w/2);
+	global.portal_current_out_y = math.ceil(map_h/2);
+	global.portal_capture_coordinates = false;
+	altar_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezmind","rezdisease","rezspirit","rezdarkness","rezlight"};
+	altar_current_buff = 1;
+	altar_current_value = 1;
+	well_types = {"normal","magical","dry","dungeon","bag"};
+	well_current_type_index = 1;
+	well_dangers={"none","poisoned","infected","cursed"};
+	well_current_danger_index = 1;
+	well_adds = {"none","hp","sp","st"};
+	well_current_add_index = 1;
+	well_cures={"none","age","poison","disease","curse"};
+	well_current_cure_index = 1;
+	well_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezmind","rezdisease","rezspirit","rezdarkness","rezlight"};
+	well_current_stat_index = 1;
+	well_buffs = {
+		{"none"},
+		{"mgt_buff"},
+		{"enu_buff"},
+		{"dex_buff"},
+		{"spd_buff"},
+		{"acu_buff"},
+		{"sns_buff"},
+		{"int_buff"},
+		{"spr_buff"},
+		{"luk_buff"},
+		{"chr_buff"},
+		{"protfromfire","protfromfire_power","protfromfire_dur"},
+		{"protfromcold","protfromcold_power","protfromcold_dur"},
+		{"protfromstatic","protfromstatic_power","protfromstatic_dur"},
+		{"protfromacid","protfromacid_power","protfromacid_dur"},
+		{"protfrompoison","protfrompoison_power","protfrompoison_dur"},
+		{"protfromlight","protfromlight_power","protfromlight_dur"},
+		{"protfromdarkness","protfromdarkness_power","protfromdarkness_dur"},
+		{"protofmind","protofmind_power","protofmind_dur"},
+		{"protofspirit","protofspirit_power","protofspirit_dur"},
+		{"protfrodisease","protfrodisease_power","protfrodisease_dur"},
+	};
+	well_current_stat_buff = 1;
+	well_current_map = 1;
+	chest_current_rotation = 1;
+	chest_current_material = 1;
+	chest_current_opened = 1;
+	chest_current_locked = 1;
+	chest_current_locktype = 1;
+	chest_current_lockcode = "random";
+	chest_current_trapcode = "random";
+	chest_current_trappower = 10;
+	chest_traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
+	chest_current_trap_type = 1;
+	trap_current_trapcode = "random";
+	trap_current_trappower = 10;
+	trap_traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
+	trap_current_trap_type = 1;
+	trap_mask=50;
 	row_status=0;
 	rows_total=22;
 	special_objects_status = 0;
@@ -512,6 +582,142 @@ function special_objects_parametres (special_objects_status)
 			end;
 		end;
 	end;
+	
+	if special_objects_status == "cm" then
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-100);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if competition_current_stat_index and competition_current_stat_index  > 1 then
+				competition_current_stat_index = competition_current_stat_index - 1;
+				competition_current_stat = competition_stats[competition_current_stat_index];
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-100);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if competition_current_stat_index and competition_current_stat_index < #competition_stats then
+				competition_current_stat_index = competition_current_stat_index + 1;
+				competition_current_stat = competition_stats[competition_current_stat_index];
+			end;
+		end;
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-100);
+		text:SetMaxWidth(100);
+		text:SetText("stat");
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-80);
+		text:SetMaxWidth(100);
+		text:SetText("limit");
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-80);
+		textinput:SetWidth(76);
+		textinput:SetText(competition_current_limit);
+		textinput:SetLimit(1);
+		textinput:SetUsable({"1","2","3","4","5"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				competition_current_limit = tonumber(text);
+			end;
+		end;
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-60);
+		text:SetMaxWidth(230);
+		text:SetText("bonus");
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-60);
+		textinput:SetWidth(76);
+		textinput:SetText(competition_current_bonus);
+		textinput:SetLimit(2);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				competition_current_bonus = math.min(20,tonumber(text));
+			end;
+		end;
+	end;
+	
+	if special_objects_status == "al" then
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-100);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if altar_current_stat_index and altar_current_stat_index  > 1 then
+				altar_current_stat_index = altar_current_stat_index - 1;
+				altar_current_stat = altar_stats[altar_current_stat_index];
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-100);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if altar_current_stat_index and altar_current_stat_index < #altar_stats then
+				altar_current_stat_index = altar_current_stat_index + 1;
+				altar_current_stat = altar_stats[altar_current_stat_index];
+			end;
+		end;
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-100);
+		text:SetMaxWidth(100);
+		text:SetText("stat");
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-60);
+		text:SetMaxWidth(230);
+		text:SetText("bonus");
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-60);
+		textinput:SetWidth(76);
+		textinput:SetText(altar_current_bonus);
+		textinput:SetLimit(2);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				altar_current_bonus = math.min(20,tonumber(text));
+			end;
+		end;
+	end;
+	
+	if special_objects_status == "pt" then
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-240, global.screenHeight-60);
+		button1:SetHeight(30);
+		button1:SetWidth(30);
+		button1:SetText("x");
+		button1.OnClick = function(object)
+			global.portal_capture_coordinates = true;
+		end;
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-200, global.screenHeight-60);
+		textinput:SetWidth(76);
+		textinput:SetText(global.portal_current_out_x);
+		textinput:SetLimit(5);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				global.portal_current_out_x = math.min(text,map_w);
+			end;
+		end;
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-60);
+		textinput:SetWidth(76);
+		textinput:SetText(global.portal_current_out_y);
+		textinput:SetLimit(5);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				global.portal_current_out_y = math.min(text,map_h);
+			end;
+		end;		
+	end;
 end;
 
 function draw_buttons ()
@@ -524,14 +730,6 @@ function draw_buttons ()
 	elseif editor_status == "help" then
 		cc=0;
 	end;
-	
-	local special_objects_texts = {
-	"ob","al","pd","pr","pt",
-	"wl","br","cl","cn","tr",
-	"bg","ch","cr","th","sp",
-	"wb","sk","sc","ug","cf",
-	"dr","fn","?","?","?",
-	};
 	
 	if editor_status == "objects" then
 		local togglebuttons = {};
@@ -945,7 +1143,7 @@ function draw_objects ()
 					addx = 64;
 					addy = 96;
 				end;
-				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 then
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
@@ -1310,14 +1508,18 @@ function playingState.keypressed(key, unicode)
 		editor_status = "minimap";
 	end;
 	if key == 'escape'  then
-		editor_status='hexes';
-		hexes_status=1;
-		object_status=1;
-		loveframes.util.RemoveAll();
-		drawUIButtons();
-		draw_buttons();
-		draw_hexbuttons ();
-		boxes();
+		if editor_status == 'objects'and global.portal_capture_coordinates then
+			global.portal_capture_coordinates = false;
+		else
+			editor_status='hexes';
+			hexes_status=1;
+			object_status=1;
+			loveframes.util.RemoveAll();
+			drawUIButtons();
+			draw_buttons();
+			draw_hexbuttons ();
+			boxes();
+		end;
 	end;
 	if love.keyboard.isDown("lctrl") and key == 'q' and row_status < rows_total and editor_status == "hexes" then
 		row_status=row_status+1;
@@ -1755,6 +1957,30 @@ end
 
 function playingState.mousereleased(x, y, button)
     loveframes.mousereleased(x, y, button);
+    if mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "objects" and special_objects_status == "pt" then
+		if global.portal_capture_coordinates and passCheck (cursor_world_x,cursor_world_y) then
+			global.portal_current_out_x = cursor_world_x;
+			global.portal_current_out_y = cursor_world_y;
+			global.portal_capture_coordinates = false;
+			loveframes.util.RemoveAll();
+			drawUIButtons();
+			draw_buttons();
+			special_objects_parametres(special_objects_status);
+		end;
+	end;
+	if mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "objects" then
+		--remove first
+		if special_objects_status == "ob"  then
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="obelisk",part=obelisk_puzzle_part,img=obelisk_img});
+		elseif special_objects_status == "pt"  then
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="portal",outx=global.portal_current_out_x, outy=global.portal_current_out_y,img=portal_img});
+		elseif special_objects_status == "al"  then
+		elseif special_objects_status == "pd"  then
+		elseif special_objects_status == "cm"  then
+		elseif special_objects_status == "br"  then
+		elseif special_objects_status == "cl"  then
+		end;
+	end;
 end;
 
 function playingState.textinput(text)
@@ -2962,19 +3188,11 @@ function playingState.draw()
 		local addy = 300;
 		local addx = 150;
 		
-		local special_objects_texts = {
-		"ob","al","pd","pr","pt",
-		"wl","br","cl","cn","tr",
-		"bg","ch","cr","th","sp",
-		"wb","sk","sc","ug","cf",
-		"dr","fn","?","?","?",
-		};
-		
 		local sob_images = {
 		ob=obelisk_img,
 		al=altar_img,
 		pd=pedestal_img,
-		pr=competition_img,
+		cm=competition_img,
 		pt=portal_img,
 		
 		wl=well_img,
@@ -2995,11 +3213,15 @@ function playingState.draw()
 		if special_objects_status and  special_objects_status ~= 0 and sob_images[special_objects_status] then
 			love.graphics.draw(media.images.tmpobjs, sob_images[special_objects_status],global.screenWidth-addx, global.screenHeight-addy);
 		end;
-		if special_objects_status == "pd" then
-			love.graphics.setColor(0, 0, 0,255);
+		love.graphics.setColor(0, 0, 0,255);
+		if special_objects_status == "pd" then	
 			love.graphics.print(pedestal_current_buff_name,global.screenWidth-120, global.screenHeight-100);
-			love.graphics.setColor(255, 255, 255,255);
 		end;
+		
+		if special_objects_status == "cm" then
+			love.graphics.print(competition_stats[competition_current_stat_index],global.screenWidth-120, global.screenHeight-100);		
+		end;
+		love.graphics.setColor(255, 255, 255,255);
 	end;
 	
 	if editor_status == "minimap" then

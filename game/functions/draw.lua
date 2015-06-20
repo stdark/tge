@@ -201,7 +201,7 @@ function draw.cursor ()
 					end;
 				end;
 				
-				if missle_type == "bitingfan" then
+				if missle_type == "bitingcloud" then
 					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,3+math.ceil(chars_mobs_npcs[current_mob].mgt/10),false);
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);

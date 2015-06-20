@@ -1021,7 +1021,61 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				end;
 				dmghp = damage.physicalRes (victim,_damage,hitzone)
 				damage.HPminus(victim,dmghp,true);
-				helpers.addToActionLog( agressor_name .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
+				helpers.addToActionLog(agressor_name .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
+			end;
+			if missle_type == "evilswarm" then
+				local damageHP = 0;
+				for i=1,5 do
+					utils.randommore ();
+					local delta_spd = 0;
+					if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
+						delta_spd = chars_mobs_npcs[current_mob].spd + chars_mobs_npcs[victim].spd;
+					else
+						delta_spd = 100;
+					end;
+					local incoming_physical_dmg = 0;
+					local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
+					local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
+					chance_to_hit = chance_to_hit + total_fate;
+					chars_mobs_npcs[victim].fate = 0;
+					chars_mobs_npcs[victim].fateself = 0;
+					random_chance = math.random(1,100)-50;	
+					if chance_to_hit >= random_chance then
+						utils.randommore ();
+						random_chance = math.random(1,100)-50;
+						if chars_mobs_npcs[current_mob].curse == 0 and chars_mobs_npcs[current_mob].bless == 0 then
+							dice = math.random(chars_mobs_npcs[current_mob].brng);
+						elseif chars_mobs_npcs[current_mob].curse > 0 and chars_mobs_npcs[current_mob].bless == 0 then
+							dice = 1;
+						elseif chars_mobs_npcs[current_mob].curse == 0 and chars_mobs_npcs[current_mob].bless == 0 then
+							dice = chars_mobs_npcs[current_mob].brng;
+						elseif chars_mobs_npcs[current_mob].curse > 0 and chars_mobs_npcs[current_mob].bless > 0 then
+							dice = math.random(chars_mobs_npcs[current_mob].brng);
+						end;
+						incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu);
+						utils.randommore ();
+						random_chance = math.random(1,100)-50;
+						chance_to_crit = math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10);
+						if chance_to_crit > random_chance then
+							incoming_physical_dmg = incoming_physical_dmg*2;
+						end;
+					end;
+					damageHP = damageHP + damage.physicalRes (victim,incoming_physical_dmg);	
+				end;
+				if chars_mobs_npcs[victim].hexes == 1 then
+					chars_mobs_npcs[victim].rot = math.random(1,6); --desorientation;
+				end;
+				global.damageflag = "charm";
+				chars_mobs_npcs[victim].charm = 3;
+				chars_mobs_npcs[current_mob].fate = 0;
+				chars_mobs_npcs[current_mob].fateself = 0;
+				chars_mobs_npcs[victim].fate = 0;
+				chars_mobs_npcs[victim].fateself = 0;
+				damage.HPminus(victim,damageHP,true);
+				table.insert(damaged_mobs,victim);
+				damage.mobDamaged(victim,current_mob,damageHP);
+				exp_for_what(damageHP,current_mob);
+				helpers.addToActionLog(agressor_name .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
 			end;
 		else -- magic
 			local lvl,num = helpers.countBoomNumbers ();
@@ -1321,16 +1375,108 @@ function damage.multidamage () --FIXME two hexes
 	elseif missle_drive == "bottle" then
 		local spellname = potionname;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.usepotion[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
+	elseif missle_drive == "muscles" then
+		local tempspellname="tricks.tricks_tips." .. missle_type .. ".title";
+		local spellname = loadstring("return " .. tempspellname)();
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
 	end;
 	local damaged_mobs = {};
 	local boomdur = 1;
 	local boompower = 1;
 	local lvl,num = helpers.countBoomNumbers ();
 	
-	if missle_type == "evilswarm" then
-	end;
-	
-	if missle_type == "bitingfan" then
+	if missle_type == "bitingcloud" then
+		for j=1,#chars_mobs_npcs do
+			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
+				utils.randommore ();
+				local delta_spd = 0;
+				if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
+					delta_spd = chars_mobs_npcs[current_mob].spd + chars_mobs_npcs[victim].spd;
+				else
+					delta_spd = 100;
+				end;
+				local incoming_physical_dmg = 0;
+				local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
+				local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
+				chance_to_hit = chance_to_hit + total_fate;
+				chars_mobs_npcs[j].fate = 0;
+				chars_mobs_npcs[j].fateself = 0;
+				random_chance = math.random(1,100)-50;	
+				if chance_to_hit >= random_chance then
+					utils.randommore ();
+					random_chance = math.random(1,100)-50;
+					if chars_mobs_npcs[current_mob].curse == 0 and chars_mobs_npcs[current_mob].bless == 0 then
+						dice = math.random(chars_mobs_npcs[current_mob].brng);
+					elseif chars_mobs_npcs[current_mob].curse > 0 and chars_mobs_npcs[current_mob].bless == 0 then
+						dice = 1;
+					elseif chars_mobs_npcs[current_mob].curse == 0 and chars_mobs_npcs[current_mob].bless == 0 then
+						dice = chars_mobs_npcs[current_mob].brng;
+					elseif chars_mobs_npcs[current_mob].curse > 0 and chars_mobs_npcs[current_mob].bless > 0 then
+						dice = math.random(chars_mobs_npcs[current_mob].brng);
+					end;
+					incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu);
+					utils.randommore ();
+					random_chance = math.random(1,100)-50;
+					chance_to_crit = math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10);
+					if chance_to_crit > random_chance then
+						incoming_physical_dmg = incoming_physical_dmg*2;
+					end;
+				end;
+				local damageHP = damage.physicalRes (j,incoming_physical_dmg);
+				damage.HPminus(j,damageHP,true);
+				table.insert(damaged_mobs,j);
+				damage.mobDamaged(j,current_mob,damageHP);
+				exp_for_what(damageHP,current_mob)
+			end;
+			local rings = boomareas.ringArea(boomx,boomy);
+			for i=1,#rings[1] do
+				if helpers.cursorAtCurrentMob (j,rings[1][i].x,rings[1][i].y) then
+					utils.randommore ();
+					local delta_spd = 0;
+					if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
+						delta_spd = chars_mobs_npcs[current_mob].spd + chars_mobs_npcs[victim].spd;
+					else
+						delta_spd = 100;
+					end;
+					local incoming_physical_dmg = 0;
+					local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
+					local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
+					chance_to_hit = chance_to_hit + total_fate;
+					chars_mobs_npcs[j].fate = 0;
+					chars_mobs_npcs[j].fateself = 0;
+					random_chance = math.random(1,100)-50;	
+					if chance_to_hit >= random_chance then
+						utils.randommore ();
+						random_chance = math.random(1,100)-50;
+						if chars_mobs_npcs[current_mob].curse == 0 and chars_mobs_npcs[current_mob].bless == 0 then
+							dice = math.random(chars_mobs_npcs[current_mob].brng);
+						elseif chars_mobs_npcs[current_mob].curse > 0 and chars_mobs_npcs[current_mob].bless == 0 then
+							dice = 1;
+						elseif chars_mobs_npcs[current_mob].curse == 0 and chars_mobs_npcs[current_mob].bless == 0 then
+							dice = chars_mobs_npcs[current_mob].brng;
+						elseif chars_mobs_npcs[current_mob].curse > 0 and chars_mobs_npcs[current_mob].bless > 0 then
+							dice = math.random(chars_mobs_npcs[current_mob].brng);
+						end;
+						incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu);
+						utils.randommore ();
+						random_chance = math.random(1,100)-50;
+						chance_to_crit = math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10);
+						if chance_to_crit > random_chance then
+							incoming_physical_dmg = incoming_physical_dmg*2;
+						end;
+					end;
+					local damageHP = damage.physicalRes (j,incoming_physical_dmg);
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
+				end;
+			end;
+		end;
+		chars_mobs_npcs[current_mob].fate = 0;
+		chars_mobs_npcs[current_mob].fateself = 0;
+		chars_mobs_npcs[j].fate = 0;
+		chars_mobs_npcs[j].fateself = 0;
 	end;
 	
 	if missle_type == "fireball" then
@@ -4764,7 +4910,7 @@ function damage.instantCast () --FIXME use lvl, num
 	
 	if missle_type=="fate" then
 		buff = 5 + num[1];
-		if helpers.mobIsPartyMemeber (victim)
+		if helpers.mobIsPartyMemeber (victim) then
 			chars_mobs_npcs[victim].fateself = buff;
 		else
 			chars_mobs_npcs[victim].fate = buff;

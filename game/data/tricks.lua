@@ -1173,7 +1173,7 @@ tricks.alltricks = {
 {"slash","dencedefence","smash","woodcutter","lunge","armorpenetration","feint","decapitator","skullcrusher","nutchopper","impale","pin"},
 {"bitsoulout","stunner","savingstick","backstab","vilehit","bloodyhit","ribbreaker","spinalshock","oblivion","deafen","smarthit","coupdegrace"},
 {"stomachhit","hammerhands","top","torero","bump","absoluteblock","sleepfinger","lotus","acrobat","shore","umbrella","ribhit"},
-{"parabolicshot","maximumstreght","carefulaiming","shieldpenetration","shockingsparkle","hiddenstrike","eagleseye","blinding","finishing","nailing","evilswarm","bitingfan"},
+{"parabolicshot","maximumstreght","carefulaiming","shieldpenetration","shockingsparkle","hiddenstrike","eagleseye","blinding","finishing","nailing","evilswarm","bitingcloud"},
 {"","","","","","","","","","","",""},
 };
 

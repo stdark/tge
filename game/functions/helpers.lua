@@ -2888,6 +2888,8 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			for i=1, #objects_list[global.object].uids do
 				if objects_list[global.object].uids[i] == chars_mobs_npcs[current_mob].uid then
 					used_before = true;
+					chars_stats[current_mob][objects_list[global.object].stat] = chars_mobs_npcs[current_mob][objects_list[global.object].stat] = chars_stats[current_mob][objects_list[global.object].value];
+					helpers.recalcBattleStats(current_objects);
 					love.audio.play(media.sounds.altar,0);
 				end;
 			end;
@@ -2958,6 +2960,7 @@ function helpers.drinkFromWell ()
 			damage.STminus(current_mob,objects_list[global.object].minusvalue,true);
 		end;
 	end;
+	
 	for i=1, #objects_list[global.object].conditions do
 		chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].name] = chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].value];
 	end;
@@ -2973,6 +2976,11 @@ function helpers.drinkFromWell ()
 		chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
 	end;
 
+	if objects_list[global.object].cursed then
+		local condition = damage.applyCondition (current_mob,objects_list[global.object]["infected"].lvl,objects_list[global.object]["cursed"].num,helpers.randomCurse (true),"darkness",false,false,1,false);
+		chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
+	end;
+
 	game_status = "neutral";
 	if global.status == "battle" then
 		damage.RTminus(current_mob,100);
@@ -2980,10 +2988,19 @@ function helpers.drinkFromWell ()
 	end;
 end;
 
+function helpers.randomCurse (char)
+	local curselist = {"curse","misfortune","darkgasp","darkcontamination","flith","fingerofdeath"};
+	if char then
+		table.insert(curselist,"evileye");
+		table.insert(curselist,"basiliskbreath");
+	end;
+	local current_curse = curselist[math.random(1,#curselist)];
+	return current_curse;
+end;
+
 function helpers.inspectScullpile ()
 	--log
-	local curselist = {"curse","evileye","basiliskbreath","misfortune","darkgasp","darkcontamination","flith","fingerofdeath"};
-	local current_curse = curselist[math.random(1,#curselist)];
+	local current_curse = helpers.randomCurse (true);
 	if current_curse ~= "misfortune" and current_curse ~= "flith" then
 		local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,current_curse,"darkness",false,"spothidden",1,true);
 		chars_mobs_npcs[current_mob][current_curse] = math.max(chars_mobs_npcs[current_mob][current_curse],condition);
@@ -5218,7 +5235,7 @@ function helpers.missleIsAweapon ()
 	if missle_type == "arrow" or missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery"
 	or missle_type == "parabolicshot" or missle_type == "maximumstreght" or missle_type == "eagleseye" or missle_type == "blinding"
 	or missle_type == "carefulaiming" or missle_type == "shieldpenetration" or missle_type == "nailing" or missle_type == "finishing"
-	or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingfan"
+	or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingcloud"
 	then
 		return true;
 	end;
@@ -5241,7 +5258,7 @@ function helpers.likeABow ()
 end;
 
 function helpers.likeAStar ()
-	if missle_type == "throwing" or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingfan" then
+	if missle_type == "throwing" or missle_type == "shockingsparkle" or missle_type == "hiddenstrike" or missle_type == "evilswarm" or missle_type == "bitingcloud" then
 		return true;
 	end;
 	return false;
