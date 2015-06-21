@@ -2577,7 +2577,7 @@ function draw.objects ()
 					addy = 72;			
 				elseif objects_list[j].typ == "altar" then
 					addx = 32;
-					addy = 64;
+					addy = 32;
 				elseif objects_list[j].typ == "competition" then
 					addx = 16;
 					addy = 40;

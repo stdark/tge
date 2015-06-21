@@ -2960,6 +2960,19 @@ function helpers.drinkFromWell ()
 		end;
 	end;
 	
+	if objects_list[global.object].permanentplus then
+		local used_before = false;
+		if chars_mobs_npcs[current_mob].person == "char" then
+			for i=1, #objects_list[global.object].uids do
+				if objects_list[global.object].uids[i] == chars_mobs_npcs[current_mob].uid then
+					chars_stats[current_mob][objects_list[global.object].permanentplus] = chars_stats[current_mob][objects_list[global.object].permanentplus] + objects_list[global.object].permanentplusvalue;
+					helpers.recalcBattleStats(current_objects);
+					used_before = true;
+				end;
+			end;
+		end;
+	end;
+	
 	for i=1, #objects_list[global.object].conditions do
 		chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].name] = chars_mobs_npcs[current_mob][objects_list[global.object].conditions[i].value];
 	end;
@@ -2976,7 +2989,7 @@ function helpers.drinkFromWell ()
 	end;
 
 	if objects_list[global.object].cursed then
-		local condition = damage.applyCondition (current_mob,objects_list[global.object]["infected"].lvl,objects_list[global.object]["cursed"].num,helpers.randomCurse (true),"darkness",false,false,1,false);
+		local condition = damage.applyCondition (current_mob,objects_list[global.object]["cursed"].lvl,objects_list[global.object]["cursed"].num,helpers.randomCurse (true),"darkness",false,false,1,false);
 		chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
 	end;
 

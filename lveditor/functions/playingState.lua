@@ -225,14 +225,21 @@ function playingState.load()
 	altar_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezmind","rezdisease","rezspirit","rezdarkness","rezlight"};
 	altar_current_buff = 1;
 	altar_current_value = 1;
-	well_types = {"normal","magical","dry","dungeon","bag"};
+	well_types = {"normal","dry","dungeon","bag","magical add","magical stat","magical cure","drunk","poisoned","infected","cursed"};
 	well_current_type_index = 1;
-	well_dangers={"none","poisoned","infected","cursed"};
-	well_current_danger_index = 1;
-	well_adds = {"none","hp","sp","st"};
-	well_current_add_index = 1;
-	well_cures={"none","age","poison","disease","curse"};
-	well_current_cure_index = 1;
+	well_current_type_name = well_types[well_current_type_index];
+	well_current_area = 1;
+	well_current_poisoned_lv = 3;
+	well_current_poisoned_num = 10;
+	well_current_infected_lv = 3;
+	well_current_infected_num = 10;
+	well_current_cursed_lv = 3;
+	well_current_cursed_num = 10;
+	--well_current_area_x = ;
+	--well_current_area_y = ;
+	well_addtypes = {"hp","sp","st"};
+	well_current_addtype_index = 1;
+	well_current_addtype_name = well_addtypes[well_current_addtype_index];
 	well_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezmind","rezdisease","rezspirit","rezdarkness","rezlight"};
 	well_current_stat_index = 1;
 	well_buffs = {
@@ -276,8 +283,15 @@ function playingState.load()
 	trap_current_trapcode = "random";
 	trap_current_trappower = 10;
 	trap_traptypes={"random","fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
-	trap_current_trap_type = 1;
-	trap_mask=50;
+	trap_current_trap_type_index = 1;
+	trap_current_traptype_name = trap_traptypes[trap_current_trap_type_index];
+	trap_current_mask=50;
+	barrel_types={"none","mgt","enu","spd","dex","acu","sns","int","spr","chr","luk"};
+	barrel_current_type = 1;
+	barrel_current_name = barrel_types[barrel_current_type];
+	cauldron_types={"none","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezdisease","rezmind","rezspirit","rezlight","rezdarkness"};
+	cauldron_current_type = 1;
+	cauldron_current_name = cauldron_types[cauldron_current_type];
 	row_status=0;
 	rows_total=22;
 	special_objects_status = 0;
@@ -720,11 +734,12 @@ function special_objects_parametres (special_objects_status)
 			end;
 		end;		
 	end;
+	
 	if special_objects_status == "ch" then
 		local text = loveframes.Create("text");
 		text:SetPos(global.screenWidth-200, global.screenHeight-140);
 		text:SetMaxWidth(100);
-		text:SetText("locktype");
+		text:SetText("lock type");
 		
 		button1 = loveframes.Create("button")
 		button1:SetPos(global.screenWidth-140, global.screenHeight-140);
@@ -761,7 +776,7 @@ function special_objects_parametres (special_objects_status)
 			local text = loveframes.Create("text");
 			text:SetPos(global.screenWidth-200, global.screenHeight-120);
 			text:SetMaxWidth(100);
-			text:SetText("lockcode");
+			text:SetText("lock code");
 			
 			local textinput = loveframes.Create("textinput");
 			textinput:SetPos(global.screenWidth-120, global.screenHeight-120);
@@ -771,7 +786,7 @@ function special_objects_parametres (special_objects_status)
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					chest_current_lockcode  = math.min(text,map_w);
+					chest_current_lockcode  = text;
 				end;
 			end;
 		end;
@@ -779,7 +794,7 @@ function special_objects_parametres (special_objects_status)
 		local text = loveframes.Create("text");
 		text:SetPos(global.screenWidth-200, global.screenHeight-100);
 		text:SetMaxWidth(100);
-		text:SetText("traptype");
+		text:SetText("trap type");
 		
 		button3 = loveframes.Create("button")
 		button3:SetPos(global.screenWidth-140, global.screenHeight-100);
@@ -816,7 +831,7 @@ function special_objects_parametres (special_objects_status)
 			local text = loveframes.Create("text");
 			text:SetPos(global.screenWidth-200, global.screenHeight-80);
 			text:SetMaxWidth(100);
-			text:SetText("trappower");
+			text:SetText("trap power");
 			
 			local textinput = loveframes.Create("textinput");
 			textinput:SetPos(global.screenWidth-120, global.screenHeight-80);
@@ -826,14 +841,14 @@ function special_objects_parametres (special_objects_status)
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					chest_current_trappower  = math.min(text,map_w); 
+					chest_current_trappower  = text; 
 				end;
 			end;
 			
 			local text = loveframes.Create("text");
 			text:SetPos(global.screenWidth-200, global.screenHeight-60);
 			text:SetMaxWidth(100);
-			text:SetText("trappower");
+			text:SetText("trap code");
 			
 			local textinput = loveframes.Create("textinput");
 			textinput:SetPos(global.screenWidth-120, global.screenHeight-60);
@@ -843,7 +858,7 @@ function special_objects_parametres (special_objects_status)
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					chest_current_trapcode  = math.min(text,map_w); --"random","random3","random4","random5","123456789"
+					chest_current_trapcode  = text; --"random","random3","random4","random5","123456789"
 				end;
 			end;
 			
@@ -855,17 +870,279 @@ function special_objects_parametres (special_objects_status)
 		text:SetText("material");
 		
 		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-120, global.screenHeight-40);
+		textinput:SetWidth(76);
+		textinput:SetText(chest_current_material);
+		textinput:SetLimit(9);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				chest_current_material  = text; --"random","random3","random4","random5","123456789"
+			end;
+		end;
+
+	end;
+	
+	if special_objects_status == "tr" then
+		
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-100);
+		text:SetMaxWidth(100);
+		text:SetText("traptype");
+		
+		button3 = loveframes.Create("button")
+		button3:SetPos(global.screenWidth-140, global.screenHeight-100);
+		button3:SetHeight(20);
+		button3:SetWidth(20);
+		button3:SetText("<");
+		button3.OnClick = function(object)
+			if trap_current_traptype_index and trap_current_traptype_index  > 1 then
+				trap_current_traptype_index = trap_current_traptype_index - 1;
+				trap_current_traptype_name = trap_traptypes[trap_current_traptype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		button4 = loveframes.Create("button")
+		button4:SetPos(global.screenWidth-40, global.screenHeight-100);
+		button4:SetHeight(20);
+		button4:SetWidth(20);
+		button4:SetText(">");
+		button4.OnClick = function(object)
+			if trap_current_traptype_index and trap_current_traptype_index < #trap_traptypes then
+				trap_current_traptype_index = trap_current_traptype_index + 1;
+				trap_current_traptype_name = trap_traptypes[trap_current_traptype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		
+		
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-80);
+		text:SetMaxWidth(100);
+		text:SetText("trappower");
+		
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-120, global.screenHeight-80);
+		textinput:SetWidth(76);
+		textinput:SetText(trap_current_trappower);
+		textinput:SetLimit(2);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				trap_current_trappower  = math.min(text,map_w); 
+			end;
+		end;
+		
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-60);
+		text:SetMaxWidth(100);
+		text:SetText("trappower");
+		
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-120, global.screenHeight-60);
+		textinput:SetWidth(76);
+		textinput:SetText(trap_current_trapcode);
+		textinput:SetLimit(9);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				trap_current_trapcode  = math.min(text,map_w); --"random","random3","random4","random5","123456789"
+			end;
+		end;
+		
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-40);
+		text:SetMaxWidth(100);
+		text:SetText("mask");
+		
+		local textinput = loveframes.Create("textinput");
 			textinput:SetPos(global.screenWidth-120, global.screenHeight-40);
 			textinput:SetWidth(76);
-			textinput:SetText(chest_current_material);
+			textinput:SetText(trap_current_mask);
 			textinput:SetLimit(9);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					chest_current_material  = math.min(text,map_w); --"random","random3","random4","random5","123456789"
+					trap_current_mask  = math.min(text,map_w); --"random","random3","random4","random5","123456789"
 				end;
 			end;
 
+	end;
+
+	if special_objects_status == "wl" then
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-140);
+		text:SetMaxWidth(100);
+		text:SetText("well type");
+	
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-140);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if well_current_type_index and well_current_type_index  > 1 then
+				well_current_type_index = well_current_type_index - 1;
+				well_current_type_name = well_types[well_current_type_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-140);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if well_current_type_index and well_current_type_index < #well_types then
+				well_current_type_index = well_current_type_index + 1;
+				well_current_type_name = well_types[well_current_type_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		
+		if well_current_type_name == "normal" then	
+		elseif well_current_type_name == "dry" then
+		elseif well_current_type_name == "bag" then
+		elseif well_current_type_name == "dungeon" then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("area");
+				
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-120);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_area);
+			textinput:SetLimit(3);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				well_current_area  = text;
+			end;
+		end;
+		elseif well_current_type_name == "magical add" then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("stat");
+			
+			button1 = loveframes.Create("button")
+			button1:SetPos(global.screenWidth-140, global.screenHeight-120);
+			button1:SetHeight(20);
+			button1:SetWidth(20);
+			button1:SetText("<");
+			button1.OnClick = function(object)
+				if well_current_addtype_index and well_current_addtype_index  > 1 then
+					well_current_addtype_index = well_current_addtype_index - 1;
+					well_current_addtype_name = well_addtypes[well_current_addtype_index];
+				end;
+			end;
+			button2 = loveframes.Create("button")
+			button2:SetPos(global.screenWidth-40, global.screenHeight-120);
+			button2:SetHeight(20);
+			button2:SetWidth(20);
+			button2:SetText(">");
+			button2.OnClick = function(object)
+				if well_current_addtype_index and well_current_addtype_index < #well_addtypes then
+					well_current_addtype_index = well_current_addtype_index + 1;
+					well_current_addtype_name = well_addtypes[well_current_addtype_index];
+				end;
+			end;
+			
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-100);
+			text:SetMaxWidth(100);
+			text:SetText("value");
+		
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-100);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_value);
+			textinput:SetLimit(3);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					well_current_value  = text;
+				end;
+			end;
+		elseif well_current_type_name == "magical stat" then
+		elseif well_current_type_name == "magical cure" then
+		elseif well_current_type_name == "infected" then
+		elseif well_current_type_name == "poisoned" then
+		elseif well_current_type_name == "infected" then
+		elseif well_current_type_name == "cursed" then
+		end;
+	end;
+	if special_objects_status == "br" then
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-120);
+		text:SetMaxWidth(100);
+		text:SetText("stat");
+		
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-120);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if barrel_current_type and barrel_current_type  > 1 then
+				barrel_current_type = barrel_current_type - 1;
+				barrel_current_name = barrel_types[barrel_current_type];
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-120);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if barrel_current_type and barrel_current_type < #barrel_types then
+				barrel_current_type = barrel_current_type + 1;
+				barrel_current_name = barrel_types[barrel_current_type];
+			end;
+		end;
+	end;
+	if special_objects_status == "cl" then
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-120);
+		text:SetMaxWidth(100);
+		text:SetText("stat");
+		
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-120);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if cauldron_current_type and cauldron_current_type  > 1 then
+				cauldron_current_type = cauldron_current_type - 1;
+				cauldron_current_name = cauldron_types[cauldron_current_type];
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-120);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if cauldron_current_type and cauldron_current_type < #cauldron_types then
+				cauldron_current_type = cauldron_current_type + 1;
+				cauldron_current_name = cauldron_types[cauldron_current_type];
+			end;
+		end;
 	end;
 end;
 
@@ -885,7 +1162,7 @@ function draw_buttons ()
 		for i=1,cc do
 			for h=1,5 do        
 				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1],  row_buttons[(i-1)*5+h][2]);
+				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1], row_buttons[(i-1)*5+h][2]);
 				togglebuttons[#togglebuttons]:SetHeight(40);
 				togglebuttons[#togglebuttons]:SetWidth(40);
 				togglebuttons[#togglebuttons]:SetText(special_objects_texts[5*(i-1)+h]);
@@ -897,6 +1174,18 @@ function draw_buttons ()
 					special_objects_parametres(special_objects_status);
 				end;
 			end;
+		end;
+		togglebuttons[#togglebuttons+1] = loveframes.Create("button")
+		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-200, 400);
+		togglebuttons[#togglebuttons]:SetHeight(40);
+		togglebuttons[#togglebuttons]:SetWidth(80);
+		togglebuttons[#togglebuttons]:SetText("clear");
+		togglebuttons[#togglebuttons].OnClick = function(object)
+			special_objects_status="clear";
+			loveframes.util.RemoveAll();
+			drawUIButtons();
+			draw_buttons();
+			special_objects_parametres(special_objects_status);
 		end;
 	end;
 	
@@ -1290,7 +1579,7 @@ function draw_objects ()
 					addy = 72;			
 				elseif objects_list[j].typ == "altar" then
 					addx = 32;
-					addy = 64;
+					addy = 32;
 				elseif objects_list[j].typ == "competition" then
 					addx = 16;
 					addy = 40;
@@ -1366,7 +1655,7 @@ function playingState.keypressed(key, unicode)
 	end;
 	
 	if  mX< global.screenWidth-274 then
-		if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" then
+		if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects" then
 			if key == 'up' then
 				if map_y>2 then
 					map_y = map_y-2;
@@ -2139,24 +2428,51 @@ function playingState.mousereleased(x, y, button)
 			special_objects_parametres(special_objects_status);
 		end;
 	end;
-	if mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "objects" then
-		 findBagOrObject(cursor_world_x,cursor_world_xy);
-		if special_objects_status == "ob"  then
+	if mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "objects" and passCheck (cursor_world_x,cursor_world_y) then
+		findBagOrObject(cursor_world_x,cursor_world_y);
+		if  special_objects_status == "clear"  then
+			--
+		elseif special_objects_status == "ob"  then
 			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="obelisk",part=obelisk_puzzle_part,img=obelisk_img});
 		elseif special_objects_status == "pt"  then
 			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="portal",outx=global.portal_current_out_x, outy=global.portal_current_out_y,img=portal_img});
 		elseif special_objects_status == "al"  then
 			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="altar",uids={},stat=altar_stats[altar_current_stat_index],value=altar_current_value,img=altar_img});
 		elseif special_objects_status == "pd"  then
-			if pedestal_buffs[pedestal_current_buff][3] then
+			if pedestal_buffs[pedestal_current_buff_index][3] then
 				pedestal_current_value2 = false;
 			end;
 			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="pedestal",effect1=pedestal_buffs[2],effect2=pedestal_buffs[3],value1=pedestal_current_value1,value2=pedestal_current_value2,img=pedestal_img});
 		elseif special_objects_status == "cm"  then
 			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="competition",uids={},stat=competition_current_stat,limit=competition_current_limit,bonus=competition_current_bonus,img=competition_img});
 		elseif special_objects_status == "br" then
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="barrel",subtyp=barrel_current_type,img=barrel_img[barrel_current_type]});
 		elseif special_objects_status == "cl" then
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="cauldron",subtyp=cauldron_current_type,img=cauldron_img[cauldron_current_type]});
 		elseif special_objects_status == "wl" then
+			if well_current_type_name == "normal" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellclean", plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_clean", img=well_img});
+			elseif well_current_type_name == "dry" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="welldry", plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_dry", img=well_img});
+			elseif well_current_type_name == "bag" then
+				table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", opened=false, locked=false, dir=0, img=well_img});
+			elseif well_current_type_name == "dungeon" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="dungeon", story="wellclean", wimg="well_dungeon", opened=false, locked=false, dir=0, img=well_img});
+			elseif well_current_type_name == "magical add" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", plus=well_current_addtype_name, plusvalue=well_current_addtype_value, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
+			elseif well_current_type_name == "magical stat" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", permanentplus=well_current_stat_name, permanentplusvalue=well_current_stat_value, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
+			elseif well_current_type_name == "magica cure" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellmagical", conditions={{well_current_condition_name,well_current_condition_value}}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
+			elseif well_current_type_name == "drunk" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellevil", conditions={{"drunk",3,10}}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_evil", img=well_img});
+			elseif well_current_type_name == "poisoned" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellbad", poisoned={well_current_poisoned_lvl,well_current_poisoned_num}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_bad", img=well_img});
+			elseif well_current_type_name == "infected" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellbad", infected={well_current_infected_lvl,well_current_infected_num}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_bad", img=well_img});
+			elseif well_current_type_name == "cursed" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellevil", cursed={well_current_cursed_lvl,well_current_cursed_num}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_evil", img=well_img});
+			end;
 		elseif special_objects_status == "ch" then
 			local ring = smallRingArea(cursor_world_x,cursor_world_y);
 			local _locked = "false";
@@ -2178,6 +2494,11 @@ function playingState.mousereleased(x, y, button)
 			end;
 			table.insert(bags_list,{x=ring[chest_current_rotation].x,y=ring[chest_current_rotation].y,xi=cursor_world_x,yi=cursor_world_y,typ="chest", dir=chest_current_rotation,inspected=false, material=chest_current_material,opened = false, locked=_locked, locktype=_locktype, lockcode =_lockcode, traped=_traped, triggers="", trapmodel=_traptype, trappower=_trappower,trapcode=_trapcode, img=chest_img[chest_current_rotation]});
 		elseif special_objects_status == "tr" then
+			_traptype = trap_traptypes[trap_current_traptype_index];
+			_trapcode = trap_current_trapcode;
+			_trappower = trap_current_trappower;
+			_mask = trap_current_mask;
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="trap", detected=false, opened=false, locked=true, locktype=0, lockcode=999999999, dir=0, traped = true, inspected = false, trapcode=_trapcode, trapmodel=_traptype, trappower = _trappower, img=trap_img});
 		elseif special_objects_status == "cr" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="crystals",charged = true, power = 25, opened=false, locked=false, img=crystals_img});
 		elseif special_objects_status == "th"  then
@@ -2340,6 +2661,8 @@ function save()
 	 .. "\r\n" .. "stepsound_table=" .. Tserial.pack(stepsound_table, true, false)
 	 .. "\r\n" .. "harvest_table=" .. Tserial.pack(harvest_table, true, false)
 	 .. "\r\n" .. "homelands_table=" .. Tserial.pack(homelands_table, true, false)
+	 .. "\r\n" .. "bags_table=" .. Tserial.pack(bags_table, true, false)
+	 .. "\r\n" .. "objects_table=" .. Tserial.pack(objects_table, true, false)
 	 .. "\r\n" .. "end;"
 	 );
 	print("levelname SAVED!");
@@ -3416,8 +3739,8 @@ function playingState.draw()
 		pt=portal_img,
 		
 		wl=well_img,
-		br=barrel_img[1],
-		cl=cauldron_img[1],
+		br=barrel_img[barrel_current_type],
+		cl=cauldron_img[cauldron_current_type],
 		cn=nil,
 		tr=trap_img,
 		
@@ -3449,6 +3772,23 @@ function playingState.draw()
 			love.graphics.print(chest_current_traptype_name,global.screenWidth-100, global.screenHeight-100);		
 		end;
 		
+		if special_objects_status == "wl" then
+			love.graphics.print(well_current_type_name,global.screenWidth-120, global.screenHeight-140);
+			if well_current_type == "magical add" then
+				love.graphics.print(well_current_addtype_name,global.screenWidth-120, global.screenHeight-140);
+			elseif well_current_type == "magical stat" then
+			elseif well_current_type == "magical cure" then
+			end;		
+		end;
+		
+		if special_objects_status == "br" then
+			love.graphics.print(barrel_current_name,global.screenWidth-120, global.screenHeight-120);		
+		end;
+		
+		if special_objects_status == "cl" then
+			love.graphics.print(cauldron_current_name,global.screenWidth-120, global.screenHeight-120);		
+		end;
+		
 		love.graphics.setColor(255, 255, 255,255);
 	end;
 	
@@ -3459,7 +3799,7 @@ function playingState.draw()
 		local _txt = levelname .. " SAVED!"
 		love.graphics.print(_txt, global.screenWidth/2-300,global.screenHeight/2);
     end
-    if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" then
+    if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "subhexes" or editor_status == "objects" or editor_status == "areas" or editor_status == "decals" then
     	love.graphics.print(cursor_world_x, 10, 10);
 		love.graphics.print("x", 35, 10);
 		love.graphics.print(cursor_world_y, 55, 10)
