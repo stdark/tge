@@ -2499,7 +2499,7 @@ function playingState.mousereleased(x, y, button)
 			_trapcode = trap_current_trapcode;
 			_trappower = trap_current_trappower;
 			_mask = trap_current_mask;
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="trap", detected=false, opened=false, locked=true, locktype=0, lockcode=999999999, dir=0, traped = true, inspected = false, trapcode=_trapcode, trapmodel=_traptype, trappower = _trappower, img=trap_img});
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="trap", detected=false, inspected=false, opened=false, locked=true, locktype=0, lockcode=999999999, dir=0, traped = true, inspected = false, trapcode=_trapcode, trapmodel=_traptype, trappower = _trappower, img=trap_img});
 		elseif special_objects_status == "cr" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="crystals",charged = true, power = 25, opened=false, locked=false, img=crystals_img});
 		elseif special_objects_status == "th"  then

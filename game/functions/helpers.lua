@@ -2768,6 +2768,7 @@ function helpers.knockToDoor () --FIXME: housewatch then chat/buying/selling/npc
 	return;
  elseif at_door and (locked or traped) then --FIXME add trap detection
 		bagid = doorid;
+		inventory_bag_call ();
 		game_status = "picklocking";
 	return;
  end;

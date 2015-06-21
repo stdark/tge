@@ -488,7 +488,7 @@ function playingState.load()
 		};
 
 		bags_list[8]={
-		x=48,y=37, xi=48, yi=37, typ="door", mask=40, detected=false, opened=false, locked=true, locktype=2, lockcode=1234512345, dir=0, traped = true, inspected = false, trapcode="204056305", trapmodel="firebomb", trappower = 5, dir=3, img_index = 1, img=door_img[1],
+		x=48,y=37, xi=48, yi=37, typ="door", opened=false, locked=true, locktype=2, lockcode=1234512345, dir=0, traped = true, inspected = false, trapcode="204056305", triggers="0001000100", trapmodel="firebomb", trappower = 5, dir=3, img_index = 1, img=door_img[1],
 		--{ttxid=303,q=32,w=0,e=0,r=1,h=0},
 		};
 
@@ -6675,7 +6675,15 @@ function  playingState.mousepressed(x,y,button)
 					helpers.beforeShoot();
 					damage.instantCast();
 				end;
-
+				
+				if love.mouse.isDown("l") and game_status == "sensing" and missle_type=="telekinesis" and mY < global.screenHeight-160 then
+					boomx = cursor_world_x;
+					boomy = cursor_world_y;
+					helpers.beforeShoot();
+					damage.instantCast();
+				end;
+				
+				
 				if love.mouse.isDown("l")
 				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 				and game_status == "sensing"
@@ -6689,7 +6697,7 @@ function  playingState.mousepressed(x,y,button)
 					game_status="shot";
 					damage.shoot();
 				end;
-			elseif global.status ~= "mindgame" then
+			elseif global.status == "mindgame" then
 
 			end;
 		end;

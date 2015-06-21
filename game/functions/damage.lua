@@ -4281,6 +4281,55 @@ function damage.instantCast () --FIXME use lvl, num
 		wlandscape[boomy][boomx] = 10;
 	end;
 	
+	if missle_type == "telekinesis" then --traps, herbs
+		local x,y = helpers.hexInFronTOfMob(current_mob);
+		for i=1,#bags_list do
+			if bags_list[i].xi == boomx and bags_list[i].yi == boomy then
+				if bags_list[i].typ == "bag" and helpers.passCheck(x,y) then
+					bags_list[i].xi = x;
+					bags_list[i].x = x;
+					bags_list[i].yi = y;
+					bags_list[i].y = y;
+					break;
+				end;
+				if bags_list[i].typ == "door" and bags_list[i].locked == false then
+					if bags_list[i].opened then
+						bags_list[i].opened = false;
+					else
+						bags_list[i].opened = true;
+					end;
+					break;
+				end;
+				--trasheap, crystalls, scullpile
+			end;
+			if lvl[1] >= 3 then
+				local x,y = helpers.hexInFronTOfMob(current_mob);
+				if (bags_list[i].typ == "crystals" or bags_list[i].typ == "trashheap" or bags_list[i].typ == "scullpile") and helpers.passCheck(x,y) then
+					if #bags_list[i] >= 1 then
+						local typ = bags_list[i].typ;
+						table.insert(bags_list,bags_list[i]);
+						bags_list[#bags_list].typ = "bag";
+						bags_list[#bags_list].xi = x;
+						bags_list[#bags_list].x = x;
+						bags_list[#bags_list].yi = y;
+						bags_list[#bags_list].y = y;
+						bags_list[#bags_list].img=bag_img;
+						helpers.zeroLastBag ();
+						if typ == "crystals" then
+							table.insert(bags_list,{x=boomx,y=boomy,xi=boomx,yi=boomy,typ="crystal",charged=false,power = 0, opened=false, locked=false, img=crystal_img,{}});
+						elseif typ == "trashheap" then
+							table.insert(bags_list,{x=boomx,y=boomy,xi=boomx,yi=boomy,typ="trashheap",condition_lvl=1,condition_num=5, opened=false, locked=false, img=trashheap_img,{}});
+						elseif typ == "scullpile" then
+							table.insert(bags_list,{x=boomx,y=boomy,xi=boomx,yi=boomy,yp="scullpile",condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img,{}});
+						end;
+						helpers.zeroLastBag ();
+						break;
+					end;
+				end;	
+			end;
+		end;
+	end;
+	
 	if missle_type == "torchlight" then
 		chars_mobs_npcs[victim].torchlight_dur = num[1];
 		chars_mobs_npcs[victim].torchlight_power = lvl[1];

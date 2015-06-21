@@ -1898,7 +1898,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=true,
-form="object",
+form="area",
 },
 
 curemind = {

@@ -3405,7 +3405,7 @@ function draw.showinventory()
 					end;
 				end;
 				draw.bag();
-			elseif bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) then
+			elseif bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) or (bags_list[j].typ == "door" and helpers.cursorAtClosedDoor(helpers.hexInFronTOfMob(current_mob))) then
 				if not start_picklock then
 					start_picklock = true;
 					lock_elements = {};
@@ -4506,12 +4506,10 @@ function draw.picklock () --chest/door/groundtrap
 	if at_door then
 		bagid = doorid;
 	end;
-
 	local condition = false;
 	if helpers.BagNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y) or at_door then
 		condition = true;
 	end;
-
 	if picklock[current_mob].key ~= 0 then
 		tempeq1=picklock[current_mob].key;
 		tempeq2=chars_stats[current_mob]["inventory_list"][tempeq1].ttxid;
@@ -4564,7 +4562,6 @@ function draw.picklock () --chest/door/groundtrap
 		end;
 		love.graphics.draw(media.images.ui, lock_2_base,x+525,y+80);
 		lockmatrix = {};
-		--for i=1,math.min(10,chars_mobs_npcs[current_mob].lvl_picklocking*chars_mobs_npcs[current_mob].num_picklocking) do
 		for i=1,10 do
 			if lock_elements[i] == 1 and lockcode[i] < 5 then
 				if picklock[current_mob].key == 0 then
@@ -4786,8 +4783,9 @@ function draw.inventory_bag ()
 		end;
 	end;
 	local bag_found = false;
+	local _x,_y = helpers.hexInFronTOfMob(current_mob)
 	for j=1, #bags_list do
-		if chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y and not bag_found then
+		if ((chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y) or (bags_list[j].typ == "door" and bags_list[j].x == _x and bags_list[j].y == _y)) and not bag_found then
 			bagid = j;
 			bag_found = true;
 			if bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and not bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) then
@@ -4802,8 +4800,9 @@ function draw.inventory_bag ()
 					end;
 				end;
 				draw.bag();
-			elseif bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) then
+			elseif bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) or (bags_list[j].typ == "door" and bags_list[j].locked) then
 				if not start_picklock then
+					print("{}!");
 					start_picklock = true;
 					lock_elements = {};
 					diskcode = {};
