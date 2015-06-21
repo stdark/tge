@@ -264,15 +264,18 @@ function playingState.load()
 	chest_current_material = 1;
 	chest_current_opened = 1;
 	chest_current_locked = 1;
-	chest_current_locktype = 1;
+	chest_locktypes = {"none","simple","cylinder","disk"};
+	chest_current_locktype_index = 1;
+	chest_current_locktype_name = chest_locktypes[chest_current_locktype_index];
 	chest_current_lockcode = "random";
 	chest_current_trapcode = "random";
 	chest_current_trappower = 10;
-	chest_traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
-	chest_current_trap_type = 1;
+	chest_traptypes={"none","random","fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
+	chest_current_traptype_index = 1;
+	chest_current_traptype_name=chest_traptypes[chest_current_traptype_index];
 	trap_current_trapcode = "random";
 	trap_current_trappower = 10;
-	trap_traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
+	trap_traptypes={"random","fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
 	trap_current_trap_type = 1;
 	trap_mask=50;
 	row_status=0;
@@ -578,7 +581,7 @@ function special_objects_parametres (special_objects_status)
 		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 		textinput.OnEnter = function(object, text)
 			if text ~= nil then
-				edestal_current_value2 = math.min(20,tonumber(text));
+				pedestal_current_value2 = math.min(20,tonumber(text));
 			end;
 		end;
 	end;
@@ -719,35 +722,150 @@ function special_objects_parametres (special_objects_status)
 	end;
 	if special_objects_status == "ch" then
 		local text = loveframes.Create("text");
-		text:SetPos(global.screenWidth-200, global.screenHeight-80);
+		text:SetPos(global.screenWidth-200, global.screenHeight-140);
 		text:SetMaxWidth(100);
 		text:SetText("locktype");
+		
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-140);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if chest_current_locktype_index and chest_current_locktype_index  > 1 then
+				chest_current_locktype_index = chest_current_locktype_index - 1;
+				chest_current_locktype_name = chest_locktypes[chest_current_locktype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-140);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if chest_current_locktype_index and chest_current_locktype_index < #chest_locktypes then
+				chest_current_locktype_index = chest_current_locktype_index + 1;
+				chest_current_locktype_name = chest_locktypes[chest_current_locktype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		
+		if chest_current_locktype_index > 1 then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("lockcode");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-120);
+			textinput:SetWidth(76);
+			textinput:SetText(chest_current_lockcode);
+			textinput:SetLimit(12);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					chest_current_lockcode  = math.min(text,map_w);
+				end;
+			end;
+		end;
+		
 		local text = loveframes.Create("text");
-		text:SetPos(global.screenWidth-200, global.screenHeight-60);
+		text:SetPos(global.screenWidth-200, global.screenHeight-100);
 		text:SetMaxWidth(100);
-		text:SetText("lockcode");
-		local textinput = loveframes.Create("textinput");
-		textinput:SetPos(global.screenWidth-100, global.screenHeight-80);
-		textinput:SetWidth(76);
-		textinput:SetText(chest_current_locktype);
-		textinput:SetLimit(5);
-		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
-		textinput.OnEnter = function(object, text)
-			if text ~= nil then
-				chest_current_locktype = math.min(text,map_w); --none (locked=false),1,2,3;
+		text:SetText("traptype");
+		
+		button3 = loveframes.Create("button")
+		button3:SetPos(global.screenWidth-140, global.screenHeight-100);
+		button3:SetHeight(20);
+		button3:SetWidth(20);
+		button3:SetText("<");
+		button3.OnClick = function(object)
+			if chest_current_traptype_index and chest_current_traptype_index  > 1 then
+				chest_current_traptype_index = chest_current_traptype_index - 1;
+				chest_current_traptype_name = chest_traptypes[chest_current_traptype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
 			end;
 		end;
-		local textinput = loveframes.Create("textinput");
-		textinput:SetPos(global.screenWidth-100, global.screenHeight-60);
-		textinput:SetWidth(76);
-		textinput:SetText(chest_current_lockcode);
-		textinput:SetLimit(5);
-		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
-		textinput.OnEnter = function(object, text)
-			if text ~= nil then
-				chest_current_lockcode  = math.min(text,map_w); --"comp1"—"compx","12312423545",random
+		button4 = loveframes.Create("button")
+		button4:SetPos(global.screenWidth-40, global.screenHeight-100);
+		button4:SetHeight(20);
+		button4:SetWidth(20);
+		button4:SetText(">");
+		button4.OnClick = function(object)
+			if chest_current_traptype_index and chest_current_traptype_index < #chest_traptypes then
+				chest_current_traptype_index = chest_current_traptype_index + 1;
+				chest_current_traptype_name = chest_traptypes[chest_current_traptype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
 			end;
 		end;
+		
+		if chest_current_traptype_index > 1 then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-80);
+			text:SetMaxWidth(100);
+			text:SetText("trappower");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-80);
+			textinput:SetWidth(76);
+			textinput:SetText(chest_current_trappower);
+			textinput:SetLimit(2);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					chest_current_trappower  = math.min(text,map_w); 
+				end;
+			end;
+			
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-60);
+			text:SetMaxWidth(100);
+			text:SetText("trappower");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-60);
+			textinput:SetWidth(76);
+			textinput:SetText(chest_current_trapcode);
+			textinput:SetLimit(9);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					chest_current_trapcode  = math.min(text,map_w); --"random","random3","random4","random5","123456789"
+				end;
+			end;
+			
+		end;
+		
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-40);
+		text:SetMaxWidth(100);
+		text:SetText("material");
+		
+		local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-40);
+			textinput:SetWidth(76);
+			textinput:SetText(chest_current_material);
+			textinput:SetLimit(9);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					chest_current_material  = math.min(text,map_w); --"random","random3","random4","random5","123456789"
+				end;
+			end;
+
 	end;
 end;
 
@@ -2040,6 +2158,25 @@ function playingState.mousereleased(x, y, button)
 		elseif special_objects_status == "cl" then
 		elseif special_objects_status == "wl" then
 		elseif special_objects_status == "ch" then
+			local ring = smallRingArea(cursor_world_x,cursor_world_y);
+			local _locked = "false";
+			local _locktype = "false";
+			local _lockcode = "false";
+			if chest_current_locktype_index > 1 then
+				_locked = true,
+				_locktype = chest_current_locktype_index - 1;
+				_lockcode = chest_current_lockcode;
+			end;
+			local _traped = "false";
+			local _traptype = "false";
+			local _trapcode = "false";
+			local _trappower = "false";
+			if chest_current_traptype_index > 1 then
+				_traped = true,
+				_traptype = chest_traptypes[chest_current_traptype_index];
+				_trapcode = chest_current_trapcode;
+			end;
+			table.insert(bags_list,{x=ring[chest_current_rotation].x,y=ring[chest_current_rotation].y,xi=cursor_world_x,yi=cursor_world_y,typ="chest", dir=chest_current_rotation,inspected=false, material=chest_current_material,opened = false, locked=_locked, locktype=_locktype, lockcode =_lockcode, traped=_traped, triggers="", trapmodel=_traptype, trappower=_trappower,trapcode=_trapcode, img=chest_img[chest_current_rotation]});
 		elseif special_objects_status == "tr" then
 		elseif special_objects_status == "cr" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="crystals",charged = true, power = 25, opened=false, locked=false, img=crystals_img});
@@ -3307,7 +3444,9 @@ function playingState.draw()
 		
 		if special_objects_status == "ch" then
 			local text = "rotation: " .. chest_current_rotation;
-			love.graphics.print(text,global.screenWidth-100, global.screenHeight-100);		
+			love.graphics.print(text,global.screenWidth-100, global.screenHeight-160);
+			love.graphics.print(chest_current_locktype_name,global.screenWidth-100, global.screenHeight-140);	
+			love.graphics.print(chest_current_traptype_name,global.screenWidth-100, global.screenHeight-100);		
 		end;
 		
 		love.graphics.setColor(255, 255, 255,255);

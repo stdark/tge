@@ -3741,6 +3741,14 @@ function helpers.randomizeArray1D (array)
 	return array;
 end;
 
+function helpers.arrayToString (array)
+	local str = "";
+	for i=1,#array do
+		str = str .. array[i];
+	end;
+	return str;
+end;
+
 function helpers.select_portrait()
 	global.screenWidth = love.graphics.getWidth();
 	global.screenHeight = love.graphics.getHeight();

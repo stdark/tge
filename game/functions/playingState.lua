@@ -512,9 +512,107 @@ function playingState.load()
 		x=15,y=36, xi=15, yi=36, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img,
 		{ttxid=440,q=math.random(1,10),w=0,e=0,r=1,h=0},
 		};
-
-		--31x9,15x36
-		--52,35,3
+--[[ for lveditor output
+		local traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"}; --zazaza
+		for i=1,#bags_list do
+			if bags_list[i].typ == "chest" or bags_list[i].typ == "trap" or bags_list[i].typ == "door" then
+				if bags_list[i].locked  then
+					local complication = 10;
+					local lockcode = {};
+					local code = bags_list[bagid].lockcode;
+					for w in string.gmatch(code, "%d") do
+						table.insert(lockcode, tonumber(w));
+					end;
+					local firstsix = ""
+					for h=1,#lockcode do
+						if h <= 6 then
+							firstsix = firstsix .. lockcode[h];
+						end;
+					end;
+					if firstsix == "random" and #lockcode == 6 then
+						complication = 10;
+					elseif firstsix == "random" and #lockcode == 7 then
+						complication = tonumber(lockcode[7]);
+					elseif firstsix == "random" and #lockcode > 7 then
+						complication = tonumber(lockcode[7] .. lockcode[8]);
+					end;
+					
+					if firstsix == "random" and (#bags_list[i].lockcode >= 6 and #bags_list[i].lockcode <= 8) then
+						local _lockcode = "";
+						local limit = 5;
+						if locktype == 3 then
+							limit = 8;
+						end;
+						for h=1,complication do
+							local rnd = math.random(1,limit);
+							_lockcode = _lockcode .. rnd;
+						end;
+						bags_list[i].lockcode = _lockcode;
+					end;	
+				end;
+				if bags_list[i].traped  then
+					local complication = 9;
+					local trapcode = {};
+					local code = bags_list[bagid].trapcode;
+					for w in string.gmatch(code, "%d") do
+						table.insert(trapcode, tonumber(w));
+					end;
+					local firstsix = ""
+					for h=1,#trapcode do
+						if h <= 6 then
+							firstsix = firstsix .. trapcode[h];
+						end;
+					end;
+					if firstsix == "random" and #trapcode == 6 then
+						complication = 9;
+					elseif firstsix == "random" and trapcode[7] == 1 then
+						complication = 1;
+					elseif firstsix == "random" and trapcode[7] == 2 then
+						complication = 2;
+					elseif firstsix == "random" and trapcode[7] == 3 then
+						complication = 3;
+					elseif firstsix == "random" and trapcode[7] == 4 then
+						complication = 4;
+					elseif firstsix == "random" and trapcode[7] >= 5 then
+						complication = 5;
+					end;
+					
+					if firstsix == "random" and #bags_list[i].trapcode >= 6 then
+						local limit = 10;
+						local trapcode_array = {};
+						local zerolomit =  complication;
+						if complication == 1 then
+							zerolimit = 0;
+						elseif complication == 2 then
+							zerolimit = 1;
+						end;
+						for h=1,complication^2 do
+							local rnd = math.random(1,limit);
+							table.insert(trapcode_array,rnd);
+						end;
+						for h=1,zerolimit do
+							trapcode_array[h] = 0;
+						end;
+						helpers.randomizeArray1D (trapcode_array);
+						local _trapcode = helpers.arrayToString (trapcode_array);
+						bags_list[i].trapcode = _trapcode;
+					end;	
+				end;
+				if bags_list[i].trapmodel and bags_list[i].trapmodel == "random" then
+					bags_list[i].trapmodel = traptypes[math.random(1,#traptypes)];
+				end;
+				if bags_list[i].locked and bags_list[i].locktype > 1 and bags_list[i].traped and bags_list[i].triggers == "" then
+					local triggers ="";
+					for i=1,bags_list[i].lockcode do
+						local rnd = math.random(1,2) - 1;
+						triggers = triggers .. rnd;
+					end;
+					bags_list[i].triggers = triggers; --FIXME too much triggers?
+				end;
+			end;
+		end;
+		
+]]
 
 		objects_list={};
 
