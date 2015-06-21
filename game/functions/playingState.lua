@@ -3773,7 +3773,6 @@ function playingState.mousereleased (x,y,button)
 				end;
 			end;
 			
-			print("OIL:",selected_portrait,holding_smth,inventory_ttx[list[holding_smth].ttxid].subclass);
 			if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- oil a weapon
 			and (inventory_ttx[list[holding_smth].ttxid].subclass == "trioil" or inventory_ttx[list[holding_smth].ttxid].subclass =="oil"
 			or inventory_ttx[list[holding_smth].ttxid].subclass == "chargeoil" or inventory_ttx[list[holding_smth].ttxid].subclass == "hardoil"

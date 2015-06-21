@@ -685,7 +685,6 @@ function special_objects_parametres (special_objects_status)
 			end;
 		end;
 	end;
-	
 	if special_objects_status == "pt" then
 		button1 = loveframes.Create("button")
 		button1:SetPos(global.screenWidth-240, global.screenHeight-60);
@@ -718,6 +717,38 @@ function special_objects_parametres (special_objects_status)
 			end;
 		end;		
 	end;
+	if special_objects_status == "ch" then
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-80);
+		text:SetMaxWidth(100);
+		text:SetText("locktype");
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-60);
+		text:SetMaxWidth(100);
+		text:SetText("lockcode");
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-80);
+		textinput:SetWidth(76);
+		textinput:SetText(chest_current_locktype);
+		textinput:SetLimit(5);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				chest_current_locktype = math.min(text,map_w); --none (locked=false),1,2,3;
+			end;
+		end;
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-60);
+		textinput:SetWidth(76);
+		textinput:SetText(chest_current_lockcode);
+		textinput:SetLimit(5);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				chest_current_lockcode  = math.min(text,map_w); --"comp1"—"compx","12312423545",random
+			end;
+		end;
+	end;
 end;
 
 function draw_buttons ()
@@ -741,8 +772,7 @@ function draw_buttons ()
 				togglebuttons[#togglebuttons]:SetWidth(40);
 				togglebuttons[#togglebuttons]:SetText(special_objects_texts[5*(i-1)+h]);
 				togglebuttons[#togglebuttons].OnClick = function(object)
-					--special_objects_status=(i-1)*5+h-1;
-					special_objects_status=special_objects_texts[5*(i-1)+h]
+					special_objects_status=special_objects_texts[5*(i-1)+h];
 					loveframes.util.RemoveAll();
 					drawUIButtons();
 					draw_buttons();
@@ -994,12 +1024,12 @@ function resize_map_lesser ()
 		end;
 	end;
 	for i=1,#bags_list do
-		if not insideMap(bags_list[i][]x,bags_list[i][]y) or not insideMap(bags_list[i][]xi,bags_list[i][]yi) then
+		if not insideMap(bags_list[i].x,bags_list[i].y) or not insideMap(bags_list[i].xi,bags_list[i].yi) then
 			table.remove(bags_list,i);
 		end;
 	end;
 	for i=1,#objects_list do
-		if not insideMap(objects_list[i][]x,objects_list[i][]y) or not insideMap(objects_list[i][]xi,objects_list[i][]yi) then
+		if not insideMap(objects_list[i].x,objects_list[i].y) or not insideMap(objects_list[i].xi,objects_list[i].yi) then
 			table.remove(objects_list,i);
 		end;
 	end;
@@ -1962,6 +1992,19 @@ function playingState.mousepressed(x, y, button)
 		end;
 	end;
 	
+	if editor_status == "objects" and special_objects_status == "ch" then
+		if button=="wu" then
+			if chest_current_rotation < 6 then
+				chest_current_rotation = chest_current_rotation + 1;
+			end;
+		end;
+		if button=="wd" then
+			if chest_current_rotation > 1 then
+				chest_current_rotation = chest_current_rotation - 1;
+			end;
+		end;
+	end;
+	
 	loveframes.mousepressed(x, y, button);
 end
 
@@ -1996,6 +2039,8 @@ function playingState.mousereleased(x, y, button)
 		elseif special_objects_status == "br" then
 		elseif special_objects_status == "cl" then
 		elseif special_objects_status == "wl" then
+		elseif special_objects_status == "ch" then
+		elseif special_objects_status == "tr" then
 		elseif special_objects_status == "cr" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="crystals",charged = true, power = 25, opened=false, locked=false, img=crystals_img});
 		elseif special_objects_status == "th"  then
@@ -3240,7 +3285,7 @@ function playingState.draw()
 		tr=trap_img,
 		
 		bg=bag_img,
-		ch=chest_img[1],
+		ch=chest_img[chest_current_rotation],
 		cr=crystals_img,
 		th=trashheap_img,
 		sp=scullpile_img,
@@ -3259,6 +3304,12 @@ function playingState.draw()
 		if special_objects_status == "cm" then
 			love.graphics.print(competition_stats[competition_current_stat_index],global.screenWidth-120, global.screenHeight-100);		
 		end;
+		
+		if special_objects_status == "ch" then
+			local text = "rotation: " .. chest_current_rotation;
+			love.graphics.print(text,global.screenWidth-100, global.screenHeight-100);		
+		end;
+		
 		love.graphics.setColor(255, 255, 255,255);
 	end;
 	
