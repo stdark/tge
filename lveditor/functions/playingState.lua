@@ -295,7 +295,8 @@ function playingState.load()
 	row_status=0;
 	rows_total=22;
 	special_objects_status = 0;
-	showhidden=1;
+	showhidden = 1;
+	global.show_harvest = 1;
 	array_of_map ();
 	savename = "level1.lua";
 	row_buttons={};
@@ -1598,7 +1599,7 @@ function draw_objects ()
 					end;
 				end;
 			end;
-			if editor_status == "harvest" and harvest_table[my+map_y][mx+map_x][1] ~= 0 then --harvest
+			if (editor_status == "harvest" or editor_status == "hexes" or editor_status == "subhexes" or editor_status == "decals" or editos_status == "buildings" or editor_status == "objects") and harvest_table[my+map_y][mx+map_x][1] ~= 0 and global.show_harvest == 1 then --harvest
 				drawHarvest (mx+map_x,my+map_y,harvest_table[my+map_y][mx+map_x][1]);
 			end;
 		end;
@@ -2608,7 +2609,7 @@ function draw_cursor ()
 	elseif mX >= global.screenWidth-274 or mY >= global.screenHeight-150 then
 		love.mouse.setVisible(true);
 	end;
-	if cursor_world_x>0 and cursor_world_x<map_w-map_limit_w  and cursor_world_y>0 and cursor_world_y<map_h-map_limit_h and mX<global.screenWidth-274 and editor_status ~= "background" then
+	if cursor_world_x>0 and cursor_world_x<map_w-map_limit_w  and cursor_world_y>0 and cursor_world_y<map_h-map_limit_h and mX < global.screenWidth-274 and mY < global.screenHeight-150 and editor_status ~= "background" then
 		if brush == 0 then
 			drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty);
 		elseif brush == 1 or brush == 2 or brush == 3 then
@@ -2627,7 +2628,7 @@ function draw_cursor ()
 		end;
 	end;
 	
-	if mX<global.screenWidth-274 and editor_status == "buildings" then
+	if mX < global.screenWidth-274 and editor_status == "buildings" then
 		drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty);
 		local hexes = "";
 		if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
@@ -2998,8 +2999,8 @@ function drawUIButtons()
 	
 	uibuttons[1] = loveframes.Create("button")
 	uibuttons[1]:SetPos(40,global.screenHeight-120);
-	uibuttons[1]:SetHeight(40);
-	uibuttons[1]:SetWidth(100);
+	uibuttons[1]:SetHeight(30);
+	uibuttons[1]:SetWidth(80);
 	uibuttons[1]:SetText("hexes");
 	uibuttons[1].OnClick = function(object)
 		editor_status='hexes';
@@ -3012,10 +3013,107 @@ function drawUIButtons()
 		boxes();
 	end;
 	
+	uibuttons[6] = loveframes.Create("button")
+	uibuttons[6]:SetPos(40,global.screenHeight-90);
+	uibuttons[6]:SetHeight(30);
+	uibuttons[6]:SetWidth(80);
+	uibuttons[6]:SetText("s/h hexes");
+	uibuttons[6].OnClick = function(object)
+		hexes_status=-1*hexes_status;
+	end;
+	
+	uibuttons[8] = loveframes.Create("button")
+	uibuttons[8]:SetPos(40,global.screenHeight-60);
+	uibuttons[8]:SetHeight(30);
+	uibuttons[8]:SetWidth(80);
+	uibuttons[8]:SetText("inv_hexes");
+	uibuttons[8].OnClick = function(object)
+		if show_invisible == true then
+			show_invisible = false;
+		else
+			show_invisible = true;
+		end;
+	end;
+	
+	---
+	
+	uibuttons[22] = loveframes.Create("button")
+	uibuttons[22]:SetPos(120,global.screenHeight-120);
+	uibuttons[22]:SetHeight(30);
+	uibuttons[22]:SetWidth(80);
+	uibuttons[22]:SetText("subhex");
+	uibuttons[22].OnClick = function(object)
+		loveframes.util.RemoveAll();
+		editor_status = "subhexes";
+		drawUIButtons();
+		draw_buttons ();
+	end;
+	
+	uibuttons[23] = loveframes.Create("button")
+	uibuttons[23]:SetPos(120,global.screenHeight-90);
+	uibuttons[23]:SetHeight(30);
+	uibuttons[23]:SetWidth(80);
+	uibuttons[23]:SetText("s/h shubhex");
+	uibuttons[23].OnClick = function(object)
+		global.subhex = -1*global.subhex;
+	end;
+	
+	uibuttons[21] = loveframes.Create("button")
+	uibuttons[21]:SetPos(120,global.screenHeight-60);
+	uibuttons[21]:SetHeight(30);
+	uibuttons[21]:SetWidth(80);
+	uibuttons[21]:SetText("areas");
+	uibuttons[21].OnClick = function(object)
+		editor_status = "homelands";
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		love.mouse.setVisible(false);
+		draw_homelands_buttons();
+	end;
+	
+	---
+	
+	uibuttons[3] = loveframes.Create("button")
+	uibuttons[3]:SetPos(200,global.screenHeight-120);
+	uibuttons[3]:SetHeight(30);
+	uibuttons[3]:SetWidth(80);
+	uibuttons[3]:SetText("harvest");
+	uibuttons[3].OnClick = function(object)
+		checkHerbs();
+		editor_status="harvest"
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		love.mouse.setVisible(false);
+		draw_harvest_buttons();
+	end;
+	
+	uibuttons[5] = loveframes.Create("button")
+	uibuttons[5]:SetPos(200,global.screenHeight-90);
+	uibuttons[5]:SetHeight(30);
+	uibuttons[5]:SetWidth(80);
+	uibuttons[5]:SetText("s/h harvest");
+	uibuttons[5].OnClick = function(object)
+		global.show_harvest = -1*global.show_harvest;
+	end;
+
+	--
+	
+	uibuttons[24] = loveframes.Create("button")
+	uibuttons[24]:SetPos(360,global.screenHeight-120);
+	uibuttons[24]:SetHeight(30);
+	uibuttons[24]:SetWidth(80);
+	uibuttons[24]:SetText("objects");
+	uibuttons[24].OnClick = function(object)
+		editor_status = "objects";
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		draw_buttons();
+	end;
+	
 	uibuttons[2] = loveframes.Create("button")
-	uibuttons[2]:SetPos(40,global.screenHeight-60);
-	uibuttons[2]:SetHeight(40);
-	uibuttons[2]:SetWidth(100);
+	uibuttons[2]:SetPos(360,global.screenHeight-90);
+	uibuttons[2]:SetHeight(30);
+	uibuttons[2]:SetWidth(80);
 	uibuttons[2]:SetText("buildings");
 	uibuttons[2].OnClick = function(object)
 		editor_status="buildings";
@@ -3027,24 +3125,66 @@ function drawUIButtons()
 		boxes();
 	end;
 	
-	uibuttons[3] = loveframes.Create("button")
-	uibuttons[3]:SetPos(160,global.screenHeight-120);
-	uibuttons[3]:SetHeight(40);
-	uibuttons[3]:SetWidth(100);
-	uibuttons[3]:SetText("harvest");
-	uibuttons[3].OnClick = function(object)
-		checkHerbs();
-		editor_status="harvest"
-		loveframes.util.RemoveAll();
-		drawUIButtons();
-		love.mouse.setVisible(false);
-		draw_harvest_buttons();
+	uibuttons[7] = loveframes.Create("button")
+	uibuttons[7]:SetPos(360,global.screenHeight-60);
+	uibuttons[7]:SetHeight(30);
+	uibuttons[7]:SetWidth(80);
+	uibuttons[7]:SetText("s/h objecys");
+	uibuttons[7].OnClick = function(object)
+		object_status=-1*object_status;
+	end;
+
+	--
+	
+	uibuttons[17] = loveframes.Create("button")
+	uibuttons[17]:SetPos(440,global.screenHeight-120);
+	uibuttons[17]:SetHeight(30);
+	uibuttons[17]:SetWidth(80);
+	uibuttons[17]:SetText("flood_map");
+	uibuttons[17].OnClick = function(object)
+		if editor_status == "hexes" then
+			flood_map();
+		elseif editor_status == "subhexes" then
+			flood_submap();
+		end;
 	end;
 	
+	uibuttons[18] = loveframes.Create("button")
+	uibuttons[18]:SetPos(440,global.screenHeight-90);
+	uibuttons[18]:SetHeight(30);
+	uibuttons[18]:SetWidth(80);
+	uibuttons[18]:SetText("generate");
+	uibuttons[18].OnClick = function(object)
+		global.moles = 6;
+		global.digger = -1*global.digger;
+	end;
+	
+	--
+	
+	uibuttons[19] = loveframes.Create("button")
+	uibuttons[19]:SetPos(520,global.screenHeight-120);
+	uibuttons[19]:SetHeight(30);
+	uibuttons[19]:SetWidth(80);
+	uibuttons[19]:SetText("randomize");
+	uibuttons[19].OnClick = function(object)
+		global.randomize_hexes = global.randomize_hexes*-1;
+	end;
+	
+	uibuttons[20] = loveframes.Create("button")
+	uibuttons[20]:SetPos(520,global.screenHeight-90);
+	uibuttons[20]:SetHeight(30);
+	uibuttons[20]:SetWidth(80);
+	uibuttons[20]:SetText("copy");
+	uibuttons[20].OnClick = function(object)
+		global.copy = -1*global.copy;
+	end;
+	
+	--
+	
 	uibuttons[4] = loveframes.Create("button")
-	uibuttons[4]:SetPos(160,global.screenHeight-60);
-	uibuttons[4]:SetHeight(40);
-	uibuttons[4]:SetWidth(100);
+	uibuttons[4]:SetPos(600,global.screenHeight-120);
+	uibuttons[4]:SetHeight(30);
+	uibuttons[4]:SetWidth(80);
 	uibuttons[4]:SetText("background");
 	uibuttons[4].OnClick = function(object)
 		add_bg_x=0;
@@ -3056,64 +3196,31 @@ function drawUIButtons()
 		draw_buttons();
 		boxes();
 	end;
-	
-	uibuttons[5] = loveframes.Create("button")
-	uibuttons[5]:SetPos(280,global.screenHeight-60);
-	uibuttons[5]:SetHeight(40);
-	uibuttons[5]:SetWidth(100);
-	uibuttons[5]:SetText("showhidden");
-	uibuttons[5].OnClick = function(object)
-		showhidden=-1*showhidden;
+
+	uibuttons[11] = loveframes.Create("button")
+	uibuttons[11]:SetPos(600,global.screenHeight-90);
+	uibuttons[11]:SetHeight(30);
+	uibuttons[11]:SetWidth(80);
+	uibuttons[11]:SetText("flood_back");
+	uibuttons[11].OnClick = function(object)
+		flood_back();
 	end;
 	
-	uibuttons[6] = loveframes.Create("button")
-	uibuttons[6]:SetPos(280,global.screenHeight-120);
-	uibuttons[6]:SetHeight(40);
-	uibuttons[6]:SetWidth(100);
-	uibuttons[6]:SetText("hexes_status");
-	uibuttons[6].OnClick = function(object)
-		hexes_status=-1*hexes_status;
+	uibuttons[12] = loveframes.Create("button")
+	uibuttons[12]:SetPos(600,global.screenHeight-60);
+	uibuttons[12]:SetHeight(30);
+	uibuttons[12]:SetWidth(80);
+	uibuttons[12]:SetText("flood_back_alt");
+	uibuttons[12].OnClick = function(object)
+		flood_back_alt();
 	end;
 	
-	uibuttons[7] = loveframes.Create("button")
-	uibuttons[7]:SetPos(400,global.screenHeight-60);
-	uibuttons[7]:SetHeight(40);
-	uibuttons[7]:SetWidth(100);
-	uibuttons[7]:SetText("objects");
-	uibuttons[7].OnClick = function(object)
-		object_status=-1*object_status;
-	end;
-	
-	uibuttons[8] = loveframes.Create("button")
-	uibuttons[8]:SetPos(400,global.screenHeight-120);
-	uibuttons[8]:SetHeight(40);
-	uibuttons[8]:SetWidth(100);
-	uibuttons[8]:SetText("inv_hexes");
-	uibuttons[8].OnClick = function(object)
-		if show_invisible == true then
-			show_invisible = false;
-		else
-			show_invisible = true;
-		end;
-	end;
-	
-	uibuttons[9] = loveframes.Create("button")
-	uibuttons[9]:SetPos(520,global.screenHeight-60);
-	uibuttons[9]:SetHeight(40);
-	uibuttons[9]:SetWidth(100);
-	uibuttons[9]:SetText("hex_numbers");
-	uibuttons[9].OnClick = function(object)
-		if drawnumbers then
-			drawnumbers  = false;
-		else
-			drawnumbers  = true;
-		end;
-	end;
+	---
 	
 	uibuttons[10] = loveframes.Create("button")
-	uibuttons[10]:SetPos(520,global.screenHeight-120);
-	uibuttons[10]:SetHeight(40);
-	uibuttons[10]:SetWidth(100);
+	uibuttons[10]:SetPos(680,global.screenHeight-120);
+	uibuttons[10]:SetHeight(30);
+	uibuttons[10]:SetWidth(80);
 	uibuttons[10]:SetText("cursor");
 	uibuttons[10].OnClick = function(object)
 		if not hex_mouse_visible then
@@ -3123,165 +3230,76 @@ function drawUIButtons()
 		end;
 	end;
 	
-	uibuttons[11] = loveframes.Create("button")
-	uibuttons[11]:SetPos(640,global.screenHeight-60);
-	uibuttons[11]:SetHeight(40);
-	uibuttons[11]:SetWidth(100);
-	uibuttons[11]:SetText("flood_back");
-	uibuttons[11].OnClick = function(object)
-		flood_back();
+	uibuttons[9] = loveframes.Create("button")
+	uibuttons[9]:SetPos(680,global.screenHeight-90);
+	uibuttons[9]:SetHeight(30);
+	uibuttons[9]:SetWidth(80);
+	uibuttons[9]:SetText("hex_numbers");
+	uibuttons[9].OnClick = function(object)
+		if drawnumbers then
+			drawnumbers  = false;
+		else
+			drawnumbers  = true;
+		end;
 	end;
 	
-	uibuttons[12] = loveframes.Create("button")
-	uibuttons[12]:SetPos(640,global.screenHeight-120);
-	uibuttons[12]:SetHeight(40);
-	uibuttons[12]:SetWidth(100);
-	uibuttons[12]:SetText("flood_back_alt");
-	uibuttons[12].OnClick = function(object)
-		flood_back_alt();
+	uibuttons[19] = loveframes.Create("button")
+	uibuttons[19]:SetPos(680,global.screenHeight-60);
+	uibuttons[19]:SetHeight(30);
+	uibuttons[19]:SetWidth(80);
+	uibuttons[19]:SetText("minimap");
+	uibuttons[19].OnClick = function(object)
+		editor_status = "minimap";
 	end;
 	
-	uibuttons[13] = loveframes.Create("button")
-	uibuttons[13]:SetPos(760,global.screenHeight-60);
-	uibuttons[13]:SetHeight(40);
-	uibuttons[13]:SetWidth(100);
-	uibuttons[13]:SetText("save");
-	uibuttons[13].OnClick = function(object)
-		save();
-	end;
+	---
 	
 	uibuttons[14] = loveframes.Create("button")
 	uibuttons[14]:SetPos(760,global.screenHeight-120);
-	uibuttons[14]:SetHeight(40);
-	uibuttons[14]:SetWidth(100);
+	uibuttons[14]:SetHeight(30);
+	uibuttons[14]:SetWidth(80);
 	uibuttons[14]:SetText("reload");
 	uibuttons[14].OnClick = function(object)
 		load();
 	end;
-	
+	--[[
 	uibuttons[15] = loveframes.Create("button")
-	uibuttons[15]:SetPos(880,global.screenHeight-60);
-	uibuttons[15]:SetHeight(40);
-	uibuttons[15]:SetWidth(100);
+	uibuttons[15]:SetPos(740,global.screenHeight-60);
+	uibuttons[15]:SetHeight(30);
+	uibuttons[15]:SetWidth(80);
 	uibuttons[15]:SetText("help");
 	uibuttons[15].OnClick = function(object)
 		editor_status="help";
 		loveframes.util.RemoveAll();
 		drawUIButtons()
 	end;
-	
+	]]
 	uibuttons[16] = loveframes.Create("button")
-	uibuttons[16]:SetPos(880,global.screenHeight-120);
-	uibuttons[16]:SetHeight(40);
-	uibuttons[16]:SetWidth(100);
+	uibuttons[16]:SetPos(760,global.screenHeight-90);
+	uibuttons[16]:SetHeight(30);
+	uibuttons[16]:SetWidth(80);
 	uibuttons[16]:SetText("next_lv");
 	uibuttons[16].OnClick = function(object)
 		switchLevel();
 	end;
-	
-	uibuttons[17] = loveframes.Create("button")
-	uibuttons[17]:SetPos(1000,global.screenHeight-60);
-	uibuttons[17]:SetHeight(40);
-	uibuttons[17]:SetWidth(100);
-	uibuttons[17]:SetText("flood_map");
-	uibuttons[17].OnClick = function(object)
-		if editor_status == "hexes" then
-			flood_map();
-		elseif editor_status == "subhexes" then
-			flood_submap();
-		end;
-	end;
-
-	uibuttons[18] = loveframes.Create("button")
-	uibuttons[18]:SetPos(1000,global.screenHeight-120);
-	uibuttons[18]:SetHeight(40);
-	uibuttons[18]:SetWidth(100);
-	uibuttons[18]:SetText("generate");
-	uibuttons[18].OnClick = function(object)
-		global.moles = 6;
-		global.digger = -1*global.digger;
-	end;
-	
-	uibuttons[19] = loveframes.Create("button")
-	uibuttons[19]:SetPos(1120,global.screenHeight-120);
-	uibuttons[19]:SetHeight(40);
-	uibuttons[19]:SetWidth(100);
-	uibuttons[19]:SetText("minimap");
-	uibuttons[19].OnClick = function(object)
-		editor_status = "minimap";
-	end;
-	
+		
 	uibuttons[20] = loveframes.Create("button")
-	uibuttons[20]:SetPos(1120,global.screenHeight-60);
-	uibuttons[20]:SetHeight(40);
-	uibuttons[20]:SetWidth(100);
+	uibuttons[20]:SetPos(760,global.screenHeight-60);
+	uibuttons[20]:SetHeight(30);
+	uibuttons[20]:SetWidth(80);
 	uibuttons[20]:SetText("new_lv");
 	uibuttons[20].OnClick = function(object)
 		newLevel();
 	end;
 	
-	uibuttons[19] = loveframes.Create("button")
-	uibuttons[19]:SetPos(1240,global.screenHeight-120);
-	uibuttons[19]:SetHeight(40);
-	uibuttons[19]:SetWidth(100);
-	uibuttons[19]:SetText("randomize");
-	uibuttons[19].OnClick = function(object)
-		global.randomize_hexes = global.randomize_hexes*-1;
-	end;
 	
-	uibuttons[20] = loveframes.Create("button")
-	uibuttons[20]:SetPos(1240,global.screenHeight-60);
-	uibuttons[20]:SetHeight(40);
-	uibuttons[20]:SetWidth(100);
-	uibuttons[20]:SetText("copy");
-	uibuttons[20].OnClick = function(object)
-		global.copy = -1*global.copy;
-	end;
-	
-	uibuttons[21] = loveframes.Create("button")
-	uibuttons[21]:SetPos(1360,global.screenHeight-60);
-	uibuttons[21]:SetHeight(40);
-	uibuttons[21]:SetWidth(100);
-	uibuttons[21]:SetText("areas");
-	uibuttons[21].OnClick = function(object)
-		editor_status = "homelands";
-		loveframes.util.RemoveAll();
-		drawUIButtons();
-		love.mouse.setVisible(false);
-		draw_homelands_buttons();
-	end;
-	
-	uibuttons[22] = loveframes.Create("button")
-	uibuttons[22]:SetPos(1480,global.screenHeight-120);
-	uibuttons[22]:SetHeight(40);
-	uibuttons[22]:SetWidth(100);
-	uibuttons[22]:SetText("subhex");
-	uibuttons[22].OnClick = function(object)
-		loveframes.util.RemoveAll();
-		editor_status = "subhexes";
-		drawUIButtons();
-		draw_buttons ();
-	end;
-	
-	uibuttons[23] = loveframes.Create("button")
-	uibuttons[23]:SetPos(1480,global.screenHeight-60);
-	uibuttons[23]:SetHeight(40);
-	uibuttons[23]:SetWidth(100);
-	uibuttons[23]:SetText("shubhex s/h");
-	uibuttons[23].OnClick = function(object)
-		global.subhex = -1*global.subhex;
-	end;
-	
-	uibuttons[24] = loveframes.Create("button")
-	uibuttons[24]:SetPos(1360,global.screenHeight-120);
-	uibuttons[24]:SetHeight(40);
-	uibuttons[24]:SetWidth(100);
-	uibuttons[24]:SetText("objects");
-	uibuttons[24].OnClick = function(object)
-		editor_status = "objects";
-		loveframes.util.RemoveAll();
-		drawUIButtons();
-		draw_buttons();
+	uibuttons[13] = loveframes.Create("button")
+	uibuttons[13]:SetPos(840,global.screenHeight-120);
+	uibuttons[13]:SetHeight(30);
+	uibuttons[13]:SetWidth(80);
+	uibuttons[13]:SetText("save");
+	uibuttons[13].OnClick = function(object)
+		save();
 	end;
 	
 end;
@@ -3710,11 +3728,11 @@ function playingState.draw()
 	end;
 	
 	if editor_status == "harvest" and current_herb > 0 then
-		if insideMap(cursor_world_x,cursor_world_y) then
 			love.graphics.draw(media.images.harvest,harvest_ttx[current_herb].sprite,global.screenWidth-160,500);
 			love.graphics.print("current: ",global.screenWidth-200, 600);
 			love.graphics.print("chance : ",global.screenWidth-200, 630);
 			love.graphics.print("pool   : ",global.screenWidth-200, 660);
+		if insideMap(cursor_world_x,cursor_world_y) then
 			love.graphics.print(harvest_table[cursor_world_y][cursor_world_x][1],global.screenWidth-130, 600);
 			love.graphics.print(harvest_table[cursor_world_y][cursor_world_x][2],global.screenWidth-130, 630);
 			local _str = "";
@@ -3807,18 +3825,17 @@ function playingState.draw()
 
 	if global.randomize_hexes == 1 then 
 		local _str = "value:" .. global.rnd_value;
-		love.graphics.print(_str,1240, global.screenHeight-140);
-		love.graphics.line(rantButton(1240,global.screenHeight-120,100,40,5));
+		love.graphics.print(_str,740, global.screenHeight-140);
+		love.graphics.print("rnd mode",655, global.screenHeight-140);
 	end;
 	
 	if global.digger == 1 then
 		local _str = "moles:" .. global.moles;
-		love.graphics.print(_str,1000, global.screenHeight-140);
-		love.graphics.line(rantButton(1000,global.screenHeight-120,100,40,5));
+		love.graphics.print(_str,500, global.screenHeight-140);
 	end;
 	
 	if global.copy == 1 then 
-		love.graphics.line(rantButton(1240,global.screenHeight-60,100,40,5));
+		love.graphics.print("copy mode",565, global.screenHeight-140);
 	end;
 	draw_cursor();
     loveframes.draw();
