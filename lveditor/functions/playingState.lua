@@ -2163,7 +2163,7 @@ function playingState.mousereleased(x, y, button)
 			local _locktype = "false";
 			local _lockcode = "false";
 			if chest_current_locktype_index > 1 then
-				_locked = true,
+				_locked = true;
 				_locktype = chest_current_locktype_index - 1;
 				_lockcode = chest_current_lockcode;
 			end;
@@ -2172,7 +2172,7 @@ function playingState.mousereleased(x, y, button)
 			local _trapcode = "false";
 			local _trappower = "false";
 			if chest_current_traptype_index > 1 then
-				_traped = true,
+				_traped = true;
 				_traptype = chest_traptypes[chest_current_traptype_index];
 				_trapcode = chest_current_trapcode;
 			end;

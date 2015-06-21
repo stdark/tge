@@ -43,7 +43,7 @@ function loadingState.start(media, finishCallback)
 		level ();
 	end;
 	
-	spiral = love.graphics.newImage('img/spiral.png');
+	spiral = love.graphics.newImage('img/spiral.dds');
 	if nextStateName == "playingState" then
 		loader.newImage(media.images, "back", images_table[1]);
 		loader.newImage(media.images, "hex", images_table[2]);
