@@ -229,19 +229,21 @@ function playingState.load()
 	well_current_type_index = 1;
 	well_current_type_name = well_types[well_current_type_index];
 	well_current_area = 1;
-	well_current_poisoned_lv = 3;
-	well_current_poisoned_num = 10;
-	well_current_infected_lv = 3;
-	well_current_infected_num = 10;
-	well_current_cursed_lv = 3;
-	well_current_cursed_num = 10;
+	well_current_level = 3;
+	well_current_number = 10;
+	well_current_mask = 50;
+	well_conditions={"poison","disease","curse","weakness"};
+	well_current_condition_index = 1;
+	well_current_condition_name = well_conditions[well_current_condition_index];
 	--well_current_area_x = ;
 	--well_current_area_y = ;
 	well_addtypes = {"hp","sp","st"};
+	well_current_add_value = 10;
 	well_current_addtype_index = 1;
 	well_current_addtype_name = well_addtypes[well_current_addtype_index];
 	well_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezmind","rezdisease","rezspirit","rezdarkness","rezlight"};
 	well_current_stat_index = 1;
+	well_current_stat_name = well_stats[well_current_stat_index];
 	well_buffs = {
 		{"none"},
 		{"mgt_buff"},
@@ -978,12 +980,12 @@ function special_objects_parametres (special_objects_status)
 
 	if special_objects_status == "wl" then
 		local text = loveframes.Create("text");
-		text:SetPos(global.screenWidth-200, global.screenHeight-140);
+		text:SetPos(global.screenWidth-220, global.screenHeight-140);
 		text:SetMaxWidth(100);
 		text:SetText("well type");
 	
 		button1 = loveframes.Create("button")
-		button1:SetPos(global.screenWidth-140, global.screenHeight-140);
+		button1:SetPos(global.screenWidth-160, global.screenHeight-140);
 		button1:SetHeight(20);
 		button1:SetWidth(20);
 		button1:SetText("<");
@@ -1036,12 +1038,12 @@ function special_objects_parametres (special_objects_status)
 		end;
 		elseif well_current_type_name == "magical add" then
 			local text = loveframes.Create("text");
-			text:SetPos(global.screenWidth-200, global.screenHeight-120);
+			text:SetPos(global.screenWidth-220, global.screenHeight-120);
 			text:SetMaxWidth(100);
 			text:SetText("stat");
 			
 			button1 = loveframes.Create("button")
-			button1:SetPos(global.screenWidth-140, global.screenHeight-120);
+			button1:SetPos(global.screenWidth-160, global.screenHeight-120);
 			button1:SetHeight(20);
 			button1:SetWidth(20);
 			button1:SetText("<");
@@ -1064,27 +1066,144 @@ function special_objects_parametres (special_objects_status)
 			end;
 			
 			local text = loveframes.Create("text");
-			text:SetPos(global.screenWidth-200, global.screenHeight-100);
+			text:SetPos(global.screenWidth-220, global.screenHeight-100);
 			text:SetMaxWidth(100);
 			text:SetText("value");
 		
 			local textinput = loveframes.Create("textinput");
 			textinput:SetPos(global.screenWidth-120, global.screenHeight-100);
 			textinput:SetWidth(76);
-			textinput:SetText(well_current_value);
+			textinput:SetText(well_current_add_value);
 			textinput:SetLimit(3);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					well_current_value  = text;
+					well_current_add_value  = text;
 				end;
 			end;
 		elseif well_current_type_name == "magical stat" then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("stat");
+			
+			button1 = loveframes.Create("button")
+			button1:SetPos(global.screenWidth-160, global.screenHeight-120);
+			button1:SetHeight(20);
+			button1:SetWidth(20);
+			button1:SetText("<");
+			button1.OnClick = function(object)
+				if well_current_stat_index and well_current_stat_index  > 1 then
+					well_current_stat_index = well_current_stat_index - 1;
+					well_current_stat_name = well_stats[well_current_stat_index];
+				end;
+			end;
+			button2 = loveframes.Create("button")
+			button2:SetPos(global.screenWidth-40, global.screenHeight-120);
+			button2:SetHeight(20);
+			button2:SetWidth(20);
+			button2:SetText(">");
+			button2.OnClick = function(object)
+				if well_current_stat_index and well_current_stat_index < #well_stats then
+					well_current_stat_index = well_current_stat_index + 1;
+					well_current_stat_name = well_stats[well_current_stat_index];
+				end;
+			end;
+			
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-100);
+			text:SetMaxWidth(100);
+			text:SetText("value");
+		
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-100);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_add_value);
+			textinput:SetLimit(3);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					well_current_add_value  = text;
+				end;
+			end;
 		elseif well_current_type_name == "magical cure" then
-		elseif well_current_type_name == "infected" then
-		elseif well_current_type_name == "poisoned" then
-		elseif well_current_type_name == "infected" then
-		elseif well_current_type_name == "cursed" then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("cure");
+			
+			button1 = loveframes.Create("button")
+			button1:SetPos(global.screenWidth-160, global.screenHeight-120);
+			button1:SetHeight(20);
+			button1:SetWidth(20);
+			button1:SetText("<");
+			button1.OnClick = function(object)
+				if well_current_condition_index and well_current_condition_index  > 1 then
+					well_current_condition_index = well_current_condition_index - 1;
+					well_current_condition_name = well_conditions[well_current_condition_index];
+				end;
+			end;
+			button2 = loveframes.Create("button")
+			button2:SetPos(global.screenWidth-40, global.screenHeight-120);
+			button2:SetHeight(20);
+			button2:SetWidth(20);
+			button2:SetText(">");
+			button2.OnClick = function(object)
+				if well_current_condition_index and well_current_condition_index < #well_conditions then
+					well_current_condition_index = well_current_condition_index + 1;
+					well_current_condition_name = well_conditions[well_current_condition_index];
+				end;
+			end;	
+		elseif well_current_type_name == "infected" or well_current_type_name == "poisoned" or well_current_type_name == "cursed" then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("level");
+		
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-120);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_level);
+			textinput:SetLimit(1);
+			textinput:SetUsable({"0","1","2","3","4","5"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					well_current_level  = math.min(5,tonumber(text));
+				end;
+			end;
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-100);
+			text:SetMaxWidth(100);
+			text:SetText("number");
+		
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-100);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_number);
+			textinput:SetLimit(1);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					well_current_number  = math.min(100,tonumber(text));
+				end;
+			end;
+			
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-80);
+			text:SetMaxWidth(100);
+			text:SetText("mask");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-80);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_mask);
+			textinput:SetLimit(1);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					well_current_mask  = math.min(100,tonumber(text));
+				end;
+			end;
 		end;
 	end;
 	if special_objects_status == "br" then
@@ -2460,19 +2579,19 @@ function playingState.mousereleased(x, y, button)
 			elseif well_current_type_name == "dungeon" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="dungeon", story="wellclean", wimg="well_dungeon", opened=false, locked=false, dir=0, img=well_img});
 			elseif well_current_type_name == "magical add" then
-				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", plus=well_current_addtype_name, plusvalue=well_current_addtype_value, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", plus=well_current_addtype_name, plusvalue=well_current_add_value, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
 			elseif well_current_type_name == "magical stat" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", permanentplus=well_current_stat_name, permanentplusvalue=well_current_stat_value, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
-			elseif well_current_type_name == "magica cure" then
+			elseif well_current_type_name == "magical cure" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellmagical", conditions={{well_current_condition_name,well_current_condition_value}}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
 			elseif well_current_type_name == "drunk" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellevil", conditions={{"drunk",3,10}}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_evil", img=well_img});
 			elseif well_current_type_name == "poisoned" then
-				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellbad", poisoned={well_current_poisoned_lvl,well_current_poisoned_num}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_bad", img=well_img});
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", mask = well_current_mask, story="wellclean", poisoned={well_current_level,well_current_number}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_clean", img=well_img});
 			elseif well_current_type_name == "infected" then
-				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellbad", infected={well_current_infected_lvl,well_current_infected_num}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_bad", img=well_img});
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", mask = well_current_mask, story="wellclean", infected={well_current_level,well_current_number}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_clean", img=well_img});
 			elseif well_current_type_name == "cursed" then
-				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellevil", cursed={well_current_cursed_lvl,well_current_cursed_num}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_evil", img=well_img});
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", mask = well_current_mask, story="wellclean", cursed={well_current_level,well_current_number}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_clean", img=well_img});
 			end;
 		elseif special_objects_status == "ch" then
 			local ring = smallRingArea(cursor_world_x,cursor_world_y);
@@ -3791,11 +3910,13 @@ function playingState.draw()
 		end;
 		
 		if special_objects_status == "wl" then
-			love.graphics.print(well_current_type_name,global.screenWidth-120, global.screenHeight-140);
-			if well_current_type == "magical add" then
-				love.graphics.print(well_current_addtype_name,global.screenWidth-120, global.screenHeight-140);
-			elseif well_current_type == "magical stat" then
-			elseif well_current_type == "magical cure" then
+			love.graphics.print(well_current_type_name,global.screenWidth-140, global.screenHeight-140);
+			if well_current_type_name == "magical add" then
+				love.graphics.print(well_current_addtype_name,global.screenWidth-140, global.screenHeight-120);
+			elseif well_current_type_name == "magical stat" then
+				love.graphics.print(well_current_stat_name,global.screenWidth-140, global.screenHeight-120);
+			elseif well_current_type_name == "magical cure" then
+				love.graphics.print(well_current_condition_name,global.screenWidth-140, global.screenHeight-120);
 			end;		
 		end;
 		

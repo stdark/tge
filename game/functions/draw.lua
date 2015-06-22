@@ -1281,12 +1281,26 @@ end;
 function draw.well ()
 	local x,y = helpers.centerObject(media.images.map);
 	love.graphics.draw(media.images.map, x,y-50);
+	if objects_list[global.object].infected and objects_list[global.object].mask and (chars_mobs_npcs[current_mob].lvl_body*chars_mobs_npcs[current_mob].num_body + chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden + chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden) >= objects_list[global.object].mask then
+		media.images[objects_list[global.object].wimg] = img_bad;
+	elseif objects_list[global.object].poisoned and objects_list[global.object].mask and (chars_mobs_npcs[current_mob].lvl_alchemy*chars_mobs_npcs[current_mob].num_alchemy + chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden) >= objects_list[global.object].mask then
+		media.images[objects_list[global.object].wimg] = img_bad;
+	elseif objects_list[global.object].cursed and objects_list[global.object].mask and (chars_mobs_npcs[current_mob].lvl_spirit*chars_mobs_npcs[current_mob].num_spirit + chars_mobs_npcs[current_mob].lvl_darkness*chars_mobs_npcs[current_mob].num_darkness + chars_mobs_npcs[current_mob].lvl_light*chars_mobs_npcs[current_mob].num_light + chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden) >= objects_list[global.object].mask then
+		media.images[objects_list[global.object].wimg] = img_evil;
+	end;
 	love.graphics.draw(media.images[objects_list[global.object].wimg], x,y-50);
 end;
 
 function draw.wellButtons ()
 	loveframes.util.RemoveAll();
 	local x,y = helpers.centerObject(media.images.map);
+	if objects_list[global.object].infected and objects_list[global.object].mask and (chars_mobs_npcs[current_mob].lvl_body*chars_mobs_npcs[current_mob].num_body + chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden) >= objects_list[global.object].mask then
+		media.images[objects_list[global.object].story] = imgbad;
+	elseif objects_list[global.object].poisoned and objects_list[global.object].mask and (chars_mobs_npcs[current_mob].lvl_alchemy*chars_mobs_npcs[current_mob].num_alchemy + chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden) >= objects_list[global.object].mask then
+		media.images[objects_list[global.object].story] = imgbad;
+	elseif objects_list[global.object].cursed and objects_list[global.object].mask and (chars_mobs_npcs[current_mob].lvl_spirit*chars_mobs_npcs[current_mob].num_spirit + chars_mobs_npcs[current_mob].lvl_darkness*chars_mobs_npcs[current_mob].num_darkness + chars_mobs_npcs[current_mob].lvl_light*chars_mobs_npcs[current_mob].num_light + chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden) >= objects_list[global.object].mask then
+		media.images[objects_list[global.object].story] = imgevil;
+	end;
 	local text = lognames.descriptions[objects_list[global.object].story];
 	wellTextField = loveframes.Create("text");
 	wellTextField:SetPos(x+50,y + 450);
