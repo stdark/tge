@@ -90,8 +90,12 @@ end;
 function love.update(dt)
 	love.mousepressed(x, y, button);
 	mX, mY = love.mouse.getPosition();
-	cursor_world_x=math.ceil((mX-left_space)/tile_w);
-	cursor_world_y=math.ceil((mY-top_space)/tile_h*1.25);
+	cursor_world_y=math.ceil((mY-top_space)/tile_h*4/3);
+	if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
+		cursor_world_x=math.ceil((mX-left_space)/tile_w+1);
+	else
+		cursor_world_x=math.ceil((mX-left_space)/tile_w+0.5);
+	end;
 	
 	if love.keyboard.isDown("rctrl") then
 		frame_x2=mX;
@@ -108,7 +112,7 @@ function love.update(dt)
 		end;
 	end;
 	
-	loveframes.update(dt); -- <-- !!!!!!!!!!!!
+	loveframes.update(dt);
 end;
 
 function draw_hexfield()

@@ -3351,22 +3351,32 @@ print("findpotion called");
 end;
 
 function helpers.countPrice (sum,client,npc,buyorsel,baseprice,wishprice,identified,condition_mod)
-	local trading_bonus = (100-(chars_mobs_npcs[client].lvl_trading*chars_mobs_npcs[client].num_trading - chars_mobs_npcs[npc].lvl_trading*chars_mobs_npcs[npc].num_trading))/100;
+	local reputation_bonus = ai.fractionRelations (client,npc);
+	local trading_bonus = (chars_mobs_npcs[client].lvl_trading*chars_mobs_npcs[client].num_trading - chars_mobs_npcs[npc].lvl_trading*chars_mobs_npcs[npc].num_trading);
+	local total_bonus = 100/(trading_bonus + reputation_bonus + chars_mobs_npcs[client].chr);
 	local preprice = 0;
 	local price = 0;
 	if buyorsel == 1 then
 		preprice = math.max(1,math.ceil(sum*traders[chars_mobs_npcs[npc].shop]["prices"][buyorsel]));
-		price = math.max(1,math.ceil(preprice*trading_bonus - chars_mobs_npcs[client].chr/5));
+		price = math.max(1,math.ceil(preprice*total_bonus));
 	else
 		if identified then
 			preprice = math.max(1,math.ceil(wishprice*traders[chars_mobs_npcs[npc].shop]["prices"][buyorsel]));
-			price = math.min(wishprice,math.max(1,math.ceil(preprice*trading_bonus + chars_mobs_npcs[client].chr/5)));
+			price = math.min(wishprice,math.max(1,math.ceil(preprice*total_bonus)));
 		else
 			preprice = math.max(1,math.ceil(baseprice*traders[chars_mobs_npcs[npc].shop]["prices"][buyorsel]));
-			price = math.min(baseprice,math.max(1,math.ceil(preprice*trading_bonus + chars_mobs_npcs[client].chr/5)));
+			price = math.min(baseprice,math.max(1,math.ceil(preprice*total_bonus)));
 		end;
 	end;
 	return price,preprice;
+end;
+
+function helpers.recountPrice(sum,client,npc)
+	local reputation_bonus = ai.fractionRelations (client,npc);
+	local trading_bonus = (chars_mobs_npcs[client].lvl_trading*chars_mobs_npcs[client].num_trading - chars_mobs_npcs[npc].lvl_trading*chars_mobs_npcs[npc].num_trading);
+	local total_bonus = 100/(trading_bonus + reputation_bonus + chars_mobs_npcs[client].chr);
+	local price = math.max(1,math.ceil(sum*total_bonus));
+	return price;
 end;
 
 function helpers.payGold (price)

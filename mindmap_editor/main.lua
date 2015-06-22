@@ -56,9 +56,13 @@ end;
 function love.update(dt)
 	love.mousepressed(x, y, button);
 	mX, mY = love.mouse.getPosition();
-	cursor_world_x = math.ceil((mX-left_space)/tile_w)+1;
-	cursor_world_y = math.ceil((mY-top_space)/tile_h*1.25);
-	loveframes.update(dt); -- <-- !!!!!!!!!!!!
+cursor_world_y=math.ceil((mY-top_space)/tile_h*4/3);
+	if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
+		cursor_world_x=math.ceil((mX-left_space)/tile_w+1);
+	else
+		cursor_world_x=math.ceil((mX-left_space)/tile_w+1.5);
+	end;
+	loveframes.update(dt);
 end;
 
 function draw_buttons()
@@ -149,14 +153,23 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
-	print("::",mX,mY);
 	local xx = cursor_world_x-2;
 	local yy = cursor_world_y-5;
-	if mX >= 70 and mX <= 650 and mY >= 140 and mY <= 360 and xx >= 1 and xx <= 9 and yy >= 1 and yy <= 9 and (xx ~=5 or yy ~= 5) then
+	if mX >= 70 and mX <= 650 and mY >= 140 and mY <= 360 and xx >= 1 and xx <= 9 and yy >= 1 and yy <= 9 and (xx ~=5 or yy ~= 5) and checkDestHex(xx,yy) then
 		hex_table[xx][yy] = current_hex;	
 		print("HEX:",xx,yy);
     end;
     loveframes.mousereleased(x, y, button);
+end;
+
+function checkDestHex(x,y)
+	local dest_coords = {{7,1,"loyality"},{8,3,"disdain"},{9,5,"boring"},{8,7,"fear"},{7,9,"distrust"},{3,9,"sad"},{2,7,"respect"},{1,5,"surprise"},{2,3,"agression"},{3,1,"glad"},{5,9,"pity"},{5,1,"shame"}};
+	for i=1,#dest_coords do
+		if dest_coords[i][1] == x and dest_coords[i][2] == y then
+			return false
+		end;
+	end;
+	return true;
 end;
 
 function love.textinput(text)
@@ -214,7 +227,9 @@ function draw_mind_object(image,object,hx,hy,addx,addy)
 	else
 		moveto_hex_x = hx*tile_w+tile_w/2+x+345+addx;
 	end;
-	love.graphics.draw(image, object, moveto_hex_x, moveto_hex_y);
+	if object then
+		love.graphics.draw(image, object, moveto_hex_x, moveto_hex_y);
+	end;
 end;
 
 function love.draw()
@@ -225,6 +240,7 @@ function love.draw()
 		love.graphics.draw(img_mindfield, 0,70);
 		draw_icons_at_field();
 	end;
+	
 	if editor_status == "help" then
 
 	end;

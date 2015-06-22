@@ -4912,6 +4912,7 @@ function draw.tradersSpeech()
 		elseif global.showinventory_flag == "id" then
 			if helpers.tradersIdentifiesThisItem(victim,class) then
 				local price = math.ceil(100*traders[chars_mobs_npcs[victim].shop].prices[1]);
+				price = helpers.recountPrice(price,current_mob,victim);
 				if list[tmpinv].r == 0 then
 					text = lognames.traders.canidfor .. price .. lognames.actions.withgold .. ".";
 				end;

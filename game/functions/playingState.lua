@@ -704,12 +704,12 @@ function playingState.load()
 		};
 
 		traders={
-		{typ="armor",bars={1,1,2,4},prices={1.5,0.5},assortiment=1
+		{typ="armor",bars={1,1,2,4},prices={3,0.5},assortiment=1
 		,classes={{"sword","axe","crushing","flagpole","staff","dagger","armor","helm","boots","gloves","belt","cloak","shield"}
 		,{"sword","axe","crushing","flagpole","staff","dagger","armor","helm","boots","gloves","belt","cloak","shield"}
 		,{"sword","axe","crushing","flagpole","staff","dagger","armor","helm","boots","gloves","belt","cloak","shield"}}
 		},
-		{typ="alchemy",bars={0,0,0,0,0,0,0,0,0,0,3,0},prices={1.5,0.5},assortiment=1
+		{typ="alchemy",bars={0,0,0,0,0,0,0,0,0,0,3,0},prices={3,0.5},assortiment=1
 		,classes={{"bottle","potion","component","alchtool"}
 		,{"bottle","potion","component","alchtool"}
 		,{"alchtool"}}
@@ -2337,7 +2337,10 @@ function playingState.mousereleased (x,y,button)
 					+chars_mobs_npcs[current_mob].spr_debuff_power*chars_mobs_npcs[current_mob].spr_debuff_dur
 					+chars_mobs_npcs[current_mob].chr_debuff_power*chars_mobs_npcs[current_mob].chr_debuff_dur
 					+chars_mobs_npcs[current_mob].luk_debuff_power*chars_mobs_npcs[current_mob].luk_debuff_dur
-					+chars_mobs_npcs[current_mob].ac_debuff_power*chars_mobs_npcs[current_mob].ac_debuff_dur;
+					+chars_mobs_npcs[current_mob].ac_debuff_power*chars_mobs_npcs[current_mob].ac_debuff_dur
+					+chars_mobs_npcs[current_mob].darkcontamination+chars_mobs_npcs[current_mob].basiliskbreath+chars_mobs_npcs[current_mob].evileye
+					+chars_mobs_npcs[current_mob].deadlyswarm;
+					
 					price = 3*deltahp + 2*deltasp + math.max(0,deltast-deltart) + effects*10;
 					if chars_mobs_npcs[current_mob].reye == 0 then
 						price = price + 500;
@@ -2360,7 +2363,7 @@ function playingState.mousereleased (x,y,button)
 					if chars_mobs_npcs[current_mob].pneumothorax > 0 then
 						price = price + 1000;
 					end;
-					price = price*math.ceil(math.max(1000,chars_mobs_npcs[current_mob].lvl_trading*chars_mobs_npcs[current_mob].num_trading/50));
+					price = helpers.recountPrice(price,current_mob,victim);
 					if helpers.payGold(price) then
 						calendar.add_time_interval(calendar.delta_temple_heals);
 
@@ -2390,7 +2393,10 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[current_mob].madness = 0;
 						chars_mobs_npcs[current_mob].filth_power=0;
 						chars_mobs_npcs[current_mob].filth_dur=0;
-						chars_mobs_npcs[current_mob].darkgasp = 0;
+						chars_mobs_npcs[current_mob].darkgasp = 0
+						chars_mobs_npcs[current_mob].darkcontamination = 0;
+						chars_mobs_npcs[current_mob].basiliskbreath = 0;
+						chars_mobs_npcs[current_mob].evileye = 0;
 						chars_mobs_npcs[current_mob].despondency_power=0;
 						chars_mobs_npcs[current_mob].despondency_dur=0;
 						chars_mobs_npcs[current_mob].blind_power = 0;
@@ -2535,7 +2541,8 @@ function playingState.mousereleased (x,y,button)
 					local skill = skills[index];
 					local skill_lvl_name = chars_mombs_npcs[current_mob]["lvl_" .. skill];
 					local skill_num_name = chars_mombs_npcs[current_mob]["num_" .. skill];
-					local price = math.ceil(math.max(1000,10^tmp)*chars_mobs_npcs[current_mob].lvl_trading*chars_mobs_npcs[current_mob].num_trading/50);
+					local price = math.ceil(math.max(1000,10^tmp));
+					price = helpers.recountPrice(price,current_mob,victim);
 					if chars_mobs_npcs[current_mob].skill_lvl_name == tmp and chars_mobs_npcs[current_mob].skill_num_name >= points_for_upgrade[tmp] and helpers.payGold() then
 						chars_mobs_npcs[current_mob].skill_lvl_name = tmp+1;
 					end;
