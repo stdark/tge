@@ -225,7 +225,7 @@ function playingState.load()
 	altar_stats = {"mgt","enu","spd","dex","acu","sns","int","spr","chr","luk","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezmind","rezdisease","rezspirit","rezdarkness","rezlight"};
 	altar_current_buff = 1;
 	altar_current_value = 1;
-	well_types = {"normal","dry","dungeon","bag","magical add","magical stat","magical cure","drunk","poisoned","infected","cursed"};
+	well_types = {"normal","dry","dungeon","bag","magical add","magical stat","magical buff","magical cure","drunk","poisoned","infected","cursed"};
 	well_current_type_index = 1;
 	well_current_type_name = well_types[well_current_type_index];
 	well_current_area = 1;
@@ -245,29 +245,31 @@ function playingState.load()
 	well_current_stat_index = 1;
 	well_current_stat_name = well_stats[well_current_stat_index];
 	well_buffs = {
-		{"none"},
-		{"mgt_buff"},
-		{"enu_buff"},
-		{"dex_buff"},
-		{"spd_buff"},
-		{"acu_buff"},
-		{"sns_buff"},
-		{"int_buff"},
-		{"spr_buff"},
-		{"luk_buff"},
-		{"chr_buff"},
-		{"protfromfire","protfromfire_power","protfromfire_dur"},
-		{"protfromcold","protfromcold_power","protfromcold_dur"},
-		{"protfromstatic","protfromstatic_power","protfromstatic_dur"},
-		{"protfromacid","protfromacid_power","protfromacid_dur"},
-		{"protfrompoison","protfrompoison_power","protfrompoison_dur"},
-		{"protfromlight","protfromlight_power","protfromlight_dur"},
-		{"protfromdarkness","protfromdarkness_power","protfromdarkness_dur"},
-		{"protofmind","protofmind_power","protofmind_dur"},
-		{"protofspirit","protofspirit_power","protofspirit_dur"},
-		{"protfrodisease","protfrodisease_power","protfrodisease_dur"},
+		"mgt_buff",
+		"enu_buff",
+		"dex_buff",
+		"spd_buff",
+		"acu_buff",
+		"sns_buff",
+		"int_buff",
+		"spr_buff",
+		"luk_buff",
+		"chr_buff",
+		"protfromfire","protfromfire_power","protfromfire_dur",
+		"protfromcold","protfromcold_power","protfromcold_dur",
+		"protfromstatic","protfromstatic_power","protfromstatic_dur",
+		"protfromacid","protfromacid_power","protfromacid_dur",
+		"protfrompoison","protfrompoison_power","protfrompoison_dur",
+		"protfromlight","protfromlight_power","protfromlight_dur",
+		"protfromdarkness","protfromdarkness_power","protfromdarkness_dur",
+		"protofmind","protofmind_power","protofmind_dur",
+		"protofspirit","protofspirit_power","protofspirit_dur",
+		"protfrodisease","protfrodisease_power","protfrodisease_dur",
 	};
-	well_current_stat_buff = 1;
+	well_current_buff_index = 1;
+	well_current_buff_name = well_buffs[well_current_buff_index];
+	well_current_power = 5;
+	well_current_duration = 10;
 	well_current_map = 1;
 	chest_current_rotation = 1;
 	chest_current_material = 1;
@@ -299,6 +301,7 @@ function playingState.load()
 	special_objects_status = 0;
 	showhidden = 1;
 	global.show_harvest = 1;
+	global.show_decals = 1;
 	array_of_map ();
 	savename = "level1.lua";
 	row_buttons={};
@@ -1126,6 +1129,68 @@ function special_objects_parametres (special_objects_status)
 					well_current_add_value  = text;
 				end;
 			end;
+		elseif well_current_type_name == "magical buff" then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("buff");
+			
+			button1 = loveframes.Create("button")
+			button1:SetPos(global.screenWidth-160, global.screenHeight-120);
+			button1:SetHeight(20);
+			button1:SetWidth(20);
+			button1:SetText("<");
+			button1.OnClick = function(object)
+				if well_current_buff_index and well_current_buff_index  > 1 then
+					well_current_buff_index = well_current_buff_index - 1;
+					well_current_buff_name = well_buffs[well_current_buff_index];
+				end;
+			end;
+			button2 = loveframes.Create("button")
+			button2:SetPos(global.screenWidth-40, global.screenHeight-120);
+			button2:SetHeight(20);
+			button2:SetWidth(20);
+			button2:SetText(">");
+			button2.OnClick = function(object)
+				if well_current_buff_index and well_current_buff_index < #well_buffs then
+					well_current_buff_index = well_current_buff_index + 1;
+					well_current_buff_name = well_buffs[well_current_buff_index];
+				end;
+			end;
+			
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-100);
+			text:SetMaxWidth(100);
+			text:SetText("duration");
+		
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-100);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_duration);
+			textinput:SetLimit(3);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					well_current_duration  = text;
+				end;
+			end;
+			
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-220, global.screenHeight-80);
+			text:SetMaxWidth(100);
+			text:SetText("power");
+		
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-80);
+			textinput:SetWidth(76);
+			textinput:SetText(well_current_power);
+			textinput:SetLimit(3);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					well_current_power  = text;
+				end;
+			end;
 		elseif well_current_type_name == "magical cure" then
 			local text = loveframes.Create("text");
 			text:SetPos(global.screenWidth-220, global.screenHeight-120);
@@ -1477,7 +1542,7 @@ function centerObject(sprite)
 end;
 
 function draw_map()
-	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and hexes_status==1 then
+	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "decals" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and hexes_status==1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				if show_invisible and map[my+map_y][mx+map_x]<20  and map[my+map_y][mx+map_x]<300 then
@@ -1491,7 +1556,7 @@ function draw_map()
  end;
  
 function draw_submap()
-	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and global.subhex == 1 then
+	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "decals" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and global.subhex == 1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				if show_invisible and submap[my+map_y][mx+map_x]<20  and submap[my+map_y][mx+map_x]<300 then
@@ -1597,7 +1662,7 @@ function passCheck (x,y)
 end;
 
 function draw_objects ()
-	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") then
+	if object_status==1 and (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "decals" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") then
 		if map_x < 12 then
 			mxx = 1
 		else
@@ -2582,6 +2647,8 @@ function playingState.mousereleased(x, y, button)
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", plus=well_current_addtype_name, plusvalue=well_current_add_value, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
 			elseif well_current_type_name == "magical stat" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", permanentplus=well_current_stat_name, permanentplusvalue=well_current_stat_value, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
+			elseif well_current_type_name == "magical buff" then
+				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="drink", story="wellmagical", plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={{well_current_buff_name,well_current_duration,well_current_buff_power}}, wimg="well_magical", img=well_img});
 			elseif well_current_type_name == "magical cure" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="wellmagical", conditions={{well_current_condition_name,well_current_condition_value}}, plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_magical", img=well_img});
 			elseif well_current_type_name == "drunk" then
@@ -3215,6 +3282,31 @@ function drawUIButtons()
 		global.show_harvest = -1*global.show_harvest;
 	end;
 
+	--
+	
+	uibuttons[26] = loveframes.Create("button")
+	uibuttons[26]:SetPos(280,global.screenHeight-120);
+	uibuttons[26]:SetHeight(30);
+	uibuttons[26]:SetWidth(80);
+	uibuttons[26]:SetText("decals");
+	uibuttons[26].OnClick = function(object)
+		checkHerbs();
+		editor_status="decals"
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		love.mouse.setVisible(false);
+		draw_harvest_buttons();
+	end;
+	
+	uibuttons[27] = loveframes.Create("button")
+	uibuttons[27]:SetPos(280,global.screenHeight-90);
+	uibuttons[27]:SetHeight(30);
+	uibuttons[27]:SetWidth(80);
+	uibuttons[27]:SetText("s/h decals");
+	uibuttons[27].OnClick = function(object)
+		global.show_decals = -1*global.show_decals;
+	end;
+	
 	--
 	
 	uibuttons[24] = loveframes.Create("button")
@@ -3915,6 +4007,8 @@ function playingState.draw()
 				love.graphics.print(well_current_addtype_name,global.screenWidth-140, global.screenHeight-120);
 			elseif well_current_type_name == "magical stat" then
 				love.graphics.print(well_current_stat_name,global.screenWidth-140, global.screenHeight-120);
+			elseif well_current_type_name == "magical buff" then
+				love.graphics.print(well_current_buff_name,global.screenWidth-140, global.screenHeight-120);
 			elseif well_current_type_name == "magical cure" then
 				love.graphics.print(well_current_condition_name,global.screenWidth-140, global.screenHeight-120);
 			end;		
