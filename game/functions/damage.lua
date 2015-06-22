@@ -4982,6 +4982,130 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.likeasaint[chars_mobs_npcs[current_mob].gender]);
 	end;
+	
+	if missle_type == "transfusion" then
+		local donor = current_mob;
+		local rings = boomareas.ringArea(boomx,boomy);
+		for i=h, #rings do
+			for i=1,#rings[h] do
+				for j=1,chars do
+					if helpers.cursorAtMob(rings[h][i].x,rings[h][i].y) then
+						donor = j;
+						break;
+					end
+				end;
+			end;
+		end;
+		if chars_mobs_npcs[donor].poison_dur > 0 then
+			debuff_dur,debuff_power = damage.applyConditionTwoFactors (victim,lvl[1],num[3],"poison","poison","enu",false,1,true);
+			if debuff_dur and debuff_power > 0 then
+				chars_mobs_npcs[victim].poison_dur = debuff_dur;
+				chars_mobs_npcs[victim].poison_power = debuff_power;
+			end;
+		end;
+		if chars_mobs_npcs[donor].disease > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"disease",false,"enu",false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].disease = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].weakness > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"weakness",false,"enu",false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].weakness = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].curse > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[3],"curse","darkness",false,false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].curse = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].flith > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[3],"flith","darkness",false,false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].flith = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].misfortune_dur > 0 then
+			debuff_dur,debuff_power = damage.applyConditionTwoFactors (victim,lvl[1],num[3],"misfortune","darkness",false,false,1,true);
+			if debuff_dur and debuff_power > 0 then
+				chars_mobs_npcs[victim].misfortune_dur = debuff_dur;
+				chars_mobs_npcs[victim].misfortune_power = debuff_power;
+			end;
+		end;
+		if chars_mobs_npcs[donor].despondency_dur > 0 then
+			debuff_dur,debuff_power = damage.applyConditionTwoFactors (victim,lvl[1],num[2],"despondency","mind",false,false,1,true);
+			if debuff_dur and debuff_power > 0 then
+				chars_mobs_npcs[victim].despondency_dur = debuff_dur;
+				chars_mobs_npcs[victim].despondency_power = debuff_power;
+			end;
+		end;
+		if chars_mobs_npcs[donor].darkcontamination > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[3],"darkcontamination","darkness",false,false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].darkcontamination = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].blind > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[1],"blind",false,false,false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].blind = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].feeblemind > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"feeblemind","mind",false,false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].feeblemind = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].berserk > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"berserk","mind",false,false,1,true);
+			if debuff > 0 then
+				chars_mobs_npcs[victim].berserk = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].paralyse > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"paralyse","mind",false,false,1,true);
+		end;
+		if chars_mobs_npcs[donor].sleep > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"sleep","mind",false,false,1,true);
+			global.damageflag = "sleep";
+			if debuff > 0 then
+				chars_mobs_npcs[victim].sleep = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].fear > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"fear","mind",false,false,1,true);
+			global.damageflag = "fear";
+			if debuff > 0 then
+				chars_mobs_npcs[victim].fear = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].panic > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"sleep","panic",false,false,1,true);
+			global.damageflag = "fear";
+			if debuff > 0 then
+				chars_mobs_npcs[victim].panic = debuff;
+			end;
+		end;
+		if chars_mobs_npcs[donor].charm > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"charm","panic",false,false,1,true);
+			global.damageflag = "charm";
+			if debuff > 0 then
+				chars_mobs_npcs[victim].charm = debuff;
+			end;
+		end;
+		local damage = lvl[1]*num[1];
+		local damageHP,damageSP,damageST = math.ceil(damage/3); 
+		damage.HPminus(donor,damageHP,true);
+		damage.SPminus(donor,damageSP,true);
+		damage.STminus(donor,damageST,true);
+		damage.RTminus(donor,50,true);
+		damage.HPplus(victim,damageHP,true);
+		damage.SPplus(victim,damageSP,true);
+		damage.STplus(vicrtm,damageST,true);
+	end;
 
 	if missle_type=="resurrect" then
 		love.audio.play(media.sounds.spell_resurrect,0);
@@ -5667,7 +5791,7 @@ function damage.mindGameCast()
 			helpers.addToActionLog( lognames.actions.noeffect);
 		end;	
 	end;
-	
+
 	table.insert(mindgame_log,phrase1);
 	--table.insert(mindgame_log,phrase2);
 	global.mindgame_counter = global.mindgame_counter + 1;

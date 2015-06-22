@@ -12,7 +12,7 @@ Install love engine from love2d.org or with the help of the packet manager of yo
 ===
 Установите движок love с сайта love2d.org или воспользуйтесь пакетным менеджером вашего дистрибутива GNU/Linux.
 
-Use love 0.9.1, becose love 0.9.2 uses lua5.3 which has no luajit support
+Use love 0.9.1, because love 0.9.2 uses lua5.3 which has no luajit support
 ===
 Используйте love 0.9.1, поскольку love 0.9.2 использует lua5.3, у которого нет поддержки luajit
 
