@@ -741,11 +741,11 @@ function helpers.anim_random ()
 end;
 
 function helpers.BagNear (x,y)
-	local x,y = helpers.hexInFronTOfMob(current_mob);
-	local at_door,doorid,locked,traped = helpers.cursorAtClosedDoor(x,y);
+	local _x,_y = helpers.hexInFronTOfMob(current_mob);
+	local at_door,doorid,locked,traped = helpers.cursorAtClosedDoor(_x,_y);
 	local at_mbag,mbagid = helpers.cursorAtMaterialBag(x,y);
 	for i=1, #bags_list do
-		if (x == bags_list[i].xi and y == bags_list[i].yi) or atdoor or at_mbag or helpers.trapInFrontOf(current_mob) then
+		if (x == bags_list[i].x and y == bags_list[i].y) or atdoor or at_mbag or helpers.trapInFrontOf(current_mob) then
 			return true;
 		end;
 	end;
@@ -1507,18 +1507,19 @@ function helpers.countFreeCells (bag)
 	return free_cells;
 end;
 
-function helpers.harvestOne ()
+function helpers.harvestOne (x,y)
 	local free_cells = helpers.countFreeCells (inventory_bag[chars_mobs_npcs[current_mob].id]);
-	if hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] > 0 and hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] < 26 then
+	if hlandscape[y][x] > 0 and hlandscape[y][x] < 26 then
 		if #free_cells > 0 then
-			helpers.addToActionLog( lognames.actions.found .. harvest_ttx[hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]].title);
-			table.insert(chars_mobs_npcs[current_mob]["inventory_list"],{ttxid=harvest_ttx[hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]].loot, q=harvest_ttx[hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]].power,w=0,e=0,r=0,h=0});
+			helpers.addToActionLog( lognames.actions.found .. harvest_ttx[hlandscape[y][x]].title);
+			table.insert(chars_mobs_npcs[current_mob]["inventory_list"],{ttxid=harvest_ttx[hlandscape[y][x]].loot, q=harvest_ttx[hlandscape[y][x]].power,w=0,e=0,r=0,h=0});
 			inventory_bag[current_mob][free_cells[1][1]][free_cells[1][2]] = #chars_mobs_npcs[current_mob]["inventory_list"];
-			hlandscape[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] = 0;
+			hlandscape[y][x] = 0;
 		else
 			helpers.addToActionLog( lognames.actions.nospace);
 		end;
 	else
+		hlandscape[y][x] = 0;
 		helpers.addToActionLog( lognames.actions.nothingtotake);
 	end;
 end;

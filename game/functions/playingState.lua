@@ -1751,7 +1751,7 @@ function playingState.keypressed(key, unicode)
 			--love.audio.play(media.sounds.battle, 0);
 		end;
 		if key=="h" and chars_mobs_npcs[current_mob].person == "char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
-			helpers.harvestOne ();
+			helpers.harvestOne (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 		end;
 		if key=="j" and chars_mobs_npcs[current_mob].person == "char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
 			helpers.flayOne ();
@@ -6079,7 +6079,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 
 		if button == "l"  and mX > global.screenWidth-180 and mX < global.screenWidth-80 and mY > global.screenHeight-160 and mY < global.screenHeight-110 and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
-			helpers.harvestOne ();
+			helpers.harvestOne (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 		end;
 
 		if button == "l" and love.keyboard.isDown("lctrl") then
