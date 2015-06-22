@@ -37,7 +37,6 @@ function playingState.load()
 	require "functions.damage"
 	require "functions.boomareas"
 	require "functions.draw"
-	require "functions.sfx"
 	require "functions.helpers"
 	require "functions.trace"
 	require "functions.pathfinding"
@@ -51,6 +50,7 @@ function playingState.load()
 	require "data.affronts"
 	require "data.threats"
 	require "data.npc"
+	require "data.sfx"
 	love.audio.stop(media.sounds.mainmenu, 0);
 
 	media.sounds.battle:setLooping( loop );
@@ -512,6 +512,12 @@ function playingState.load()
 		x=15,y=36, xi=15, yi=36, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img,
 		{ttxid=440,q=math.random(1,10),w=0,e=0,r=1,h=0},
 		};
+		
+		bags_list[13]={
+		x=26,y=20, xi=26, yi=20, typ="box", opened=false, locked=false, img=box_img,
+		{ttxid=6,q=math.random(1,10),w=0,e=0,r=1,h=0},
+		};
+		
 --[[ for lveditor output
 		local traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"}; --zazaza
 		for i=1,#bags_list do
@@ -7688,7 +7694,7 @@ function mob_moving()
 				end;
 			end;
 			--helpers.findShadows();
-			if chars_mobs_npcs[current_mob].torchlight_dur > 0 then
+			if chars_mobs_npcs[current_mob].torchlight > 0 then
 				for i=1,#lights do
 					if lights[i].typ == "mob" and lights[i].index == current_mob then
 						lights[i].x = chars_mobs_npcs[current_mob].x;
@@ -8281,9 +8287,9 @@ function restoreRT ()
 					helpers.addToActionLog( victim_name .. lognames.actions.gotdmg[chars_mobs_npcs[current_mob].gender]  .. dmg .. lognames.actions.metr  .. lognames.actions.ofhp .. types_of_damage.acid .. types_of_damage.dot);
 					damage.HPminus(i,dmg);
 				end
-				if chars_mobs_npcs[i].torchlight_dur > 0 then
-					chars_mobs_npcs[i].torchlight_dur = chars_mobs_npcs[i].torchlight_dur-1;
-				elseif chars_mobs_npcs[i].torchlight_dur == 0 then
+				if chars_mobs_npcs[i].torchlight > 0 then
+					chars_mobs_npcs[i].torchlight = chars_mobs_npcs[i].torchlight-1;
+				elseif chars_mobs_npcs[i].torchlight == 0 then
 					for h=#lights,1,-1 do
 						if lights[h].typ == "mob" and lights[h].index == i then
 							lights[h]["light"].clear();

@@ -63,20 +63,30 @@ function path_finding (mode,ignore_mobs)
 				path_can_be_found = 1;
 				path_status = 1;
 			end;
-			--[[local cursor_at_door, pointx,pointy,rotation_to_door,opened = helpers.cursorAtClosedDoor(cursor_world_x,cursor_world_y); --FIXME doors are 2-sided
-			if cursor_at_door and not opened then
-				point_to_go_x = pointx;
-				point_to_go_y = pointy;
-				last_path_hex_turn = rotation_to_door; -- check if hex is free!
+			local cursor_at_door, bagid, locked, traped = helpers.cursorAtClosedDoor(point_to_go_x,point_to_go_y);
+			if cursor_at_door and (locked or traped) then				
+				local newx,newy = findAltWayToHex(cursor_world_x,cursor_world_y);
+				if newx and newy then
+					point_to_go_x = newx;
+					point_to_go_y = newy;
+				end;
 				mob_is_going_to_picklock = 1;
-			end;]]
+				if point_to_go_x and helpers.passWalk(point_to_go_x,point_to_go_y) and not helpers.isAimOnMob (point_to_go_x,point_to_go_y) then
+					path_can_be_found = 1;
+					hitHex = {x=cursor_hex_x,y=cursor_hex_y};
+					global.object = helpers.whatObject(cursor_world_x,cursor_world_y);
+				else
+					path_status = 0;
+					--print("path not found!");
+				end;
+			end;
 			--buildings
 			local cursor_at_building,rotation_to_building = helpers.cursorAtBuilding(cursor_world_x,cursor_world_y);
 			if cursor_at_building then
 				point_to_go_x = cursor_world_x;
 				point_to_go_y = cursor_world_y;
 				if helpers.passCheck(point_to_go_x,point_to_go_y) then
-					last_path_hex_turn = rotation_to_building; -- check if hex is free!
+					last_path_hex_turn = rotation_to_building;
 					mob_is_going_to_knock = 1;
 				else
 					path_status = 0;

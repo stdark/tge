@@ -28,6 +28,7 @@ function playingState.load()
 	--specialobjects
 	obelisk_img = love.graphics.newQuad(0, 17*32, 64,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	altar_img = love.graphics.newQuad(64, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	box_img = love.graphics.newQuad(128, 17*32, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	competition_img = love.graphics.newQuad(64, 19*32, 32,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	pedestal_img = love.graphics.newQuad(128, 18*32, 32,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	portal_img = love.graphics.newQuad(32*5, 20*32, 64,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
@@ -176,7 +177,7 @@ function playingState.load()
 		"wl","br","cl","cn","tr",
 		"bg","ch","cr","th","sp",
 		"wb","sk","sc","ug","cf",
-		"dr","fn","?","?","?",
+		"dr","fn","bx","?","?",
 		};
 	
 	pedestal_buffs={
@@ -1717,6 +1718,14 @@ function draw_objects ()
 					end;
 				end;
 				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "box" then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-8);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-16, (my-1)*tile_h*0.75+top_space-8);
+					end;
+				end;
+				
 				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "crystals" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-36);
@@ -2693,7 +2702,9 @@ function playingState.mousereleased(x, y, button)
 		elseif special_objects_status == "sp" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img});
 		elseif special_objects_status == "bg" then
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="bag", opened=false, locked=false, dir=0, img=bag_img, img=bag_img});
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="bag", opened=false, locked=false, img=bag_img});
+		elseif special_objects_status == "bx" then
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="box", opened=false, locked=false, img=box_img});
 		end;
 	end;
 end;
@@ -3978,10 +3989,11 @@ function playingState.draw()
 		cr=crystals_img,
 		th=trashheap_img,
 		sp=scullpile_img,
+		bx=box_img,
 		
 		wc=well_img,
 		};
-		
+	
 		if special_objects_status and  special_objects_status ~= 0 and sob_images[special_objects_status] then
 			love.graphics.draw(media.images.tmpobjs, sob_images[special_objects_status],global.screenWidth-addx, global.screenHeight-addy);
 		end;

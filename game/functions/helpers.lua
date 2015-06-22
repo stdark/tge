@@ -1971,8 +1971,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].haste = 0;
 	chars_mobs_npcs[i].mobility_dur = 0;
 	chars_mobs_npcs[i].mobility_power = 0;
-	chars_mobs_npcs[i].torchlight_dur = 0;
-	chars_mobs_npcs[i].torchlight_power = 0;
+	chars_mobs_npcs[i].torchlight = 0;
 	chars_mobs_npcs[i].executor_dur = 0;
 	chars_mobs_npcs[i].executor_power = 0;
 	chars_mobs_npcs[i].hourofpower_dur = 0;
@@ -2447,7 +2446,7 @@ function helpers.findShadows()
 		end;
 	end;
 	for j=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[j].torchlight_dur > 0 and chars_mobs_npcs[j].y == i and  chars_mobs_npcs[j].x == z then
+		if chars_mobs_npcs[j].torchlight > 0 and chars_mobs_npcs[j].y == i and  chars_mobs_npcs[j].x == z then
 			slandscape[z][i] = math.max(4,environment_light);
 			for i=1,#rings[1] do
 				if helpers.insideMap(rings[1][i].y,rings[1][i].x) then
@@ -2802,7 +2801,7 @@ function helpers.cursorAtChest(x,y)
 	return false,nil,nil,nil;
 end;
 
-function helpers.cursorAtClosedDoor(x,y) --FIXME doors are 2-sided
+function helpers.cursorAtClosedDoor(x,y)
 	for i=1,#bags_list do
 		if bags_list[i].xi == x and bags_list[i].yi == y and bags_list[i].typ == "door" and not bags_list[i].opened then
 			return true,i,bags_list[i].locked,bags_list[i].traped;
@@ -2811,7 +2810,7 @@ function helpers.cursorAtClosedDoor(x,y) --FIXME doors are 2-sided
 	return false,nil,nil;
 end;
 
-function helpers.cursorAtOpenedDoor(x,y) --FIXME doors are 2-sided
+function helpers.cursorAtOpenedDoor(x,y)
 	for i=1,#bags_list do
 		if bags_list[i].xi == x and bags_list[i].yi == y and bags_list[i].typ == "door" and bags_list[i].opened then
 			return true,i;
@@ -2820,9 +2819,9 @@ function helpers.cursorAtOpenedDoor(x,y) --FIXME doors are 2-sided
 	return false,nil;
 end;
 
-function helpers.cursorAtMaterialBag(x,y) --FIXME doors are 2-sided
+function helpers.cursorAtMaterialBag(x,y)
 	for i=1,#bags_list do
-		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "crystals" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well") then
+		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "crystals" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well" or bags_list[i].typ == "box") then
 			return true,i;
 		end;
 	end;
@@ -2912,7 +2911,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			chars_mobs_npcs[current_mob].y = objects_list[global.object].outy;
 			helpers.cam_to_mob(current_mob);
 			love.audio.play(media.sounds.teleport,0);
-			if chars_mobs_npcs[current_mob].torchlight_dur > 0 then
+			if chars_mobs_npcs[current_mob].torchlight > 0 then
 				for i=1,#lights do
 					if lights[i].typ == "mob" and lights[i].index == current_mob then
 						lights[i].x = chars_mobs_npcs[current_mob].x;
@@ -4415,7 +4414,7 @@ function helpers.trapHere(x,y)
 end;
 
 function helpers.bagIsVisible(index)
-	if bags_list[index].typ == "bag" or bags_list[index].typ == "chest" or bags_list[index].typ == "crystals" or bags_list[index].typ == "scullpile" or bags_list[index].typ == "trashheap" or bags_list[index].typ == "door" or bags_list[index].typ == "well" then
+	if bags_list[index].typ == "bag" or bags_list[index].typ == "chest" or  bags_list[index].typ == "box" or bags_list[index].typ == "crystals" or bags_list[index].typ == "scullpile" or bags_list[index].typ == "trashheap" or bags_list[index].typ == "door" or bags_list[index].typ == "well" then
 		return true;
 	end;
 	if bags_list[index].typ == "trap" or bags_list[index].typ == "secret" then

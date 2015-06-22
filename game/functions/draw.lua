@@ -1437,7 +1437,7 @@ function draw.stats(index)
 	local addy3 = 0;
 	local addy4 = 0;
 	love.graphics.setColor(0, 255, 0);
-	if chars_mobs_npcs[current_mob].torchlight_dur > 0 then
+	if chars_mobs_npcs[current_mob].torchlight > 0 then
 		local str = tips_conditions.torchlight;
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
@@ -2528,7 +2528,7 @@ function draw.objects ()
 				end;  
 			end;
 			for j=1,#bags_list do
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and bags_list[j].typ ~= "well" and bags_list[j].typ ~= "crystals" and bags_list[j].typ ~= "scullpile" and bags_list[j].typ ~= "trashheap" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and bags_list[j].typ ~= "well" and bags_list[j].typ ~= "crystals" and bags_list[j].typ ~= "scullpile" and bags_list[j].typ ~= "trashheap" and bags_list[j].typ ~= "box" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-12);
 					else  
@@ -2541,6 +2541,14 @@ function draw.objects ()
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-64);
 					else  
 						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-64);
+					end;
+				end;
+				
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "box" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-8);
+					else  
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-16, (my-1)*tile_h*0.75+top_space-8);
 					end;
 				end;
 				

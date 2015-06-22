@@ -1083,7 +1083,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			local spellname = loadstring("return " .. tempspellname)();
 			helpers.addToActionLog( agressor_name .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
 			if missle_type == "flamearrow" then
-				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,8),"fire"); --FIXME nil
+				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,3),"fire"); --FIXME nil
 				damage.HPminus(victim,dmghp,true);
 				helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
 			end;
@@ -2343,6 +2343,37 @@ function damage.multidamage () --FIXME two hexes
 						damage.mobDamaged(j,current_mob,math.ceil(debuff/4));
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.cursed[chars_mobs_npcs[j].gender]);
 						exp_for_what(math.ceil(debuff/3),current_mob);
+					end;
+				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "massfear" then
+		local boomarea = boomareas.sightArea(); 
+		for i=1,#boomarea do
+			for j=1,#chars_mobs_npcs do
+				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) and chars_mobs_npcs[j].person ~= "char" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "golem" then
+					local debuff1 = damage.applyCondition (j,lvl[1],num[1],"panic","darkness",false,false,1,false);
+					local debuff2 = damage.applyCondition (j,lvl[2],num[2],"panic","mind",false,false,1,false);
+					local debuff3 = damage.applyCondition (j,lvl[1],num[1],"fear","darkness",false,false,1,false);
+					local debuff4 = damage.applyCondition (j,lvl[2],num[2],"fear","mind",false,false,1,false);
+					if debaff1 > debuff2 then
+						debuff = debuff1;
+					else
+						debuff = debuff2;
+					end;
+					if debaff3 >  debuff4 then
+						debuff = debuff + debuff3;
+					else
+						debuff = debuff + debuff4;
+					end;
+					if debuff > 0 then
+						global.damageflag = "panic";
+						table.insert(damaged_mobs,j);
+						damage.mobDamaged(j,current_mob,math.ceil(debuff/4));
+						chars_mobs_npcs[index].aggro = chars_mobs_npcs[index].aggro + 4*debuff;
+						chars_mobs_npcs[index].aggressor = chars_mobs_npcs[current_mob].id;
 					end;
 				end;
 			end;
@@ -4339,8 +4370,7 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 	
 	if missle_type == "torchlight" then
-		chars_mobs_npcs[victim].torchlight_dur = num[1];
-		chars_mobs_npcs[victim].torchlight_power = lvl[1];
+		chars_mobs_npcs[victim].torchlight = 10 + num[1];
 		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
 		table.insert(lights,{x=chars_mobs_npcs[victim].x,y=chars_mobs_npcs[victim].y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 128),typ="mob",index = victim});
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
@@ -5077,20 +5107,19 @@ function damage.instantCast () --FIXME use lvl, num
 		end;
 		if chars_mobs_npcs[donor].fear > 0 then
 			debuff = damage.applyCondition (victim,lvl[1],num[2],"fear","mind",false,false,1,true);
-			global.damageflag = "fear";
 			if debuff > 0 then
 				chars_mobs_npcs[victim].fear = debuff;
 			end;
 		end;
 		if chars_mobs_npcs[donor].panic > 0 then
-			debuff = damage.applyCondition (victim,lvl[1],num[2],"sleep","panic",false,false,1,true);
-			global.damageflag = "fear";
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"panic","mind",false,false,1,true);
 			if debuff > 0 then
 				chars_mobs_npcs[victim].panic = debuff;
+				global.damageflag = "panic";
 			end;
 		end;
 		if chars_mobs_npcs[donor].charm > 0 then
-			debuff = damage.applyCondition (victim,lvl[1],num[2],"charm","panic",false,false,1,true);
+			debuff = damage.applyCondition (victim,lvl[1],num[2],"charm","mind",false,false,1,true);
 			global.damageflag = "charm";
 			if debuff > 0 then
 				chars_mobs_npcs[victim].charm = debuff;
@@ -5408,8 +5437,7 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "fireelemental" then
 		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="fireelemental",fraction="party"});
 		helpers.addMob(#chars_mobs_npcs,"mob");
-		chars_mobs_npcs[#chars_mobs_npcs].torchlight_dur = 100000;
-		chars_mobs_npcs[#chars_mobs_npcs].torchlight_power = 1;
+		chars_mobs_npcs[#chars_mobs_npcs].torchlight = 100000;
 		chars_mobs_npcs[#chars_mobs_npcs].firebelt_dur = 100000;
 		chars_mobs_npcs[#chars_mobs_npcs].firebelt_power = 3;
 		chars_mobs_npcs[#chars_mobs_npcs].fireprint_dur = 100000;
@@ -6059,8 +6087,7 @@ function damage.deadNow (index)
 	chars_mobs_npcs[index].myrth_power = 0;
 	chars_mobs_npcs[index].executor_dur = 0;
 	chars_mobs_npcs[index].executor_power = 0;
-	chars_mobs_npcs[index].torchlight_dur = 0;
-	chars_mobs_npcs[index].torchlight_power = 0;
+	chars_mobs_npcs[index].torchlight = 0;
 	chars_mobs_npcs[index].stoneskin_dur = 0;
 	chars_mobs_npcs[index].stoneskin_power = 0;
 	chars_mobs_npcs[index].shield = 0;
