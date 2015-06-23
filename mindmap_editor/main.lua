@@ -56,7 +56,7 @@ end;
 function love.update(dt)
 	love.mousepressed(x, y, button);
 	mX, mY = love.mouse.getPosition();
-cursor_world_y=math.ceil((mY-top_space)/tile_h*4/3);
+	cursor_world_y=math.ceil((mY-top_space)/tile_h*4/3);
 	if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
 		cursor_world_x=math.ceil((mX-left_space)/tile_w+1);
 	else

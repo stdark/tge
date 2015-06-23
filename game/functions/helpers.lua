@@ -251,35 +251,14 @@ end;
  end;
 
 function helpers.cursorWorldCoordinates () -- in hexes
-	local coordX = 1;
-	local coordY = 1;
-	local centreX = 0;
-	local centreY = 0;
-	local deltaX = map_w;
-	local deltaY = map_h;
-	for h=1, map_h do
-		centreY = (h-1-map_y)*tile_h*0.75+top_space+tile_h/2;
-		for i=1, map_w do
-			if	h/2 == math.ceil(h/2) then
-				centreX = (i-1-map_x)*tile_w;
-			else
-				centreX = (i-1-map_x)*tile_w+tile_w/2;
-			end;
-			if math.abs(centreY - mY) <= deltaY then
-				coordY = h;
-				deltaY = math.abs(centreY - mY);
-			end
-			local addx = 0;
-			if coordY/2 == math.ceil(coordY/2) then
-				addx = 32;
-			end;
-			if math.abs(mX - centreX) <= deltaX +addx then
-				coordX = i;
-				deltaX = math.abs(mX - centreX);
-			end
-		end;
+	local coordx,coordy = 1;
+	coordy=math.ceil((mY-top_space)/tile_h*4/3) + map_y;
+	if coordy/2 == math.ceil(coordy/2) then
+		coordx = math.ceil((mX-left_space)/tile_w+1)+map_x;
+	else
+		coordx = math.ceil((mX-left_space)/tile_w+0.5)+map_x;
 	end;
-	return coordX,coordY;
+	return coordx,coordy;
 end;
 
 function helpers.mindGameCoordinates ()

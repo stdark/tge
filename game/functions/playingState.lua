@@ -8750,6 +8750,7 @@ function restoreRT ()
 						chars_mobs_npcs[i].control = "ai";
 						chars_mobs_npcs[i].panic = 3+math.abs(moral);
 					elseif demoralEffect == 2 and chars_mobs_npcs[i].fear == 0 then --  dumbfounded (petrified)
+						chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt + 100;
 						chars_mobs_npcs[i].control = "ai";
 						chars_mobs_npcs[i].ai = "stay";
 					elseif demoralEffect == 3 and chars_mobs_npcs[i].fear == 0 then --fear

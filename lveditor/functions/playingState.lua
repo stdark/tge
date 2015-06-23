@@ -397,13 +397,14 @@ function playingState.update(dt)
 		end;
 	end;
 	btn_x=global.screenWidth - 210;
-	cursor_world_y=math.ceil((mY-top_space)/tile_h*1.32)+map_y;
+	mX, mY = love.mouse.getPosition();
+	cursor_world_y=math.ceil((mY-top_space)/tile_h*4/3) + map_y;
 	if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
-		cursor_world_x=math.ceil((mX-left_space+1.5*tile_w)/tile_w)+map_x;
+		cursor_world_x=math.ceil((mX-left_space)/tile_w+1)+map_x;
 	else
-		cursor_world_x=math.ceil((mX-left_space+0.75*tile_w)/tile_w)+map_x;
+		cursor_world_x=math.ceil((mX-left_space)/tile_w+0.5)+map_x;
 	end;
-	loveframes.update(dt); -- <-- !!!!!!!!!!!!
+	loveframes.update(dt);
 end;
 
 function newLevel()	
