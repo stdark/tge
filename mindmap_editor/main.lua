@@ -75,6 +75,9 @@ function draw_buttons()
 			buttons[index] = loveframes.Create("button");
 			buttons[index]:SetPos(740+x,30+y);
 			buttons[index]:SetText("");
+			if h*i == 64 then
+				buttons[index]:SetText("clear");
+			end;
 			buttons[index]:SetHeight(64);
 			buttons[index]:SetWidth(64);
 			buttons[index].OnClick = function(object)

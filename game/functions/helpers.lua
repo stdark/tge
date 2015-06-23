@@ -1980,6 +1980,7 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].preservation = 0;
 	chars_mobs_npcs[i].dayofgods_power = 0;
 	chars_mobs_npcs[i].dayofgods_dur = 0;
+	chars_mobs_npcs[i].guardian = 0;
 
 	chars_mobs_npcs[i].num_unarmed=tmpclass2.num_unarmed;
 	chars_mobs_npcs[i].lvl_unarmed=tmpclass2.lvl_unarmed;

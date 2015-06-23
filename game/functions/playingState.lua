@@ -54,7 +54,7 @@ function playingState.load()
 	love.audio.stop(media.sounds.mainmenu, 0);
 
 	media.sounds.battle:setLooping( loop );
-	media.sounds.battle:setVolume(0.75);
+	media.sounds.battle:setVolume(0.5);
 
 	--currentState = loadingState;
 	--currentState.start(media, loadingFinished);
@@ -148,6 +148,7 @@ function playingState.load()
 	npc_load();
 	calendar.calendar_data ();
 	tricks_tips_load ();
+	quests_load ();
 
 	fractions={
 	party={party=0,greens=-100,bandidos=-100,vagrants = 0,merchants=0},
@@ -167,6 +168,7 @@ function playingState.load()
 
 	global.hang = false;
 	global.damageflag = false; --for charm,sleep,stun
+	global.questbook_page = 1;
 	tempbb={};
 	tmp_ppoint={};
 	tmp_ppoint2={};
@@ -5397,17 +5399,28 @@ function  playingState.mousepressed(x,y,button)
 	end;
 -- turning the pagesof
 
-	if button == "l"  and  game_status == "literature" and littype=="book" then
+	if button == "l"  and  game_status == "literature" and littype == "book" then
 		local x,y = helpers.centerObject(media.images.book);
-		if mX>x and mX<=x+460 and mY>y+20 and mY<y+680 and pagebook>1 then
+		if mX>x and mX <= x+460 and mY>y+20 and mY < y+680 and pagebook > 1 then
 			love.audio.play(media.sounds.bookpage, 0);
-			pagebook=pagebook-1;
-		elseif  mX>=460 and mX<x+960 and mY>y+20 and mY<y+680 and pagebook<books_ttx[list[tmp_book].q].pages then
+			pagebook = pagebook-1;
+		elseif  mX >= 460 and mX < x+960 and mY > y+20 and mY < y+680 and pagebook<books_ttx[list[tmp_book].q].pages then
 			love.audio.play(media.sounds.bookpage, 0);
-			pagebook=pagebook+1;
+			pagebook = pagebook + 1;
 		end;
 	end;
-
+	
+	if button == "l"  and  game_status == "questbook" then --FIXME notes and etc modes
+		local x,y = helpers.centerObject(media.images.book);
+		if mX>x and mX<=x+460 and mY>y+20 and mY<y+680 and global.questbook_page > 1 then
+			love.audio.play(media.sounds.bookpage, 0);
+			global.questbook_page = global.questbook_page - 1;
+		elseif  mX >= 460 and mX < x+960 and mY > y+20 and mY < y+680 and global.questbook_page < #party.quests then
+			love.audio.play(media.sounds.bookpage, 0);
+			global.questbook_page = global.questbook_page + 1;
+		end;
+	end;
+	
 --btns at alchemy --FIXME: btns at alchemy picklocking traptools
 
 --mills
@@ -8320,6 +8333,9 @@ function restoreRT ()
 				end;
 				if chars_mobs_npcs[i].panic > 0 then
 					chars_mobs_npcs[i].panic =  chars_mobs_npcs[i].panic-1;
+				end;
+				if chars_mobs_npcs[i].guardian > 0 then
+					chars_mobs_npcs[i].guardian =  chars_mobs_npcs[i].guardian-1;
 				end;
 				tmpi=i;
 				helpers.recalcResistances(i);

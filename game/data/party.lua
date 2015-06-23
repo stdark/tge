@@ -342,3 +342,8 @@ party.affronts={1,2};
 party.connections = {1,2};
 
 party.gold = 9800000;
+
+party.quests = {
+{id=1,stages={true,true,true,false,false}},
+{id=2,stages={true,true,true,true,false}},
+}

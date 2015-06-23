@@ -2681,6 +2681,9 @@ function damage.multidamage () --FIXME two hexes
 								chars_mobs_npcs[j].holyblood_dur = 0;
 								chars_mobs_npcs[j].holyblood_power = 0;
 								counter = counter - 1;	
+							elseif chars_mobs_npcs[j].guardian > 0 then
+								chars_mobs_npcs[j].guardian = 0;
+								counter = counter - 1;	
 							end;
 							if chars_mobs_npcs[j].nature == "elemental" then
 								local dmg = math.min(dmg,chars_mobs_npcs[j].hp);
@@ -4303,13 +4306,24 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( lognames.actions.andrestored[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim) .. " " .. buff .. lognames.actions.metr .. lognames.actions.ofhp);
 		helpers.mobAtBody (victim);
-		if chars_mobs_npcs[victim].hp>0 and mobs_at_hex==0 then
-			chars_mobs_npcs[victim].status=1;
+		if chars_mobs_npcs[victim].hp > 0 and mobs_at_hex == 0 then
+			chars_mobs_npcs[victim].status = 1;
 		end;
 	end;
 
 	if missle_type == "wizardeye" then
 		wlandscape[boomy][boomx] = 10;
+	end;
+	
+	if missle_type == "guardian" then
+		buff = lvl[1]*num[2];
+		if chars_mobs_npcs[victim].nature ~= "undead" then
+			chars_mobs_npcs[victim].angel = buff;
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.foundarchangel);
+		else
+		local damageHP = damage.magicalRes (victim,buff,"light");
+			damage.HPminus(victim,buff,true)
+		end;
 	end;
 	
 	if missle_type == "telekinesis" then --traps, herbs
@@ -5954,6 +5968,16 @@ function damage.HPcheck(index)
 end;
 
 function damage.HPminus(index,damageHP,flag)
+	if chars_mobs_npcs[index].guardian > 0 then
+		chars_mobs_npcs[index].guardian = chars_mobs_npcs[index].guardian - damageHP;
+		damageHP = damageHP - chars_mobs_npcs[index].guardian - damageHP;
+		if chars_mobs_npcs[index].guardian < 0 then
+			chars_mobs_npcs[index].guardian = 0;
+		end;
+		if damageHP < 0 then
+			damageHP = 0;
+		end;
+	end;
 	chars_mobs_npcs[index].hp = chars_mobs_npcs[index].hp - damageHP;
 	if chars_mobs_npcs[index].hp < chars_mobs_npcs[index].poison_status then
 		chars_mobs_npcs[index].poison_status = chars_mobs_npcs[index].hp;
@@ -6087,6 +6111,7 @@ function damage.deadNow (index)
 	chars_mobs_npcs[index].myrth_power = 0;
 	chars_mobs_npcs[index].executor_dur = 0;
 	chars_mobs_npcs[index].executor_power = 0;
+	chars_mobs_npcs[index].guardian = 0;
 	chars_mobs_npcs[index].torchlight = 0;
 	chars_mobs_npcs[index].stoneskin_dur = 0;
 	chars_mobs_npcs[index].stoneskin_power = 0;

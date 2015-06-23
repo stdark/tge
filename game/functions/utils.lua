@@ -49,7 +49,6 @@ function utils.printDebug(message)
    end;
 end;
 
-
 function utils.generateHolyGrail () --FIXME check for objects,chests
 	local selected_level = math.random(1,2);
 	package.loaded[ 'levels.level1' ] = nil;
@@ -65,11 +64,11 @@ function utils.generateHolyGrail () --FIXME check for objects,chests
 	local applicable_hexes = {};
 	for my=1,map_h do
 		for mx=1, map_w do
-			if map[mx][my] <= 300 and heights_table[map[mx][my]] == 0 and mx > 12 and mx < map_w - 12 and my > 24 and my < map_h - 24 then
+			if map[mx][my] <= 300 and heights_table[map[mx][my]] == 0 and not utils.hexHasObject(mx,my) and mx > 12 and mx < map_w - 12 and my > 24 and my < map_h - 24 then
 				local ring = utils.smallRingArea(mx,my);
 				local add_hex = true;
 				for i=1,#ring do
-					if heights_table[map[ring[i].x][ring[i].y]] ~= 0 then
+					if heights_table[map[ring[i].x][ring[i].y]] ~= 0 or utils.hexHasObject(ring[i].x,ring[i].y) then
 						add_hex = false;
 					end;
 				end;
@@ -95,6 +94,28 @@ function utils.generateHolyGrail () --FIXME check for objects,chests
 		end;
 	end;
 	return selected_level,applicable_hexes[selected_hex].x,applicable_hexes[selected_hex].y,obelisks_array;
+end;
+
+function utils.hexHasObject(x,y)
+	if bags_list and objects_list then
+		for i=1,#bags_list do
+			if bags_list[i].xi == x and bags_list[i].yi == y and bags_list[i].typ == "chest" then
+				return true;
+			end;
+			if bags_list[i].xi == x and bags_list[i].yi == y and bags_list[i].typ == "door" then
+				return true;
+			end;
+			if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "crystals" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well" or bags_list[i].typ == "box") then
+				return true;
+			end;
+		end;
+		for i=1,#objects_list do
+			if objects_list[i].xi == x and objects_list[i].yi == y then
+				return true;
+			end;
+		end;
+		end;
+	return false;
 end;
 
 function utils.smallRingArea(x,y)

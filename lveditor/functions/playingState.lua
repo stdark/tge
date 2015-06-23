@@ -4156,7 +4156,7 @@ function clearHerb(x,y)
 end;
 
 function checkHerb(x,y)
-	if not  passCheck (x,y) then
+	if not passCheck (x,y) then
 		clearHerb(x,y);
 	end;
 end;

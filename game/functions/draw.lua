@@ -2214,6 +2214,38 @@ end;
 function draw.questbook ()
 	local x,y = helpers.centerObject(media.images.book);
 	love.graphics.draw(media.images.book, x,y-70);
+	loveframes.util.RemoveAll();
+	local text_field_story = {};
+	if #party.quests > 0 then
+		local quest_id = party.quests[global.questbook_page].id;
+		--local font = quests[quest_id]["font"];
+		local font = messFont;
+		local text_title = quests[quest_id].title;
+		local text_field_title = loveframes.Create("text");
+		text_field_title:SetPos(x+200, y-40);
+		text_field_title:SetMaxWidth(340);
+		text_field_title:SetFont(font);
+		text_field_title:SetText(text_title);
+		local quest_height = 0; 
+		for i=1,#party.quests[global.questbook_page]["stages"] do
+			if party.quests[global.questbook_page]["stages"][i] then
+				local text_story = quests[quest_id]["stages"][i].story;
+				
+				local addx = 0;
+				if quests[quest_id]["stages"][i].pager then
+					addx = 400;
+				end;
+				text_field_story[i] = loveframes.Create("text");
+				text_field_story[i]:SetPos(x+140+addx, y + quest_height + 20*i);
+				text_field_story[i]:SetMaxWidth(340);
+				text_field_story[i]:SetFont(font);
+				text_field_story[i]:SetText(text_story);
+			end;
+			if text_field_story[i] then
+				quest_height = quest_height + text_field_story[i]:GetHeight();
+			end;
+		end;
+	end;
 end;
 
 function draw.equipment ()
