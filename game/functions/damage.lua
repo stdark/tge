@@ -5721,13 +5721,13 @@ function damage.mindGameCast()
 	
 	if missle_type == "controlundead" then
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
-		if chars_mobs_npcs[current_mob].lvl_spirit*chars_mobs_npcs[current_mob].num_mind > chars_mobs_npcs[victim].rezspirit
+		if chars_mobs_npcs[current_mob].lvl_darkness*chars_mobs_npcs[current_mob].num_mind > chars_mobs_npcs[victim].rezdarkness
 		and chars_mobs_npcs[victim].sleep==0
 		and chars_mobs_npcs[victim].berserk==0 and chars_mobs_npcs[victim].stone==0
 		and chars_mobs_npcs[victim].freeze==0
 		and chars_mobs_npcs[victim].nature=="undead"
 		then
-			local debuff = chars_mobs_npcs[current_mob].lvl_spirit;
+			local debuff = chars_mobs_npcs[current_mob].lvl_darkness;
 			local minusstatus = 7;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][6] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][6] - debuff);
 			local snd = "mindgame_loyality"; --FIXME master

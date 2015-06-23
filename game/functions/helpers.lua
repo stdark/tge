@@ -2714,6 +2714,35 @@ function helpers.find_free_hexes (index)
 	return free_hexes;
 end;
 
+function helpers.findAreaHexes (index,area)
+	local area_hexes = {};
+	for mx=1,map_w do
+		for my=1,map_h do
+			if helpers.passCheck(mx,my) and not helpers.aliveAtHex(mx,my)
+			and helpers.thisHexAtArea(x,y,area)
+			and helpers.passMove (mx,my,current_mob)
+			then
+				ai_world_x = mx;
+				ai_world_y = my;
+				mob_can_move = 0;
+				path_finding (0,0);
+				if path_status == 1 then
+					local number_of_hex = (mx-1)*map_w+my;
+					table.insert(area_hexes,number_of_hex);
+				end;
+			end;
+		end;
+	end;
+	return area_hexes;
+end;
+
+function helpers.thisHexAtArea(x,y,area)
+	if area_table(x,y) == area then
+		return true;
+	end;
+	return false;
+end;
+
 function helpers.partyAlive ()
 	local partyAlive = false;
 	for i=1,chars do

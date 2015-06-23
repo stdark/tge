@@ -489,6 +489,18 @@ function ai.behavior()
 	if chars_mobs_npcs[current_mob].ai == "building" then
 		game_status = "restoring";
 	end;
+--RETURNING TO BASE
+	if chars_mobs_npcs[current_mob].area and not helpers.thisHexAtArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].area) then
+		local free_hexes = helpers.findZoneHexes (current_mob);
+		if #free_hexes > 0 then	
+			chars_mobs_npcs[current_mob].ai == "called";
+			mob_is_going_to_hit = 0;
+			local roll_point = math.random(1,#free_hexes);
+			chars_mobs_npcs[current_mob]["call"].x = all_ground_hexes[free_hexes[roll_point]].x;
+			chars_mobs_npcs[current_mob]["call"].y = all_ground_hexes[free_hexes[roll_point]].y;
+			--call
+		end;
+	end;
 end;
 
 function ai.fractionRelations (watcher,index)

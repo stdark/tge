@@ -1647,7 +1647,7 @@ function resize_background ()
 end;
 
 function passCheck (x,y)
-	if not map[y][x] then
+	if not map[y] or not map[y][x] then
 		return false;
 	end;
 	local height_value = 0;
@@ -2250,6 +2250,7 @@ function playingState.mousepressed(x, y, button)
 		if brush == 0 then
 			if insideMap(cursor_world_y,cursor_world_x) then
 				map[cursor_world_y][cursor_world_x] = global.copied[1];
+				checkHerb(cursor_world_x,cursor_world_y);
 			end;
 		elseif brush == 1 or brush == 2 or brush == 3 then
 			local rings = ringArea(cursor_world_x,cursor_world_y);
@@ -2263,6 +2264,7 @@ function playingState.mousepressed(x, y, button)
 				for i=1,#rings[h] do
 					if insideMap(rings[h][i].y,rings[h][i].x) and _tmp_array[counter] then	
 						map[rings[h][i].y][rings[h][i].x] = _tmp_array[counter];
+						checkHerb(rings[h][i].x,rings[h][i].y);
 					end;
 					counter = counter + 1;
 				end;
@@ -2277,6 +2279,7 @@ function playingState.mousepressed(x, y, button)
 			for i=1,#boomarea do
 				if insideMap(boomarea[i].y,boomarea[i].x) and _tmp_array[counter] then
 					map[boomarea[i].y][boomarea[i].x] = _tmp_array[counter];
+					checkHerb(boomarea[i].x,boomarea[i].y);
 				end;
 				counter = counter + 1;
 			end;
@@ -2294,6 +2297,7 @@ function playingState.mousepressed(x, y, button)
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				map[cursor_world_y][cursor_world_x] = map_value;
+				checkHerb(cursor_world_x,cursor_world_y);
 			end;
 		elseif brush == 1 or brush == 2 or brush == 3 then
 			if global.randomize_hexes == -1 then
@@ -2304,6 +2308,7 @@ function playingState.mousepressed(x, y, button)
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				map[cursor_world_y][cursor_world_x] = map_value;
+				checkHerb(cursor_world_x,cursor_world_y);
 			end;
 			local rings = ringArea(cursor_world_x,cursor_world_y);
 			for h=1,brush do
@@ -2316,6 +2321,7 @@ function playingState.mousepressed(x, y, button)
 					end;
 					if insideMap(rings[h][i].y,rings[h][i].x) then
 						map[rings[h][i].y][rings[h][i].x] = map_value;
+						checkHerb(rings[h][i].x,rings[h][i].y);
 					end;
 				end;
 			end;
@@ -2330,6 +2336,7 @@ function playingState.mousepressed(x, y, button)
 						map_value = current_hex_type+rnd+row_status*10;
 					end;
 					map[boomarea[i].y][boomarea[i].x] = map_value;
+					checkHerb(boomarea[i].x,boomarea[i].y);
 				end;
 			end;
 		end;
@@ -3531,9 +3538,11 @@ function startDiggers(x,y,count,flag) --FIXME submap only
 	if insideMap(cursor_world_x,cursor_world_y) then
 		if global.randomize_hexes == -1 then
 			map[cursor_world_y][cursor_world_x] = row_status*10+current_hex_type;
+			checkHerb(cursor_world_x,cursor_world_y);
 		else
 			local _rnd = math.random(1,global.rnd_value+1)-1;
 			map[cursor_world_y][cursor_world_x] = row_status*10+current_hex_type+_rnd;
+			checkHerb(cursor_world_x,cursor_world_y);
 		end;
 	end;
 	diggers = {};
@@ -3557,9 +3566,11 @@ function startDiggers(x,y,count,flag) --FIXME submap only
 					if insideMap(diggers[i].y+directions[1]["y"][i],diggers[i].x+xdirections[i]) then
 						if global.randomize_hexes == -1 then
 							map[diggers[i].y+directions[1]["y"][i]][diggers[i].x+xdirections[i]] = row_status*10+current_hex_type;
+							checkHerb(diggers[i].x+xdirections[i],diggers[i].y+directions[1]["y"][i]);
 						else
 							local _rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
 							map[diggers[i].y+directions[1]["y"][i]][diggers[i].x+xdirections[i]] = row_status*10+current_hex_type+_rnd;
+							checkHerb(diggers[i].x+xdirections[i],diggers[i].y+directions[1]["y"][i]);
 						end;
 					end;
 				end;
@@ -3570,9 +3581,11 @@ function startDiggers(x,y,count,flag) --FIXME submap only
 			if insideMap(diggers[i].y,diggers[i].x) then
 				if global.randomize_hexes == -1 then
 					map[diggers[i].y][diggers[i].x] = row_status*10+current_hex_type;
+					checkHerb(diggers[i].x,diggers[i].y);
 				else
 					local _rnd = math.random(1,global.rnd_value+1)-1;
 					map[diggers[i].y][diggers[i].x] = row_status*10+current_hex_type+_rnd;
+					checkHerb(diggers[i].x,diggers[i].y);
 				end;
 			end;
 			if ifDiggerStops(diggers[i].x ,diggers[i].y ,row_status*10+current_hex_type) then
@@ -4135,10 +4148,17 @@ function addHerb(x,y)
 	else
 		harvest_table[y][x] = {current_herb,current_herb_dencity,{}};
 	end;
+	checkHerb(x,y);
 end;
 
 function clearHerb(x,y)
 	harvest_table[y][x] = {0,0,{}};
+end;
+
+function checkHerb(x,y)
+	if not  passCheck (x,y) then
+		clearHerb(x,y);
+	end;
 end;
 
 function checkHerbs()
