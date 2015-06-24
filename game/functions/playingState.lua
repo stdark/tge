@@ -980,10 +980,16 @@ function playingState.update(dt)
 			global.hang = false;
 			global.mindhero_x = global.mindway[#global.mindway][1];
 			global.mindhero_y = global.mindway[#global.mindway][2];
+			
 			if mindgame.map[global.mindhero_x][global.mindhero_y] >= 1 and mindgame.map[global.mindhero_x][global.mindhero_y] <= 7 then -- opponent ignores money
 				love.audio.play(media.sounds.gold_dzen,0);
 				party.gold = party.gold+mindgame.moneysums[mindgame.map[global.mindhero_x][global.mindhero_y]];
 				global.mindgold = global.mindgold-mindgame.moneysums[mindgame.map[global.mindhero_x][global.mindhero_y]];
+				mindgame.map[global.mindhero_x][global.mindhero_y] = 0;
+			end;
+			
+			if mindgame.map[global.mindhero_x][global.mindhero_y] >= 1000 then -- opponent ignores gifts
+				--love.audio.play(media.sounds.gold_dzen,0);
 				mindgame.map[global.mindhero_x][global.mindhero_y] = 0;
 			end;
 
@@ -998,7 +1004,7 @@ function playingState.update(dt)
 					local plusstatus = 1;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1006,7 +1012,7 @@ function playingState.update(dt)
 					local plusstatus = 2;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1014,7 +1020,7 @@ function playingState.update(dt)
 					local plusstatus = 3;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1022,7 +1028,7 @@ function playingState.update(dt)
 					local plusstatus = 4;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1030,7 +1036,7 @@ function playingState.update(dt)
 					local plusstatus = 5;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1038,7 +1044,7 @@ function playingState.update(dt)
 					local plusstatus = 6;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1046,7 +1052,7 @@ function playingState.update(dt)
 					local plusstatus = 7;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1054,7 +1060,7 @@ function playingState.update(dt)
 					local plusstatus = 8;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1062,7 +1068,7 @@ function playingState.update(dt)
 					local plusstatus = 9;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1070,7 +1076,7 @@ function playingState.update(dt)
 					local plusstatus = 10;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1078,7 +1084,7 @@ function playingState.update(dt)
 					local plusstatus = 11;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -1086,7 +1092,7 @@ function playingState.update(dt)
 					local plusstatus = 12;
 					local plusnumber = 5;
 					local minusnumber = 1;
-					for i=1,10 do
+					for i=1,12 do
 						chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] - minusnumber);
 					end;
 					chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
@@ -2230,23 +2236,7 @@ function playingState.mousereleased (x,y,button)
 	end;
 
 	if button == "l" and game_status == "mindgame" then
-		local x,y = helpers.centerObject(media.images.map);
-		local chatlog_height = 0;
-		local chatlogTextField = {};
-		--for i=1,math.min(#mindgame_log,4) do
-		for i=#mindgame_log-1,#mindgame_log do
-			local text = mindgame_log[i];
-			if chatlogTextField[i-1] then
-				chatlog_height = chatlog_height + chatlogTextField[i-1]:GetHeight();
-			end;
-			if chatlog_height < 300 then
-				chatlogTextField[i] = loveframes.Create("text");
-				chatlogTextField[i]:SetPos(x+140,y + chatlog_height);
-				chatlogTextField[i]:SetMaxWidth(500);
-				chatlogTextField[i]:SetFont(bookFont);
-				chatlogTextField[i]:SetText(text);
-			end;
-		end;
+		draw.mindgameLog ();
 	end;
 
 	--if button == "l" and game_status == "skills" and mX >= 600 and mX <= 690 and mY >= 600 and mY <= 630 then
@@ -2270,9 +2260,10 @@ function playingState.mousereleased (x,y,button)
 			current_questions = {};
 		end;
 		local index = chars_mobs_npcs[victim]["personality"]["current"].chat;
-		local linenumber=0;
+		local linenumber = 0;
 		if chars_mobs_npcs[victim]["personality"] then
-			chars_mobs_npcs[victim]["personality"]["current"].mindstatus = {0,0,0,0,0,0,0,0,0,0}; --FIXME depends ON
+			--chars_mobs_npcs[victim]["personality"]["current"].mindstatus = {0,0,0,0,0,0,0,0,0,0,0,0}; --FIXME depends ON
+			chars_mobs_npcs[victim]["personality"]["current"].mindstatus = chars_mobs_npcs[victim]["personality"]["default"].mindstatus;
 		end;
 		local current_questions = {};
 		for i = 1,#chats.rules[index] do
@@ -2569,10 +2560,12 @@ function playingState.mousereleased (x,y,button)
 					mindgame.updateFlags();
 					mindgame_log = {};
 					mindgame.map = mindmaps[index]; --FIXME NEED RESET
+					global.threats_level = 0;
 					global.mindgold = 0;
 					global.mindgold_array = {};
-					global.threats_level = 0;
 					global.goldmissle = 1;
+					global.minddrink_array = {};
+					global.drinkmissle = 1;
 					global.secrets_pull = party.secrets;
 					global.jokes_pull = party.jokes;
 					global.nlps_pull = party.nlps;
@@ -2585,6 +2578,11 @@ function playingState.mousereleased (x,y,button)
 						local _gold = mindgame.moneysums[i];
 						if party.gold >= _gold then
 							table.insert(global.mindgold_array,_gold);
+						end;
+					end;
+					for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+						if chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid == raws.buz then
+							table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="alcho",price=1});
 						end;
 					end;
 					mindmissle = false;
@@ -4171,6 +4169,29 @@ function  playingState.mousepressed(x,y,button)
 							mindmissle = 1;
 							loveframes.util.RemoveAll();
 							draw.mindgameButtons();
+						elseif mindmissle > 1000 and #global.minddrink_array >= 1 then --drinks,gifts
+							local index = mindmissle;
+							mindgame.map[global.mindcursor_x][global.mindcursor_y] = index;
+							local emo = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinks"];
+							for i=1,12 do
+								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] + mindgame["flags_drinks"][emo][1][i]*math.ceil(chars_mobs_npcs[current_mob].chr/5);
+								local snd = "mindgame_" .. mindgame["flags_drinks"][emo][3];
+							end;
+							love.audio.play(media.sounds.inv_bottle_put,0);
+							table.remove(chars_mobs_npcs[current_mob]["inventory_list"],global.minddrink_array[global.drinkmissle].itemid);
+							helpers.renumber (global.minddrink_array[global.drinkmissle].itemid,current_mob);
+							global.minddrink_array = {};
+							for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+								if chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid == raws.buz then
+									table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="alcho",price=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].price});
+								end;
+							end;
+							phrase1 = chars_mobs_npcs[current_mob].name .. ": " ..chats.questionPerEtiquette("wannadrink",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette);
+							phrase2 = helpers.mobName(victim) .. ": " .. mindgame["flags_drinks"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinks"]][4];
+							mindmissle = false;
+							global.drinkmissle = 1;
+							loveframes.util.RemoveAll();
+							draw.mindgameButtons();
 						elseif mindmissle >=10 and mindmissle <= 16 then --threats
 							local _level = threats_ttx[global.threats_pull[global.current_threat] ].level;
 							local _repo_down = math.max(1,threats_ttx[global.threats_pull[global.current_threat]].repodown - chars_mobs_npcs[current_mob].chr);
@@ -5575,7 +5596,7 @@ function  playingState.mousepressed(x,y,button)
 				local tmppower2=math.ceil(tmppower*inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].tool3].ttxid].a/100);
 				local tmppower3=tmppower2+math.random(tmppower-tmppower2);
 				chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3]={ttxid=raws.tare,q=1,w=1,e=1,r=1};
-				mixedpotion=raws.bubuz;
+				mixedpotion=raws.buz;
 				helpers.findpotion (comparray, #comparray);
 				chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2]={ttxid=mixedpotion,q=tmppower3,w=1,e=1,r=1}
 				helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.distillated[chars_stats[current_mob].gender] .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].title .. lognames.actions.ofpower .. tmppower3)

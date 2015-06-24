@@ -78,10 +78,16 @@ function mindgame.updateFlags()
 	};
 
 	mindgame.flags_drinks = {
-	boozer      = {1,1,true},
-	teetotaller = {3,1,false},
-	abstainer   = {4,1,false},
-	ulcer       = {5,1,false},
+	
+	drinker     = {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("uknowwhattopresent",etiquette)},
+	boozer      = {{0,0,0,0,0,0,0,0,0,1,0,0},false,"respect",chats.questionPerEtiquette("reallygoodone",etiquette)},
+	drunkard 	= {{0,0,0,0,0,0,0,0,0,0,1,0},false,"lol",chats.questionPerEtiquette("iwanttodrink",etiquette)},
+	teetotaller = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("donotdrink",etiquette)},
+	abstainer   = {{0,1,0,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("bueh",etiquette)},
+	agressive   = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"boring",chats.questionPerEtiquette("hatealcohol",etiquette)},
+	ulcer       = {{0,0,0,0,0,1,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("cruelbastard",etiquette)},
+	anonymous	= {{0,0,0,0,0,0,0,0,0,0,0,1},false,"boring",chats.questionPerEtiquette("andimalcholoic",etiquette)},
+	
 	};
 	
 	mindgame.flags_informed = {
@@ -244,24 +250,18 @@ function mindgame.passCheck(x,y)
 			local _index = mindgame.map[x][y];
 			if _index <= 7 and mindgame.flags_gold[chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["gold"]][_index][2] then
 				return false;
---[[			elseif _index == 10 and mindgame.flags_threat[chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["threat"] ][_index-9][7] then
-				return false;
-			elseif _index == 11 and mindgame.flags_threat[chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["threat"] ][_index-9][7] then
-				return false;
-			elseif _index == 12 and mindgame.flags_threat[chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["threat"] ][_index-9][7] then
-				return false;]]
-		--	else
-			--	return true;
 			end;
 		end;
-		if mindgame.map[x][y] and mindgame.map[x][y] > 7 and  mindgame.map[x][y] <= 100 then
+		if mindgame.map[x][y] and mindgame.map[x][y] >= 1000 then
 			return false;
-		else
-			return true;
+		end;
+		if mindgame.map[x][y] and mindgame.map[x][y] > 7 and mindgame.map[x][y] <= 100 then
+			return false;
 		end;
 	else
 		return false;
 	end;
+	return true;
 end;
 
 function mindgame.passTurn()

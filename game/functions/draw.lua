@@ -1842,6 +1842,27 @@ function draw.miniLog ()
 	love.graphics.setColor(255, 255, 255);
 end;
 
+function draw.mindgameLog ()
+	love.graphics.setColor(0, 0, 0);
+	local x,y = helpers.centerObject(media.images.map);
+		local chatlog_height = 0;
+		local chatlogTextField = {};
+		for i=#mindgame_log-1,#mindgame_log do
+			local text = mindgame_log[i];
+			if chatlogTextField[i-1] then
+				chatlog_height = chatlog_height + chatlogTextField[i-1]:GetHeight();
+			end;
+			if chatlog_height < 300 then
+				chatlogTextField[i] = loveframes.Create("text");
+				chatlogTextField[i]:SetPos(x+140,y + chatlog_height);
+				chatlogTextField[i]:SetMaxWidth(500);
+				chatlogTextField[i]:SetFont(bookFont);
+				chatlogTextField[i]:SetText(text);
+			end;
+		end;
+	love.graphics.setColor(255, 255, 255);
+end;
+
 function draw.bigLog ()
 	loveframes.util.RemoveAll();
 	love.graphics.setFont(heroesFont);
@@ -2018,6 +2039,11 @@ function draw.mindgame()
 			end;
 		end;
 	end;
+	if total_diplomacy >= 1 and #global.minddrink_array >= 1 then
+		local id = global.minddrink_array[global.drinkmissle].spriteid
+		--love.graphics.draw(media.images.items2,tiles_items[id],x+496,y+360);
+		love.graphics.draw(media.images.items2,tiles_items[id],x+496,y+370);
+	end;
 	--local coords = global.mindcursor_x .. "X" .. global.mindcursor_y;
 	--love.graphics.print(coords, 750,200);
 	--if mindmissle then
@@ -2047,7 +2073,8 @@ function draw.mindgameCycle(before)
 			if condition then
 				if mindgame.map[i][h] >= 1 and mindgame.map[i][h] <= 7 then
 					if mindgame.map[i][h] == 1 then
-						draw.drawMindObject(media.images.ui,gold_icons[5],i,h,-325,-115);
+						--draw.drawMindObject(media.images.ui,gold_icons[5],i,h,-325,-115);
+						draw.drawMindObject(media.images.ui,gold_icons[4],i,h,-332,-130);
 					elseif  mindgame.map[i][h] == 2 then
 						draw.drawMindObject(media.images.ui,gold_icons[4],i,h,-332,-130);
 					elseif  mindgame.map[i][h] == 3 then
@@ -2084,6 +2111,9 @@ function draw.mindgameCycle(before)
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_sad_icon,i,h,-384,-200);
 				elseif mindgame.map[i][h] > 100 and mindgame.map[i][h] <= 165 then
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_icons[mindgame.map[i][h]-100],i,h,-350,-200);
+				elseif mindgame.map[i][h] > 1000 then
+					local tileid = mindgame.map[i][h] - 1000;
+					draw.drawMindObject(media.images.items2,tiles_items[tileid],i,h,-336,-175);
 				end;
 			end;
 		end;
@@ -5386,7 +5416,7 @@ function draw.mindgameButtons()
 		local text = mindgame.moneysums[global.goldmissle];
 		local addx = math.ceil(5*(7-#tostring(text)));
 		global.gold_text_field = loveframes.Create("text");
-		global.gold_text_field:SetPos(x+145+addx,y+400);
+		global.gold_text_field:SetPos(x+95+addx,y+400);
 		global.gold_text_field:SetMaxWidth(100);
 		global.gold_text_field:SetFont(bookFont);
 		global.gold_text_field:SetText(text);
@@ -5395,7 +5425,7 @@ function draw.mindgameButtons()
 	if total_diplomacy >= 1 and #global.mindgold_array > 1 then
 		global.buttons.g3_button = loveframes.Create("imagebutton");
 		global.buttons.g3_button:SetImage(media.images.button9);
-		global.buttons.g3_button:SetPos(x+235,y+395);
+		global.buttons.g3_button:SetPos(x+190,y+395);
 		global.buttons.g3_button:SizeToImage()
 		global.buttons.g3_button:SetText(">>>");
 		global.buttons.g3_button.OnClick = function(object)
@@ -5412,13 +5442,59 @@ function draw.mindgameButtons()
 	if total_diplomacy >= 1 and #global.mindgold_array > 1 then
 		global.buttons.g4_button = loveframes.Create("imagebutton");
 		global.buttons.g4_button:SetImage(media.images.button9);
-		global.buttons.g4_button:SetPos(x+335,y+395);
+		global.buttons.g4_button:SetPos(x+290,y+395);
 		global.buttons.g4_button:SizeToImage()
 		global.buttons.g4_button:SetText(lognames.mindgame.bribery);
 		global.buttons.g4_button.OnClick = function(object)
 			mindmissle = global.goldmissle;
 		end;
 	end;
+	
+	--drink
+	local addx2 = 355;
+	
+	if total_diplomacy >= 1 and #global.minddrink_array >= 1 then
+		global.buttons.d1_button = loveframes.Create("imagebutton");
+		global.buttons.d1_button:SetImage(media.images.button9);
+		global.buttons.d1_button:SetPos(x+35+addx2,y+395);
+		global.buttons.d1_button:SizeToImage()
+		global.buttons.d1_button:SetText("<<<");
+		global.buttons.d1_button.OnClick = function(object)
+			if global.drinkmissle > 1 then
+				global.drinkmissle = global.drinkmissle - 1;
+			else
+				global.drinkmissle = #global.minddrink_array;
+			end;
+			mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+		end;
+	end;
+	
+	if total_diplomacy >= 1 and #global.minddrink_array >= 1 then
+		global.buttons.d3_button = loveframes.Create("imagebutton");
+		global.buttons.d3_button:SetImage(media.images.button9);
+		global.buttons.d3_button:SetPos(x+180+addx2,y+395);
+		global.buttons.d3_button:SizeToImage()
+		global.buttons.d3_button:SetText(">>>");
+		global.buttons.d3_button.OnClick = function(object)
+			if global.drinkmissle < #global.minddrink_array then
+				global.drinkmissle = global.drinkmissle + 1;
+			else
+				global.drinkmissle = 1;
+			end;
+			mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+		end;
+	end;
+	if total_diplomacy >= 1 and #global.minddrink_array >= 1 then
+		global.buttons.d4_button = loveframes.Create("imagebutton");
+		global.buttons.d4_button:SetImage(media.images.button9);
+		global.buttons.d4_button:SetPos(x+280+addx2,y+395);
+		global.buttons.d4_button:SizeToImage()
+		global.buttons.d4_button:SetText(lognames.mindgame.gift);
+		global.buttons.d4_button.OnClick = function(object)
+			mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+		end;
+	end;
+	
 	--threats
 
 	if total_diplomacy >= 1 and #global.threats_pull > 0 then
@@ -5736,7 +5812,7 @@ function draw.mindgameButtons()
 			mindmisle = 34;
 			end;
 	end;
-	
+	draw.mindgameLog ();
 	love.graphics.setColor(255, 255, 255);
 	love.graphics.setFont(mainFont);
 end;
