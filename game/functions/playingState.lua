@@ -521,7 +521,7 @@ function playingState.load()
 		};
 		
 --[[ for lveditor output
-		local traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"}; --zazaza
+		local traptypes={"fire","cold","static","poison","acid","disease","spikes","teleport",",bell"}; 
 		for i=1,#bags_list do
 			if bags_list[i].typ == "chest" or bags_list[i].typ == "trap" or bags_list[i].typ == "door" then
 				if bags_list[i].locked  then
@@ -4173,9 +4173,21 @@ function  playingState.mousepressed(x,y,button)
 							local index = mindmissle;
 							mindgame.map[global.mindcursor_x][global.mindcursor_y] = index;
 							local emo = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinks"];
+							local price = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinksprice"];
 							for i=1,12 do
+								if emo == taster and price and price > inventory_ttx[index-1000].price then
+									emo = taster2;
+								end;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] + mindgame["flags_drinks"][emo][1][i]*math.ceil(chars_mobs_npcs[current_mob].chr/5);
 								local snd = "mindgame_" .. mindgame["flags_drinks"][emo][3];
+							end;
+							if emo == "boozer" then
+								if chars_mobs_npcs[current_mob].nature ~= "undead" then
+									damage.applyConditionTwoFactors (current_mob,3,10,"drunk","poison","enu",false,1,true);
+									helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drunk[chars_mobs_npcs[current_mob].gender]);
+								end;
+								damage.applyConditionTwoFactors (victim,3,10,"drunk","poison","enu",false,1,true);
+								helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.drunk[chars_mobs_npcs[victim].gender]);
 							end;
 							love.audio.play(media.sounds.inv_bottle_put,0);
 							table.remove(chars_mobs_npcs[current_mob]["inventory_list"],global.minddrink_array[global.drinkmissle].itemid);

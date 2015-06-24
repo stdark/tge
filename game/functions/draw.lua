@@ -2113,7 +2113,7 @@ function draw.mindgameCycle(before)
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_icons[mindgame.map[i][h]-100],i,h,-350,-200);
 				elseif mindgame.map[i][h] > 1000 then
 					local tileid = mindgame.map[i][h] - 1000;
-					draw.drawMindObject(media.images.items2,tiles_items[tileid],i,h,-336,-175);
+					draw.drawMindObject(media.images.items2,tiles_items[tileid],i,h,-336,-170);
 				end;
 			end;
 		end;

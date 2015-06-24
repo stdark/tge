@@ -83,11 +83,13 @@ function mindgame.updateFlags()
 	boozer      = {{0,0,0,0,0,0,0,0,0,1,0,0},false,"respect",chats.questionPerEtiquette("reallygoodone",etiquette)},
 	drunkard 	= {{0,0,0,0,0,0,0,0,0,0,1,0},false,"lol",chats.questionPerEtiquette("iwanttodrink",etiquette)},
 	teetotaller = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("donotdrink",etiquette)},
-	abstainer   = {{0,1,0,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("bueh",etiquette)},
-	agressive   = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"boring",chats.questionPerEtiquette("hatealcohol",etiquette)},
-	ulcer       = {{0,0,0,0,0,1,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("cruelbastard",etiquette)},
-	anonymous	= {{0,0,0,0,0,0,0,0,0,0,0,1},false,"boring",chats.questionPerEtiquette("andimalcholoic",etiquette)},
-	
+	abstainer   = {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("bueh",etiquette)},
+	agressive   = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"agression",chats.questionPerEtiquette("hatealcohol",etiquette)},
+	ulcer       = {{0,0,0,0,0,1,0,0,0,0,0,0},false,"cry",chats.questionPerEtiquette("cruelbastard",etiquette)},
+	anonymous	= {{0,0,0,0,0,0,0,0,0,0,0,1},false,"shame",chats.questionPerEtiquette("andimalcholoic",etiquette)},
+	taster		= {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("winenotbad",etiquette)},
+	taster2		= {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("disgustingwine",etiquette)},
+	poisoner	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("poisoner",etiquette)},
 	};
 	
 	mindgame.flags_informed = {
@@ -252,7 +254,8 @@ function mindgame.passCheck(x,y)
 				return false;
 			end;
 		end;
-		if mindgame.map[x][y] and mindgame.map[x][y] >= 1000 then
+		local drinkmode =  chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinks"];
+		if mindgame.map[x][y] and mindgame.map[x][y] >= 1000 and (drinkmode == "drinker" or drinkmode == "boozer" or drinkmode == "drunkard") then
 			return false;
 		end;
 		if mindgame.map[x][y] and mindgame.map[x][y] > 7 and mindgame.map[x][y] <= 100 then
