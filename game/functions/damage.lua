@@ -3190,40 +3190,11 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
-	if (missle_type == "bottle" and missle_subtype == "oxybomb") or missle_type == "oxybomb" then
-		local index = 1;
-		local boompower = 1;
-		--boomareas.poisonAir(boomx,boomy,index,lvl[2],num[2]);
-		for j=1,#chars_mobs_npcs do
-			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
-				local damageST = damage.magicalRes (j,25+math.random(1,10)*num[1] + num[1],"poison");
-				damage.STminus(j,damageHP,true);
-				table.insert(damaged_mobs,j);
-				damage.mobDamaged(j,current_mob,math.ceil(damageST/2));
-				exp_for_what(math.ceil(damageST/2),current_mob);
-			end;
-		end;
-		local rings = boomareas.ringArea(boomx,boomy);
-		for h=1,boompower do
-			for i=1,#rings[h] do
-				for j=1,#chars_mobs_npcs do
-					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
-						local damageST = damage.magicalRes (j,25+math.random(1,10)*num[1] + num[1],"poison");
-						damage.STminus(j,damageHP,true);
-						table.insert(damaged_mobs,j);
-						damage.mobDamaged(j,current_mob,math.ceil(damageST/2));
-						exp_for_what(math.ceil(damageST/2),current_mob);
-					end;
-				end;
-			end;
-		end;
-	end;
-	
 --charmbomb (bumba!)
---berserkbomb (int check)
 --panicbomb
 --fearbomb
 --demoralizebomb
+--sleepbomb
 	
 	for i = 1, #damaged_mobs do --mb powerheal should not be here? or just no dmg
 		--damage.mobDamaged(damaged_mobs[i]);
@@ -4319,7 +4290,7 @@ function damage.instantCast () --FIXME use lvl, num
 		buff = lvl[1]*num[2];
 		if chars_mobs_npcs[victim].nature ~= "undead" then
 			chars_mobs_npcs[victim].angel = buff;
-			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.foundarchangel);
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.gotarchangel[chars_mobs_npcs[victim].gender]);
 		else
 		local damageHP = damage.magicalRes (victim,buff,"light");
 			damage.HPminus(victim,buff,true)

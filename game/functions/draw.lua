@@ -2560,62 +2560,44 @@ function draw.objects ()
 				end;  
 			end;
 			for j=1,#bags_list do
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ ~= "door" and bags_list[j].typ ~= "well" and bags_list[j].typ ~= "crystals" and bags_list[j].typ ~= "scullpile" and bags_list[j].typ ~= "trashheap" and bags_list[j].typ ~= "box" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].typ == "bag" then
+					addx = 16;
+					addy = 12;
+				elseif bags_list[j].typ == "chest" then
+					addx = 16;
+					addy = 12;
+				elseif bags_list[j].typ == "barrel" or  bags_list[j].typ == "cauldron" then
+					addx = 32;
+					addy = 32;
+				elseif bags_list[j].typ == "brokenbarrel" then
+					addx = 32;
+					addy = 32;
+				elseif bags_list[j].typ == "door" then
+					addx = 32;
+					addy = 64;
+				elseif bags_list[j].typ == "box" then
+					addx = 16;
+					addy = 8;
+				elseif bags_list[j].typ == "crystals" then
+					addx = 32;
+					addy = 46;
+				elseif bags_list[j].typ == "trashheap" then
+					addx = 32;
+					addy = 32;
+				elseif bags_list[j].typ == "scullpile" then
+					addx = 32;
+					addy = 32;
+				elseif bags_list[j].typ == "well" then
+					addx = 64;
+					addy = 96;
+				end;
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-12);
+						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-16, (my-1)*tile_h*0.75+top_space-12);
+						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
 					end;
 				end;
-				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "door" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-64);
-					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-64);
-					end;
-				end;
-				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "box" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-16, (my-1)*tile_h*0.75+top_space-8);
-					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-16, (my-1)*tile_h*0.75+top_space-8);
-					end;
-				end;
-				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "crystals" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-46);
-					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-46);
-					end;
-				end;
-				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "scullpile" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
-					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-32);
-					end;
-				end;
-				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "trashheap" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space-32);
-					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-32, (my-1)*tile_h*0.75+top_space-32);
-					end;
-				end;
-				
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and bags_list[j].typ == "well" and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-64, (my-1)*tile_h*0.75+top_space-96);
-					else  
-						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-64, (my-1)*tile_h*0.75+top_space-96);
-					end;
-				end;
-				
 			end;
 			for j=1, #objects_list do
 				local addx = 0;

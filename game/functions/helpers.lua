@@ -2830,7 +2830,7 @@ end;
 
 function helpers.cursorAtMaterialBag(x,y)
 	for i=1,#bags_list do
-		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "crystals" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well" or bags_list[i].typ == "box") then
+		if bags_list[i].xi == x and bags_list[i].yi == y and (bags_list[i].typ == "trashheap" or bags_list[i].typ == "crystals" or bags_list[i].typ == "scullpile" or bags_list[i].typ == "campfire" or bags_list[i].typ == "crystals" or bags_list[i].typ == "secret" or bags_list[i].typ == "well" or bags_list[i].typ == "box" or bags_list[i].typ == "barrel" or bags_list[i].typ == "cauldron") then
 			return true,i;
 		end;
 	end;

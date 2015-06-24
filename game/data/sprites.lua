@@ -182,13 +182,13 @@ function sprites.load()
 	};
 	
 	barrel_img = {};
-	for i=1,12 do
+	for i=1,13 do
 		local _x = (i-1)*64;
 		table.insert(barrel_img,love.graphics.newQuad(_x, 320, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
 	end;
 	
 	cauldron_img = {};
-	for i=1,11 do
+	for i=1,13 do
 		local _x = (i-1)*64;
 		table.insert(cauldron_img,love.graphics.newQuad(_x, 384, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
 	end;
