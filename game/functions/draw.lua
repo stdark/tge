@@ -3462,7 +3462,7 @@ function draw.showinventory()
 			bag_found = true;
 			if bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and not bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) then
 				if bags_list[j].typ == "chest" and not bags_list[j].opened then
-					love.audio.play(media.sounds.chestopen_unlocked, 0);
+					utils.playSfx(media.sounds.chestopen_unlocked, 1);
 					bags_list[j].opened = true;
 					if bags_list[j].traped then
 						if bags_list[j].locktype == 1 then
@@ -3503,7 +3503,7 @@ function draw.showinventory()
 						for h=1,10 do
 							lock_elements[h] = 0;
 						end;
-						love.audio.play(media.sounds.chestopen_key, 0);
+						utils.playSfx(media.sounds.chestopen_key, 1);
 					end;	
 				end;
 				if bags_list[j].locked then
@@ -4857,7 +4857,7 @@ function draw.inventory_bag ()
 			bag_found = true;
 			if bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and not bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) then
 				if bags_list[j].typ == "chest" and not bags_list[j].opened then
-					love.audio.play(media.sounds.chestopen_unlocked, 0);
+					utils.playSfx(media.sounds.chestopen_unlocked, 1);
 					bags_list[j].opened = true;
 					if bags_list[j].traped then
 						if bags_list[j].locktype == 1 then
@@ -4899,7 +4899,7 @@ function draw.inventory_bag ()
 						for h=1,10 do
 							lock_elements[h] = 0;
 						end;
-						love.audio.play(media.sounds.chestopen_key, 0);
+						utils.playSfx(media.sounds.chestopen_key, 1);
 					end;	
 				end;
 				if bags_list[j].locked then

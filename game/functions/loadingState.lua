@@ -39,8 +39,10 @@ function loadingState.start(media, finishCallback)
 		package.loaded[ 'levels.level2' ] = nil;
 		if global.level_to_load == 1 then
 			require "levels.level1"
+			loader.newSource(media.sounds, "peace", "music/location_1.ogg");
 		elseif global.level_to_load == 2 then
 			require "levels.level2"
+			loader.newSource(media.sounds, "peace", "music/location_2.ogg");
 		end;
 		level ();
 	end;

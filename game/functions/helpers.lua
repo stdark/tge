@@ -1323,7 +1323,7 @@ function helpers.breakTrapTool (bagid)
 		table.remove(list[current_mob],tmp);
 		picklock[current_mob].traptool = 0;
 		--helpers.renumber(picklock[current_mob].traptool,current_mob);
-		love.audio.play(media.sounds.crack,0);
+		utils.playSfx(media.sounds.crack,1);
 		helpers.addToActionLog( lognames.actions.picklockbroken);
 		--psPicklockBroken[1].ps:start();
 		picklockJustBroken = 100;
@@ -1336,7 +1336,7 @@ function helpers.breakPicklock (bagid)
 		table.remove(list[current_mob],picklock[current_mob].picklock);
 		picklock[current_mob].picklock = 0;
 		--helpers.renumber(tmp,current_mob);
-		love.audio.play(media.sounds.crack,0);
+		utils.playSfx(media.sounds.crack,1);
 		helpers.addToActionLog( lognames.actions.picklockbroken);
 		--psPicklockBroken[1].ps:start();
 		picklockJustBroken = 100;
@@ -1349,7 +1349,7 @@ function helpers.breakKey (bagid)
 		table.remove(list[current_mob],tmp);
 		picklock[current_mob].key = 0;
 		--helpers.renumber(picklock[current_mob].key,current_mob);
-		love.audio.play(media.sounds.crack,0);
+		utils.playSfx(media.sounds.crack,1);
 		helpers.addToActionLog( lognames.actions.picklockbroken);
 		--psPicklockBroken[1].ps:start();
 		keyJustBroken = 100;
@@ -2868,7 +2868,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		chars_stats[current_mob][global.stats_short[objects_list[global.object].subtyp]] = chars_stats[current_mob][global.stats_short[objects_list[global.object].subtyp]] + 2;
 		helpers.recalcBattleStats(current_mob);
 		objects_list[global.object].subtyp = 0;
-		love.audio.play(media.sounds.drink,0);
+		utils.playSfx(media.sounds.drink,1);
 		objects_list[global.object].img = barrel_img[1];
 		global.object = 0;
 		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drinkfrombarrel[chars_mobs_npcs[current_mob].gender]);
@@ -2876,7 +2876,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		chars_stats[current_mob][global.resistances[objects_list[global.object].subtyp]] = chars_stats[current_mob][global.resistances[objects_list[global.object].subtyp]] + 1;
 		helpers.recalcResistances(current_mob);
 		objects_list[global.object].subtyp = 0;
-		love.audio.play(media.sounds.drink,0);
+		utils.playSfx(media.sounds.drink,1);
 		objects_list[global.object].img = cauldron_img[1];
 		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drinkfromcauldron[chars_mobs_npcs[current_mob].gender]);
 		global.object = 0;
@@ -2888,7 +2888,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		if objects_list[global.object].effect2 then
 			chars_mobs_npcs[current_mob][objects_list[global.object].effect2] = chars_mobs_npcs[current_mob][objects_list[global.object].value2];
 			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.usedpedestal[chars_mobs_npcs[current_mob].gender]); --FIXME type of pedestal
-			love.audio.play(media.sounds.altar,0);
+			utils.playSfx(media.sounds.altar,1);
 		end;
 		global.object = 0;
 	elseif objects_list[global.object].typ == "altar" then
@@ -2899,7 +2899,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 					used_before = true;
 					chars_stats[current_mob][objects_list[global.object].stat] = chars_mobs_npcs[current_mob][objects_list[global.object].stat] + chars_stats[current_mob][objects_list[global.object].value];
 					helpers.recalcBattleStats(current_objects);
-					love.audio.play(media.sounds.altar,0);
+					utils.playSfx(media.sounds.altar,1);
 				end;
 			end;
 		end;
@@ -2919,7 +2919,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			chars_mobs_npcs[current_mob].x = objects_list[global.object].outx;
 			chars_mobs_npcs[current_mob].y = objects_list[global.object].outy;
 			helpers.cam_to_mob(current_mob);
-			love.audio.play(media.sounds.teleport,0);
+			utils.playSfx(media.sounds.teleport,1);
 			if chars_mobs_npcs[current_mob].torchlight > 0 then
 				for i=1,#lights do
 					if lights[i].typ == "mob" and lights[i].index == current_mob then
@@ -2943,14 +2943,14 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 				chars_stats[current_mob].skillpoints = chars_stats[current_mob].skillpoints + objects_list[global.object].bonus;
 				table.insert(objects_list[global.object].uids,chars_mobs_npcs[current_mob].uid);
 			end;
-			love.audio.play(media.sounds.altar,0);
+			utils.playSfx(media.sounds.altar,1);
 		end;
 	end;
 end;
 
 function helpers.drinkFromWell ()
 	helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drunkfromwell[chars_mobs_npcs[current_mob].gender]);
-	love.audio.play(media.sounds.drink,0);
+	utils.playSfx(media.sounds.drink,1);
 	if objects_list[global.object].plus then
 		if objects_list[global.object].plus == "hp" then
 			damage.HPplus(current_mob,objects_list[global.object].plusvalue,true);
@@ -3390,10 +3390,10 @@ end;
 function helpers.payGold (price)
 	if party.gold >= price then
 		party.gold = party.gold - price;
-		love.audio.play(media.sounds.gold_dzen,0);
+		utils.playSfx(media.sounds.gold_dzen,1);
 		return true;
 	else
-		love.audio.play(media.sounds.error,0);
+		utils.playSfx(media.sounds.error,1);
 		helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notenoughgold);
 		return false;
 	end;
@@ -3711,7 +3711,7 @@ function helpers.idAndRepair(dragfrom)
 	then
 		list[work_this].q = math.min(chars_mobs_npcs[current_mob].num_repair*chars_mobs_npcs[current_mob].lvl_repair,inventory_ttx[list[work_this].ttxid].material);
 		helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.fixed[chars_mobs_npcs[current_mob].gender] .. lognames.actions.someequipment);
-		love.audio.play(media.sounds.repair, 0);
+		utils.playSfx(media.sounds.repair, 1);
 	elseif love.keyboard.isDown("lctrl","rctrl") and  work_this > 0 and inventory_ttx[list[work_this].ttxid].class ~= "ammo" then
 		helpers.addToActionLog( lognames.actions.nothingtofix)
 	end;
@@ -3852,7 +3852,7 @@ function helpers.dodgeIfPossible (index)
 		chars_mobs_npcs[index].defmod = "dodge";
 		restoreRT()
 	else
-		love.audio.play(media.sounds.error,0);
+		utils.playSfx(media.sounds.error,1);
 	end;
 end;
 
@@ -3868,7 +3868,7 @@ function helpers.blockIfPossible (index)
 		chars_mobs_npcs[index].protectionmode = "block";
 		restoreRT()
 	else
-		love.audio.play(media.sounds.error,0);
+		utils.playSfx(media.sounds.error,1);
 	end;
 end;
 
@@ -3895,7 +3895,7 @@ function helpers.parryIfPossible (index)
 		chars_mobs_npcs[index].protectionmode = "parry";
 		restoreRT()
 	else
-		love.audio.play(media.sounds.error,0);
+		utils.playSfx(media.sounds.error,1);
 	end;
 end;
 
@@ -3908,7 +3908,7 @@ function helpers.handsIfPossible (index)
 		chars_mobs_npcs[index].protectionmode = "hands";
 		restoreRT()
 	else
-		love.audio.play(media.sounds.error,0);
+		utils.playSfx(media.sounds.error,1);
 	end;
 end;
 
@@ -4442,7 +4442,7 @@ function helpers.bagIsVisible(index)
 end;
 
 function helpers.noSkill()
-	love.audio.play(media.sounds.noskill, 0);
+	utils.playSfx(media.sounds.noskill, 1);
 	if tmpskillname=="sword" or tmpskillname=="axe" or tmpskillname=="flagpole" or tmpskillname=="crushing"
 	or tmpskillname=="dagger" or tmpskillname=="stuff"
 	or tmpskillname=="bow" or tmpskillname=="crossbow" or tmpskillname=="throwing" or tmpskillname=="firearms" or tmpskillname=="blaster" then
@@ -4468,12 +4468,12 @@ function helpers.ifMobHasMana () --FIXME strange NOT USABLE ATM, ll be deleted
 		missle_drive = "spellbook";
 		game_status = "sensing";
 	elseif chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class == "wand" and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].q > 0 then
-		love.audio.play(media.sounds.outofmana, 0);
+		utils.playSfx(media.sounds.outofmana, 1);
 		helpers.addToActionLog( lognames.actions.outofmana);
 		missle_drive = "wand";
 		missle_type = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].w;
 	else
-		love.audio.play(media.sounds.outofmana, 0);
+		utils.playSfx(media.sounds.outofmana, 1);
 		helpers.addToActionLog( lognames.actions.outofmana);
 		missle_drive = "muscles";
 		if chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
@@ -4591,7 +4591,7 @@ end;
 function helpers.castFailed ()
 	missle_drive = "muscles";
 	missle_type = "none";
-	love.audio.play(media.sounds.error,0);
+	utils.playSfx(media.sounds.error,1);
 	if global.status == "mindgame" then
 		game_status = "mindgame"
 	else
@@ -4618,7 +4618,7 @@ function helpers.ifHoldIsUsable ()
 end;
 
 function helpers.holdFailed ()
-	love.audio.play(media.sounds.error,0);
+	utils.playSfx(media.sounds.error,1);
 	missle_effect = "none";
 	game_status = "neutral"
 end;
@@ -4777,7 +4777,7 @@ function helpers.battleorder ()
 		global.battle_start = false;
 	end;
 	if chars_mobs_npcs[current_mob].control == "player" then
-		love.audio.play(media.sounds.party_turn, 0);
+		utils.playSfx(media.sounds.party_turn, 1);
 	end;
 	if global.status == "battle" then
 		draw.lineOfOrder();
@@ -5318,7 +5318,7 @@ function helpers.missleAtWarBook()
 end;
 
 function helpers.noSkillToUseThisItem()
-	love.audio.play(media.sounds.cannotputon, 0);
+	utils.playSfx(media.sounds.cannotputon, 1);
 	helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.noskill2);
 end;
 
@@ -5368,7 +5368,7 @@ function helpers.oilItemInSlot(index,slot,oiltype,oilpower,oileffect)
 	end;
 	local tmp = inventory_ttx[list[oil_smth].ttxid].a;
 	local q = list[oil_smth].q;
-	love.audio.play(media.sounds.grease,0);
+	utils.playSfx(media.sounds.grease,1);
 	helpers.addToActionLog( chars_stats[index].name .. " " .. lognames.actions.greased[chars_mobs_npcs[index].gender] .. lognames.actions.someequipment);
 	table.remove(list,oil_smth) ;
 	if dragfrom == "char" then

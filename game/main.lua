@@ -59,6 +59,14 @@ function love.load()
 	-- love.window.setMode(1200, 600, {resizable=false});
 	local width, height = love.window.getDesktopDimensions(1);  -- get our display size
 	love.window.setMode(width, height, {resizable=false});      -- set screen size
+	
+	global.music_mainmenu = 0;
+	global.music_battle = 0;
+	global.music_peace = 0;
+	global.music_switch_to = "mainmenu";
+	global.theme_music_array = {};
+	global.theme_music_volume = 1;
+	global.theme_sfx_volume = 1;
 end;
 
 function love.update(dt)
@@ -66,14 +74,13 @@ function love.update(dt)
 	global.screenWidth = love.graphics.getWidth();
 	global.screenHeight = love.graphics.getHeight();
 	fps = love.timer.getFPS( );
-
 	local randomXX = os.time();
 	if randomX ~= randomXX then
 		randomX = randomXX;
 		utils.initRandomize(randomX);
 	end;
 	utils.randommore(); 	-- init lua lua random generator
-
+	utils.themeMusicVolumeDynamic ()
 	currentState.update(dt);
 	loveframes.update(dt);
 end;

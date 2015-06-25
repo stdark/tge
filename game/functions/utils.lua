@@ -183,4 +183,74 @@ function utils.randommore ()
       rndCounter = 1;
    end;
 end;
---
+
+function utils.playThemeMusic (music,start_volume,music_type)
+	music:setVolume(math.min(1,start_volume*global.theme_music_volume));
+	love.audio.play(music);
+	if music_type == "mainmenu" then
+		global.music_mainmenu = 0;
+		global.music_switch_to = "mainmenu";
+	elseif music_type == "battle" then
+		global.music_battle = 0;
+		global.music_switch_to = "battle";
+	elseif music_type == "peace" then
+		global.music_peace = 0;
+		global.music_switch_to = "peace";
+	end;
+	table.insert(global.theme_music_array,{track=music,type=global.music_switch_to});
+	while #global.theme_music_array > 2 do
+		table.remove(global.theme_music_array,1);
+	end;
+end;
+
+function utils.themeMusicVolumeDynamic ()
+	for i=1,#global.theme_music_array do
+		if global.music_switch_to == "mainmenu" and global.theme_music_array[i].type == global.music_switch_to then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume < global.theme_music_volume then
+				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+			end;
+		elseif global.theme_music_array[i].type == "mainmenu" then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume > 0 then
+				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+			end;
+			if volume <= 0 then
+				love.audio.stop(global.theme_music_array[i].track);
+			end;
+		end;
+		if global.music_switch_to == "battle" and global.theme_music_array[i].type == global.music_switch_to then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume < global.theme_music_volume then
+				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+			end;
+		elseif global.theme_music_array[i].type == "battle" then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume > 0 then
+				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+			end;
+			if volume <= 0 then
+				love.audio.stop(global.theme_music_array[i].track);
+			end;
+		end;
+		if global.music_switch_to == "peace" and global.theme_music_array[i].type == global.music_switch_to then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume < global.theme_music_volume then
+				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+			end;
+		elseif global.theme_music_array[i].type == "peace" then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume > 0 then
+				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+			end;
+			if volume <= 0 then
+				love.audio.stop(global.theme_music_array[i].track);
+			end;
+		end;
+	end;
+end;
+
+function utils.playSfx(sound,volume)
+	sound:setVolume(math.min(1,volume*global.theme_sfx_volume));
+	love.audio.play(sound);
+end;

@@ -51,11 +51,13 @@ function playingState.load()
 	require "data.threats"
 	require "data.npc"
 	require "data.sfx"
-	love.audio.stop(media.sounds.mainmenu, 0);
-
+	--love.audio.stop(media.sounds.mainmenu, 0);
+	
 	media.sounds.battle:setLooping( loop );
 	media.sounds.battle:setVolume(0.5);
-
+	media.sounds.peace:setLooping( loop );
+	media.sounds.peace:setVolume(0.5);
+	
 	--currentState = loadingState;
 	--currentState.start(media, loadingFinished);
 	--blurv = love.graphics.newShader(love.filesystem.read("shader/blurv.glsl"),1)
@@ -912,6 +914,9 @@ function playingState.load()
 	if ai.enemyWatchesYou () then
 		letaBattleBegin ();
 	end;
+	if global.status == "peace" then
+		utils.playThemeMusic (media.sounds.peace,0,"peace");
+	end;
 	global.first_load = false;
 end;
 
@@ -982,14 +987,14 @@ function playingState.update(dt)
 			global.mindhero_y = global.mindway[#global.mindway][2];
 			
 			if mindgame.map[global.mindhero_x][global.mindhero_y] >= 1 and mindgame.map[global.mindhero_x][global.mindhero_y] <= 7 then -- opponent ignores money
-				love.audio.play(media.sounds.gold_dzen,0);
+				utils.playSfx(media.sounds.gold_dzen,1);
 				party.gold = party.gold+mindgame.moneysums[mindgame.map[global.mindhero_x][global.mindhero_y]];
 				global.mindgold = global.mindgold-mindgame.moneysums[mindgame.map[global.mindhero_x][global.mindhero_y]];
 				mindgame.map[global.mindhero_x][global.mindhero_y] = 0;
 			end;
 			
 			if mindgame.map[global.mindhero_x][global.mindhero_y] >= 1000 then -- opponent ignores gifts
-				--love.audio.play(media.sounds.gold_dzen,0);
+				--utils.playSfx(media.sounds.gold_dzen,1);
 				mindgame.map[global.mindhero_x][global.mindhero_y] = 0;
 			end;
 
@@ -1408,7 +1413,7 @@ function playingState.update(dt)
 				global.timers.n_timer=0;
 				local sound_of_step = stepsound_table[map[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]];
 				local snd = loadstring("return " .. "media.sounds.footstep_long_" .. sound_of_step)();
-				love.audio.play(snd,0);
+				utils.playSfx(snd,1);
 			end;
 			mob_moving();
 		end;
@@ -1762,7 +1767,7 @@ function playingState.keypressed(key, unicode)
 			love.audio.resume(media.sounds.battle, 0);
 		end;
 		if key=="l" then
-			--love.audio.play(media.sounds.battle, 0);
+			--utils.playSfx(media.sounds.battle, 1);
 		end;
 		if key=="h" and chars_mobs_npcs[current_mob].person == "char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
 			helpers.harvestOne (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
@@ -1786,7 +1791,7 @@ function playingState.keypressed(key, unicode)
 				inventory_bag_call();
 				helpers.repackBag();
 			elseif chars_mobs_npcs[current_mob].person=="char" and game_status == "picklocking" then
-			   love.audio.play(media.sounds.invclose,0);
+			   utils.playSfx(media.sounds.invclose,1);
 			   game_status="neutral";
 			end;
 		end;
@@ -1906,10 +1911,10 @@ function playingState.keypressed(key, unicode)
 
 		if key == "m" and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
 			game_status="map"
-			love.audio.play(media.sounds.paper,0);
+			utils.playSfx(media.sounds.paper,1);
 		elseif game_status == "map" then
 			game_status="neutral"
-			love.audio.play(media.sounds.paper,0);
+			utils.playSfx(media.sounds.paper,1);
 		end
 
 		if key == "b"
@@ -1922,7 +1927,7 @@ function playingState.keypressed(key, unicode)
 				page=1;
 				spellbook_call();
 			elseif game_status == "spellbook" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status="neutral";
 			end;
 		end;
@@ -1935,7 +1940,7 @@ function playingState.keypressed(key, unicode)
 				page=1;
 				questbook_call();
 			elseif game_status == "questbook" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status="neutral";
 			end;
 		end;
@@ -1948,7 +1953,7 @@ function playingState.keypressed(key, unicode)
 				page=1;
 				warbook_call();
 			elseif game_status == "warbook" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status="neutral";
 			end;
 		end;
@@ -1961,7 +1966,7 @@ function playingState.keypressed(key, unicode)
 			if game_status~="stats" then
 				charstats_call();
 			elseif game_status == "stats" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status="neutral";
 			end;
 		end;
@@ -1974,7 +1979,7 @@ function playingState.keypressed(key, unicode)
 			if game_status~="skills" then
 				charskills_call(current_mob);
 			elseif game_status == "skills" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status="neutral";
 			end;
 		end;
@@ -1986,7 +1991,7 @@ function playingState.keypressed(key, unicode)
 				inventory_bag_call();
 				helpers.repackBag();
 			elseif chars_mobs_npcs[current_mob].person=="char" and game_status == "inventory" and holding_smth==0 then
-				love.audio.play(media.sounds.invclose,0);
+				utils.playSfx(media.sounds.invclose,1);
 				game_status="neutral";
 			end;
 		end;
@@ -1998,7 +2003,7 @@ function playingState.keypressed(key, unicode)
 				inventory_bag_call();
 				helpers.repackBag();
 			elseif chars_mobs_npcs[current_mob].person=="char" and game_status == "alchemy" then
-				love.audio.play(media.sounds.invclose,0);
+				utils.playSfx(media.sounds.invclose,1);
 				game_status="neutral";
 			end;
 		end;
@@ -2167,13 +2172,13 @@ function playingState.keypressed(key, unicode)
 			end;
 
 			if game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 			elseif  game_status == "inventory" then
-				love.audio.play(media.sounds.invclose,0);
+				utils.playSfx(media.sounds.invclose,1);
 			elseif game_status == "stats" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 			elseif game_status == "map" then
-				love.audio.play(media.sounds.paper,0);
+				utils.playSfx(media.sounds.paper,1);
 			end;
 			game_status="neutral"
 			for i = 1, chars do
@@ -2366,7 +2371,7 @@ function playingState.mousereleased (x,y,button)
 					if helpers.payGold(price) then
 						calendar.add_time_interval(calendar.delta_temple_heals);
 
-						love.audio.play(media.sounds["spell_heal"], 0);
+						utils.playSfx(media.sounds["spell_heal"], 1);
 						helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.healed[chars_mobs_npcs[current_mob].gender]);
 
 						chars_mobs_npcs[current_mob].hp = chars_mobs_npcs[current_mob].hp_max;
@@ -2626,19 +2631,19 @@ function playingState.mousereleased (x,y,button)
 		if mX>x+8 and mX<x+100 and mY>y and mY<y+50 then
 			utils.printDebug("sword axe falgpole");
 			page=1;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+21 and mX<x+100 and mY>y+55 and mY<y+115 then
 			utils.printDebug("crushing staff dagger");
 			page=2;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+24 and mX<x+100 and mY>y+120 and mY<y+180 then
 			utils.printDebug("unarmed dodging shield");
 			page=3;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+18 and mX<x+100 and mY>y+185 and mY<y+240 then
 			utils.printDebug("bow crossbow throwing");
 			page=4;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		end;
 	end;
 
@@ -2653,59 +2658,59 @@ function playingState.mousereleased (x,y,button)
 		if mX>x+8 and mX<x+100 and mY>y and mY<y+50 then
 			utils.printDebug("school of fire");
 			page=1;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+21 and mX<x+100 and mY>y+55 and mY<y+115 then
 			utils.printDebug("school of air");
 			page=2;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+24 and mX<x+100 and mY>y+120 and mY<y+180 then
 			utils.printDebug("school of water");
 			page=3;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+18 and mX<x+100 and mY>y+185 and mY<y+240 then
 			utils.printDebug("school of earth");
 			page=4;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+21 and mX<x+100 and mY>y+245 and mY<y+300 then
 			utils.printDebug("school of conflux");
 			page=10;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+18 and mX<x+100 and mY>y+305 and mY<y+360 then
 			utils.printDebug("school of darkness");
 			page=9;
-			love.audio.play(media.sounds.bookpage, 0)
+			utils.playSfx(media.sounds.bookpage, 1)
 		elseif  mX>x+18 and mX<x+100 and mY>y+405 and mY<y+420 then
 			utils.printDebug("school of distortion");
 			page=13;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif mX>x+901 and mX<x+978 and mY>y and mY<y+50 then
 			utils.printDebug("school of body");
 			page=5;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+901 and mX<x+978 and mY>y+55 and mY<y+115 then
 			utils.printDebug("school of mind");
 			page=6;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+901 and mX<x+978 and mY>y+120 and mY<y+180 then
 			utils.printDebug("school of spirit");
 			page=7;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+901 and mX<x+978 and mY>y+185 and mY<y+240 then
 			utils.printDebug("school of life");
 			page=11;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+901 and mX<x+978 and mY>y+245 and mY<y+300 then
 			utils.printDebug("school of conjuction");
 			page=12;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+901 and mX<x+978 and mY>y+305 and mY<y+360 then
 			utils.printDebug("school of light");
 			page=8;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		elseif  mX>x+901 and mX<x+978 and mY>y+365 and mY<y+420 then
 			utils.printDebug("school of holyness");
 			page=14;
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 		end ;
 	end;
 --/spellbook
@@ -3861,7 +3866,7 @@ function playingState.mousereleased (x,y,button)
 					end;
 				end;
 				helpers.limitStats();
-				love.audio.play(media.sounds.drink,0);
+				utils.playSfx(media.sounds.drink,1);
 				helpers.addToActionLog( chars_stats[current_mob].name .. " " ..
 				lognames.actions.drinked[chars_mobs_npcs[current_mob].gender] .. " «"
 				.. inventory_ttx[list[holding_smth].ttxid].title .. "» "
@@ -3891,7 +3896,7 @@ function playingState.mousereleased (x,y,button)
 			) then
 				oil_smth = holding_smth;
 				holding_smth = 0;
-				love.audio.play(media.sounds.chpok,0);
+				utils.playSfx(media.sounds.chpok,1);
 				sorttarget = dragfrom;
 				game_status = "inventory";
 			end;
@@ -3899,7 +3904,7 @@ function playingState.mousereleased (x,y,button)
 			if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- eat smth
 			and inventory_ttx[list[holding_smth].ttxid].class == "food" then
 				holding_smth = 0;
-				--love.audio.play(media.sounds.yami,0);
+				--utils.playSfx(media.sounds.yami,1);
 				helpers.addToActionLog(chars_stats[current_mob].name .. lognames.actions.eaten[chars_mobs_npcs[current_mob].gender]);
 				local value = inventory_ttx[list[holding_smth].ttxid].a;
 				if chars_mobs_npcs[index].basiliskbreath == 0 then
@@ -3924,7 +3929,7 @@ function playingState.mousereleased (x,y,button)
 			if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- bomb
 			and inventory_ttx[list[holding_smth].ttxid].subclass == "bomb" then
 				bomb_smth = holding_smth;
-				love.audio.play(media.sounds.inv_bottle_put,0);
+				utils.playSfx(media.sounds.inv_bottle_put,1);
 				potionname = inventory_ttx[list[holding_smth].ttxid].title;
 				missle_subtype = inventory_ttx[list[holding_smth].ttxid].a;
 				bombpower = list[holding_smth].q;
@@ -3935,7 +3940,7 @@ function playingState.mousereleased (x,y,button)
 			if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- allieshelp
 			and inventory_ttx[list[holding_smth].ttxid].subclass == " allieshelp" then
 				use_smth = holding_smth;
-				love.audio.play(media.sounds.inv_bottle_put,0);
+				utils.playSfx(media.sounds.inv_bottle_put,1);
 				potionname = inventory_ttx[list[holding_smth].ttxid].title;
 				missle_subtype = inventory_ttx[list[holding_smth].ttxid].a;
 				bombpower = list[holding_smth].q;
@@ -4004,7 +4009,7 @@ function playingState.mousereleased (x,y,button)
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					bag[tmp_bagid][inv_quad_x][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
-					love.audio.play(media.sounds.bookopen, 0);
+					utils.playSfx(media.sounds.bookopen, 1);
 				elseif inventory_ttx[list[holding_smth].ttxid].class == "message" then
 					littype="message";
 					game_status="literature";
@@ -4012,7 +4017,7 @@ function playingState.mousereleased (x,y,button)
 					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					holding_smth=0;
-					love.audio.play(media.sounds.paper, 0);
+					utils.playSfx(media.sounds.paper, 1);
 				elseif inventory_ttx[list[holding_smth].ttxid].class == "letter" then
 					littype="letter";
 					game_status="literature";
@@ -4020,7 +4025,7 @@ function playingState.mousereleased (x,y,button)
 					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					holding_smth=0;
-					love.audio.play(media.sounds.paper, 0);
+					utils.playSfx(media.sounds.paper, 1);
 				elseif inventory_ttx[list[holding_smth].ttxid].class == "map" then
 					littype="map";
 					game_status="literature";
@@ -4028,7 +4033,7 @@ function playingState.mousereleased (x,y,button)
 					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					holding_smth=0;
-					love.audio.play(media.sounds.paper, 0);
+					utils.playSfx(media.sounds.paper, 1);
 				elseif inventory_ttx[list[holding_smth].ttxid].class == "gobelen" then
 					littype="gobelen";
 					game_status="literature";
@@ -4036,7 +4041,7 @@ function playingState.mousereleased (x,y,button)
 					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					holding_smth=0;
-					love.audio.play(media.sounds.inv_cloth_take, 0);
+					utils.playSfx(media.sounds.inv_cloth_take, 1);
 				end;
 			end;
 			if holding_smth > 0 and selected_portrait > 0 and selected_portrait == current_mob --read a scroll
@@ -4047,7 +4052,7 @@ function playingState.mousereleased (x,y,button)
 			and  chars_mobs_npcs[current_mob].paralyze == 0
 			and  chars_mobs_npcs[current_mob].insane == 0
 			and  chars_mobs_npcs[current_mob].control == "player" then
-				love.audio.play(media.sounds.paper,0);
+				utils.playSfx(media.sounds.paper,1);
 				missle_drive = "scroll";
 				missle_type = list[holding_smth].w;
 				game_status = "sensing";
@@ -4141,7 +4146,7 @@ function  playingState.mousepressed(x,y,button)
 							local index = mindmissle;
 							mindgame.map[global.mindcursor_x][global.mindcursor_y] = index;
 							global.mindgold = global.mindgold + mindgame.moneysums[index];
-							love.audio.play(media.sounds.gold_dzen,0);
+							utils.playSfx(media.sounds.gold_dzen,1);
 							for i=1,12 do
 								--if global.mindgold <= mindgame["flags_gold"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["gold"]][8][7] then
 									--index = mindmissle;
@@ -4151,7 +4156,7 @@ function  playingState.mousepressed(x,y,button)
 								index = 3;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] + mindgame["flags_gold"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["gold"]][index][1][i];
 								local snd = "mindgame_" .. mindgame["flags_gold"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["gold"]][index][3];
-								love.audio.play(media["sounds"][snd],0);
+								utils.playSfx(media["sounds"][snd],1);
 								if chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] < 0 then
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = 0;
 								end;
@@ -4189,7 +4194,7 @@ function  playingState.mousepressed(x,y,button)
 								damage.applyConditionTwoFactors (victim,3,10,"drunk","poison","enu",false,1,true);
 								helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.drunk[chars_mobs_npcs[victim].gender]);
 							end;
-							love.audio.play(media.sounds.inv_bottle_put,0);
+							utils.playSfx(media.sounds.inv_bottle_put,1);
 							table.remove(chars_mobs_npcs[current_mob]["inventory_list"],global.minddrink_array[global.drinkmissle].itemid);
 							helpers.renumber (global.minddrink_array[global.drinkmissle].itemid,current_mob);
 							global.minddrink_array = {};
@@ -4237,7 +4242,7 @@ function  playingState.mousepressed(x,y,button)
 								for i=1,10 do
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] + mindgame["flags_threat"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["threat"]][1][i]*threats_ttx[global.threats_pull[global.current_threat] ].level;
 									local snd = "mindgame_" .. mindgame["flags_threat"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["threat"]][3];
-									love.audio.play(media["sounds"][snd],0); --FIXME 10 times?!
+									utils.playSfx(media["sounds"][snd],1); --FIXME 10 times?!
 									if chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] < 0 then
 										chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = 0;
 									end;
@@ -4248,29 +4253,29 @@ function  playingState.mousepressed(x,y,button)
 								_emo = math.random(1,#_rnd_emo);
 								local _power = 1;
 								if _emo == 1 then --FIXME add phrases
-									love.audio.play(media.sounds.mindgame_loyality,0);
+									utils.playSfx(media.sounds.mindgame_loyality,1);
 								elseif _emo == 2 then
-									love.audio.play(media.sounds.mindgame_fear,0);
+									utils.playSfx(media.sounds.mindgame_fear,1);
 								elseif _emo == 3 then
-									love.audio.play(media.sounds.mindgame_boring,0);
+									utils.playSfx(media.sounds.mindgame_boring,1);
 								elseif _emo == 4 then
-									love.audio.play(media.sounds.mindgame_disdain,0);
+									utils.playSfx(media.sounds.mindgame_disdain,1);
 								elseif _emo == 5 then
-									love.audio.play(media.sounds.mindgame_agression,0);
+									utils.playSfx(media.sounds.mindgame_agression,1);
 								elseif _emo == 6 then
-									love.audio.play(media.sounds.mindgame_distrust,0);
+									utils.playSfx(media.sounds.mindgame_distrust,1);
 								elseif _emo == 7 then
-									love.audio.play(media.sounds.mindgame_cry,0);
+									utils.playSfx(media.sounds.mindgame_cry,1);
 								elseif _emo == 8 then
-									love.audio.play(media.sounds.mindgame_surprized,0);
+									utils.playSfx(media.sounds.mindgame_surprized,1);
 								elseif _emo == 9 then
-									love.audio.play(media.sounds.mindgame_respect,0);
+									utils.playSfx(media.sounds.mindgame_respect,1);
 								elseif _emo == 10 then
-									love.audio.play(media.sounds.mindgame_lol,0);
+									utils.playSfx(media.sounds.mindgame_lol,1);
 								elseif _emo == 11 then
-									love.audio.play(media.sounds.mindgame_pity,0);
+									utils.playSfx(media.sounds.mindgame_pity,1);
 								elseif _emo == 12 then
-									love.audio.play(media.sounds.mindgame_shame,0);
+									utils.playSfx(media.sounds.mindgame_shame,1);
 								end;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
 								phrase2 = "...";
@@ -4321,33 +4326,33 @@ function  playingState.mousepressed(x,y,button)
 							if interested then
 								mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle;
 								if _emo == 1 then
-									love.audio.play(media.sounds.mindgame_loyality,0);
+									utils.playSfx(media.sounds.mindgame_loyality,1);
 								elseif _emo == 2 then
-									love.audio.play(media.sounds.mindgame_fear,0);
+									utils.playSfx(media.sounds.mindgame_fear,1);
 								elseif _emo == 3 then
-									love.audio.play(media.sounds.mindgame_boring,0);
+									utils.playSfx(media.sounds.mindgame_boring,1);
 								elseif _emo == 4 then
-									love.audio.play(media.sounds.mindgame_disdain,0);
+									utils.playSfx(media.sounds.mindgame_disdain,1);
 								elseif _emo == 5 then
-									love.audio.play(media.sounds.mindgame_agression,0);
+									utils.playSfx(media.sounds.mindgame_agression,1);
 								elseif _emo == 6 then
-									love.audio.play(media.sounds.mindgame_distrust,0);
+									utils.playSfx(media.sounds.mindgame_distrust,1);
 								elseif _emo == 7 then
-									love.audio.play(media.sounds.mindgame_cry,0);
+									utils.playSfx(media.sounds.mindgame_cry,1);
 								elseif _emo == 8 then
-									love.audio.play(media.sounds.mindgame_surprized,0);
+									utils.playSfx(media.sounds.mindgame_surprized,1);
 								elseif _emo == 9 then
-									love.audio.play(media.sounds.mindgame_respect,0);
+									utils.playSfx(media.sounds.mindgame_respect,1);
 								elseif _emo == 10 then
-									love.audio.play(media.sounds.mindgame_lol,0);
+									utils.playSfx(media.sounds.mindgame_lol,1);
 								elseif _emo == 11 then
-									love.audio.play(media.sounds.mindgame_pity,0);
+									utils.playSfx(media.sounds.mindgame_pity,1);
 								elseif _emo == 12 then
-									love.audio.play(media.sounds.mindgame_shame,0);
+									utils.playSfx(media.sounds.mindgame_shame,1);
 								end;
 							else
 								phrase2 = helpers.mobName(victim) .. ": " .. chats.questionPerEtiquette("whocares",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
-								love.audio.play(media.sounds.mindgame_boring,0);
+								utils.playSfx(media.sounds.mindgame_boring,1);
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3]+1;
 							end;
 
@@ -4371,38 +4376,38 @@ function  playingState.mousepressed(x,y,button)
 							if _joke_reaction > 0 then
 								mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][1] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][10]+_joke_reaction;
-								love.audio.play(media.sounds.mindgame_lol,0);
+								utils.playSfx(media.sounds.mindgame_lol,1);
 								phrase2 = helpers.mobName(victim) .. ": " .. chats.questionPerEtiquette("goodjoke",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 							elseif _joke_reaction == 0 then
 								local _index = chars_mobs_npcs[victim]["personality"]["current"]["humor"]["ifknown"];
-								love.audio.play(media.sounds.mindgame_boring,0);
+								utils.playSfx(media.sounds.mindgame_boring,1);
 								phrase2 = helpers.mobName(victim) .. ": " .. chats.questionPerEtiquette("knownjoke",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 							elseif _joke_reaction < 0 then
 								local _emo = chars_mobs_npcs[victim]["personality"]["current"]["humor"]["ifnot"];
 								if _emo == 1 then
-									love.audio.play(media.sounds.mindgame_loyality,0);
+									utils.playSfx(media.sounds.mindgame_loyality,1);
 								elseif _emo == 2 then
-									love.audio.play(media.sounds.mindgame_fear,0);
+									utils.playSfx(media.sounds.mindgame_fear,1);
 								elseif _emo == 3 then
-									love.audio.play(media.sounds.mindgame_boring,0);
+									utils.playSfx(media.sounds.mindgame_boring,1);
 								elseif _emo == 4 then
-									love.audio.play(media.sounds.mindgame_disdain,0);
+									utils.playSfx(media.sounds.mindgame_disdain,1);
 								elseif _emo == 5 then
-									love.audio.play(media.sounds.mindgame_agression,0);
+									utils.playSfx(media.sounds.mindgame_agression,1);
 								elseif _emo == 6 then
-									love.audio.play(media.sounds.mindgame_distrust,0);
+									utils.playSfx(media.sounds.mindgame_distrust,1);
 								elseif _emo == 7 then
-									love.audio.play(media.sounds.mindgame_cry,0);
+									utils.playSfx(media.sounds.mindgame_cry,1);
 								elseif _emo == 8 then
-									love.audio.play(media.sounds.mindgame_surprized,0);
+									utils.playSfx(media.sounds.mindgame_surprized,1);
 								elseif _emo == 9 then
-									love.audio.play(media.sounds.mindgame_respect,0);
+									utils.playSfx(media.sounds.mindgame_respect,1);
 								elseif _emo == 10 then
-									love.audio.play(media.sounds.mindgame_lol,0);
+									utils.playSfx(media.sounds.mindgame_lol,1);
 								elseif _emo == 11 then
-									love.audio.play(media.sounds.mindgame_pity,0);
+									utils.playSfx(media.sounds.mindgame_pity,1);
 								elseif _emo == 12 then
-									love.audio.play(media.sounds.mindgame_shame,0);
+									utils.playSfx(media.sounds.mindgame_shame,1);
 								end;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_joke_reaction;
 								phrase2 = helpers.mobName(victim) .. ": " .. chats.questionPerEtiquette("badjoke",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
@@ -4488,36 +4493,36 @@ function  playingState.mousepressed(x,y,button)
 									local _emo = nlps_ttx[global.nlp_index].emo;
 									mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle;
 									if _emo == 1 then
-										love.audio.play(media.sounds.mindgame_loyality,0);
+										utils.playSfx(media.sounds.mindgame_loyality,1);
 									elseif _emo == 2 then
-										love.audio.play(media.sounds.mindgame_fear,0);
+										utils.playSfx(media.sounds.mindgame_fear,1);
 									elseif _emo == 3 then
-										love.audio.play(media.sounds.mindgame_boring,0);
+										utils.playSfx(media.sounds.mindgame_boring,1);
 									elseif _emo == 4 then
-										love.audio.play(media.sounds.mindgame_disdain,0);
+										utils.playSfx(media.sounds.mindgame_disdain,1);
 									elseif _emo == 5 then
-										love.audio.play(media.sounds.mindgame_agression,0);
+										utils.playSfx(media.sounds.mindgame_agression,1);
 									elseif _emo == 6 then
-										love.audio.play(media.sounds.mindgame_distrust,0);
+										utils.playSfx(media.sounds.mindgame_distrust,1);
 									elseif _emo == 7 then
-										love.audio.play(media.sounds.mindgame_cry,0);
+										utils.playSfx(media.sounds.mindgame_cry,1);
 									elseif _emo == 8 then
-										love.audio.play(media.sounds.mindgame_surprized,0);
+										utils.playSfx(media.sounds.mindgame_surprized,1);
 									elseif _emo == 9 then
-										love.audio.play(media.sounds.mindgame_respect,0);
+										utils.playSfx(media.sounds.mindgame_respect,1);
 									elseif _emo == 10 then
-										love.audio.play(media.sounds.mindgame_lol,0);
+										utils.playSfx(media.sounds.mindgame_lol,1);
 									elseif _emo == 11 then
-										love.audio.play(media.sounds.mindgame_pity,0);
+										utils.playSfx(media.sounds.mindgame_pity,1);
                                     elseif _emo == 12 then
-										love.audio.play(media.sounds.mindgame_shame,0);
+										utils.playSfx(media.sounds.mindgame_shame,1);
 									end;
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
 
 								end;
 							else
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3]+1;
-								love.audio.play(media.sounds.mindgame_boring,0);
+								utils.playSfx(media.sounds.mindgame_boring,1);
 							end;
 							phrase2 = chars_mobs_npcs[victim].name .. ": " .. "..."; --FIXME from nlp ttx
 							table.remove(global.nlps_pull,global.current_nlp);
@@ -4587,29 +4592,29 @@ function  playingState.mousepressed(x,y,button)
 									mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle; --FIXME: 2 variants
 									local _emo = chars_mobs_npcs[victim]["personality"]["current"]["affronts"]["emo"];
 									if _emo == 1 then
-										love.audio.play(media.sounds.mindgame_loyality,0);
+										utils.playSfx(media.sounds.mindgame_loyality,1);
 									elseif _emo == 2 then
-										love.audio.play(media.sounds.mindgame_fear,0);
+										utils.playSfx(media.sounds.mindgame_fear,1);
 									elseif _emo == 3 then
-										love.audio.play(media.sounds.mindgame_boring,0);
+										utils.playSfx(media.sounds.mindgame_boring,1);
 									elseif _emo == 4 then
-										love.audio.play(media.sounds.mindgame_disdain,0);
+										utils.playSfx(media.sounds.mindgame_disdain,1);
 									elseif _emo == 5 then
-										love.audio.play(media.sounds.mindgame_agression,0);
+										utils.playSfx(media.sounds.mindgame_agression,1);
 									elseif _emo == 6 then
-										love.audio.play(media.sounds.mindgame_distrust,0);
+										utils.playSfx(media.sounds.mindgame_distrust,1);
 									elseif _emo == 7 then
-										love.audio.play(media.sounds.mindgame_cry,0);
+										utils.playSfx(media.sounds.mindgame_cry,1);
 									elseif _emo == 8 then
-										love.audio.play(media.sounds.mindgame_surprized,0);
+										utils.playSfx(media.sounds.mindgame_surprized,1);
 									elseif _emo == 9 then
-										love.audio.play(media.sounds.mindgame_respect,0);
+										utils.playSfx(media.sounds.mindgame_respect,1);
 									elseif _emo == 10 then
-										love.audio.play(media.sounds.mindgame_lol,0);
+										utils.playSfx(media.sounds.mindgame_lol,1);
 									elseif _emo == 11 then
-										love.audio.play(media.sounds.mindgame_pity,0);
+										utils.playSfx(media.sounds.mindgame_pity,1);
 									elseif _emo == 12 then
-										love.audio.play(media.sounds.mindgame_shame,0);
+										utils.playSfx(media.sounds.mindgame_shame,1);
 									end;
 									_power = math.ceil(_power*chars_mobs_npcs[victim]["personality"]["current"]["affronts"]["modifer"]);
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
@@ -4617,7 +4622,7 @@ function  playingState.mousepressed(x,y,button)
 								end;
 							else
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3]+1;
-								love.audio.play(media.sounds.mindgame_boring,0);
+								utils.playSfx(media.sounds.mindgame_boring,1);
 							end;
 							phrase2 = chars_mobs_npcs[victim].name .. ": " .. "...";
 						elseif mindmissle == 35 then --connections
@@ -4637,29 +4642,29 @@ function  playingState.mousepressed(x,y,button)
 								_emo = chars_mobs_npcs[victim]["personality"]["current"]["connections"][i].emo;
 								_power = chars_mobs_npcs[victim]["personality"]["current"]["connections"][i].power;
 								if _emo == 1 then --FIXME add phrases
-									love.audio.play(media.sounds.mindgame_loyality,0);
+									utils.playSfx(media.sounds.mindgame_loyality,1);
 								elseif _emo == 2 then
-									love.audio.play(media.sounds.mindgame_fear,0);
+									utils.playSfx(media.sounds.mindgame_fear,1);
 								elseif _emo == 3 then
-									love.audio.play(media.sounds.mindgame_boring,0);
+									utils.playSfx(media.sounds.mindgame_boring,1);
 								elseif _emo == 4 then
-									love.audio.play(media.sounds.mindgame_disdain,0);
+									utils.playSfx(media.sounds.mindgame_disdain,1);
 								elseif _emo == 5 then
-									love.audio.play(media.sounds.mindgame_agression,0);
+									utils.playSfx(media.sounds.mindgame_agression,1);
 								elseif _emo == 6 then
-									love.audio.play(media.sounds.mindgame_distrust,0);
+									utils.playSfx(media.sounds.mindgame_distrust,1);
 								elseif _emo == 7 then
-									love.audio.play(media.sounds.mindgame_cry,0);
+									utils.playSfx(media.sounds.mindgame_cry,1);
 								elseif _emo == 8 then
-									love.audio.play(media.sounds.mindgame_surprized,0);
+									utils.playSfx(media.sounds.mindgame_surprized,1);
 								elseif _emo == 9 then
-									love.audio.play(media.sounds.mindgame_respect,0);
+									utils.playSfx(media.sounds.mindgame_respect,1);
 								elseif _emo == 10 then
-									love.audio.play(media.sounds.mindgame_lol,0);
+									utils.playSfx(media.sounds.mindgame_lol,1);
 								elseif _emo == 11 then
-									love.audio.play(media.sounds.mindgame_pity,0);
+									utils.playSfx(media.sounds.mindgame_pity,1);
 								elseif _emo == 12 then
-										love.audio.play(media.sounds.mindgame_shame,0);
+										utils.playSfx(media.sounds.mindgame_shame,1);
 								end;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
 								phrase2 = ""; -- this person is...
@@ -4668,35 +4673,35 @@ function  playingState.mousepressed(x,y,button)
 								_emo = math.random(1,#_same_name_emo);
 								local _power = 1;
 								if _emo == 1 then --FIXME add phrases
-									love.audio.play(media.sounds.mindgame_loyality,0);
+									utils.playSfx(media.sounds.mindgame_loyality,1);
 								elseif _emo == 2 then
-									love.audio.play(media.sounds.mindgame_fear,0);
+									utils.playSfx(media.sounds.mindgame_fear,1);
 								elseif _emo == 3 then
-									love.audio.play(media.sounds.mindgame_boring,0);
+									utils.playSfx(media.sounds.mindgame_boring,1);
 								elseif _emo == 4 then
-									love.audio.play(media.sounds.mindgame_disdain,0);
+									utils.playSfx(media.sounds.mindgame_disdain,1);
 								elseif _emo == 5 then
-									love.audio.play(media.sounds.mindgame_agression,0);
+									utils.playSfx(media.sounds.mindgame_agression,1);
 								elseif _emo == 6 then
-									love.audio.play(media.sounds.mindgame_distrust,0);
+									utils.playSfx(media.sounds.mindgame_distrust,1);
 								elseif _emo == 7 then
-									love.audio.play(media.sounds.mindgame_cry,0);
+									utils.playSfx(media.sounds.mindgame_cry,1);
 								elseif _emo == 8 then
-									love.audio.play(media.sounds.mindgame_surprized,0);
+									utils.playSfx(media.sounds.mindgame_surprized,1);
 								elseif _emo == 9 then
-									love.audio.play(media.sounds.mindgame_respect,0);
+									utils.playSfx(media.sounds.mindgame_respect,1);
 								elseif _emo == 10 then
-									love.audio.play(media.sounds.mindgame_lol,0);
+									utils.playSfx(media.sounds.mindgame_lol,1);
 								elseif _emo == 11 then
-									love.audio.play(media.sounds.mindgame_pity,0);
+									utils.playSfx(media.sounds.mindgame_pity,1);
 						         elseif _emo == 12 then
-									love.audio.play(media.sounds.mindgame_shame,0);
+									utils.playSfx(media.sounds.mindgame_shame,1);
 								end;
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][_emo]+_power;
 								phrase2 = ""; --thats my name!
 							else
 								chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][3]+1;
-								love.audio.play(media.sounds.mindgame_boring,0);
+								utils.playSfx(media.sounds.mindgame_boring,1);
 								phrase2 = ""; --do not know him!
 							end;
 						elseif mindmissle == 36 then --music
@@ -4717,7 +4722,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 			end;
 		else
-			love.audio.play(media.sounds.error,0);
+			utils.playSfx(media.sounds.error,1);
 		end;
 	end;
 	--/mindgame
@@ -4746,7 +4751,7 @@ function  playingState.mousepressed(x,y,button)
 			drink_smth = 0;
 			bomb_smth = 0;
 			use_smth = 0;
-			love.audio.play(media.sounds.invclose,0);
+			utils.playSfx(media.sounds.invclose,1);
 			game_status="neutral";
 		end;
 	end;
@@ -4756,7 +4761,7 @@ function  playingState.mousepressed(x,y,button)
 			inventory_bag_call();
 			helpers.repackBag();
 		elseif game_status == "alchemy"  then
-			love.audio.play(media.sounds.invclose,0);
+			utils.playSfx(media.sounds.invclose,1);
 			game_status="neutral";
 		end;
 	end;
@@ -4767,7 +4772,7 @@ function  playingState.mousepressed(x,y,button)
 			inventory_bag_call();
 			helpers.repackBag();
 		elseif game_status == "picklocking"  then
-			love.audio.play(media.sounds.invclose,0);
+			utils.playSfx(media.sounds.invclose,1);
 			game_status="neutral";
 		end;
 	end;
@@ -4776,9 +4781,9 @@ function  playingState.mousepressed(x,y,button)
 	if  button == "l" and mX>=global.screenWidth-380 and mX<global.screenWidth-350 and mY>global.screenHeight-150 and mY<global.screenHeight-80 and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
 		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
 			game_status="map";
-			love.audio.play(media.sounds.paper,0);
+			utils.playSfx(media.sounds.paper,1);
 		elseif game_status == "map"  then
-			love.audio.play(media.sounds.paper,0);
+			utils.playSfx(media.sounds.paper,1);
 			game_status="neutral";
 		end;
 	end;
@@ -5435,10 +5440,10 @@ function  playingState.mousepressed(x,y,button)
 	if button == "l"  and  game_status == "literature" and littype == "book" then
 		local x,y = helpers.centerObject(media.images.book);
 		if mX>x and mX <= x+460 and mY>y+20 and mY < y+680 and pagebook > 1 then
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 			pagebook = pagebook-1;
 		elseif  mX >= 460 and mX < x+960 and mY > y+20 and mY < y+680 and pagebook<books_ttx[list[tmp_book].q].pages then
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 			pagebook = pagebook + 1;
 		end;
 	end;
@@ -5446,10 +5451,10 @@ function  playingState.mousepressed(x,y,button)
 	if button == "l"  and  game_status == "questbook" then --FIXME notes and etc modes
 		local x,y = helpers.centerObject(media.images.book);
 		if mX>x and mX<=x+460 and mY>y+20 and mY<y+680 and global.questbook_page > 1 then
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 			global.questbook_page = global.questbook_page - 1;
 		elseif  mX >= 460 and mX < x+960 and mY > y+20 and mY < y+680 and global.questbook_page < #party.quests then
-			love.audio.play(media.sounds.bookpage, 0);
+			utils.playSfx(media.sounds.bookpage, 1);
 			global.questbook_page = global.questbook_page + 1;
 		end;
 	end;
@@ -5466,7 +5471,7 @@ function  playingState.mousepressed(x,y,button)
 		--and chars_mobs_npcs[current_mob].lvl_alchemy>0
 		and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].comp8].ttxid].subclass == "raw"
 		and alchlab[current_mob].tool2>0 then
-			love.audio.play(media.sounds.mill,0);
+			utils.playSfx(media.sounds.mill,1);
 			local tclr=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].comp8].ttxid].b;
 			local tmpcolor=raws[tclr]
 			local list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false);
@@ -5488,7 +5493,7 @@ function  playingState.mousepressed(x,y,button)
 		and math.abs(chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].comp7].q-chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].comp9].q)<=powerlimit
 		--and chars_mobs_npcs[current_mob].lvl_alchemy>0
 		and alchlab[current_mob].tool2>0 then
-			love.audio.play(media.sounds.mill,0);
+			utils.playSfx(media.sounds.mill,1);
 			local tclr=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].comp7].ttxid].b
 			local tmpcolor=raws[tclr];
 			local tmpnumber1=alchlab[current_mob].comp7;
@@ -5518,7 +5523,7 @@ function  playingState.mousepressed(x,y,button)
 		--and chars_mobs_npcs[current_mob].lvl_alchemy>0
 		--and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].comp8].ttxid].subclass == "gom"
 		and alchlab[current_mob].tool2>0 then
-			love.audio.play(media.sounds.mill,0);
+			utils.playSfx(media.sounds.mill,1);
 			local tclr=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].comp8].ttxid].b;
 			local tmpcolor=raws[tclr];
 			local list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false);
@@ -5556,7 +5561,7 @@ function  playingState.mousepressed(x,y,button)
 			while (#comparray>0) do
 				table.remove(comparray,1);
 			end;
-			love.audio.play(media.sounds.alch_guggle,0);
+			utils.playSfx(media.sounds.alch_guggle,1);
 			temppotion="";
 			sumcomp="";
 			tempcomp="";
@@ -5603,7 +5608,7 @@ function  playingState.mousepressed(x,y,button)
 			and #inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].c+#inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].ttxid].c<= chars_stats[current_mob].lvl_alchemy
 			and math.abs(chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].q-chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].q)<=powerlimit
 			then
-				love.audio.play(media.sounds.alch_guggle,0);
+				utils.playSfx(media.sounds.alch_guggle,1);
 				local tmppower=math.min(chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].q,chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].q,powerlimit);
 				local tmppower2=math.ceil(tmppower*inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].tool3].ttxid].a/100);
 				local tmppower3=tmppower2+math.random(tmppower-tmppower2);
@@ -5619,7 +5624,7 @@ function  playingState.mousepressed(x,y,button)
 			and #inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].c+#inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].ttxid].c<= chars_stats[current_mob].lvl_alchemy
 			and math.abs(chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].q-chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].q)<=powerlimit
 			then --using catalisator
-				love.audio.play(media.sounds.alch_guggle,0);
+				utils.playSfx(media.sounds.alch_guggle,1);
 				local tmppower=math.min(chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].q+chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].q,powerlimit);
 				local tmppower2=math.ceil(tmppower*inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].tool3].ttxid].a/100);
 				local tmppower3=tmppower2+math.random(tmppower-tmppower2);
@@ -5638,7 +5643,7 @@ function  playingState.mousepressed(x,y,button)
 			and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].ttxid].class~="bottle"
 			and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].id == inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].ttxid].id
 			then
-				love.audio.play(media.sounds.alch_guggle,0);
+				utils.playSfx(media.sounds.alch_guggle,1);
 				local tmppower=math.min(chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].q+chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].q,powerlimit)
 				local tmppower2=math.ceil(tmppower*inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].tool3].ttxid].a/100)
 				local tmppower3=tmppower2+math.random(tmppower-tmppower2)
@@ -5649,7 +5654,7 @@ function  playingState.mousepressed(x,y,button)
 			elseif --separating potions
 			((inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].class == "bottle" and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].ttxid].class~="bottle") or (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].class~="bottle" and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].ttxid].class == "bottle"))
 			then
-				love.audio.play(media.sounds.alch_guggle,0);
+				utils.playSfx(media.sounds.alch_guggle,1);
 				mixedpotion=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].id
 				local tmppower=math.ceil(chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].q+chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].q/2);
 				local tmppower2=chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].q+chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].q-tmppower;
@@ -5689,7 +5694,7 @@ function  playingState.mousepressed(x,y,button)
 						for j=1,10 do
 							tmpk = tmpk .. tostring(keycode[j]);
 						end;
-						love.audio.play(media.sounds.making_picklock,0);
+						utils.playSfx(media.sounds.making_picklock,1);
 						chars_mobs_npcs[current_mob]["inventory_list"][picklock[current_mob].key].w = tmpk;
 						break;
 					end;
@@ -5734,22 +5739,22 @@ function  playingState.mousepressed(x,y,button)
 
 					if lock_elements[i] == 1 and success then
 						lock_elements[i] = 0;
-						love.audio.play(media.sounds.click,0);
+						utils.playSfx(media.sounds.click,1);
 					elseif lock_elements[i] == 1 and not success then
 						lock_elements[i] = 0;
-						love.audio.play(media.sounds.click,0);
+						utils.playSfx(media.sounds.click,1);
 						for j=1,10 do
 							local roll = math.random(1,120);
 							if lock_elements[j] == 0 and roll > chars_mobs_npcs[current_mob].luk and j ~= i then --crack!
 								lock_elements[j] = 1;
-								love.audio.play(media.sounds.click,0);
+								utils.playSfx(media.sounds.click,1);
 								helpers.chestTrapCylinder(bagid,traptriggers[j]);
 								helpers.breakAllPicklocks (current_mob);
 							end;
 						end;
 					else
 						lock_elements[i] = 1;
-						love.audio.play(media.sounds.click,0);
+						utils.playSfx(media.sounds.click,1);
 					end;
 				end;
 			end;
@@ -5815,7 +5820,7 @@ function  playingState.mousepressed(x,y,button)
 							end;
 						end;
 					end;
-					love.audio.play(media.sounds.click,0);
+					utils.playSfx(media.sounds.click,1);
 				end;
 			end;
 			helpers.breakAllPicklocks (current_mob);
@@ -5883,7 +5888,7 @@ function  playingState.mousepressed(x,y,button)
 						helpers.chestTrapDisk(bagid);
 						helpers.breakAllPicklocks (current_mob);
 					end;
-					love.audio.play(media.sounds.click,0);
+					utils.playSfx(media.sounds.click,1);
 				end;
 			end;
 			helpers.breakAllPicklocks (current_mob);
@@ -5958,7 +5963,7 @@ function  playingState.mousepressed(x,y,button)
 					end;
 					if mX > x+575+h*25 and mX < x+575+(h+1)*25 and mY > 620-i*25 and mY < y+400-(i-1)*25 and mY > y+400-i*25 and picklock[current_mob].traptool > 0 and inventory_ttx[list[picklock[current_mob].traptool].ttxid].a == trapcode[counter] and lucky then
 						if trapcode[counter] > 0 then
-							love.audio.play(media.sounds.click,0);
+							utils.playSfx(media.sounds.click,1);
 							trapcode[counter] = 0;
 							local tmp_trapcode = "";
 							for k=1,complication^2 do
@@ -6202,7 +6207,7 @@ function  playingState.mousepressed(x,y,button)
 				page = 1;
 				spellbook_call();
 			elseif game_status == "spellbook" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status = "neutral" ;
 			end;
 		end;
@@ -6217,7 +6222,7 @@ function  playingState.mousepressed(x,y,button)
 				page = 1;
 				questbook_call();
 			elseif game_status == "questbook" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status = "neutral" ;
 			end;
 		end;
@@ -6232,7 +6237,7 @@ function  playingState.mousepressed(x,y,button)
 				page = 1;
 				warbook_call();
 			elseif game_status == "warbook" then
-				love.audio.play(media.sounds.bookclose,0);
+				utils.playSfx(media.sounds.bookclose,1);
 				game_status = "neutral" ;
 			end;
 		end;
@@ -6326,7 +6331,7 @@ function  playingState.mousepressed(x,y,button)
 			and chars_stats[current_mob].nature=="humanoid"
 			then
 				helpers.limitStats();
-				love.audio.play(media.sounds.chpok,0);
+				utils.playSfx(media.sounds.chpok,1);
 				missle_type="drinkpotion";
 				game_status="sensing";
 				drink_smth=holding_smth;
@@ -6363,7 +6368,7 @@ function  playingState.mousepressed(x,y,button)
 				elseif inventory_ttx[list[drink_smth].ttxid].b=="zero" then
 					chars_mobs_npcs[previctim][tmp]=0;
 				end;
-				helpers.limitStats() love.audio.play(media.sounds.drink,0);
+				helpers.limitStats() utils.playSfx(media.sounds.drink,1);
 				helpers.addToActionLog( chars_stats[previctim].name .. " " ..
 				lognames.actions.drinked[chars_mobs_npcs[previctim].gender] .. " «"
 				.. inventory_ttx[list[drink_smth].ttxid].title .. "» "
@@ -7015,11 +7020,11 @@ function  playingState.mousepressed(x,y,button)
 				helpers.repackBag();
 				find_nonfree_space_at_inv();
 				sell_smth = 0;
-				love.audio.play(media.sounds.gold_dzen,0);
+				utils.playSfx(media.sounds.gold_dzen,1);
 				party.gold=party.gold+global.price;
 			else
 				helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notinterested);
-				love.audio.play(media.sounds.error,0);
+				utils.playSfx(media.sounds.error,1);
 			end;
 		end;
 		if id_smth > 0 then
@@ -7032,12 +7037,12 @@ function  playingState.mousepressed(x,y,button)
 			local price = math.ceil(100*traders[chars_mobs_npcs[npc].shop].prices[1]);
 			if helpers.tradersIdentifiesThisItem(victim,class) then
 				if helpers.payGold(price) then
-					--love.audio.play(media.sounds.id,0);
+					--utils.playSfx(media.sounds.id,1);
 					chars_mobs_npcs[current_mob]["inventory_list"][id_smth].r = 1;
 				end;
 			else
 				helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-				love.audio.play(media.sounds.error,0);
+				utils.playSfx(media.sounds.error,1);
 			end;
 		end;
 		if repair_smth > 0 then
@@ -7051,12 +7056,12 @@ function  playingState.mousepressed(x,y,button)
 			helpers.inv_tips_add();
 			if helpers.tradersRepairsThisItem(victim,class) then
 				if helpers.payGold(global.price) then
-					love.audio.play(media.sounds.repair,0);
+					utils.playSfx(media.sounds.repair,1);
 					chars_mobs_npcs[current_mob]["inventory_list"][repair_smth].q = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][repair_smth].ttxid].material; --fixme may be skill of repairng?
 				end;
 			else
 				helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-				love.audio.play(media.sounds.error,0);
+				utils.playSfx(media.sounds.error,1);
 			end;
 		end;
 	end;
@@ -7117,7 +7122,7 @@ function  playingState.mousepressed(x,y,button)
 					helpers.repackBag();
 					find_nonfree_space_at_inv();
 					sell_smth = 0;
-					love.audio.play(media.sounds.gold_dzen,0);
+					utils.playSfx(media.sounds.gold_dzen,1);
 					party.gold=party.gold+global.price;
 					if #bags_list[bagid] == 0 then
 						table.remove(bags_list,bagid)
@@ -7126,7 +7131,7 @@ function  playingState.mousepressed(x,y,button)
 					end;
 				else
 					helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notinterested);
-					love.audio.play(media.sounds.error,0);
+					utils.playSfx(media.sounds.error,1);
 				end;
 			end;
 			if id_smth > 0 then
@@ -7139,12 +7144,12 @@ function  playingState.mousepressed(x,y,button)
 				local price = math.ceil(100*traders[chars_mobs_npcs[npc].shop].prices[1]);
 				if helpers.helpers.tradersIdentifiesThisItem(victim,class) then
 					if helpers.payGold(price) then
-						--love.audio.play(media.sounds.id,0);
+						--utils.playSfx(media.sounds.id,1);
 						bags_list[bagid][id_smth].r = 1;
 					end;
 				else
 					helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-					love.audio.play(media.sounds.error,0);
+					utils.playSfx(media.sounds.error,1);
 				end;
 			end;
 			if repair_smth > 0 then
@@ -7158,12 +7163,12 @@ function  playingState.mousepressed(x,y,button)
 				helpers.inv_tips_add();
 				if helpers.tradersRepairsThisItem(victim,class) then
 					if helpers.payGold(global.price) then
-						love.audio.play(media.sounds.repair,0);
+						utils.playSfx(media.sounds.repair,1);
 						bags_list[bagid][repair_smth].q = inventory_ttx[bags_list[bagid][repair_smth].ttxid].material; --fixme may be skill of repairng?
 					end;
 				else
 					helpers.addToActionLog(helpers.mobName(victim) .. ": " .. lognames.traders.notmyspec);
-					love.audio.play(media.sounds.error,0);
+					utils.playSfx(media.sounds.error,1);
 				end;
 			end;
 		end;
@@ -7280,7 +7285,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 			if tmp12>0 then
 				if inventory_ttx[list[holding_smth].ttxid].class == "gold" then
-					love.audio.play(media.sounds.gold_dzen,0);
+					utils.playSfx(media.sounds.gold_dzen,1);
 					party.gold=party.gold+list[holding_smth].q;
 					table.remove(bags_list[bagid],holding_smth);
 					for i=1,11 do
@@ -7685,7 +7690,7 @@ function mob_moving()
 	if (walked_before == 0 and global.timers.n_timer >= 0.2*global.walk_animation_speed) or global.timers.n_timer >= 0.4*global.walk_animation_speed then
 		local sound_of_step = stepsound_table[map[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]]
 		local snd = loadstring("return " .. "media.sounds.footstep_short_" .. sound_of_step)();
-		love.audio.play(snd,0)
+		utils.playSfx(snd,1);
 		b = chars_mobs_npcs[current_mob].x;
 		a = chars_mobs_npcs[current_mob].y;
 		local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
@@ -7701,7 +7706,7 @@ function mob_moving()
 			calendar.add_time_interval(calendar.delta_walk_in_peace);
 		end;
 		local price = helpers.countCurrentHexPrice(path_counter,current_mob);
-		if helpers.aliveNature(current_mob) and global_status == "battle" then
+		if helpers.aliveNature(current_mob) and global.status == "battle" then
 			if chars_mobs_npcs[current_mob].st >= price then
 				chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st-price;
 			else
@@ -7713,9 +7718,9 @@ function mob_moving()
 				helpers.addToActionLog( name .. " " .. lognames.actions.tired[chars_mobs_npcs[current_mob].gender]);
 			end;
 		end;
-		if chars_mobs_npcs[current_mob].rt >= price and global_status == "battle" then --do not need if count before  FIXME WTF?
+		if chars_mobs_npcs[current_mob].rt >= price and global.status == "battle" then --do not need if count before  FIXME WTF?
 			chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-price;
-		elseif global_status == "battle" then
+		elseif global.status == "battle" then
 			chars_mobs_npcs[current_mob].rt = 0;
 			utils.printDebug("out of recovery!");
 			game_status = "restoring";
@@ -7979,7 +7984,7 @@ function steal (index)
 				chars_mobs_npcs[index].gold = chars_mobs_npcs[index].gold - 1;
 				helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.stolen[chars_mobs_npcs[current_mob].gender] .. " " .. gold .. " " .. lognames.actions.withgold);
 				helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.robbed[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
-				love.audio.play(media.sounds.gold_dzen,0);
+				utils.playSfx(media.sounds.gold_dzen,1);
 			end;
 		end;
 		if chars_mobs_npcs[current_mob].lvl_thievery >= 2 then
@@ -8167,11 +8172,12 @@ function letaBattleBegin ()
 		for i=1,#chars_mobs_npcs do
 			helpers.countMoral(i);
 		end;
-		love.audio.play(media.sounds.battle_begins,0);
+		utils.playSfx(media.sounds.battle_begins,1);
 		helpers.addToActionLog( lognames.actions.battlestarted);
 		global.status="battle";
 		global.battle_start = true;
-		love.audio.play(media.sounds.battle, 0);
+		--utils.playSfx(media.sounds.battle, 1);
+		utils.playThemeMusic (media.sounds.battle,0,"battle");
 		helpers.battleorder();
 	end;
 end;
@@ -8179,10 +8185,11 @@ end;
 function letaBattleFinishes ()
 	utils.printDebug("Battle finished!");
 	if global.status == "battle" then
-		love.audio.play(media.sounds.battle_finishes,0);
+		utils.playSfx(media.sounds.battle_finishes,1);
 		helpers.addToActionLog(lognames.actions.battlefinished);
 		global.status = "peace";
-		love.audio.stop(media.sounds.battle, 0);
+		--love.audio.stop(media.sounds.battle, 0);
+		utils.playThemeMusic (media.sounds.peace,0,"peace");
 		for i=1,#chars_mobs_npcs do
 			chars_mobs_npcs[i].enslave = 0;
 			if chars_mobs_npcs[i].summoned then
@@ -8917,13 +8924,13 @@ end;
 
 function charstats_call()
 	game_status = "stats";
-	love.audio.play(media.sounds.bookopen, 0);
+	utils.playSfx(media.sounds.bookopen, 1);
 end;
 
 function charskills_call(index)
 	helpers.countSkills (index);
 	game_status = "skills";
-	love.audio.play(media.sounds.bookopen, 0);
+	utils.playSfx(media.sounds.bookopen, 1);
 	draw.applyButton ();
 end;
 
@@ -8960,23 +8967,23 @@ end;
 
 function spellbook_call()
 	game_status = "spellbook";
-	love.audio.play(media.sounds.bookopen, 0);
+	utils.playSfx(media.sounds.bookopen, 1);
 end
 
 function questbook_call()
 	game_status = "questbook";
-	love.audio.play(media.sounds.bookopen, 0);
+	utils.playSfx(media.sounds.bookopen, 1);
 end
 
 function warbook_call()
 	game_status = "warbook";
-	love.audio.play(media.sounds.bookopen, 0);
+	utils.playSfx(media.sounds.bookopen, 1);
 end
 
 function inventory_bag_call ()
 	closeAllBags ();
 	inv_page=1;
-	love.audio.play(media.sounds.invopen,0);
+	utils.playSfx(media.sounds.invopen,1);
 	bagid = helpers.whatBag (current_mob);
 	if bagid then
 		th=bagid;

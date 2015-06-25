@@ -276,7 +276,7 @@ function mindgame.passTurn()
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][mindcounter] = 0;
 		end;
 		local snd = "mindgame_" .. mindgame["flags_default"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"].default][3];
-		love.audio.play(media["sounds"][snd],0);
+		utils.playSfx(media["sounds"][snd],1);
 	end;
 	mindgame.path ();
 end;

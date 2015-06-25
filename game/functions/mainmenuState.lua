@@ -42,7 +42,8 @@ function mainmenuState.start(media)
 end;
 
 function mainmenuState.load()
-	love.audio.play(media.sounds.mainmenu, 0);
+	--utils.playSfx(media.sounds.mainmenu, 1);
+	utils.playThemeMusic (media.sounds.mainmenu,0,"mainmenu");
 	mainmenuState.drawButtons ();
 end;
 

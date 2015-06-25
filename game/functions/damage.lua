@@ -274,7 +274,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	local selfrem_rt = 0;
 	helpers.recalcBattleStats (current_mob);
 	if helpers.missleIsAweapon () and missle_type ~= "bottle" then
-		love.audio.play(media.sounds.arrow_impact,0); -- FIXME: different sounds for different missles
+		utils.playSfx(media.sounds.arrow_impact,1); -- FIXME: different sounds for different missles
 		local wpEffect,wpChance = damage.weaponPassives(current_mob,victim,missle_type);
 		local attacked_from = helpers.attackDirection(current_mob,victim);
 		if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
@@ -327,7 +327,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		end;
 		if chance_to_hit <= 0 then
 			iflucky = 0;
-			--love.audio.play(media.sounds.sword_miss,0);
+			--utils.playSfx(media.sounds.sword_miss,1);
 			helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
 		else
 			iflucky = 1;
@@ -636,7 +636,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					end;
 					
 				elseif hitResult == "block" then
-					love.audio.play(media.sounds.block,0);		
+					utils.playSfx(media.sounds.block,1);		
 					helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
 					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
 						chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg));
@@ -684,10 +684,10 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				random_chance = math.random(1,100);
 				if chance_to_crit >= random_chance then
 					crit = 2;
-					--love.audio.play(media.sounds.sword_crit,0);
+					--utils.playSfx(media.sounds.sword_crit,1);
 				elseif chance_to_crit < random_chance then
 					crit = 1;
-					--love.audio.play(media.sounds.sword_impact,0);
+					--utils.playSfx(media.sounds.sword_impact,1);
 				end;
 				--/CRIT
 				incoming_physical_dmg = incoming_physical_dmg*crit;
@@ -3224,7 +3224,7 @@ function damage.ifBattleEnds()
 			local roll = math.random(1,2);
 			if roll == 1 then
 			else
-				love.audio.play(media.sounds.highmoral, 0);
+				utils.playSfx(media.sounds.highmoral, 1);
 				helpers.addToActionLog( helpers.mobName(j) .. " " .. lognames.actions.hashighmoral[chars_mobs_npcs[j].gender]);
 				chars_mobs_npcs[j].rt = math.min(200,chars_mobs_npcs[j].rt + 20);
 			end;
@@ -3232,7 +3232,7 @@ function damage.ifBattleEnds()
 				local roll = math.random(1,2);
 				if roll == 1 then
 				else
-					love.audio.play(media.sounds.lowmoral, 0);
+					utils.playSfx(media.sounds.lowmoral, 1);
 					helpers.addToActionLog( helpers.mobName(j) .. " " .. lognames.actions.haslowmoral[chars_mobs_npcs[j].gender]);
 					chars_mobs_npcs[j].rt = math.max(0,chars_mobs_npcs[j].rt - 20);
 				end;
@@ -3393,7 +3393,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	end;
 	if chance_to_hit <= 0 then
 		iflucky = 0;
-		love.audio.play(media.sounds.sword_miss,0);
+		utils.playSfx(media.sounds.sword_miss,1);
 		helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
 	else
 		iflucky = 1;
@@ -3774,7 +3774,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 					end;
 				end;	
 			elseif hitResult == "block" then
-				love.audio.play(media.sounds.block,0);		
+				utils.playSfx(media.sounds.block,1);		
 				helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
 				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
 					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg*armorDmgMod));
@@ -3852,10 +3852,10 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			random_chance = math.random(1,100);
 			if chance_to_crit >= random_chance then
 				crit = 2;
-				love.audio.play(media.sounds.sword_crit,0);
+				utils.playSfx(media.sounds.sword_crit,1);
 			elseif chance_to_crit < random_chance then
 				crit = 1;
-				love.audio.play(media.sounds.sword_impact,0);
+				utils.playSfx(media.sounds.sword_impact,1);
 			end;
 			--/CRIT
 			incoming_physical_dmg = incoming_physical_dmg*crit;
@@ -4193,7 +4193,7 @@ function damage.shoot()
 			local mob_sht1 = loadstring("return " .. tmp	)();
 			animation_sht1 = anim8.newAnimation(mob_sht1[atk_direction]("1-9",1), 0.075,"pauseAtEnd");
 			recovery = helpers.countRangeRecoveryChar (current_mob);
-			love.audio.play(media.sounds.crossbow_shot, 0);
+			utils.playSfx(media.sounds.crossbow_shot, 1);
 		elseif missle_type == "throwing" then
 			recovery = helpers.countRangeRecoveryChar (current_mob);
 		elseif missle_type == "bottle" then
@@ -4210,7 +4210,7 @@ function damage.shoot()
 		damage.RTminus(current_mob,recovery+add_effect_rt,false);
 		img_shoot = img_mob_war;
 	elseif missle_drive=="spellbook" or missle_drive=="scroll" or missle_drive=="wand" then
-		--love.audio.play(sfx.Sounds["spellbook"], 0)
+		--utils.playSfx(sfx.Sounds["spellbook"], 1)
 		if magic.spell_tips[missle_type].form == "ball"
 		or magic.spell_tips[missle_type].form == "arrow"
 		or missle_type == "toxiccloud" then
@@ -4589,7 +4589,7 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[victim].poison_dur = chars_mobs_npcs[victim].poison_dur-buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.cured[chars_mobs_npcs[current_mob].gender]);
-		love.audio.play(media.sounds.spell_freeze,0);
+		utils.playSfx(media.sounds.spell_freeze,1);
 	end;
 	
 	if missle_type == "curedisease" then
@@ -4603,7 +4603,7 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[victim].poison_dur = chars_mobs_npcs[victim].disease-buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.cured[chars_mobs_npcs[current_mob].gender]);
-		love.audio.play(media.sounds.spell_freeze,0);
+		utils.playSfx(media.sounds.spell_freeze,1);
 	end;
 	
 	if missle_type == "curemind" then
@@ -5122,7 +5122,7 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 
 	if missle_type=="resurrect" then
-		love.audio.play(media.sounds.spell_resurrect,0);
+		utils.playSfx(media.sounds.spell_resurrect,1);
 		if lvl[1]==5 then
 			buff=damage.damageRandomizator(current_mob,1,5)*num[2];
 		else
@@ -5343,7 +5343,7 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[victim].deadlyswarm = 0;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.freeze[chars_mobs_npcs[current_mob].gender]);
-		love.audio.play(media.sounds.spell_freeze,0);
+		utils.playSfx(media.sounds.spell_freeze,1);
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
 	end;
@@ -5365,7 +5365,7 @@ function damage.instantCast () --FIXME use lvl, num
 		end;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.freeze[chars_mobs_npcs[current_mob].gender]);
-		--love.audio.play(media.sounds.spell_stone,0);
+		--utils.playSfx(media.sounds.spell_stone,1);
 		local damaged_mobs = {};
 		table.insert(damaged_mobs,victim);
 	end;
@@ -5506,7 +5506,7 @@ function damage.mindGameCast()
 			end;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
 			local snd = "mindgame_agression";
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("berserk",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5525,7 +5525,7 @@ function damage.mindGameCast()
 			local minusnumber = debuff;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][minusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][minusstatus] - minusnumber;
 			local snd = "mindgame_loyality";
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("charm",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 			chars_mobs_npcs[victim].aggressor = 0;
 			chars_mobs_npcs[victim].aggro = 0;
@@ -5550,7 +5550,7 @@ function damage.mindGameCast()
 			end;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
 			local snd = "mindgame_fear";
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("fear",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5574,7 +5574,7 @@ function damage.mindGameCast()
 			end;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
 			local snd = "mindgame_fear";
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("charm",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5606,7 +5606,7 @@ function damage.mindGameCast()
 			fractions[chars_mobs_npcs[victim]["fraction"]]["party"] = fractions[chars_mobs_npcs[victim]["fraction"]]["party"]-plusnumber;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
 			local snd = "mindgame_fear"; -- FIXME hhhhhhh
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("asphyxia",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5632,7 +5632,7 @@ function damage.mindGameCast()
 				chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
 			end;
 			local snd = "mindgame_lol";
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("feelglad",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5658,7 +5658,7 @@ function damage.mindGameCast()
 				chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][plusstatus] + plusnumber;
 			end;
 			local snd = "mindgame_cry";
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("feelsad",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5679,7 +5679,7 @@ function damage.mindGameCast()
 				global.mind_hero.y = 5;
 			end;
 			local snd = "mindgame_cry"; --FIXME
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("sleep",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5697,7 +5697,7 @@ function damage.mindGameCast()
 			local minusstatus = 7;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][6] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][6] - debuff);
 			local snd = "mindgame_loyality"; --FIXME master
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("mymaster",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5716,7 +5716,7 @@ function damage.mindGameCast()
 			local minusstatus = 7;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][6] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][6] - debuff);
 			local snd = "mindgame_loyality"; --FIXME master
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("mymaster",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
@@ -5734,7 +5734,7 @@ function damage.mindGameCast()
 			local minusstatus = 7;
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][2] = math.max(0,chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][2] - debuff);
 			local snd = "mindgame_loyality"; --FIXME ooh
-			love.audio.play(media["sounds"][snd],0);
+			utils.playSfx(media["sounds"][snd],1);
 			local phrase1 = chars_mobs_npcs[victim].name .. ": " .. chats.questionPerEtiquette("curedmind",chars_mobs_npcs[victim]["personality"]["current"].etiquette);
 		else
 			helpers.addToActionLog( lognames.actions.noeffect);
