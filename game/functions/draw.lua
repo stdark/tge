@@ -1472,6 +1472,26 @@ function draw.stats(index)
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
 	end;
+	if chars_mobs_npcs[current_mob].dayofgods_dur > 0 then
+		local str = tips_conditions.dayofgods;
+		love.graphics.print(str, x+794,y+260 + addy3*15);
+		addy3 = addy3 + 1;
+	end;
+	if chars_mobs_npcs[current_mob].hourofpower_dur > 0 then
+		local str = tips_conditions.hourofpower;
+		love.graphics.print(str, x+794,y+260 + addy3*15);
+		addy3 = addy3 + 1;
+	end;
+	if chars_mobs_npcs[current_mob].protection_dur > 0 then
+		local str = tips_conditions.protection;
+		love.graphics.print(str, x+794,y+260 + addy3*15);
+		addy3 = addy3 + 1;
+	end;
+	if chars_mobs_npcs[current_mob].angel > 0 then
+		local str = tips_conditions.angel;
+		love.graphics.print(str, x+794,y+260 + addy3*15);
+		addy3 = addy3 + 1;
+	end;
 	if chars_mobs_npcs[current_mob].heroism_dur > 0 then
 		local str = tips_conditions.heroism;
 		love.graphics.print(str, x+794,y+260 + addy3*15);
@@ -1482,7 +1502,7 @@ function draw.stats(index)
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
 	end;
-	if chars_mobs_npcs[current_mob].bless > 0 then
+	if chars_mobs_npcs[current_mob].bless_dur > 0 then
 		local str = tips_conditions.bless;
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;

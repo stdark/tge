@@ -1435,7 +1435,7 @@ function helpers.detectAImode (index)
 	elseif chars_mobs_npcs[index].enslave > 0 then
 		mind_condition = mind_status.enslave;
 	end;
-	if chars_mobs_npcs[index].heroism_power > 0 or chars_mobs_npcs[index].fateself > 0 or chars_mobs_npcs[index].prayer > 0 or chars_mobs_npcs[index].myrth_power > 0 or chars_mobs_npcs[index].bless > 0 or chars_mobs_npcs[index].haste > 0 then
+	if chars_mobs_npcs[index].heroism_power > 0 or chars_mobs_npcs[index].fateself > 0 or chars_mobs_npcs[index].prayer > 0 or chars_mobs_npcs[index].myrth_power > 0 or chars_mobs_npcs[index].bless_dur > 0 or chars_mobs_npcs[index].haste > 0 then
 		mind_buff = mind_status.hoorah;
 	end;
 	if chars_mobs_npcs[index].rage > 0 or chars_mobs_npcs[index].thirstofblood > 0 then
@@ -1919,6 +1919,10 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].protfromdisease_dur = 0;
 	chars_mobs_npcs[i].protofmind_power = 0;
 	chars_mobs_npcs[i].protofmind_dur = 0;
+	chars_mobs_npcs[i].protofmind_dur = 0;
+	chars_mobs_npcs[i].protection_dur = 0;
+	chars_mobs_npcs[i].protection_power = 0;
+	chars_mobs_npcs[i].angel = 0;
 	chars_mobs_npcs[i].shield = 0;
 	chars_mobs_npcs[i].stoneskin_power = 0;
 	chars_mobs_npcs[i].stoneskin_dur = 0;
@@ -1935,7 +1939,8 @@ function helpers.addMob(i,person)
 	chars_mobs_npcs[i].shieldfromacid_power = 0;
 	chars_mobs_npcs[i].shieldfromacid_dur = 0;
 
-	chars_mobs_npcs[i].bless = 0;
+	chars_mobs_npcs[i].bless_dur = 0;
+	chars_mobs_npcs[i].bless_power = 0;
 	chars_mobs_npcs[i].fate = 0;
 	chars_mobs_npcs[i].fateself = 0;
 	chars_mobs_npcs[i].heroism_power = 0;

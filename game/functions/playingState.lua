@@ -8405,8 +8405,17 @@ function restoreRT ()
 				if chars_mobs_npcs[i].preservation > 0 then
 					chars_mobs_npcs[i].preservation= chars_mobs_npcs[i].preservation-1;
 				end;
-				if chars_mobs_npcs[i].bless>0 then
-					chars_mobs_npcs[i].bless= chars_mobs_npcs[i].bless-1;
+				if chars_mobs_npcs[i].bless_dur > 0 then
+					chars_mobs_npcs[i].bless_dur = chars_mobs_npcs[i].bless_dur - 1;
+					if chars_mobs_npcs[i].bless_dur == 0 then
+						chars_mobs_npcs[i].bless_power = 0;
+					end;
+				end;
+				if chars_mobs_npcs[i].protection_dur > 0 then
+					chars_mobs_npcs[i].protection_dur = chars_mobs_npcs[i].protection_dur - 1;
+					if chars_mobs_npcs[i].protection_dur == 0 then
+						chars_mobs_npcs[i].protection_power = 0;
+					end;
 				end;
 				if chars_mobs_npcs[i].curse>0 then
 					chars_mobs_npcs[i].curse= chars_mobs_npcs[i].curse-1;
