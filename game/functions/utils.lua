@@ -199,6 +199,7 @@ function utils.playThemeMusic (music,start_volume,music_type)
 	end;
 	table.insert(global.theme_music_array,{track=music,type=global.music_switch_to});
 	while #global.theme_music_array > 2 do
+		love.audio.stop(global.theme_music_array[1].track);
 		table.remove(global.theme_music_array,1);
 	end;
 end;

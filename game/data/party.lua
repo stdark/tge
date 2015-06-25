@@ -36,8 +36,8 @@ chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=10, num_spothidden=15, num_monsterid=10,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=3, lvl_spothidden=3, lvl_monsterid=1,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
+            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=1, num_picklocking=15, num_traps=10, num_spothidden=15, num_monsterid=10,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=3, lvl_spothidden=3, lvl_monsterid=1,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
                    }
 chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name="John Rambo", face=3, lv=1, xp=0,  nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="warrior",
@@ -265,6 +265,7 @@ chars_stats[2].inventory_list={
 {ttxid=384,q=2,w="coldbeam",e=0,r=1,h=0},
 {ttxid=241,q=1,w=0,e=0,r=1,h=0},
 {ttxid=251,q=1,w=0,e=0,r=1,h=0},
+{ttxid=394,q=1,w="fear",e=0,r=1,h=0},
 }
 chars_stats[3].inventory_list={
 {ttxid=1,q=1,w=0,e=0,r=1,h=0},

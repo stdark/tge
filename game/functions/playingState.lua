@@ -54,9 +54,7 @@ function playingState.load()
 	--love.audio.stop(media.sounds.mainmenu, 0);
 	
 	media.sounds.battle:setLooping( loop );
-	media.sounds.battle:setVolume(0.5);
 	media.sounds.peace:setLooping( loop );
-	media.sounds.peace:setVolume(0.5);
 	
 	--currentState = loadingState;
 	--currentState.start(media, loadingFinished);
@@ -1986,13 +1984,19 @@ function playingState.keypressed(key, unicode)
 
 		if key == "i" then
 			if chars_mobs_npcs[current_mob].person=="char"
-			and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" ) then
+			and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "mindgame") then
+				loveframes.util.RemoveAll();
 				game_status="inventory";
 				inventory_bag_call();
 				helpers.repackBag();
 			elseif chars_mobs_npcs[current_mob].person=="char" and game_status == "inventory" and holding_smth==0 then
 				utils.playSfx(media.sounds.invclose,1);
 				game_status="neutral";
+			elseif chars_mobs_npcs[current_mob].person=="char" and game_status == "mindgame" and holding_smth==0 then
+				utils.playSfx(media.sounds.invclose,1);
+				global.mindgame_attempts = global.mindgame_attempts - 1;
+				game_status = "mindgame";
+				draw.mindgameButtons();
 			end;
 		end;
 
@@ -2097,18 +2101,25 @@ function playingState.keypressed(key, unicode)
 			game_status = "mindgame";
 			draw.mindgameButtons();
 		end;
+		
+		if key == "escape" and (game_status == "inventory" and global.status == "mindgame") then
+			global.mindgame_attempts = global.mindgame_attempts - 1;
+			game_status = "mindgame";
+			draw.mindgameButtons();
+			utils.playSfx(media.sounds.invclose,1);
+		end;
 
 		if key == "escape"
 		and (game_status == "neutral"
 		or game_status == "sensing"
 		or game_status == "path_finding"
 		or game_status == "menu"
-		or game_status == "inventory"
+		or (game_status == "inventory" and global.status ~= "mindgame")
 		or game_status == "alchemy"
 		or game_status == "picklocking"
 		or game_status == "crafting"
 		or (game_status == "spellbook" and global.status ~= "mindgame")
-		 or game_status == "questbook"
+		or game_status == "questbook"
 		or game_status == "warbook"
 		or game_status == "literature"
 		or game_status == "map"
@@ -4055,11 +4066,17 @@ function playingState.mousereleased (x,y,button)
 				utils.playSfx(media.sounds.paper,1);
 				missle_drive = "scroll";
 				missle_type = list[holding_smth].w;
-				game_status = "sensing";
-				scroll_smth=holding_smth;
+				if global.status ~= "mindgame" then
+					game_status = "sensing";
+				else
+					global.mindgame_attempts = global.mindgame_attempts - 1;
+					damage.mindGameCast();
+					game_status = "mindgame";
+				end;
+				scroll_smth = holding_smth;
 				holding_smth = 0;
 			end;
-			if (holding_smth > 0 and selected_portrait > 0 and selected_portrait ~= current_mob and char_for_trading_is_near == 1) then
+			if (holding_smth > 0 and selected_portrait > 0 and selected_portrait ~= current_mob and char_for_trading_is_near == 1) then --FIXME wno need trading this way!
 				sorttarget="char";
 				oldsorttarget="char";
 				selected_char=selected_portrait;
@@ -6333,7 +6350,13 @@ function  playingState.mousepressed(x,y,button)
 				helpers.limitStats();
 				utils.playSfx(media.sounds.chpok,1);
 				missle_type="drinkpotion";
-				game_status="sensing";
+				if global.status ~= "mindgame" then
+					game_status="sensing";
+				else
+					global.mindgame_attempts = global.mindgame_attempts - 1;
+					damage.mindGameCast();
+					game_status = "mindgame";
+				end;
 				drink_smth=holding_smth;
 				bag[tmp_bagid][inv_quad_x][inv_quad_y]=holding_smth;
 				holding_smth=0;
