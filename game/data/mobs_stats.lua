@@ -25,7 +25,7 @@ mobs_stats.goblin={class="goblin", subclass=1, race="goblin",  sprite = "goblin"
 			loot_gold_min=0, loot_gold_max=10
                    };
 mobs_stats.rogue={class="rogue", subclass=1, race="human",  sprite = "rogue", name="nonameandnick", face=5, lv=1, nature="humanoid", size="normal", gender=1, motion="walking",  track=1, hexes=1,
-            mgt=10,enu=15,dex=20,spd=20,acu=55,sns=55,int=5,spr=5,chr=5,luk=25, --stats
+            mgt=10,enu=15,dex=20,spd=20,acu=35,sns=55,int=5,spr=5,chr=5,luk=25, --stats
             hp_base_mod = 12, sp_base_mod = 0, st_base_mod = 12,hp_coff = 1, sp_coff = 0, st_coff = 1,
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0, moral = 30, fov = 180, nightvision = 0, claws = 0, teeth = 0, tail = 0, head = 1, arms={"rh","lh"},hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             mvcoff=1, recmel=50, recrng=50, recmag=0, expa=100,

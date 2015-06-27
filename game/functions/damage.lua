@@ -212,6 +212,7 @@ function damage.mobsAlive()
 end;
 
 function damage.singledamage () -- missle_type, missle_drive,current_mob,victim (all globals)
+	clear_elandscape();
 	global.hex = 1; --FIXME
 	utils.printDebug("damaging called");
 	-- This function calculates damage and buffs/debuffs/dots from ranged weapon and direct single-target spells.
@@ -348,7 +349,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 --/tricks
 			utils.randommore ();
 			dice = damage.damageRandomizator(current_mob,1,chars_mobs_npcs[current_mob].brng);
-			incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu);
+			incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+math.ceil(chars_mobs_npcs[current_mob].acu/5));
 			--trick
 			if missle_type == "blinding" and not helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
 				incoming_physical_dmg = incoming_physical_dmg*2;
@@ -3240,6 +3241,7 @@ end;
 
 function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(RH2,LH2,RH3,LH3),teeth,tail,horns
 	utils.printDebug("attack!");
+	clear_elandscape();
 	global.hex = 1;
 	if chars_mobs_npcs[current_mob].control == "player" and global.status == "peace" then
 		letaBattleBegin ();
@@ -4217,6 +4219,7 @@ function damage.instantCast () --FIXME use lvl, num
 	sfx.castSound ();
 	helpers.clearBoomLight ();
 	draw.shaderIrradiation ();
+	clear_elandscape();
 	local dmg = 0;
 	local buff = 0;
 	local debuff = 0;
@@ -6192,6 +6195,9 @@ function damage.deadNow (index)
 		end;
 	end;
 	damage.ifBattleEnds();
+	if not helpers.partyAlive () then
+		game_status = "gameover";
+	end;
 end;
 
 function damage.uncondNow (index)
@@ -6680,7 +6686,8 @@ function damage.setProtectionMode ()
 	damage.SPminus(current_mob,_minus);
 	damage.RTminus(current_mob,_minus);
 	helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.takenprotectionpose[chars_mobs_npcs[current_mob].gender]);
-	restoreRT();
+	--restoreRT();
+	game_status = "restoring";
 end;
 
 function damage.setSelfBuff ()

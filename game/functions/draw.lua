@@ -1262,6 +1262,11 @@ function draw.papermap ()
 	end;
 end;
 
+function draw.gameover ()
+	local x,y = helpers.centerObject(media.images.gameover);
+	love.graphics.draw(media.images.gameover, x,y-50);
+end;
+
 function draw.obelisk ()
 	local x,y = helpers.centerObject(media.images.map);
 	love.graphics.draw(media.images.map, x,y-50);
@@ -4557,12 +4562,24 @@ function draw.ui ()
    if game_status == "comic" then
 		draw.comic();
    end;
+   if game_status == "gameover" then
+		draw.gameover();
+   end;
     if game_status == "switchlevel" then
 		local x,y = helpers.centerObject(media.images.map);
 		love.graphics.draw(media.images.map, x,y-50);
 	end;
 	local _txt = cursor_world_x .. "x" .. cursor_world_y;
 	love.graphics.print(_txt,50,10);
+	if current_mob then
+		local _txt = current_mob .. " " .. chars_mobs_npcs[current_mob].ai;
+		if chars_mobs_npcs[current_mob].battleai then
+			_txt = _txt .. " " .. chars_mobs_npcs[current_mob].battleai;
+		else
+			_txt = _txt .. " " .. "no bAI";
+		end;
+		love.graphics.print(_txt,250,10);
+	end;
 	--love.graphics.print(missle_type,100,10);
 	--love.graphics.print(missle_drive,150,10);
 end;

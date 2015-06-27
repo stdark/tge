@@ -57,6 +57,7 @@ function loadingState.start(media, finishCallback)
 		loader.newImage(media.images, "preloader1","img/loadscreens/preloader1.dds");
 		loader.newImage(media.images, "preloader2","img/loadscreens/preloader2.dds");
 		loader.newImage(media.images, "preloader3","img/loadscreens/preloader3.dds");
+		loader.newImage(media.images, "gameover","img/gameover.dds");
 	elseif nextStateName == "createPartyState" then
 		loader.newImage(media.images, "createpartyback", "img/loadscreens/createpartyback.dds");
 		loader.newImage(media.images, "button2", "img/buttons/button2.dds");

@@ -31,7 +31,6 @@ function sprites.load()
 		end;
 	end;
 	
-	
 	gold_icons={}
 	gold_icons[1] = love.graphics.newQuad(305, 0, 128,64, media.images.ui:getWidth(), media.images.ui:getHeight());
 	gold_icons[2] = love.graphics.newQuad(305, 64, 96,32, media.images.ui:getWidth(), media.images.ui:getHeight());

@@ -1462,7 +1462,7 @@ function boomareas.fireExploGround (x,y)
 end;
 
 function boomareas.flameAir (x,y)
-	if helpers.passFly(x,y) then
+	if helpers.passLev(x,y) then
 		elandscape[y][x] = "flame";
 		--helpers.clearHlandscape(x,y);
 		boomareas.ashGround (x,y);

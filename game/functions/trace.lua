@@ -474,7 +474,6 @@ function trace.trace_for_boom (hexes_to_sense,mobsAffect)
 	local traced_hexes = {};
 	local coff={1,0.7,0.6,0.5};
 	for k=1,4 do
-		--local sense = chars_mobs_npcs[tmp_current_mob].visibility;
 		local start_sight_point_x = chars_mobs_npcs[tmp_current_mob].x;
 		local start_sight_point_y = chars_mobs_npcs[tmp_current_mob].y;
 		local trace_to_hex = {};

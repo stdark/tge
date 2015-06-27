@@ -1471,7 +1471,7 @@ function playingState.update(dt)
 				end;
 				global.lookaround = false;
 			end;
-			restoreRT()
+			restoreRT();
 		end;
 
 		if game_status == "sensing" and missle_type == "genocide" then
@@ -8074,7 +8074,8 @@ function steal (index)
 		else
 			fractions[chars_mobs_npcs[victim].fraction].party = fractions[chars_mobs_npcs[victim].fraction].party - math.ceil(5 + (100-chars_mobs_npcs[current_mob].chr)/10);
 			chars_mobs_npcs[current_mob].rt = 0;
-			restoreRT()
+			--restoreRT();
+			game_status = "restoring";
 		end;
 	end;
 	helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.didntrob[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
@@ -8106,7 +8107,7 @@ function missle_fly ()
 		end;
 		global.timers.msla_timer=0;
 	end;
-	if global.timers.msl_timer >= 0.06 then -- 0.005 too fast
+	if global.timers.msl_timer >= 0.05 then -- 0.005 too fast
 		missle_x = shot_line[fly_count][1];
 		missle_y = shot_line[fly_count][2];
 		if missle_x == chars_mobs_npcs[victim].x and missle_y == chars_mobs_npcs[victim].y then
@@ -8236,17 +8237,17 @@ function restoreRT ()
 	ai_called = 0;
 	mob_is_going_to_hit = 0;
 	walked_before = 0;
-	global.timer200 = global.timer200+1;
+	global.timer200 = global.timer200 + 1;
 	calendar.add_time_interval(calendar.delta_restore_in_battle);
 	path_failed = 0;
 	path_status = 0;
-	clear_elandscape();
-	for i=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[i].status == 1 then
-			while (#damaged_mobs>0) do
-				table.remove(damaged_mobs,1);
-			end;
-			if global.timer200 >= 200 then
+	--clear_elandscape();
+	if global.timer200 >= 200 then
+		for i=1,#chars_mobs_npcs do
+			if chars_mobs_npcs[i].status == 1 then
+				while (#damaged_mobs>0) do
+					table.remove(damaged_mobs,1);
+				end;
 				if chars_mobs_npcs[i].person == "char" then -- oil at stuff expires while equiped
 					for key,value in pairs(chars_mobs_npcs[i]["equipment"]) do
 						if chars_mobs_npcs[i]["equipment"][key] > 0 then
@@ -8278,7 +8279,7 @@ function restoreRT ()
 						damage.HPminus(i,10);
 					end;
 					if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "undead" then
-						damage.HPplus(i,5); --FIXME lickes and deathknights can get hp regen, so no need
+						damage.HPplus(i,5); --FIXME liches and deathknights can get hp regen, so no need
 					end;
 				end;
 				damage.landscapeHex(current_mob,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
@@ -8512,14 +8513,14 @@ function restoreRT ()
 					damage.SPplus(i,chars_mobs_npcs[i].sp_regeneration,true);
 					helpers.addHunger(i,value);
 				end;
-				if chars_mobs_npcs[i].status > 0 and chars_mobs_npcs[i].st < chars_mobs_npcs[i].st_max and chars_mobs_npcs[i].st_regeneration > 0 and helpers.doNotFeelHunger(i) then
-					damage.STplus(i,chars_mobs_npcs[i].st_regeneration);
-					helpers.addHunger(i,value);
+				--/mobs only
+				if chars_mobs_npcs[i].status > 0 and chars_mobs_npcs[i].st < chars_mobs_npcs[i].st_max and helpers.doNotFeelHunger(i) then
+					damage.STplus(i,1);
+					helpers.addHunger(i,1);
 				end;
 				if chars_mobs_npcs[i].status <= 0 and chars_mobs_npcs[i].st > 0 then
-					damage.STplus(i,1);
+					damage.STminus(i,1);
 				end;
-				--/mobs only
 				if chars_mobs_npcs[i].hp < chars_mobs_npcs[i].hp_max and chars_mobs_npcs[i].num_regeneration > 0 and helpers.doNotFeelHunger(i) then
 					local value = chars_mobs_npcs[i].lvl_regeneration*2 + math.ceil(chars_mobs_npcs[i].num_regeneration/5);
 					damage.HPplus(i,value);
@@ -8566,8 +8567,7 @@ function restoreRT ()
 							end;
 						end;
 					end;
-				end;
-							
+				end;					
 				if chars_mobs_npcs[i].healaura_dur > 0 then --FIXME rewrite  need hunger or not?
 					if chars_mobs_npcs[i].y/2 == math.cail(chars_mobs_npcs[i].y/2) then
 						for j=1,#chars_movs_npcs do
@@ -8660,8 +8660,6 @@ function restoreRT ()
 				end;
 			end;
 		end;
-	end;
-	if global.timer200 >= 200 then
 		helpers.addToActionLog( " dot ");
 		missle_type="areadots";
 		for a=1,map_w do
@@ -8718,7 +8716,7 @@ function restoreRT ()
 				end;
 			end;
 		end;
-		global.timer200 = global.timer200-200;
+		global.timer200 = 0;
 	end;
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].slow_dur == 0 then

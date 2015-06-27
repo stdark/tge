@@ -20,13 +20,13 @@ local _image = love.graphics.newImage("img/particles/image_particle_2.png" );
 ParticleSystem = love.graphics.newParticleSystem(_image,20);
 local _texture = love.graphics.newImage("img/particles/image_particle_2.png" );
 ParticleSystem:setTexture(_texture);
-ParticleSystem:setBufferSize(20);
-ParticleSystem:setParticleLifetime(3,5);
-ParticleSystem:setEmissionRate(20);
+ParticleSystem:setBufferSize(120);
+ParticleSystem:setParticleLifetime(1,5);
+ParticleSystem:setEmissionRate(100);
 ParticleSystem:setSpeed(250)
-ParticleSystem:setLinearAcceleration( -15, -17, 15, 17);
+ParticleSystem:setLinearAcceleration( -10, -10, 10, 10);
 --ParticleSystem:setLinearDamping( 10, 20 )
-ParticleSystem:setSpread(360);
+ParticleSystem:setSpread(30);
 ParticleSystem:setRelativeRotation(true)
 ParticleSystem:setSpin(0,1)
 ParticleSystem:setSpinVariation(1)
@@ -77,6 +77,8 @@ function mainmenuState.drawButtons ()
 end;
 
 function mainmenuState.update (dt)
+	--mX, mY = love.mouse.getPosition();
+	--ParticleSystem:setPosition(mX,mY);
 	ParticleSystem:update( dt )
 end;
 

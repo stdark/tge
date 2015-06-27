@@ -1604,10 +1604,12 @@ function helpers.addMob(index,person)
 		tmpclass2=loadstring("return " .. tmpclass)();
 		chars_mobs_npcs[index].face = tmpclass2.face;
 		chars_mobs_npcs[index].control = "ai";
+		chars_mobs_npcs[index].battleai = tmpclass2.battleai;
 	elseif person == "npc" then
 		tmpclass="mobs_stats." .. chars_mobs_npcs[index].class;
 		tmpclass2=loadstring("return " .. tmpclass)();
 		chars_mobs_npcs[index].control = "ai";
+		chars_mobs_npcs[index].battleai = tmpclass2.battleai;
 	elseif person == "char" then
 		tmpclass2 = chars_stats[index];
 		chars_mobs_npcs[index].control = "player";
@@ -2695,8 +2697,6 @@ function helpers.findFreeHexes (index)
 				mob_can_move = 0;
 				path_finding (0,0);
 				if path_status == 1 then
-					--local number_of_hex = (mx-1)*map_w+my;
-					--table.insert(free_hexes,number_of_hex);
 					table.insert(free_hexes,{x=mx,y=my});
 				end;
 			end;
@@ -3840,7 +3840,8 @@ function helpers.dodgeIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].defmod = "dodge";
-		restoreRT()
+		--restoreRT();
+		game_status = "restoring";
 	else
 		utils.playSfx(media.sounds.error,1);
 	end;
@@ -3856,7 +3857,8 @@ function helpers.blockIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].protectionmode = "block";
-		restoreRT()
+		--restoreRT();
+		game_status = "restoring";
 	else
 		utils.playSfx(media.sounds.error,1);
 	end;
@@ -3883,7 +3885,8 @@ function helpers.parryIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].protectionmode = "parry";
-		restoreRT()
+		--restoreRT();
+		game_status = "restoring";
 	else
 		utils.playSfx(media.sounds.error,1);
 	end;
@@ -3896,7 +3899,8 @@ function helpers.handsIfPossible (index)
 		chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - 50; -- FIXME if 0
 		chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - 50;
 		chars_mobs_npcs[index].protectionmode = "hands";
-		restoreRT()
+		--restoreRT();
+		game_status = "restoring";
 	else
 		utils.playSfx(media.sounds.error,1);
 	end;

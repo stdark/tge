@@ -4,6 +4,7 @@ function ai.behavior()
 	utils.printDebug("ai_called");
 	mob_can_move = 0;
 	game_status="ai";
+	tmp_current_mob = current_mob;
 	--BUILDING	
 	if chars_mobs_npcs[current_mob].ai == "building" then
 		damage.RTminus(current_mob,200,false);
@@ -262,7 +263,8 @@ function ai.behavior()
 				local available_spells = {};
 				for i=1,#chars_mobs_npcs[current_mob].spellnames do
 					local spellname = chars_mobs_npcs[current_mob].spellnames[i];
-					if chars_mobs_npcs[current_mob].sp >= magic.spell_tips[spellname].mana then
+					if chars_mobs_npcs[current_mob].sp >= magic.spell_tips[spellname].mana
+					and chars_mobs_npcs[current_mob].rt >= magic.spell_tips[spellname].recovery then
 						table.insert(available_spells,spellname);
 					end;
 				end;
@@ -324,6 +326,7 @@ function ai.behavior()
 					and (chars_mobs_npcs[j].hp_max - chars_mobs_npcs[j].hp) >= chars_mobs_npcs[current_mob].lvl_body*chars_mobs_npcs[current_mob].num_body
 					and helpers.aliveNature(j)
 					and chars_mobs_npcs[current_mob].sp >= magic.spell_tips["heal"].mana
+					and chars_mobs_npcs[current_mob].rt >= magic.spell_tips["heal"].recovery
 					then
 						table.insert(array_to_heal,j);
 					end;
@@ -333,12 +336,14 @@ function ai.behavior()
 					and helpers.aliveNature(j)
 					and chars_mobs_npcs[j].regeneration_dur == 0
 					and chars_mobs_npcs[current_mob].sp >= magic.spell_tips["regeneration"].mana
+					and chars_mobs_npcs[current_mob].rt >= magic.spell_tips["regeneration"].recovery
 					then
 						table.insert(array_to_regenerate,j);
 					end;
 					if chars_mobs_npcs[j].status == 0
 					and not helpers.cursorAtDeadMob (chars_mobs_npcs[j].x,chars_mobs_npcs[j].y)
 					and chars_mobs_npcs[current_mob].sp >= magic.spell_tips["resurrect"].mana
+					and chars_mobs_npcs[current_mob].rt >= magic.spell_tips["resurrect"].recovery
 					then
 						table.insert(array_to_resurrect,j);
 					end;
@@ -424,7 +429,8 @@ function ai.behavior()
 				local available_spells = {};
 				for i=1,#chars_mobs_npcs[current_mob].spellnames do
 					local spellname = chars_mobs_npcs[current_mob].spellnames[i];
-					if chars_mobs_npcs[current_mob].sp >= magic.spell_tips[spellname].mana then
+					if chars_mobs_npcs[current_mob].sp >= magic.spell_tips[spellname].mana
+					and chars_mobs_npcs[current_mob].rt >= magic.spell_tips[spellname].recovery then		
 						table.insert(available_spells,spellname);
 					end;
 				end;
@@ -526,7 +532,6 @@ function ai.behavior()
 					path_finding(0,0);
 			end;
 		elseif #mob_detects_enemies == 0 then
-			print("all_agro",all_agro);
 			if all_agro > 0 then
 				chars_mobs_npcs[current_mob].ai = "toenemy";
 			else
@@ -535,36 +540,45 @@ function ai.behavior()
 		end;
 	end;
 --MOVING TO AN ENEMY
-		if chars_mobs_npcs[current_mob].ai == "toenemy" then
-			if not global.hang then
-				local roll_point = 1;
-				local free_hexes = helpers.findFreeHexes (current_mob);
-				if #free_hexes > 0 then
-					local distance = math.ceil(math.random(free_hexes[1].x^2+free_hexes[1].y^2));
-					for j=1,#free_hexes do
-						if agro_array[free_hexes[j].y][free_hexes[j].x] >= agro_array[free_hexes[roll_point].y][free_hexes[roll_point].x]
-						and math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2)) <= distance
-						then
-							distance = math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2));
-							roll_point = j;
-						end;
+	if chars_mobs_npcs[current_mob].ai == "toenemy" then
+		print(current_mob,"global.hang",global.hang);
+		if not global.hang then
+			local roll_point = 1;
+			local free_hexes = helpers.findFreeHexes (current_mob);
+			print("#free_hexes",#free_hexes)
+			if #free_hexes > 0 then
+				local distance = math.ceil(math.random(free_hexes[1].x^2+free_hexes[1].y^2));
+				for j=1,#free_hexes do
+					if agro_array[free_hexes[j].y][free_hexes[j].x] >= agro_array[free_hexes[roll_point].y][free_hexes[roll_point].x]
+					and math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2)) <= distance
+					then
+						distance = math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2));
+						roll_point = j;
 					end;
-					ai_world_x = free_hexes[roll_point].x;
-					ai_world_y = free_hexes[roll_point].y;
-					--print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
-					mob_can_move = 1;
-					if chars_mobs_npcs[current_mob].person == "char" then
-						helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.toenemy);
-					elseif chars_mobs_npcs[current_mob].person == "mob" then
-						tmp_name1 = chars_mobs_npcs[current_mob].class;
-						tmp_name2 = "lognames.mob_names." .. tmp_name1;
-						tmp_name3 = loadstring("return " .. tmp_name2)();
-						helpers.addToActionLog( tmp_name3 .. " " .. lognames.actions.toenemy);
-					end;
-					path_finding (0,0);
-					return;
 				end;
+				ai_world_x = free_hexes[roll_point].x;
+				ai_world_y = free_hexes[roll_point].y;
+				print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
+				mob_can_move = 1;
+				if chars_mobs_npcs[current_mob].person == "char" then
+					helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.toenemy);
+				elseif chars_mobs_npcs[current_mob].person == "mob" then
+					tmp_name1 = chars_mobs_npcs[current_mob].class;
+					tmp_name2 = "lognames.mob_names." .. tmp_name1;
+					tmp_name3 = loadstring("return " .. tmp_name2)();
+					helpers.addToActionLog( tmp_name3 .. " " .. lognames.actions.toenemy);
+				end;
+				print("MOOO");
+				path_finding (0,0);
+				return;
+			else
+				chars_mobs_npcs[current_mob].ai = "stay";
 			end;
+		else
+			print("else");
+			game_status = "restoring";
+			return;
+		end;
 	end;
 --MOVING TO A PARTY
 	ai.party_array_full ();
@@ -596,6 +610,8 @@ function ai.behavior()
 				end;
 				path_finding (0,0);
 				return;
+			else
+				chars_mobs_npcs[current_mob].ai = "stay";
 			end;
 		end;
 	end;
@@ -663,6 +679,8 @@ function ai.behavior()
 	if chars_mobs_npcs[current_mob].ai == "stay" then
 		if ai.enemyWatchesTheMob (current_mob) then
 			chars_mobs_npcs[current_mob].ai = chars_mobs_npcs[current_mob].dangerai;
+			game_status = "restoring";
+			return;
 		else
 			--chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt - 200;
 			damage.RTminus(current_mob,200,false);
