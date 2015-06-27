@@ -6176,6 +6176,7 @@ function damage.deadNow (index)
 		md_timer = 0;
 		draw.boom();
 	end;
+	
 	if endbattle == 1 then -- end of the battle, counting of exp
 		local tmpchars = chars_around;
 		letaBattleFinishes ();

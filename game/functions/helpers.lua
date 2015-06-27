@@ -2908,6 +2908,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 		if helpers.passCheck(objects_list[global.object].outx,objects_list[global.object].outy) then
 			chars_mobs_npcs[current_mob].x = objects_list[global.object].outx;
 			chars_mobs_npcs[current_mob].y = objects_list[global.object].outy;
+			trace.first_watch(current_mob);
 			helpers.cam_to_mob(current_mob);
 			utils.playSfx(media.sounds.teleport,1);
 			if chars_mobs_npcs[current_mob].torchlight > 0 then
@@ -2934,6 +2935,19 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 				table.insert(objects_list[global.object].uids,chars_mobs_npcs[current_mob].uid);
 			end;
 			utils.playSfx(media.sounds.altar,1);
+		end;
+	elseif objects_list[global.object].typ == "fountain" then
+		local fountain_unknown = true;
+		for i=1,#party.known_fountains do
+			if objects_list[global.object].area == party.known_fountains[i] then
+				fountain_unknown = false;
+				local phrase = math.random(2,#lognames.fountains)
+				helpers.addToActionLog(lognames.fountains[phrase]);
+			end;
+		end;
+		if fountain_unknown then
+			helpers.addToActionLog(lognames.fountains[1]);
+			table.insert(party.known_fountains,objects_list[global.object].area);
 		end;
 	end;
 end;

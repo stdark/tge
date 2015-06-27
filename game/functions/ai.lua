@@ -12,6 +12,10 @@ function ai.behavior()
 		return;
 	end;
 	--/BUILDING
+	if chars_mobs_npcs[current_mob].ai ~= chars_mobs_npcs[current_mob].defaultai and chars_mobs_npcs[current_mob].fear == 0 and chars_mobs_npcs[current_mob].charm == 0 and chars_mobs_npcs[current_mob].berserk == 0 then
+		print("current_mob",current_mob);
+		chars_mobs_npcs[current_mob].ai = chars_mobs_npcs[current_mob].defaultai;
+	end;
 	mob_range = chars_mobs_npcs[current_mob].rng-walked_before; --count walked before!
 	path_can_be_found = 0;
 	local tmpclass = nil;
@@ -545,7 +549,6 @@ function ai.behavior()
 		if not global.hang then
 			local roll_point = 1;
 			local free_hexes = helpers.findFreeHexes (current_mob);
-			print("#free_hexes",#free_hexes)
 			if #free_hexes > 0 then
 				local distance = math.ceil(math.random(free_hexes[1].x^2+free_hexes[1].y^2));
 				for j=1,#free_hexes do
@@ -558,7 +561,7 @@ function ai.behavior()
 				end;
 				ai_world_x = free_hexes[roll_point].x;
 				ai_world_y = free_hexes[roll_point].y;
-				print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
+				--print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
 				mob_can_move = 1;
 				if chars_mobs_npcs[current_mob].person == "char" then
 					helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.toenemy);
@@ -568,14 +571,13 @@ function ai.behavior()
 					tmp_name3 = loadstring("return " .. tmp_name2)();
 					helpers.addToActionLog( tmp_name3 .. " " .. lognames.actions.toenemy);
 				end;
-				print("MOOO");
 				path_finding (0,0);
 				return;
 			else
+				chars_mobs_npcs[current_mob].rot = math.random(1,6);
 				chars_mobs_npcs[current_mob].ai = "stay";
 			end;
 		else
-			print("else");
 			game_status = "restoring";
 			return;
 		end;
@@ -611,6 +613,7 @@ function ai.behavior()
 				path_finding (0,0);
 				return;
 			else
+				chars_mobs_npcs[current_mob].rot = math.random(1,6);
 				chars_mobs_npcs[current_mob].ai = "stay";
 			end;
 		end;

@@ -53,9 +53,6 @@ function playingState.load()
 	require "data.sfx"
 	--love.audio.stop(media.sounds.mainmenu, 0);
 	
-	media.sounds.battle:setLooping( loop );
-	media.sounds.peace:setLooping( loop );
-	
 	--currentState = loadingState;
 	--currentState.start(media, loadingFinished);
 	--blurv = love.graphics.newShader(love.filesystem.read("shader/blurv.glsl"),1)
@@ -1420,8 +1417,8 @@ function playingState.update(dt)
 			tmp_current_mob=current_mob
 			helpers.turnMob(current_mob);
 		end;
-		--0.04
-		if game_status == "attack" and global.timers.a_timer>=0.4 then
+--0.4
+		if game_status == "attack" and global.timers.a_timer >= 1 then
 			if global.multiattack == 0 or chars_mobs_npcs[victim].status <= 0 or chars_mobs_npcs[current_mob].rt <= 0 or chars_mobs_npcs[current_mob].st <= 0 then --FIXME RECOVERY
 				 global.multiattack = 0;
 				hang=0;
@@ -1438,8 +1435,8 @@ function playingState.update(dt)
 				damage.meleeAttack (damage.meleeAttackTool (current_mob));
 			end;
 		end;
-
-		if  game_status == "damage" and global.timers.d_timer>=0.4 then
+--0.4
+		if  game_status == "damage" and global.timers.d_timer >= 1 then
 			hang=0;
 			path_status=0;
 			global.timers.d_timer=0;
@@ -1449,8 +1446,8 @@ function playingState.update(dt)
 				game_status="restoring";
 			end;
 		end;
-
-		if game_status == "multidamage" and global.timers.md_timer>=0.4 then
+--0.4
+		if game_status == "multidamage" and global.timers.md_timer >= 1 then
 			hang=0;
 			path_status=0;
 			global.timers.md_timer=0;
@@ -1703,7 +1700,20 @@ function playingState.keyreleased(key, unicode)
 end;
 
 function playingState.keypressed(key, unicode)
-
+	
+	if key == "x" and find_the_path == 0 and (game_status ~= "neutral" and game_status ~= "sensing")then
+		for j=1,#chars_mobs_npcs do
+			if chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[j].control == "player" then
+			elseif chars_mobs_npcs[j].person == "mob" then
+				chars_mobs_npcs[j].hp = 0;
+				damage.deadNow (j);
+			end;
+		end;
+		current_mob = 4;
+		game_status = "neutral";
+	end;
+	
+	
 	if key == " " and chars_mobs_npcs[current_mob].control == "player" and game_status == "moving" then -- FIXME debug, for interrupt turn funtions
 		helper.interrupt();
 	end;
@@ -7828,6 +7838,10 @@ function mobMoving()
 			global.hang = false;
 		end;
 		damage.landscapeHex(current_mob,a,b);
+		if trapped == 1 then
+			damage.RTminus(current_mob,100);
+			game_status = "restore";
+		end;
 		local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
 		local mob_walk = loadstring("return " .. tmp)();
 		if path_counter == 1 then
@@ -8244,10 +8258,8 @@ function restoreRT ()
 	--clear_elandscape();
 	if global.timer200 >= 200 then
 		for i=1,#chars_mobs_npcs do
-			if chars_mobs_npcs[i].status == 1 then
-				while (#damaged_mobs>0) do
-					table.remove(damaged_mobs,1);
-				end;
+			if chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].ai ~= "building" then
+				damaged_mobs = {};
 				if chars_mobs_npcs[i].person == "char" then -- oil at stuff expires while equiped
 					for key,value in pairs(chars_mobs_npcs[i]["equipment"]) do
 						if chars_mobs_npcs[i]["equipment"][key] > 0 then
@@ -8514,10 +8526,7 @@ function restoreRT ()
 					helpers.addHunger(i,value);
 				end;
 				--/mobs only
-				if chars_mobs_npcs[i].status > 0 and chars_mobs_npcs[i].st < chars_mobs_npcs[i].st_max and helpers.doNotFeelHunger(i) then
-					damage.STplus(i,1);
-					helpers.addHunger(i,1);
-				end;
+
 				if chars_mobs_npcs[i].status <= 0 and chars_mobs_npcs[i].st > 0 then
 					damage.STminus(i,1);
 				end;
@@ -8567,7 +8576,8 @@ function restoreRT ()
 							end;
 						end;
 					end;
-				end;					
+				end;	
+								
 				if chars_mobs_npcs[i].healaura_dur > 0 then --FIXME rewrite  need hunger or not?
 					if chars_mobs_npcs[i].y/2 == math.cail(chars_mobs_npcs[i].y/2) then
 						for j=1,#chars_movs_npcs do
@@ -8718,6 +8728,7 @@ function restoreRT ()
 		end;
 		global.timer200 = 0;
 	end;
+	
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].slow_dur == 0 then
 			chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
@@ -8733,8 +8744,9 @@ function restoreRT ()
 				chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 			end;
 		end;
-		if chars_mobs_npcs[i].st < chars_mobs_npcs[i].st_max and chars_mobs_npcs[i].pneumothorax == 0 and chars_mobs_npcs[i].disease == 0 and chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and helpers.doNotFeelHunger(i) then
+		if chars_mobs_npcs[i].status > 0 and chars_mobs_npcs[i].st < chars_mobs_npcs[i].st_max and chars_mobs_npcs[i].pneumothorax == 0 and chars_mobs_npcs[i].disease == 0 and chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and helpers.doNotFeelHunger(i) then
 			chars_mobs_npcs[i].st = chars_mobs_npcs[i].st+1;
+			damage.STplus(i,1,false);
 			helpers.addHunger(i,1);
 		end;
 		if chars_mobs_npcs[i].rt >= 200 and damage.mobIsActive(chars_mobs_npcs[current_mob]) then
@@ -8782,7 +8794,7 @@ function restoreRT ()
 			game_status = "neutral";
 			ignore_kb = 0;
 			if not global.lookaround then
-				trace.lookaround(i); --FIXME slowdown?
+				--trace.lookaround(i); --FIXME slowdown?
 			end;
 			if global.status == "peace" and ai.enemyWatchesYou () then
 				letaBattleBegin ();

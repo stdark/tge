@@ -187,6 +187,7 @@ end;
 function utils.playThemeMusic (music,start_volume,music_type)
 	music:setVolume(math.min(1,start_volume*global.theme_music_volume));
 	love.audio.play(music);
+	music:setLooping(true);
 	if music_type == "mainmenu" then
 		global.music_mainmenu = 0;
 		global.music_switch_to = "mainmenu";

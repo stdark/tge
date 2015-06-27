@@ -267,7 +267,6 @@ end;
 
 function trace.first_watch (index)
 	if chars_mobs_npcs[index].status == 1 then
-		local sight_array = {};
 		if chars_mobs_npcs[index].control == "player" then
 			local temp_array = trace.trace_hexes(index,false,trace.sightArray (index),false);
 		end;

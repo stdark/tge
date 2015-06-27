@@ -14,7 +14,7 @@ function love.load()
 	
 	img_hud =  love.graphics.newImage("img/hud.png");
 	img_hex =  love.graphics.newImage("img/hex_landscape.png");
-	media.images.buildings1 = love.graphics.newImage("img/buildings1.png");
+	media.images.buildings1 = love.graphics.newImage("img/buildings1.dds");
 	img_back = love.graphics.newImage("img/back.jpg");
 	
 	editor_status = "normal";

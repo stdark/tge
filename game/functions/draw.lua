@@ -2665,22 +2665,27 @@ function draw.objects ()
 					addx = 32;
 					addy = 96;
 				elseif objects_list[j].typ == "pedestal" then
-					addx = 16;
-					addy = 72;			
+					addx = 32;
+					addy = 68;			
 				elseif objects_list[j].typ == "altar" then
 					addx = 32;
 					addy = 32;
 				elseif objects_list[j].typ == "competition" then
-					addx = 16;
-					addy = 40;
+					addx = 32;
+					addy = 68;
 				elseif objects_list[j].typ == "portal" then
 					addx = 32;
 					addy = 0;
 				elseif objects_list[j].typ == "well" then
 					addx = 64;
-					addy = 96;
+					addy = 90;
+				elseif objects_list[j].typ == "fountain" then
+					--addx = 64;
+					--addy = 64;
+					addx = 16;
+					addy = 32;
 				end;
-				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 then
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and  objects_list[j].typ ~= "fountain" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
@@ -3760,6 +3765,15 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 		love.graphics.print(dr, mX+addx2,mY+320);
 		love.graphics.print(lognames.protectionmodes.protectionmode, mX+addx,mY+335);
 		love.graphics.print(lognames.protectionmodes[chars_mobs_npcs[tmpc].protectionmode], mX+100,mY+335);
+	end;
+	
+	if chars_mobs_npcs[current_mob].lvl_monsterid == 5 then
+		local str = chars_mobs_npcs[tmpc].ai;
+			if chars_mobs_npcs[tmpc].battleai then
+			str = str .. "/" .. chars_mobs_npcs[tmpc].battleai;
+		end;
+		love.graphics.print(lognames.actions.behavior, mX+addx,mY+350);
+		love.graphics.print(str, mX+addx2,mY+350);
 	end;
 
 	local addy3 = 0;

@@ -29,13 +29,19 @@ function playingState.load()
 	obelisk_img = love.graphics.newQuad(0, 17*32, 64,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	altar_img = love.graphics.newQuad(64, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	box_img = love.graphics.newQuad(128, 17*32, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
-	competition_img = love.graphics.newQuad(64, 19*32, 32,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
-	pedestal_img = love.graphics.newQuad(128, 18*32, 32,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	--competition_img = love.graphics.newQuad(64, 19*32, 32,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	competition_img = love.graphics.newQuad(2*32, 21*32, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	--pedestal_img = love.graphics.newQuad(128, 18*32, 32,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	pedestal_img = love.graphics.newQuad(0, 21*32, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	portal_img = love.graphics.newQuad(32*5, 20*32, 64,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
-	well_img = love.graphics.newQuad(7*32, 17*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	--well_img = love.graphics.newQuad(7*32, 17*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	well_img = love.graphics.newQuad(10*32, 21*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	trashheap_img = love.graphics.newQuad(32*5, 18*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	scullpile_img = love.graphics.newQuad(32*11, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
-	crystals_img = love.graphics.newQuad(32*11, 19*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	--crystals_img = love.graphics.newQuad(32*11, 19*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	crystals_img = love.graphics.newQuad(4*32, 21*32, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	fountain_img = love.graphics.newQuad(6*32, 21*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	fake_img  = love.graphics.newQuad(31*32, 31*32, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	
 	barrel_img = {};
 	for i=1,13 do
@@ -295,6 +301,7 @@ function playingState.load()
 	cauldron_types={"none","rezfire","rezcold","rezstatic","rezpoison","rezacid","rezdisease","rezmind","rezspirit","rezlight","rezdarkness"};
 	cauldron_current_type = 1;
 	cauldron_current_name = cauldron_types[cauldron_current_type];
+	fountain_current_area = 1;
 	row_status=0;
 	rows_total=22;
 	special_objects_status = 0;
@@ -1329,6 +1336,24 @@ function special_objects_parametres (special_objects_status)
 			end;
 		end;
 	end;
+	if special_objects_status == "fn" then
+		local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("area");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-120);
+			textinput:SetWidth(76);
+			textinput:SetText(fountain_current_area);
+			textinput:SetLimit(3);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+			if text ~= nil then
+				fountain_current_area  = text;
+			end;
+		end;
+	end;
 end;
 
 function draw_buttons ()
@@ -1718,7 +1743,7 @@ function draw_objects ()
 					addy = 8;
 				elseif bags_list[j].typ == "crystals" then
 					addx = 32;
-					addy = 46;
+					addy = 64;
 				elseif bags_list[j].typ == "trashheap" then
 					addx = 32;
 					addy = 32;
@@ -1727,7 +1752,7 @@ function draw_objects ()
 					addy = 32;
 				elseif bags_list[j].typ == "well" then
 					addx = 64;
-					addy = 96;
+					addy = 90;
 				end;
 				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
@@ -1747,20 +1772,25 @@ function draw_objects ()
 					addx = 32;
 					addy = 96;
 				elseif objects_list[j].typ == "pedestal" then
-					addx = 16;
-					addy = 72;			
+					addx = 32;
+					addy = 68;			
 				elseif objects_list[j].typ == "altar" then
 					addx = 32;
 					addy = 32;
 				elseif objects_list[j].typ == "competition" then
-					addx = 16;
-					addy = 40;
+					addx = 32;
+					addy = 68;
 				elseif objects_list[j].typ == "portal" then
 					addx = 32;
 					addy = 0;
 				elseif objects_list[j].typ == "well" then
 					addx = 64;
-					addy = 96;
+					addy = 90;
+				elseif objects_list[j].typ == "fountain" then
+					--addx = 64;
+					--addy = 64;
+					addx = 16;
+					addy = 32;
 				end;
 				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
@@ -2694,6 +2724,9 @@ function playingState.mousereleased(x, y, button)
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="barrel", opened=false, locked=false, img=barrel_img[13]});
 		elseif special_objects_status == "cd" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="cauldron", opened=false, locked=false, img=cauldron_img[13]});
+		elseif special_objects_status == "fn" then
+			--table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="fountain", opened=false, locked=false, img=fountain_img}); --FIXME some nil image
+			table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="fountain", area=fountain_current_area, opened=false, locked=false, img=fake_img}); --FIXME some nil image
 		end;
 	end;
 end;
@@ -3989,6 +4022,7 @@ function playingState.draw()
 		cd=cauldron_img[13],
 		
 		wc=well_img,
+		fn=fountain_img,
 		};
 	
 		if special_objects_status and  special_objects_status ~= 0 and sob_images[special_objects_status] then
