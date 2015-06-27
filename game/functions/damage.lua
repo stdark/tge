@@ -2624,6 +2624,10 @@ function damage.multidamage () --FIXME two hexes
 								chars_mobs_npcs[j].concentration_dur = 0;
 								chars_mobs_npcs[j].concentration_power = 0;
 								counter = counter - 1;
+							elseif chars_mobs_npcs[j].farsight_dur > 0 then
+								chars_mobs_npcs[j].farsight_dur = 0;
+								chars_mobs_npcs[j].farsight_power = 0;
+								counter = counter - 1;
 							elseif chars_mobs_npcs[j].glamour_dur > 0 then
 								chars_mobs_npcs[j].glamour_dur = 0;
 								chars_mobs_npcs[j].glamour_power = 0;
