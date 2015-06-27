@@ -55,7 +55,7 @@ mobs_stats.mage={class="mage", subclass=1, race="human",  sprite = "rogue", name
             perks={},
             rezfire=0, rezcold=10, rezstatic=0, rezpoison=20, rezacid=5, rezmind=0, rezspirit=0, rezdisease=20, rezlight=0, rezdarkness=0, --resistances
             revenge_type = 0, revenge_power = 0,
-            spellbook=1, spellnames={"flamearrow","fireball","fireblast","coldbeam","poisonedspit","acidburst","iceball"}, sp_limit = 20,battleai="battlemage",protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
+            spellbook=1, spellnames={"flamearrow","fireball","fireblast","coldbeam","poisonedspit","acidburst","iceball"}, sp_limit = 0,battleai="battlemage",protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=0, dr=0, block=0, amel=1,bmel=2,cmel=1, atkm=3, arng=1,brng=3,crng=3, atkr=0, multiattack = 1,--battle stats
             num_unarmed=0,num_dagger=0,num_sword=3,num_axe=0,num_crushing=0,num_flagpole=0,num_staff=0,num_bow=0,num_crossbow=0,num_throwing=0,num_firearms=0,--skills weapon num
             lvl_unarmed=0,lvl_dagger=0,lvl_sword=1,lvl_axe=0,lvl_crushing=0,lvl_flagpole=0,lvl_staff=0,lvl_bow=0,lvl_crossbow=0,lvl_throwing=0,lvl_firearms=0,--skills weapon lv

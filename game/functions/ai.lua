@@ -4,6 +4,13 @@ function ai.behavior()
 	utils.printDebug("ai_called");
 	mob_can_move = 0;
 	game_status="ai";
+	--BUILDING	
+	if chars_mobs_npcs[current_mob].ai == "building" then
+		damage.RTminus(current_mob,200,false);
+		game_status = "restoring";
+		return;
+	end;
+	--/BUILDING
 	mob_range = chars_mobs_npcs[current_mob].rng-walked_before; --count walked before!
 	path_can_be_found = 0;
 	local tmpclass = nil;
@@ -25,10 +32,8 @@ function ai.behavior()
 		chars_mobs_npcs[current_mob].ai	= "away";
 		helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.runaway);
 	end;
-	
 	helpers.clearAiArrays();
 	trace.first_watch (current_mob);
-	
 --CALLED	
 	if chars_mobs_npcs[current_mob].ai == "called" then
 		if ai.enemyWatchesTheMob (current_mob) then
@@ -157,6 +162,7 @@ function ai.behavior()
 				local target_preroll = math.random(1,#mob_detects_aggro);
 				local target_roll = mob_detects_aggro[target_preroll];
 				previctim = chars_mobs_npcs[target_roll].id;
+				--previctim = target_roll;
 				ai_world_x = chars_mobs_npcs[target_roll].x;
 				ai_world_y = chars_mobs_npcs[target_roll].y;
 				mob_under_cursor= chars_mobs_npcs[target_roll].id;
@@ -174,6 +180,7 @@ function ai.behavior()
 				helpers.turnMob (current_mob);
 					--chars_mobs_npcs[current_mob].rot =  helpers.antiDirection(atk_direction);
 				damage.shoot ();
+				return;
 				--else
 					--game_status = "restoring";
 				--end;
@@ -191,21 +198,23 @@ function ai.behavior()
 	end;
 --AGR battle mage
 	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "battlemage" then
-		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
-			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
-			for j=1,#chars_mobs_npcs do
-				for h=1,3 do
-					for i=1,6 do
-						if not ai.friendOrFoe (current_mob,j)
-						and chars_mobs_npcs[j].x == rings[h][i].x
-						and chars_mobs_npcs[j].y == rings[h][i].y
-						and chars_mobs_npcs[j].status == 1
-						and chars_mobs_npcs[j].invisibility == 0
-						and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].y][chars_mobs_npcs[j].x] == 0 then
-							chars_mobs_npcs[current_mob].ai = "away";
-						end;
+		local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+		for j=1,#chars_mobs_npcs do
+			for h=1,3 do
+				for i=1,6 do
+					if not ai.friendOrFoe (current_mob,j)
+					and chars_mobs_npcs[j].x == rings[h][i].x
+					and chars_mobs_npcs[j].y == rings[h][i].y
+					and chars_mobs_npcs[j].status == 1
+					and chars_mobs_npcs[j].invisibility == 0
+					and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].y][chars_mobs_npcs[j].x] == 0 then
+						chars_mobs_npcs[current_mob].ai = "away";
 					end;
 				end;
+			end;
+		end;
+		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then		
+			for j=1,#chars_mobs_npcs do
 				trace.trace_hexes (current_mob,j,trace.sightArray (current_mob),true);
 				if not ai.friendOrFoe (current_mob,j)
 				and math.abs(chars_mobs_npcs[j].x - chars_mobs_npcs[current_mob].x) <= #shot_line
@@ -249,20 +258,28 @@ function ai.behavior()
 				boomx = chars_mobs_npcs[previctim].x;
 				boomy = chars_mobs_npcs[previctim].y;
 				missle_drive = "spellbook";
-				local missle = math.random(1,#chars_mobs_npcs[current_mob].spellnames);
-				missle_type = chars_mobs_npcs[current_mob]["spellnames"][missle];
-				game_status = "shot";
-				trace.trace_hexes (current_mob,previctim,trace.sightArray (current_mob),true);
-				--if #shot_line > 0 then --dirty fix
-				point_to_go_x = chars_mobs_npcs[previctim].x;
-				point_to_go_y = chars_mobs_npcs[previctim].y;
-				helpers.turnMob (current_mob);
-					--chars_mobs_npcs[current_mob].rot =  helpers.antiDirection(atk_direction);
-				damage.shoot ();
-				--else
-					--game_status = "restoring";
-				--end;
-				
+				--local missle = math.random(1,#chars_mobs_npcs[current_mob].spellnames); --FIXME check mana before, sp_limit is a bad variant
+				local available_spells = {};
+				for i=1,#chars_mobs_npcs[current_mob].spellnames do
+					local spellname = chars_mobs_npcs[current_mob].spellnames[i];
+					if chars_mobs_npcs[current_mob].sp >= magic.spell_tips[spellname].mana then
+						table.insert(available_spells,spellname);
+					end;
+				end;
+				if #available_spells > 0 then
+					missle_type = available_spells[math.random(1,#available_spells)];
+					game_status = "shot";
+					trace.trace_hexes (current_mob,previctim,trace.sightArray (current_mob),true);
+					--if #shot_line > 0 then --dirty fix
+					point_to_go_x = chars_mobs_npcs[previctim].x;
+					point_to_go_y = chars_mobs_npcs[previctim].y;
+					helpers.turnMob (current_mob);
+						--chars_mobs_npcs[current_mob].rot =  helpers.antiDirection(atk_direction);
+					damage.shoot ();
+					return;
+				else
+					game_status = "melee";
+				end;
 			elseif chars_mobs_npcs[current_mob].ai == "agr" then
 				change_position = true;
 				--chars_mobs_npcs[current_mob].ai = "random";
@@ -274,6 +291,164 @@ function ai.behavior()
 			chars_mobs_npcs[current_mob].battleai = "melee";
 		end;
 	end;
+--AGR healer
+	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "healer" then
+		for j=1,#chars_mobs_npcs do
+			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+			for j=1,#chars_mobs_npcs do
+				for h=1,3 do
+					for i=1,6 do
+						if not ai.friendOrFoe (current_mob,j)
+						and chars_mobs_npcs[j].x == rings[h][i].x
+						and chars_mobs_npcs[j].y == rings[h][i].y
+						and chars_mobs_npcs[j].status == 1
+						and chars_mobs_npcs[j].invisibility == 0
+						and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].y][chars_mobs_npcs[j].x] == 0 then
+							chars_mobs_npcs[current_mob].ai = "away";
+						end;
+					end;
+				end;
+			end;
+		end;
+		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
+			local array_to_resurrect = {};
+			local array_to_heal = {};
+			local array_to_regenerate = {};
+			local array_to_cure = {};
+			local array_to_buff = {};
+			boomx = chars_mobs_npcs[previctim].x;
+			boomy = chars_mobs_npcs[previctim].y;
+			for j=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[j].party == chars_mobs_npcs[current_mob].party and chars_mobs_npcs[j].stone == 0 and chars_mobs_npcs[j].freeze == 0 and chars_mobs_npcs[j].flith == 0 then
+					if chars_mobs_npcs[j].status == 1
+					and (chars_mobs_npcs[j].hp_max - chars_mobs_npcs[j].hp) >= chars_mobs_npcs[current_mob].lvl_body*chars_mobs_npcs[current_mob].num_body
+					and helpers.aliveNature(j)
+					and chars_mobs_npcs[current_mob].sp >= magic.spell_tips["heal"].mana
+					then
+						table.insert(array_to_heal,j);
+					end;
+					if chars_mobs_npcs[j].status == 1
+					and (chars_mobs_npcs[j].hp_max - chars_mobs_npcs[j].hp) >= chars_mobs_npcs[current_mob].lvl_body*chars_mobs_npcs[current_mob].num_body/2
+					and (chars_mobs_npcs[j].hp_max - chars_mobs_npcs[j].hp) < chars_mobs_npcs[current_mob].lvl_body*chars_mobs_npcs[current_mob].num_body
+					and helpers.aliveNature(j)
+					and chars_mobs_npcs[j].regeneration_dur == 0
+					and chars_mobs_npcs[current_mob].sp >= magic.spell_tips["regeneration"].mana
+					then
+						table.insert(array_to_regenerate,j);
+					end;
+					if chars_mobs_npcs[j].status == 0
+					and not helpers.cursorAtDeadMob (chars_mobs_npcs[j].x,chars_mobs_npcs[j].y)
+					and chars_mobs_npcs[current_mob].sp >= magic.spell_tips["resurrect"].mana
+					then
+						table.insert(array_to_resurrect,j);
+					end;
+				end;
+			end;
+			local spell = false;
+			previctim = 0;
+			local action_done = false;
+			if #array_to_heal > 0 and not action_done then
+				action_done = true;
+				local rnd = array_to_heal[math.random(1,array_to_heal)];
+				previctim = rnd;
+				missle_drive = "spellbook";
+				missle_type = "heal";
+				helpers.beforeShoot ();
+				game_status="shot";
+				damage.shoot();
+				return;
+			end;
+			if #array_to_regenerate > 0 and not action_done then
+				action_done = true;
+				local rnd = array_to_regenerate[math.random(1,array_to_regenerate)];
+				previctim = rnd;
+				missle_drive = "spellbook";
+				missle_type = "regeneration";
+				helpers.beforeShoot ();
+				game_status="shot";
+				damage.shoot();
+				return;
+			end;
+			if #array_to_resurrect > 0 and not action_done then
+				action_done = true;
+				local rnd = array_to_resurrection[math.random(1,array_to_resurrection)];
+				previctim = rnd;
+				missle_drive = "spellbook";
+				missle_type = "resurrection";
+				helpers.beforeShoot ();
+				game_status="shot";
+				damage.shoot();
+				return;
+			end;
+			if #array_to_cure > 0 and not action_done then --traumas, poison
+				action_done = true;
+			end;
+			if #array_to_buff > 0 and not action_done then
+				action_done = true;
+			end;
+		end;
+	else
+		chars_mobs_npcs[current_mob].battleai = "melee";
+	end;
+--  buffer
+
+	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "buffer" then
+		for j=1,#chars_mobs_npcs do
+			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+			for j=1,#chars_mobs_npcs do
+				for h=1,3 do
+					for i=1,6 do
+						if not ai.friendOrFoe (current_mob,j)
+						and chars_mobs_npcs[j].x == rings[h][i].x
+						and chars_mobs_npcs[j].y == rings[h][i].y
+						and chars_mobs_npcs[j].status == 1
+						and chars_mobs_npcs[j].invisibility == 0
+						and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].y][chars_mobs_npcs[j].x] == 0 then
+							chars_mobs_npcs[current_mob].ai = "away";
+						end;
+					end;
+				end;
+			end;
+		end;
+		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
+			local array_to_buff = {};
+			for j=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[j].party == chars_mobs_npcs[current_mob].party and chars_mobs_npcs[j].stone == 0 and chars_mobs_npcs[j].freeze == 0 and chars_mobs_npcs[j].flith == 0 then
+					if chars_mobs_npcs[j].status == 1 and j ~= current_mob then
+						table.insert(array_to_buff,j);
+					end;
+				end;
+			end;
+			if #array_to_buff > 1 then
+				local previctim = array_to_buff[math.random(1,#array_to_buff)];
+				local available_spells = {};
+				for i=1,#chars_mobs_npcs[current_mob].spellnames do
+					local spellname = chars_mobs_npcs[current_mob].spellnames[i];
+					if chars_mobs_npcs[current_mob].sp >= magic.spell_tips[spellname].mana then
+						table.insert(available_spells,spellname);
+					end;
+				end;
+				if #available_spell > 0 then
+					missle_type = available_spell[math.random(1,available_spell)];
+					chars_mobs_npcs[current_mob].battleai = "melee";
+					game_status = "shot";
+					trace.trace_hexes (current_mob,previctim,trace.sightArray (current_mob),true);
+					point_to_go_x = chars_mobs_npcs[previctim].x;
+					point_to_go_y = chars_mobs_npcs[previctim].y;
+					helpers.turnMob (current_mob);
+					damage.shoot ();
+					return;
+					else
+						game_status = "melee";
+					end;
+			elseif chars_mobs_npcs[current_mob].ai == "agr" then
+				change_position = true;
+				chars_mobs_npcs[current_mob].ai = "toenemy";
+			end;
+		end;
+	end;
+--	debuffer (like battle mage but conditions checks before)
+--	controller (like battle mage but conditions checks before)
 --AGR melee	
 	if (chars_mobs_npcs[current_mob].ai == "agr" or chars_mobs_npcs[current_mob].ai == "berserk") and chars_mobs_npcs[current_mob].battleai == "melee" then
 		for l=1, #chars_mobs_npcs do		
@@ -329,6 +504,7 @@ function ai.behavior()
 			local target_preroll = math.random(1,#mob_detects_aggro);
 			local target_roll = mob_detects_aggro[target_preroll];
 			previctim = chars_mobs_npcs[target_roll].id;
+			--previctim = target_roll;
 			if  helpers.ifMobIsNear(current_mob,target_roll) then
 				ai_world_x = chars_mobs_npcs[target_roll].x;
 				ai_world_y = chars_mobs_npcs[target_roll].y;
@@ -339,6 +515,7 @@ function ai.behavior()
 				global.multiattack = damage.countMultiattack(current_mob);
 				game_status = "attack";
 				damage.meleeAttack (damage.meleeAttackTool (current_mob));
+				return;
 			else
 				--print("hiu",path_status);
 					mob_can_move = 1;
@@ -374,7 +551,7 @@ function ai.behavior()
 					end;
 					ai_world_x = free_hexes[roll_point].x;
 					ai_world_y = free_hexes[roll_point].y;
-					print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
+					--print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
 					mob_can_move = 1;
 					if chars_mobs_npcs[current_mob].person == "char" then
 						helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.toenemy);
@@ -385,8 +562,42 @@ function ai.behavior()
 						helpers.addToActionLog( tmp_name3 .. " " .. lognames.actions.toenemy);
 					end;
 					path_finding (0,0);
+					return;
 				end;
 			end;
+	end;
+--MOVING TO A PARTY
+	ai.party_array_full ();
+	if chars_mobs_npcs[current_mob].ai == "toparty" then
+		if not global.hang then
+			local roll_point = 1;
+			local free_hexes = helpers.findFreeHexes (current_mob);
+			if #free_hexes > 0 then
+				local distance = math.ceil(math.random(free_hexes[1].x^2+free_hexes[1].y^2));
+				for j=1,#free_hexes do
+					if party_array[free_hexes[j].y][free_hexes[j].x] >= party_array[free_hexes[roll_point].y][free_hexes[roll_point].x]
+					and math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2)) <= distance
+					then
+						distance = math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2));
+						roll_point = j;
+					end;
+				end;
+				ai_world_x = free_hexes[roll_point].x;
+				ai_world_y = free_hexes[roll_point].y;
+				--print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
+				mob_can_move = 1;
+				if chars_mobs_npcs[current_mob].person == "char" then
+					helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.toenemy);
+				elseif chars_mobs_npcs[current_mob].person == "mob" then
+					tmp_name1 = chars_mobs_npcs[current_mob].class;
+					tmp_name2 = "lognames.mob_names." .. tmp_name1;
+					tmp_name3 = loadstring("return " .. tmp_name2)();
+					helpers.addToActionLog( tmp_name3 .. " " .. lognames.actions.toenemy);
+				end;
+				path_finding (0,0);
+				return;
+			end;
+		end;
 	end;
 --RANDOM WALKING
 	if chars_mobs_npcs[current_mob].ai == "random" then
@@ -411,8 +622,10 @@ function ai.behavior()
 				tmp_name1 = chars_mobs_npcs[current_mob].class;
 				tmp_name2 = "lognames.mob_names." .. tmp_name1;
 				tmp_name3 = loadstring("return " .. tmp_name2)();
-				helpers.addToActionLog( tmp_name3 .. " " .. lognames.actions.lostself[chars_mobs_npcs[current_mob].gender])
+				helpers.addToActionLog( tmp_name3 .. " " .. lognames.actions.lostself[chars_mobs_npcs[current_mob].gender]);
+				
 			end;
+			return;
 		else
 			chars_mobs_npcs[current_mob].ai = "stay";
 		end;
@@ -439,9 +652,11 @@ function ai.behavior()
 			mob_can_move = 1;
 			helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.runaway);
 			path_finding (0,0);
+			return;
 		else
 			chars_mobs_npcs[current_mob].ai = "agr";
 			chars_mobs_npcs[current_mob].battleai = "melee";
+			return;
 		end;
 	end;
 --STAY
@@ -452,19 +667,8 @@ function ai.behavior()
 			--chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt - 200;
 			damage.RTminus(current_mob,200,false);
 			game_status = "restoring";
+			return;
 		end;
-	end;
-	if chars_mobs_npcs[current_mob].ai == "building" then
-		if ai.enemyWatchesTheMob (current_mob) then
-			chars_mobs_npcs[current_mob].ai = chars_mobs_npcs[current_mob].dangerai;
-		else
-			--chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt - 200;
-			damage.RTminus(current_mob,200,false);
-			game_status = "restoring";
-		end;
-	end;
-	if chars_mobs_npcs[current_mob].ai == "building" then
-		game_status = "restoring";
 	end;
 --RETURNING TO BASE
 	if chars_mobs_npcs[current_mob].area and not helpers.thisHexAtArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].area) then
@@ -478,6 +682,7 @@ function ai.behavior()
 			mob_can_move = 1;
 			path_finding (0,0);
 			helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.movingback);
+			return;
 		end;
 	end;
 end;
@@ -569,10 +774,10 @@ function ai.agro_array_full () -- check trace and visibility
 					local tmpfrac2 = chars_mobs_npcs[current_mob].fraction;
 					local fraccond = loadstring("return " .. "fractions." .. tmpfrac2 .. "." .. tmpfrac)();
 					if fraccond < 0 and chars_mobs_npcs[m].invisibility == 0 and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[m].y][chars_mobs_npcs[m].x] == 0 then
-						agro_array[i][z] = 10+math.ceil(chars_mobs_npcs[current_mob].lv*math.abs(fraccond)/100)
-					end
-				end
-			end
+						agro_array[i][z] = 10+math.ceil(chars_mobs_npcs[current_mob].lv*math.abs(fraccond)/100);
+					end;
+				end;
+			end;
 			for n=1,6 do
 				if i/2 == math.ceil(i/2)then
 					if i+directions[1].y[n]>0 and i+directions[1].y[n] <= map_w and z+directions[1].xc[n] > 0 and z+directions[1].xc[n] <= map_h then
@@ -608,4 +813,56 @@ function ai.agro_array_full () -- check trace and visibility
 		end;
 	end;
 	return agro_array
+end;
+
+function ai.party_array_full ()
+	local party_array = {};
+	for i=1, map_w do
+		party_array [i]= {};
+		for z=1, map_h do
+			party_array[i][z]= 0;
+		end;
+	end;
+	for i=1, map_w do
+		for z=1, map_h do
+			for m=1,#chars_mobs_npcs do		
+				if chars_mobs_npcs[current_mob].party == chars_mobs_npcs[m].party then
+					party_array[i][z] = 10;
+				end;
+			end;
+			for n=1,6 do
+				if i/2 == math.ceil(i/2)then
+					if i+directions[1].y[n]>0 and i+directions[1].y[n] <= map_w and z+directions[1].xc[n] > 0 and z+directions[1].xc[n] <= map_h then
+						party_array[i+directions[1].y[n]][z+directions[1].xc[n]] = math.max(party_array[i+directions[1].y[n]][z+directions[1].xc[n]],party_array[i][z]-1);
+					end;
+				else
+					if i+directions[1].y[n] > 0 and i+directions[1].y[n] < map_w and z+directions[1].xn[n] > 0 and z+directions[1].xn[n] < map_h then
+						party_array[i+directions[1].y[n]][z+directions[1].xn[n]] = math.max(party_array[i+directions[1].y[n]][z+directions[1].xn[n]],party_array[i][z]-1);
+					end;
+				end; 
+			end;
+		end;
+	end;
+	for i=map_w,1 do
+		for z=map_h,1 do
+			for n=1,6 do
+				if i/2 == math.ceil(i/2)then
+					if i+directions[1].y[n] > 0 and i+directions[1].y[n] <= map_w  and z+directions[1].xc[n] > 0 and z+directions[1].xc[n] <= map_h then
+						party_array[i+directions[1].y[n]][z+directions[1].xc[n]] = math.max(party_array[i+directions[1].y[n]][z+directions[1].xc[n]],party_array[i][z]-1);
+					end;
+				else
+					if i+directions[1].y[n]>0 and i+directions[1].y[n] <= map_w and z+directions[1].xn[n]>0 and z+directions[1].xn[n] <= map_h then
+						party_array[i+directions[1].y[n]][z+directions[1].xn[n]] = math.max(party_array[i+directions[1].y[n]][z+directions[1].xn[n]],party_array[i][z]-1);
+					end;
+				end;
+			end;
+		end;
+	end;
+	all_party = 0
+	for i = 1,#party_array do
+		for h = 1,#party_array[i] do
+			all_party = all_party + party_array[i][h];
+		end;
+	end;
+	return party_array
 end;

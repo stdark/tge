@@ -4232,9 +4232,9 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "heal" then
 		prebuff = damage.damageRandomizator(current_mob,1,5)*lvl[1]+num[1]*5;
 		buff=math.min(prebuff,math.abs(chars_mobs_npcs[victim].hp_max-chars_mobs_npcs[victim].hp));
-		chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp+buff;
-		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
-		helpers.addToActionLog( lognames.actions.andrestored[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim) .. " " .. buff .. lognames.actions.metr .. lognames.actions.ofhp);
+		chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp+buff;
+		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
+		helpers.addToActionLog(lognames.actions.andrestored[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim) .. " " .. buff .. lognames.actions.metr .. lognames.actions.ofhp);
 		helpers.mobAtBody (victim);
 		if chars_mobs_npcs[victim].hp>0 and mobs_at_hex==0 then
 			chars_mobs_npcs[victim].status=1;
@@ -4244,9 +4244,9 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "restoreundead" then
 		prebuff = damage.damageRandomizator(current_mob,1,5)*lvl[1]+num[2]*5;
 		buff=math.min(prebuff,math.abs(chars_mobs_npcs[victim].hp_max-chars_mobs_npcs[victim].hp));
-		chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp+buff;
-		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
-		helpers.addToActionLog( lognames.actions.andrestored[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim) .. " " .. buff .. lognames.actions.metr .. lognames.actions.ofhp);
+		chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp+buff;
+		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
+		helpers.addToActionLog(lognames.actions.andrestored[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim) .. " " .. buff .. lognames.actions.metr .. lognames.actions.ofhp);
 		helpers.mobAtBody (victim);
 		if chars_mobs_npcs[victim].hp > 0 and mobs_at_hex == 0 then
 			chars_mobs_npcs[victim].status = 1;
@@ -6708,7 +6708,7 @@ function damage.falseDamager(x,y,r)
 	return id;
 end;
 
-function damage.damageOfLandscape(index,x,y)
+function damage.landscapeHex(index,x,y)
 	if dlandscape_obj[y][x] == "fire" and dlandscape_duration[y][x] > 0 then
 		local dmgland = dlandscape_power[y][x];
 		local name = helpers.mobName(index);

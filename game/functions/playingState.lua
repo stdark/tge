@@ -1580,7 +1580,7 @@ function playingState.update(dt)
 				damage.singledamage();
 			elseif magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy" or missle_type=="torchlight" or missle_type=="ritualofthevoid" then
 				game_status="damage";
-				damage.instantCast()
+				damage.instantCast();
 			elseif magic.spell_tips[missle_type].form == "ring" or magic.spell_tips[missle_type].form == "proactive"
 			or magic.spell_tips[missle_type].form == "wall" or magic.spell_tips[missle_type].form == "sight" or magic.spell_tips[missle_type].form == "breath"
 			or magic.spell_tips[missle_type].form == "rain" or magic.spell_tips[missle_type].form == "level" or magic.spell_tips[missle_type].form == "vray"
@@ -6264,7 +6264,7 @@ function  playingState.mousepressed(x,y,button)
 			for i=1,#chars_mobs_npcs do
 				if chars_mobs_npcs[current_mob].control == "player" and chars_mobs_npcs[i].x == cursor_world_x and chars_mobs_npcs[i].y == cursor_world_y then
 					cursor_on_mob = 1;
-					previctim = chars_mobs_npcs[i].id	 ;
+					previctim = chars_mobs_npcs[i].id;
 				else
 				end;
 			end;
@@ -6502,6 +6502,7 @@ function  playingState.mousepressed(x,y,button)
 		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 		and game_status == "sensing"
 		and missle_drive == "muscles"
+		and helpers.missleAtWarBook()
 		and tricks.tricks_tips[missle_type].form == "pose" then
 			damage.setProtectionMode();
 		end;
@@ -6518,6 +6519,7 @@ function  playingState.mousepressed(x,y,button)
 		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 		and game_status == "sensing"
 		and missle_drive == "muscles"
+		and helpers.missleAtWarBook()
 		and tricks.tricks_tips[missle_type].form == "ranged" then
 			boomx= chars_mobs_npcs[victim].x;
 			boomy= chars_mobs_npcs[victim].y;
@@ -7825,7 +7827,7 @@ function mobMoving()
 			path_counter=0;
 			global.hang = false;
 		end;
-		damage.damageOfLandscape(current_mob,a,b);
+		damage.landscapeHex(current_mob,a,b);
 		local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
 		local mob_walk = loadstring("return " .. tmp)();
 		if path_counter == 1 then
@@ -8191,6 +8193,7 @@ end;
 
 function letaBattleBegin ()
 	utils.printDebug("Battle started!");
+	global.walk_animation_speed = 0.25;
 	if global.status == "peace" then
 		for i=1,#chars_mobs_npcs do
 			helpers.countMoral(i);
@@ -8207,6 +8210,7 @@ end;
 
 function letaBattleFinishes ()
 	utils.printDebug("Battle finished!");
+	global.walk_animation_speed = 0.1;
 	if global.status == "battle" then
 		utils.playSfx(media.sounds.battle_finishes,1);
 		helpers.addToActionLog(lognames.actions.battlefinished);
@@ -8269,14 +8273,15 @@ function restoreRT ()
 						helpers.recalcBattleStats(i);
 					end;
 				end;
-				
-				if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "humanoid" then
-					damage.HPminus(i,10);
+				if chars_mobs_npcs[i].person == "char" then
+					if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "humanoid" then
+						damage.HPminus(i,10);
+					end;
+					if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "undead" then
+						damage.HPplus(i,5); --FIXME lickes and deathknights can get hp regen, so no need
+					end;
 				end;
-				if chars_mobs_npcs[i].status == 0 and chars_mobs_npcs[i].nature == "undead" then
-					damage.HPplus(i,5);
-				end;
-				damage.damageOfLandscape(current_mob,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+				damage.landscapeHex(current_mob,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 				if chars_mobs_npcs[i].fingerofdeath > 0 then
 					local chance = math.random(1,math.max(chars_mobs_npcs[i].luk+1,101));
 					if chance > chars_mobs_npcs[i].luk then
@@ -8480,56 +8485,6 @@ function restoreRT ()
 				if chars_mobs_npcs[i].stoneskin_dur>0 then
 					chars_mobs_npcs[tmpi].stoneskin_dur= chars_mobs_npcs[tmpi].stoneskin_dur-1;
 				end;
-				if chars_mobs_npcs[i].mgt_buff_dur>0 then
-					chars_mobs_npcs[tmpi].mgt_buff_dur= chars_mobs_npcs[tmpi].mgt_buff_dur-1;
-				else
-					chars_mobs_npcs[i].mgt_buff_power=0;
-				end;
-				if chars_mobs_npcs[i].enu_buff_dur>0 then
-					chars_mobs_npcs[tmpi].enu_buff_dur= chars_mobs_npcs[tmpi].enu_buff_dur-1
-				else
-					chars_mobs_npcs[i].enu_buff_power=0;
-				end;
-				if chars_mobs_npcs[i].dex_buff_dur>0 then
-					chars_mobs_npcs[i].dex_buff_dur= chars_mobs_npcs[i].dex_buff_dur-1;
-				else
-					chars_mobs_npcs[i].dex_buff_power=0;
-				end;
-				if chars_mobs_npcs[i].spd_buff_dur>0 then
-					chars_mobs_npcs[i].spd_buff_dur= chars_mobs_npcs[i].spd_buff_dur-1;
-				else
-					chars_mobs_npcs[i].spd_buff_power=0;
-				end;
-				if chars_mobs_npcs[i].acu_buff_dur>0 then
-					chars_mobs_npcs[i].acu_buff_dur= chars_mobs_npcs[i].acu_buff_dur-1;
-				else
-					chars_mobs_npcs[i].acu_buff_power=0;
-				end;
-				if chars_mobs_npcs[i].sns_buff_dur>0 then
-					chars_mobs_npcs[i].sns_buff_dur= chars_mobs_npcs[i].sns_buff_dur-1;
-				else
-					chars_mobs_npcs[i].sns_buff_power=0;
-				end;
-				if chars_mobs_npcs[i].int_buff_dur>0 then
-					chars_mobs_npcs[i].int_buff_dur= chars_mobs_npcs[i].int_buff_dur-1;
-				else
-					chars_mobs_npcs[i].int_buff_power=0;
-				end;
-				if chars_mobs_npcs[i].spr_buff_dur>0 then
-					chars_mobs_npcs[i].spr_buff_dur= chars_mobs_npcs[i].spr_buff_dur-1;
-				else
-					chars_mobs_npcs[i].spr_buff_power=0;
-				end
-				if chars_mobs_npcs[i].chr_buff_dur>0 then
-					chars_mobs_npcs[i].chr_buff_dur= chars_mobs_npcs[i].chr_buff_dur-1;
-				else
-					chars_mobs_npcs[i].chr_buff_power=0
-				end;
-				if chars_mobs_npcs[i].luk_buff_dur>0 then
-					chars_mobs_npcs[i].luk_buff_dur= chars_mobs_npcs[i].luk_buff_dur-1
-				else
-					chars_mobs_npcs[i].luk_buff_power=0
-				end;
 				if chars_mobs_npcs[i].heroism_dur>0 then
 					chars_mobs_npcs[i].heroism_dur= chars_mobs_npcs[i].heroism_dur-1;
 				else
@@ -8557,9 +8512,12 @@ function restoreRT ()
 					damage.SPplus(i,chars_mobs_npcs[i].sp_regeneration,true);
 					helpers.addHunger(i,value);
 				end;
-				if chars_mobs_npcs[i].st < chars_mobs_npcs[i].st_max and chars_mobs_npcs[i].st_regeneration > 0 and helpers.doNotFeelHunger(i) then
+				if chars_mobs_npcs[i].status > 0 and chars_mobs_npcs[i].st < chars_mobs_npcs[i].st_max and chars_mobs_npcs[i].st_regeneration > 0 and helpers.doNotFeelHunger(i) then
 					damage.STplus(i,chars_mobs_npcs[i].st_regeneration);
 					helpers.addHunger(i,value);
+				end;
+				if chars_mobs_npcs[i].status <= 0 and chars_mobs_npcs[i].st > 0 then
+					damage.STplus(i,1);
 				end;
 				--/mobs only
 				if chars_mobs_npcs[i].hp < chars_mobs_npcs[i].hp_max and chars_mobs_npcs[i].num_regeneration > 0 and helpers.doNotFeelHunger(i) then
@@ -8719,8 +8677,8 @@ function restoreRT ()
 				end;
 				if dlandscape_duration[a][b] == 0 then
 					if dlandscape_obj[a][b] == "fire" then
-						boomareas.ashGround (a,b);
-						helpers.clearLights (a,b);
+						boomareas.ashGround (b,a);
+						helpers.clearLights (b,a);
 					end;
 					dlandscape_obj[a][b] = 0;
 					dlandscape_power[a][b] = 0;
@@ -8728,8 +8686,7 @@ function restoreRT ()
 
 				if alandscape_duration[a][b] == 0 then
 					if alandscape_obj[a][b] == "poison" then
-						alandscape[a][b] = 0;
-						helpers.clearLights (a,b);
+						helpers.clearLights (b,a);
 					end;
 					alandscape_obj[a][b] = 0;
 					alandscape_power[a][b] = 0;
@@ -8764,16 +8721,16 @@ function restoreRT ()
 		global.timer200 = global.timer200-200;
 	end;
 	for i=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].slow == 0 then
+		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].slow_dur == 0 then
 			chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 		end;
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow == 0 then
+		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur == 0 then
 			chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 		end;
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow > 0 and chars_mobs_npcs[i].haste > 0 then
+		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur > 0 and chars_mobs_npcs[i].haste > 0 then
 			chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 		end;
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow > 0 and chars_mobs_npcs[i].haste == 0 then
+		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur > 0 and chars_mobs_npcs[i].haste == 0 then
 			if global.timer200/2 == math.ceil(global.timer200/2) then
 				chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 			end;
@@ -8902,8 +8859,7 @@ function mob_plus()
 	end;
 end;
 
-function atk_dir_to_hex () --FIXME proverka na prepyatstviya
-	--atk_direction = helpers.attackDirection (current_mob,chars_mobs_npcs[mob_under_cursor].x,chars_mobs_npcs[mob_under_cursor].y);
+function atk_dir_to_hex ()
 	atk_direction = helpers.attackDirection (current_mob,victim);
 	if chars_mobs_npcs[mob_under_cursor].y/2 == math.ceil(chars_mobs_npcs[mob_under_cursor].y/2) then
 		add_x = directions[1].xc[atk_direction];
@@ -8916,7 +8872,6 @@ function atk_dir_to_hex () --FIXME proverka na prepyatstviya
 		point_to_go_x = cursor_world_x+add_x;
 		point_to_go_y = cursor_world_y+add_y;
 	elseif chars_mobs_npcs[current_mob].control == "ai" then
-		--print("NIL",ai_world_x, add_x);
 		point_to_go_x = ai_world_x+add_x;
 		point_to_go_y = ai_world_y+add_y;
 	end;

@@ -1669,7 +1669,7 @@ function helpers.addMob(index,person)
 
 	chars_mobs_npcs[index].multiattack = tmpclass2.multiattack;
 	chars_mobs_npcs[index].status = 1;
-	chars_mobs_npcs[index].id = i;
+	chars_mobs_npcs[index].id = index;
 	chars_mobs_npcs[index].person = person;
 	chars_mobs_npcs[index].sprite = tmpclass2.sprite;
 	chars_mobs_npcs[index].aggro = 0;
@@ -1851,6 +1851,7 @@ function helpers.addMob(index,person)
 	chars_mobs_npcs[index].filth_power = 0;
 	chars_mobs_npcs[index].filth_dur = 0;
 	chars_mobs_npcs[index].darkgasp = 0;
+	chars_mobs_npcs[index].feeblemind = 0;
 	chars_mobs_npcs[index].despondency_power = 0;
 	chars_mobs_npcs[index].despondency_dur = 0;
 	chars_mobs_npcs[index].misfortune_power = 0;
@@ -2334,7 +2335,6 @@ end;
 function helpers.clearLights (x,y)
 	for i=#lights,1,-1 do
 		if lights[i].typ == "ground" and lights[i].x == x and lights[i].y == y then
-			print("CLEAR",i);
 			lights[i]["light"].clear();
 			table.remove(lights,i);
 		end;

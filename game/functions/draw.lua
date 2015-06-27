@@ -3129,7 +3129,7 @@ function draw.objects ()
 					or (game_status == "damage" and i ~= victim)
 					or (game_status == "multidamage" and damaged==0)
 					or (i ~= current_mob and i ~= victim and damaged==0) then
-						if chars_mobs_npcs[i].id == selected_mob and darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0  then
+						if i == selected_mob and darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0  then
 							love.graphics.draw(media.images.hex, cursor_white,mobto_hex_x-tile_w,mobto_hex_y+86); -- selection from portraits marked
 						end
 						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
@@ -3593,86 +3593,115 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			love.graphics.print(healthstatus.uncond, mX+100,mY+50);
 		elseif chars_mobs_npcs[tmpc].status==-1 then
 			love.graphics.print(healthstatus.dead, mX+100,mY+50);
-		end
-	end
-
-	if chars_stats[current_mob].spellbook==1 then
+		end;
+	end;
+	if chars_stats[current_mob].spellbook==1 or chars_mobs_npcs[current_mob].lvl_monsterid >= 1 then
 		if tmpclass3.spellbook==0 then
 			love.graphics.setColor(0, 0, 0);
 			love.graphics.print(manastatus.nobook, mX+100,mY+65);
 		else
-		if chars_mobs_npcs[tmpc].sp>=chars_mobs_npcs[tmpc].sp_max*0.75 then
-			love.graphics.setColor(0, 0, 255) ;
-			love.graphics.print(manastatus.full, mX+100,mY+65);
-		elseif chars_mobs_npcs[tmpc].sp<chars_mobs_npcs[tmpc].sp_max*0.75 and chars_mobs_npcs[tmpc].sp>=chars_mobs_npcs[tmpc].sp_max*0.5 then
-			love.graphics.setColor(0, 0, 225);
-			love.graphics.print(manastatus.morethanhalf, mX+100,mY+65);
-		elseif chars_mobs_npcs[tmpc].sp<chars_mobs_npcs[tmpc].sp_max*0.5 and chars_mobs_npcs[tmpc].sp>=chars_mobs_npcs[tmpc].sp_max*0.25 then
-			love.graphics.setColor(0, 0, 200) ;
-			love.graphics.print(manastatus.lessthanhalf, mX+100,mY+65);
-		elseif chars_mobs_npcs[tmpc].sp<chars_mobs_npcs[tmpc].sp_max*0.25 and chars_mobs_npcs[tmpc].sp>0 then
-			love.graphics.setColor(0, 0, 150);
-			love.graphics.print(manastatus.quaterorless, mX+100,mY+65);
-		elseif chars_mobs_npcs[tmpc].sp<=0 then
-			love.graphics.setColor(0, 0, 0);
-			love.graphics.print(manastatus.nomana, mX+100,mY+65);
+			if chars_mobs_npcs[tmpc].sp>=chars_mobs_npcs[tmpc].sp_max*0.75 then
+				love.graphics.setColor(0, 0, 255) ;
+				love.graphics.print(manastatus.full, mX+100,mY+65);
+			elseif chars_mobs_npcs[tmpc].sp<chars_mobs_npcs[tmpc].sp_max*0.75 and chars_mobs_npcs[tmpc].sp>=chars_mobs_npcs[tmpc].sp_max*0.5 then
+				love.graphics.setColor(0, 0, 225);
+				love.graphics.print(manastatus.morethanhalf, mX+100,mY+65);
+			elseif chars_mobs_npcs[tmpc].sp<chars_mobs_npcs[tmpc].sp_max*0.5 and chars_mobs_npcs[tmpc].sp>=chars_mobs_npcs[tmpc].sp_max*0.25 then
+				love.graphics.setColor(0, 0, 200) ;
+				love.graphics.print(manastatus.lessthanhalf, mX+100,mY+65);
+			elseif chars_mobs_npcs[tmpc].sp<chars_mobs_npcs[tmpc].sp_max*0.25 and chars_mobs_npcs[tmpc].sp>0 then
+				love.graphics.setColor(0, 0, 150);
+				love.graphics.print(manastatus.quaterorless, mX+100,mY+65);
+			elseif chars_mobs_npcs[tmpc].sp<=0 then
+				love.graphics.setColor(0, 0, 0);
+				love.graphics.print(manastatus.nomana, mX+100,mY+65);
+			end;
 		end;
-	end;
 	else
 		love.graphics.setColor(0, 0, 0);
 		love.graphics.print(manastatus.idk, mX+100,mY+65);
 	end;
-  
- -- print("stamina",chars_mobs_npcs[tmpc].st_max,chars_mobs_npcs[tmpc].st)
-	if chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.75 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(staminastatus.full, mX+100,mY+80);
-	elseif chars_mobs_npcs[tmpc].st<chars_mobs_npcs[tmpc].st_max*0.75 and chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.5 then
-		love.graphics.setColor(125, 125, 125); 
-		love.graphics.print(staminastatus.ok, mX+100,mY+80);
-	elseif chars_mobs_npcs[tmpc].st<chars_mobs_npcs[tmpc].st_max*0.5 and chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.25 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(staminastatus.abittired, mX+100,mY+80);
-	elseif chars_mobs_npcs[tmpc].st<chars_mobs_npcs[tmpc].st_max*0.25 and chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.1 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(staminastatus.tired, mX+100,mY+80);
-	elseif chars_mobs_npcs[tmpc].st<=chars_mobs_npcs[tmpc].st_max*0.1 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(staminastatus.disabled, mX+100,mY+80);
+	if chars_mobs_npcs[current_mob].lvl_monsterid >= 1 then 
+		if chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.75 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(staminastatus.full, mX+100,mY+80);
+		elseif chars_mobs_npcs[tmpc].st<chars_mobs_npcs[tmpc].st_max*0.75 and chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.5 then
+			love.graphics.setColor(125, 125, 125); 
+			love.graphics.print(staminastatus.ok, mX+100,mY+80);
+		elseif chars_mobs_npcs[tmpc].st<chars_mobs_npcs[tmpc].st_max*0.5 and chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.25 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(staminastatus.abittired, mX+100,mY+80);
+		elseif chars_mobs_npcs[tmpc].st<chars_mobs_npcs[tmpc].st_max*0.25 and chars_mobs_npcs[tmpc].st>=chars_mobs_npcs[tmpc].st_max*0.1 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(staminastatus.tired, mX+100,mY+80);
+		elseif chars_mobs_npcs[tmpc].st<=chars_mobs_npcs[tmpc].st_max*0.1 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(staminastatus.disabled, mX+100,mY+80);
+		end;
+	   
+		if chars_mobs_npcs[tmpc].rt==200 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(recoverystatus.full, mX+100,mY+95);
+		elseif chars_mobs_npcs[tmpc].rt>=150 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(recoverystatus.ok, mX+100,mY+95);
+		elseif chars_mobs_npcs[tmpc].rt>=100 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(recoverystatus.half, mX+100,mY+95);
+		elseif chars_mobs_npcs[tmpc].rt>=50 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(recoverystatus.quater, mX+100,mY+95);
+		elseif chars_mobs_npcs[tmpc].rt>50 then
+			love.graphics.setColor(125, 125, 125);
+			love.graphics.print(recoverystatus.abit, mX+100,mY+95);
+		end;
+		love.graphics.setColor(0, 0, 0)
+		local moral_index = 4;
+		if chars_mobs_npcs[tmpc].moral < chars_mobs_npcs[tmpc].base_moral and chars_mobs_npcs[tmpc].moral > -1*chars_mobs_npcs[tmpc].base_moral then
+			moral_index = 2;
+		elseif chars_mobs_npcs[tmpc].moral > chars_mobs_npcs[tmpc].base_moral then
+			moral_index = 1;
+		elseif chars_mobs_npcs[tmpc].moral < -1*chars_mobs_npcs[tmpc].base_moral then
+			moral_index = 3;
+		end;
+		if not helpers.aliveNature(tmpc) then
+			moral_index = 4;
+		end;
+		love.graphics.print(chars_mobs_npcs[tmpc].moral, mX+10,mY+110);
+		love.graphics.print(moralstatus[moral_index], mX+100,mY+110);
 	end;
-   
-	if chars_mobs_npcs[tmpc].rt==200 then
+	if chars_mobs_npcs[current_mob].lvl_monsterid == 5 then
+		if chars_mobs_npcs[tmpc].hp>=chars_mobs_npcs[tmpc].hp_max then
+			love.graphics.setColor(0, 155, 0);
+		elseif chars_mobs_npcs[tmpc].hp<chars_mobs_npcs[tmpc].hp_max and chars_mobs_npcs[tmpc].hp>=chars_mobs_npcs[tmpc].hp_max*0.9 then
+			love.graphics.setColor(255, 255, 0);
+		elseif chars_mobs_npcs[tmpc].hp<chars_mobs_npcs[tmpc].hp_max*0.9 and chars_mobs_npcs[tmpc].hp>=chars_mobs_npcs[tmpc].hp_max*0.5 then
+			love.graphics.setColor(255, 255, 0);
+		elseif chars_mobs_npcs[tmpc].hp<chars_mobs_npcs[tmpc].hp_max*0.5 and chars_mobs_npcs[tmpc].hp>=chars_mobs_npcs[tmpc].hp_max*0.9 then
+			love.graphics.setColor(255, 125, 0);
+		elseif chars_mobs_npcs[tmpc].hp<chars_mobs_npcs[tmpc].hp_max*0.5 and chars_mobs_npcs[tmpc].hp>chars_mobs_npcs[tmpc].hp_max*0.9 then
+			love.graphics.setColor(255, 125, 0);
+		elseif chars_mobs_npcs[tmpc].hp<=chars_mobs_npcs[tmpc].hp_max*0.9 and chars_mobs_npcs[tmpc].hp>0 then
+			love.graphics.setColor(255, 0, 0);
+		elseif chars_mobs_npcs[tmpc].hp<=0 then
+			love.graphics.setColor(0, 0, 0);
+		end;
+		local str_hp = "(" .. chars_mobs_npcs[tmpc].hp .. ")";
+		love.graphics.print(str_hp, mX+200,mY+50);
+		
+		love.graphics.setColor(0, 0, 255) ;
+		local str_sp = "(" .. chars_mobs_npcs[tmpc].sp .. ")";
+		love.graphics.print(str_sp, mX+200,mY+65);
+		
 		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(recoverystatus.full, mX+100,mY+95);
-	elseif chars_mobs_npcs[tmpc].rt>=150 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(recoverystatus.ok, mX+100,mY+95);
-	elseif chars_mobs_npcs[tmpc].rt>=100 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(recoverystatus.half, mX+100,mY+95);
-	elseif chars_mobs_npcs[tmpc].rt>=50 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(recoverystatus.quater, mX+100,mY+95);
-	elseif chars_mobs_npcs[tmpc].rt>50 then
-		love.graphics.setColor(125, 125, 125);
-		love.graphics.print(recoverystatus.abit, mX+100,mY+95);
+		local str_st = "(" .. chars_mobs_npcs[tmpc].st .. ")";
+		love.graphics.print(str_st, mX+200,mY+80);
+		
+		local str_rt = "(" .. chars_mobs_npcs[tmpc].rt .. ")";
+		love.graphics.print(str_rt, mX+200,mY+95);
+		
+		love.graphics.setColor(0, 0, 0) ;
 	end;
-	love.graphics.setColor(0, 0, 0)
-	local moral_index = 4;
-	if chars_mobs_npcs[tmpc].moral < chars_mobs_npcs[tmpc].base_moral and chars_mobs_npcs[tmpc].moral > -1*chars_mobs_npcs[tmpc].base_moral then
-		moral_index = 2;
-	elseif chars_mobs_npcs[tmpc].moral > chars_mobs_npcs[tmpc].base_moral then
-		moral_index = 1;
-	elseif chars_mobs_npcs[tmpc].moral < -1*chars_mobs_npcs[tmpc].base_moral then
-		moral_index = 3;
-	end;
-	if not helpers.aliveNature(tmpc) then
-		moral_index = 4;
-	end;
-	love.graphics.print(chars_mobs_npcs[tmpc].moral, mX+10,mY+110);
-	love.graphics.print(moralstatus[moral_index], mX+100,mY+110);
-
-	
 	addx=115;
 	addx2=215;
 	
