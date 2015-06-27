@@ -38,7 +38,7 @@ function ai.behavior()
 			local roll_point = 1;
 			local point_to_go_x = chars_mobs_npcs[current_mob]["call"].x;
 			local point_to_go_y = chars_mobs_npcs[current_mob]["call"].y;
-			local free_hexes = helpers.find_free_hexes (current_mob);
+			local free_hexes = helpers.findFreeHexes (current_mob);
 			local rollmd = math.random(1,2);
 			if rollmd == 1 then
 				modepf = 1;
@@ -46,17 +46,17 @@ function ai.behavior()
 				modepf = -1;
 			end;
 			if #free_hexes > 0 then
-				local distance = math.ceil(math.sqrt((all_ground_hexes[free_hexes[1]].x - point_to_go_x)^2 + (all_ground_hexes[free_hexes[1]].y - point_to_go_y)^2));
+				local distance = math.ceil(math.sqrt((free_hexes[1].x - point_to_go_x)^2 + (free_hexes[1].y - point_to_go_y)^2));
 				local newdistance = 0;
 				for j=1,#free_hexes do
-					newdistance =  math.ceil(math.sqrt((all_ground_hexes[free_hexes[j]].x - point_to_go_x)^2 + (all_ground_hexes[free_hexes[j]].y - point_to_go_y)^2));
+					newdistance =  math.ceil(math.sqrt((free_hexes[j].x - point_to_go_x)^2 + (free_hexes[j].y - point_to_go_y)^2));
 					if newdistance < distance then
 						distance = newdistance;
 						roll_point = j;
 					end;
 				end;		
-				ai_world_x = all_ground_hexes[free_hexes[roll_point]].x;
-				ai_world_y = all_ground_hexes[free_hexes[roll_point]].y;
+				ai_world_x = free_hexes[roll_point].x;
+				ai_world_y = free_hexes[roll_point].y;
 				--ai_world_x = point_to_go_x;
 				--ai_world_y = point_to_go_y;
 				mob_can_move = 1;
@@ -77,7 +77,7 @@ function ai.behavior()
 			local roll_point = 1;
 			local point_to_go_x = chars_mobs_npcs[current_mob].waypoint[chars_mobs_npcs[current_mob].nextpoint][1];
 			local point_to_go_y = chars_mobs_npcs[current_mob].waypoint[chars_mobs_npcs[current_mob].nextpoint][2];
-			local free_hexes = helpers.find_free_hexes (current_mob);
+			local free_hexes = helpers.findFreeHexes (current_mob);
 			local rollmd = math.random(1,2);
 			if rollmd == 1 then
 				modepf = 1;
@@ -85,17 +85,17 @@ function ai.behavior()
 				modepf = -1;
 			end;
 			if #free_hexes > 0 then
-				local distance = math.ceil(math.sqrt((all_ground_hexes[free_hexes[1]].x - point_to_go_x)^2 + (all_ground_hexes[free_hexes[1]].y - point_to_go_y)^2));
+				local distance = math.ceil(math.sqrt((free_hexes[1].x - point_to_go_x)^2 + (free_hexes[1].y - point_to_go_y)^2));
 				local newdistance = 0;
 				for j=1,#free_hexes do
-					newdistance =  math.ceil(math.sqrt((all_ground_hexes[free_hexes[j]].x - point_to_go_x)^2 + (all_ground_hexes[free_hexes[j]].y - point_to_go_y)^2));
+					newdistance =  math.ceil(math.sqrt((free_hexes[j].x - point_to_go_x)^2 + (free_hexes[j].y - point_to_go_y)^2));
 					if newdistance < distance then
 						distance = newdistance;
 						roll_point = j;
 					end;
 				end;		
-				ai_world_x = all_ground_hexes[free_hexes[roll_point]].x;
-				ai_world_y = all_ground_hexes[free_hexes[roll_point]].y;
+				ai_world_x = free_hexes[roll_point].x;
+				ai_world_y = free_hexes[roll_point].y;
 				mob_can_move = 1;
 				path_finding (0,0);
 				helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.atwaypoint);
@@ -341,35 +341,12 @@ function ai.behavior()
 				damage.meleeAttack (damage.meleeAttackTool (current_mob));
 			else
 				--print("hiu",path_status);
-				--if path_status == 1 then
 					mob_can_move = 1;
 					mob_is_going_to_hit = 1;
 					ai_world_x = chars_mobs_npcs[target_roll].x;
 					ai_world_y = chars_mobs_npcs[target_roll].y;
 					game_status = "path_finding";
 					path_finding(0,0);
-				--else
-				--[[if 2 == 1 then --FIXME: do not remember why need this
-					mob_is_going_to_hit = 0;
-					local free_hexes = helpers.find_free_hexes (current_mob);
-					if #free_hexes == 0 then
-						--chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt - 50;
-						damage.RTminus(current_mob,50,false);
-						game_status = "restoring";
-					else
-						local eprev = 1;
-						ai_world_x = all_ground_hexes[free_hexes[eprev] ].x;
-						ai_world_y = all_ground_hexes[free_hexes[eprev] ].y;
-						for e=1,#free_hexes do
-							if math.sqrt((all_ground_hexes[free_hexes[e] ].x-chars_mobs_npcs[victim].x)^2+(all_ground_hexes[free_hexes[e] ].y-chars_mobs_npcs[victim].y)^2)<math.sqrt((all_ground_hexes[free_hexes[eprev] ].x-chars_mobs_npcs[victim].x)^2+(all_ground_hexes[free_hexes[eprev] ].y-chars_mobs_npcs[victim].y)^2) then
-								ai_world_x = all_ground_hexes[free_hexes[e] ].x;
-								ai_world_y = all_ground_hexes[free_hexes[e] ].y;
-								eprev = e;
-							end;
-						end;
-						path_finding(0,0);
-					end;
-				end;]]
 			end;
 		elseif #mob_detects_enemies == 0 then
 			print("all_agro",all_agro);
@@ -384,19 +361,19 @@ function ai.behavior()
 		if chars_mobs_npcs[current_mob].ai == "toenemy" then
 			if not global.hang then
 				local roll_point = 1;
-				local free_hexes = helpers.find_free_hexes (current_mob);
+				local free_hexes = helpers.findFreeHexes (current_mob);
 				if #free_hexes > 0 then
-					local distance = math.ceil(math.random(all_ground_hexes[free_hexes[1]].x^2+all_ground_hexes[free_hexes[1]].y^2));
+					local distance = math.ceil(math.random(free_hexes[1].x^2+free_hexes[1].y^2));
 					for j=1,#free_hexes do
-						if agro_array[all_ground_hexes[free_hexes[j]].y][all_ground_hexes[free_hexes[j]].x] >= agro_array[all_ground_hexes[free_hexes[roll_point]].y][all_ground_hexes[free_hexes[roll_point]].x]
-						and math.ceil(math.random(all_ground_hexes[free_hexes[j]].x^2+all_ground_hexes[free_hexes[j]].y^2)) <= distance
+						if agro_array[free_hexes[j].y][free_hexes[j].x] >= agro_array[free_hexes[roll_point].y][free_hexes[roll_point].x]
+						and math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2)) <= distance
 						then
-							distance = math.ceil(math.random(all_ground_hexes[free_hexes[j]].x^2+all_ground_hexes[free_hexes[j]].y^2));
+							distance = math.ceil(math.random(free_hexes[j].x^2+free_hexes[j].y^2));
 							roll_point = j;
 						end;
 					end;
-					ai_world_x = all_ground_hexes[free_hexes[roll_point]].x;
-					ai_world_y = all_ground_hexes[free_hexes[roll_point]].y;
+					ai_world_x = free_hexes[roll_point].x;
+					ai_world_y = free_hexes[roll_point].y;
 					print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
 					mob_can_move = 1;
 					if chars_mobs_npcs[current_mob].person == "char" then
@@ -421,11 +398,11 @@ function ai.behavior()
 			modepf = -1;
 		end;
 		roll_point = 0;
-		local free_hexes = helpers.find_free_hexes (current_mob);
+		local free_hexes = helpers.findFreeHexes (current_mob);
 		if #free_hexes > 0 then
 			local roll_point = math.random(1,#free_hexes);
-			ai_world_x = all_ground_hexes[free_hexes[roll_point]].x;
-			ai_world_y = all_ground_hexes[free_hexes[roll_point]].y;
+			ai_world_x = free_hexes[roll_point].x;
+			ai_world_y = free_hexes[roll_point].y;
 			mob_can_move = 1;
 			path_finding (0,0);
 			if chars_mobs_npcs[current_mob].person=="char" then
@@ -450,15 +427,15 @@ function ai.behavior()
 			modepf = -1;
 		end;
 		local roll_point = 1;
-		local free_hexes = helpers.find_free_hexes (current_mob);
+		local free_hexes = helpers.findFreeHexes (current_mob);
 		if #free_hexes > 0 then
 			for j=1,#free_hexes do
-				if agro_array[all_ground_hexes[free_hexes[j]].y][all_ground_hexes[free_hexes[j]].x] < agro_array[all_ground_hexes[free_hexes[roll_point]].y][all_ground_hexes[free_hexes[roll_point]].x] then
+				if agro_array[free_hexes[j].y][free_hexes[j].x] < agro_array[free_hexes[roll_point].y][free_hexes[roll_point].x] then
 					roll_point = j;
 				end;
 			end;
-			ai_world_x = all_ground_hexes[free_hexes[roll_point]].x;
-			ai_world_y = all_ground_hexes[free_hexes[roll_point]].y;
+			ai_world_x = free_hexes[roll_point].x;
+			ai_world_y = free_hexes[roll_point].y;
 			mob_can_move = 1;
 			helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.runaway);
 			path_finding (0,0);
@@ -496,8 +473,8 @@ function ai.behavior()
 			chars_mobs_npcs[current_mob].ai = "called";
 			mob_is_going_to_hit = 0;
 			local roll_point = math.random(1,#free_hexes);
-			chars_mobs_npcs[current_mob]["call"].x = all_ground_hexes[free_hexes[roll_point]].x;
-			chars_mobs_npcs[current_mob]["call"].y = all_ground_hexes[free_hexes[roll_point]].y;
+			chars_mobs_npcs[current_mob]["call"].x = free_hexes[roll_point].x;
+			chars_mobs_npcs[current_mob]["call"].y = free_hexes[roll_point].y;
 			mob_can_move = 1;
 			path_finding (0,0);
 			helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.movingback);

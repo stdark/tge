@@ -2351,6 +2351,7 @@ end;
 function helpers.clearLights (x,y)
 	for i=#lights,1,-1 do
 		if lights[i].typ == "ground" and lights[i].x == x and lights[i].y == y then
+			print("CLEAR",i);
 			lights[i]["light"].clear();
 			table.remove(lights,i);
 		end;
@@ -2696,7 +2697,7 @@ function helpers.countRange()
 	end;
 end;
 
-function helpers.find_free_hexes (index)
+function helpers.findFreeHexes (index)
 	local mob_range = chars_mobs_npcs[index].rng-walked_before;
 	local free_hexes = {};
 	mob_range = helpers.countRange();
@@ -2711,8 +2712,9 @@ function helpers.find_free_hexes (index)
 				mob_can_move = 0;
 				path_finding (0,0);
 				if path_status == 1 then
-					local number_of_hex = (mx-1)*map_w+my;
-					table.insert(free_hexes,number_of_hex);
+					--local number_of_hex = (mx-1)*map_w+my;
+					--table.insert(free_hexes,number_of_hex);
+					table.insert(free_hexes,{x=mx,y=my});
 				end;
 			end;
 		end;
@@ -3964,7 +3966,7 @@ function helpers.createWarbook(index)
 	end;
 end;
 
-function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weakness
+function helpers.recalcBattleStats (index)
 	local tmpclass = nil;
 	local tmpclass2 = nil;
 	local poison_mod1 = 1;
@@ -4056,11 +4058,11 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 		end;
 	end;
 	if chars_mobs_npcs[index].drunk > 0 then --HOUR OF POWER
-		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
-		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
-		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
-		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
-		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].hourrofpower_power;
+		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].enu_buff_power = chars_mobs_npcs[index].enu_debuff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_debuff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].dex_buff_power = chars_mobs_npcs[index].dex_debuff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].acu_buff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].hourofpower_power;
 	end;
 	if chars_mobs_npcs[index].misfortune_dur > 0 then --MISFORTUNE
 		chars_mobs_npcs[index].luk_debuff_power = chars_mobs_npcs[index].luk_debuff_power + chars_mobs_npcs[index].misfortune_power;
@@ -4068,6 +4070,12 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 	if chars_mobs_npcs[index].might_dur > 0 then --MIGHT
 		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_buff_power + chars_mobs_npcs[index].might_power;
 		chars_mobs_npcs[index].enu_buff_power = chars_mobs_npcs[index].enu_buff_power + chars_mobs_npcs[index].might_power;
+	end;
+	if chars_mobs_npcs[index].weakness_dur > 0 then --WEAKNESS
+		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].weakness_power;
+	end;
+	if chars_mobs_npcs[index].slow_dur > 0 then --SLOW
+		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].slow_power;
 	end;
 	if chars_mobs_npcs[index].dash_dur > 0 then --DASH
 		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_buff_power + chars_mobs_npcs[index].dash_power;
@@ -4084,13 +4092,13 @@ function helpers.recalcBattleStats (index) --FIXME darkgasp slow misfortune weak
 		chars_mobs_npcs[index].chr_buff_power = chars_mobs_npcs[index].chr_buff_power + chars_mobs_npcs[index].glamour_power;
 	end;
 	if chars_mobs_npcs[index].blind_dur > 0 then --BLIND
-		chars_mobs_npcs[index].sns_debuff_power = chars_mobs_npcs[index].sns_debuff_power + chars_mobs_npcs[index].blind_power;
+		--chars_mobs_npcs[index].sns_debuff_power = chars_mobs_npcs[index].sns_debuff_power + chars_mobs_npcs[index].blind_power;
 		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].blind_power;
 	end;
 	if chars_mobs_npcs[index].darkgasp > 0 then --DARKGASP
 		chars_mobs_npcs[index].sns_debuff_power = chars_mobs_npcs[index].sns_debuff_power + chars_mobs_npcs[index].darkgasp;
 	end;
-	if dlandscape_duration[chars_mobs_npcs[index].x][chars_mobs_npcs[index].y] == "ice" then --ICE
+	if dlandscape_duration[chars_mobs_npcs[index].x][chars_mobs_npcs[index].y] == "ice" and chars_mobs_npcs[index].mobility_dur == 0 then --ICE
 		chars_mobs_npcs[index].spd_debuff_power = math.max(chars_mobs_npcs[index].spd_debuff_power,math.ceil(chars_mobs_npcs[index].spd/2));
 		chars_mobs_npcs[index].dex_debuff_power = math.max(chars_mobs_npcs[index].dex_debuff_power,math.ceil(chars_mobs_npcs[index].dex/2));
 		chars_mobs_npcs[index].acu_debuff_power = math.max(chars_mobs_npcs[index].acu_debuff_power,math.ceil(chars_mobs_npcs[index].acu/2));

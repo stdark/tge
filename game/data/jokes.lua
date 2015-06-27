@@ -2,10 +2,10 @@ function jokes_load ()
 
 jokes_ttx={
 {id=1,
-code={{"revenge","trick"},{"goblins"},{"humans","elfs","dwarfs","orks"}}; --theme,good,bad FIXME add if success and songs support
+code={{"revenge","trick"},{"goblins"},{"orks"}}; --theme,good,bad FIXME add if success and songs support
 title="История про орков, их пленников, и барабан из лысого гоблинского черепа.",
 shortstory="...и он втыкает себе шило в голову: не будет вам барабана!",
-story="",
+story="Поймали как-то орки гоблина и говорят: мы тебя съедим, из шкуры сошьём жилетку, а твой скальп пустим на барабан! Последнее желание есть? Есть! — отвечает гоблин. Дайте мне шило! Берёт запрошенный инструмент и со словами — 'Не будет вам барабана!', — втыкает себе шило в голову.",
 },
 {id=2,
 code={{"nude","stupidness"},{"orks"},{"elfs"}};

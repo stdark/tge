@@ -5002,10 +5002,11 @@ function damage.instantCast () --FIXME use lvl, num
 				chars_mobs_npcs[victim].disease = debuff;
 			end;
 		end;
-		if chars_mobs_npcs[donor].weakness > 0 then
-			debuff = damage.applyCondition (victim,lvl[1],num[2],"weakness",false,"enu",false,1,true);
-			if debuff > 0 then
-				chars_mobs_npcs[victim].weakness = debuff;
+		if chars_mobs_npcs[donor].weakness_dur > 0 then
+			debuff = damage.applyConditionTwoFactors (victim,lvl[1],num[2],"weakness",false,"enu",false,1,true);
+			if debuff_dur and debuff_power > 0 then
+				chars_mobs_npcs[victim].weakness_dur = debuff_dur;
+				chars_mobs_npcs[victim].weakness_power = debuff_power;
 			end;
 		end;
 		if chars_mobs_npcs[donor].curse > 0 then
@@ -6713,8 +6714,8 @@ function damage.damageOfLandscape(index,x,y)
 		if dlandscape_duration[y][x] == 0 then
 			dlandscape_power[y][x] = 0;
 			dlandscape_obj[y][x] = 0;
-			boomareas.ashGround (a,b)
-			helpers.clearLights (a,b);
+			boomareas.ashGround (x,y)
+			helpers.clearLights (x,y);
 		end;
 		helpers.addToActionLog( name .. lognames.actions.gotdmg[chars_mobs_npcs[index].gender]  .. lognames.actions.metr .. lognames.actions.ofhp .. " " .. dmg .. types_of_damage.fire);
 	end;
@@ -6730,8 +6731,7 @@ function damage.damageOfLandscape(index,x,y)
 		if alandscape_duration[y][x] == 0 then
 			alandscape_power[y][x] = 0;
 			alandscape_obj[y][x] = 0;
-			boomareas.ashGround (a,b)
-			helpers.clearLights (a,b);
+			helpers.clearLights (x,y);
 		end;
 	end;
 	if dlandscape_obj[y][x] == "holy" and dlandscape_duration[y][x] > 0 then
@@ -6749,8 +6749,14 @@ function damage.damageOfLandscape(index,x,y)
 		if dlandscape_duration[y][x] == 0 then
 			dlandscape_power[y][x] = 0;
 			dlandscape_obj[y][x] = 0;
-			--boomareas.ashGround (a,b)
-			--helpers.clearLights (a,b);
+			--helpers.clearLights (x,y);
+		end;
+	end;
+	if dlandscape_obj[y][x] == "mud" and chars_mobs_npcs[index].mobility == 0 then
+		local rnd = math.random(1,100);
+		if chars_mobs_npcs[index].dex < rnd then
+			trapped  = 1;
+			helpers.addToActionLog( name .. lognames.actions.stuck[chars_mobs_npcs[index].gender]);
 		end;
 	end;
 	if dlandscape_obj[y][x] == "twister" or dlandscape_obj[y][x] == "twisterpart" then

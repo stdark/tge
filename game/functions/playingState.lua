@@ -1413,7 +1413,7 @@ function playingState.update(dt)
 				local snd = loadstring("return " .. "media.sounds.footstep_long_" .. sound_of_step)();
 				utils.playSfx(snd,1);
 			end;
-			mob_moving();
+			mobMoving();
 		end;
 
 		if game_status == "sensing" and chars_mobs_npcs[current_mob].control=="player" then
@@ -1836,7 +1836,6 @@ function playingState.keypressed(key, unicode)
 		end;
 
 		if key == "f" and (game_status == "neutral" or game_status == "sensing") then
-			--global.free_hexes = helpers.find_free_hexes (current_mob); --FIXME LLLLAAAGGGSSS
 			find_the_path=1;
 			game_status = "path_finding";
 			global.wheeled = 0;
@@ -7702,7 +7701,7 @@ function potion_in_inventory_ttx ()
 	end;
 end;
 
-function mob_moving()
+function mobMoving()
 	--clear_elandscape();
 	local trapped = 0;
 	if path_counter > 0 and #way_of_the_mob > 0 then
@@ -7737,7 +7736,8 @@ function mob_moving()
 				utils.printDebug("out of stamina!");
 				--game_status = "restoring";
 				local name = helpers.mobName(current_mob);
-				chars_mobs_npcs[current_mob].weakness = 5;
+				chars_mobs_npcs[current_mob].weakness_power = 5;
+				chars_mobs_npcs[current_mob].weakness_dur = 5;
 				helpers.addToActionLog( name .. " " .. lognames.actions.tired[chars_mobs_npcs[current_mob].gender]);
 			end;
 		end;
@@ -7779,7 +7779,7 @@ function mob_moving()
 			--shadows[current_mob].y = way_of_the_mob[path_counter][1];
 			--shadows[current_mob].x = way_of_the_mob[path_counter][2];
 			if chars_mobs_npcs[current_mob].bleeding > 0 then
-				boomareas.ashGround (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+				boomareas.bloodGround (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 			end;
 			if global.status == "peace" and ai.enemyWatchesYou () then --FIXME SLOWWWW
 				helpers.interrupt();
@@ -7812,7 +7812,7 @@ function mob_moving()
 			boomx = a;
 			boomy = b;
 			trapped = 1;
-			missle_type = "fireball";
+			missle_type = "fireball"; --FIXME firebomb?
 			missle_drive = "trap";
 			game_status = "boom";
 			dmg = mlandscape_power[b][a];
@@ -8714,7 +8714,9 @@ function restoreRT ()
 				if vlandscape_duration[a][b] > 0 then
 					vlandscape_duration[a][b] = vlandscape_duration[a][b]-1;
 				end;
-
+				if alandscape_duration[a][b] > 0 then
+					alandscape_duration[a][b] = alandscape_duration[a][b]-1;
+				end;
 				if dlandscape_duration[a][b] == 0 then
 					if dlandscape_obj[a][b] == "fire" then
 						boomareas.ashGround (a,b);
@@ -8825,7 +8827,7 @@ function restoreRT ()
 			game_status = "neutral";
 			ignore_kb = 0;
 			if not global.lookaround then
-				trace.lookaround(i);
+				trace.lookaround(i); --FIXME slowdown?
 			end;
 			if global.status == "peace" and ai.enemyWatchesYou () then
 				letaBattleBegin ();
@@ -9111,7 +9113,6 @@ function playingState.draw()
 	if chars_mobs_npcs[current_mob].control=="player" then --FIXME
 		if (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and game_status == "path_finding" and path_status==1 then
 			draw.way();
-			--draw.reachableHexes(); --incorrect
 		end;
 	end;
 	draw.fogOfWar();

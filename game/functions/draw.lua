@@ -4570,14 +4570,6 @@ function draw.lineOfOrder ()
 	end;
 end;
 
-function draw.reachableHexes()
-	if game_status == "path_finding" and global.free_hexes then
-		for i=1,#global.free_hexes do
-			draw.drawHex (all_ground_hexes[global.free_hexes[i]].x,all_ground_hexes[global.free_hexes[i]].y,cursor_white);
-		end;
-	end;
-end;
-
 function draw.picklock () --chest/door/groundtrap
 	local x,y = helpers.centerObject(media.images.inv1);
 	love.graphics.draw(media.images.charfaces, charfaces[chars_mobs_npcs[current_mob].face], x+390, y-20);
