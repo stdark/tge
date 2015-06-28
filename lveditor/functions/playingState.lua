@@ -409,6 +409,8 @@ function playingState.update(dt)
 	else
 		cursor_world_x=math.ceil((mX-left_space)/tile_w+0.5)+map_x;
 	end;
+	cursor_world_x = math.max(1,cursor_world_x);
+	cursor_world_y = math.max(1,cursor_world_y);
 	loveframes.update(dt);
 end;
 
@@ -457,7 +459,8 @@ end;
 function draw_background ()
 	for i=1,bgmap_h do
 		for h=1,bgmap_w do
-			if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands") and (h-map_x) <= 8 and (i-map_y) <= 3 then
+			if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands") then
+			--and (h-map_x) <= 8 and (i-map_y) <= 3 then
 				love.graphics.draw(media.images.img_back, background_[bgmap[i][h]], (h-1)*back_size-map_x*64, (i-1)*back_size-map_y*32*0.75);
 			elseif editor_status == "background" then
 				hex_status=-1;
@@ -1570,10 +1573,12 @@ function draw_map()
 	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "decals" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and hexes_status==1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
-				if show_invisible and map[my+map_y][mx+map_x]<20  and map[my+map_y][mx+map_x]<300 then
-					drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]]);
-				elseif map[my+map_y][mx+map_x]>20 and map[my+map_y][mx+map_x]<300 then
-					drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]]);
+				mxx = math.max(1,mx+map_x);
+				myy = math.max(1,my+map_y);
+				if show_invisible and map[myy][mxx]<20  and map[myy][mxx]<300 then
+					drawHex(mxx,myy,tile[map[myy][mxx]]);
+				elseif map[myy][mxx]>20 and map[myy][mxx]<300 then
+					drawHex(mxx,myy,tile[map[myy][mxx]]);
 				end;
 			end;
 		end;
@@ -1584,10 +1589,12 @@ function draw_submap()
 	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "decals" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and global.subhex == 1 then
 		for my=1, math.min(map_display_h, map_h-map_y) do
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
-				if show_invisible and submap[my+map_y][mx+map_x]<20  and submap[my+map_y][mx+map_x]<300 then
-					drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]]);
-				elseif submap[my+map_y][mx+map_x]>20 and submap[my+map_y][mx+map_x]<300 then
-					drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]]);
+				mxx = math.max(1,mx+map_x);
+				myy = math.max(1,my+map_y);
+				if show_invisible and submap[myy][mxx]<20  and submap[myy][mxx]<300 then
+					drawHex(mxx,myy,tile[submap[myy][mxx]]);
+				elseif submap[myy][mxx]>20 and submap[myy][mxx]<300 then
+					drawHex(mxx,myy,tile[submap[myy][mxx]]);
 				end;
 			end;
 		end;
@@ -1700,12 +1707,14 @@ function draw_objects ()
 		end;
 		for my=myy, math.min(map_display_h, map_h-map_y) do
 		  for mx=mxx, math.min(map_display_w, map_w-map_x) do
-			if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-				if map[my+map_y][mx+map_x]>120 and  map[my+map_y][mx+map_x]<=220 then
-					love.graphics.draw(media.images.img_obj, objects[map[my+map_y][mx+map_x]-120], ((mx-1)*tile_w+left_space)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-120][6])
+			mx_ = math.max(1,mx+map_x);
+			my_ = math.max(1,my+map_y);
+			if (my_)/2 == math.ceil((my_)/2) then
+				if map[my_][mx_]>120 and  map[my_][mx_]<=220 then
+					love.graphics.draw(media.images.img_obj, objects[map[my_][mx_]-120], ((mx-1)*tile_w+left_space)-tile_w+top_space+objects_table[map[my_][mx_]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my_][mx_]-120][6])
 				end;       
-				if map[my+map_y][mx+map_x] > 300 then
-					local index = map[my+map_y][mx+map_x] - 300;
+				if map[my_][mx_] > 300 then
+					local index = map[my_][mx_] - 300;
 					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
@@ -1713,11 +1722,11 @@ function draw_objects ()
 					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
 				end;
 			else
-				if map[my+map_y][mx+map_x]>120 and  map[my+map_y][mx+map_x]<=220 then
-					love.graphics.draw(media.images.img_obj, objects[map[my+map_y][mx+map_x]-120], ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-120][6])
+				if map[my_][mx_]>120 and  map[my_][mx_]<=220 then
+					love.graphics.draw(media.images.img_obj, objects[map[my_][mx_]-120], ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+objects_table[map[my_][mx_]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my_][mx_]-120][6])
 				end;
-				if map[my+map_y][mx+map_x] > 300 then
-					local index = map[my+map_y][mx+map_x] - 300;
+				if map[my_][mx_] > 300 then
+					local index = map[my_][mx_] - 300;
 					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
@@ -1754,8 +1763,8 @@ function draw_objects ()
 					addx = 64;
 					addy = 90;
 				end;
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+				if bags_list[j].xi == mx_ and bags_list[j].yi == my_ then
+					if (my_)/2 == math.ceil((my_)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
 						love.graphics.draw(media.images.tmpobjs,bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
@@ -1792,16 +1801,16 @@ function draw_objects ()
 					addx = 16;
 					addy = 32;
 				end;
-				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+				if objects_list[j].xi == mx_ and objects_list[j].yi == my_ then
+					if (my_)/2 == math.ceil((my_)/2) then
 						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
 						love.graphics.draw(media.images.tmpobjs,objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
 					end;
 				end;
 			end;
-			if (editor_status == "harvest" or editor_status == "hexes" or editor_status == "subhexes" or editor_status == "decals" or editos_status == "buildings" or editor_status == "objects") and harvest_table[my+map_y][mx+map_x][1] ~= 0 and global.show_harvest == 1 then --harvest
-				drawHarvest (mx+map_x,my+map_y,harvest_table[my+map_y][mx+map_x][1]);
+			if (editor_status == "harvest" or editor_status == "hexes" or editor_status == "subhexes" or editor_status == "decals" or editos_status == "buildings" or editor_status == "objects") and harvest_table[my_][mx_][1] ~= 0 and global.show_harvest == 1 then --harvest
+				drawHarvest (mx_,my_,harvest_table[my_][mx_][1]);
 			end;
 		end;
       end;
@@ -1859,9 +1868,9 @@ function playingState.keypressed(key, unicode)
 	if  mX< global.screenWidth-274 then
 		if editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects" then
 			if key == 'up' then
-				if map_y>2 then
+				--if map_y>2 then
 					map_y = map_y-2;
-				end;
+				--end;
 			end;
 			if key == 'down' then
 				if  map_y<(map_h-30) then
@@ -1869,9 +1878,9 @@ function playingState.keypressed(key, unicode)
 				end;
 			end;
 			if key == 'left' then
-				if map_x > 2 then
+				--if map_x > 2 then
 					map_x=map_x-2;
-				end;
+				--end;
 			end;
 			if key == 'right' then
 				if map_x<(map_w-18) then

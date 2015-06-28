@@ -2901,7 +2901,7 @@ mindgame=false,
 form="enemy",
 },
 
-flith = {
+filth = {
 title="скверна",
 story="На жертву не действуют исцеляющие заклятия, регенерация отсутствует.",
 dmg1="нет",
@@ -4757,7 +4757,7 @@ form="party",
 {"fear","mindblast","protfrommind","charm","telepathy","curemind","telekinesis","feeblemind","glamour","berserk","paralyze","enslave"},
 {"spiritualarrow","fate","turnundead","protofspirit","bless","preservation","heroism","protection","luckyday","curecurse","prayer","ritualofthevoid"},
 {"lightbolt","lightelemental","shieldoflight","destroyundead","blindflash","slow","massdispell","streamoflight","lightoftruth","sunray","prismaticlight","wheelofsun"},
-{"raisedead","darkgasp","painreflection","masscurse","controlundead","flith","misfortune","violation","sacrifice","fingerofdeath","souldrinker","genocide"},
+{"raisedead","darkgasp","painreflection","masscurse","controlundead","filth","misfortune","violation","sacrifice","fingerofdeath","souldrinker","genocide"},
 {"acidrain","levitation","mud","golemstopper","coldray","groundbor","megavolts","implosion","townportal","rechargeitem","enchantitem","elementalriot"},
 {"despondency","precision","protfromdisease","weakness","sleep","concentration","haste","thirstofblood","myrth","resurrect","rage","spiritlash"},
 {"stonetoflesh","melt","boilingblood","deadlyswarm","turntostone","manaburn","wizardeye","clone","fireelemental","airelemental","waterelemental","earthelemental"},

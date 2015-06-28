@@ -851,7 +851,7 @@ function playingState.load()
     table.insert(lights,{x=0,y=0,light=lightWorld.newLight(0, 0, 0, 0, 0,0),typ="default"});
     boomareas.fireGround (12,7,1,1,1); --FIXME! For test only
     boomareas.fireGround (15,15,1,1,2); --FIXME! For test only
-    boomareas.poisonAir (8,12,1,1,2);
+    boomareas.poisonAir (8,12,1,10,10);
     --for i=1,#chars_mobs_npcs do
     	--local xx,yy =  helpers.hexToPixels(chars_mobs_npcs[i].y,chars_mobs_npcs[i].x);
     	--table.insert(shadows,{x=chars_mobs_npcs[i].x,y=chars_mobs_npcs[i].y,shadow = lightWorld.newCircle(xx, yy, 20),typ="mob"});
@@ -7839,10 +7839,10 @@ function mobMoving()
 			global.hang = false;
 		end;
 		damage.landscapeHex(current_mob,a,b);
-		if trapped == 1 then
-			damage.RTminus(current_mob,100);
-			game_status = "restore";
-		end;
+		--if trapped == 1 then --HANGS Explosion
+			--damage.RTminus(current_mob,100);
+			--game_status = "restore";
+		--end;
 		local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
 		local mob_walk = loadstring("return " .. tmp)();
 		if path_counter == 1 then
@@ -8257,7 +8257,7 @@ function restoreRT ()
 	path_failed = 0;
 	path_status = 0;
 	--clear_elandscape();
-	if global.timer200 >= 200 then
+	if global.timer200 >= 20 then
 		for i=1,#chars_mobs_npcs do
 			if chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].ai ~= "building" then
 				damaged_mobs = {};
@@ -8341,10 +8341,10 @@ function restoreRT ()
 				end
 				if chars_mobs_npcs[i].poison_dur > 0 then
 					chars_mobs_npcs[i].poison_dur = chars_mobs_npcs[i].poison_dur-1
-					dmg = chars_mobs_npcs[i].poison_power*math.ceil((100-chars_mobs_npcs[i].rezpoison)/100);
+					local dmg = damage.magicalRes (i,chars_mobs_npcs[i].poison_power,"poison");
 					local victim_name = helpers.mobName(i);
 					damage.PoisonPlus(i,dmg);
-					if	chars_mobs_npcs[i].poison_status == chars_mobs_npcs[i].hp then
+					if	chars_mobs_npcs[i].poison_status >= chars_mobs_npcs[i].hp then
 						damage.HPminus(i,dmg);
 					end;
 					helpers.addToActionLog( victim_name .. lognames.actions.gotdmg[chars_mobs_npcs[i].gender]  .. dmg .. lognames.actions.metr  .. lognames.actions.ofhp .. types_of_damage.poison .. types_of_damage.dot);
@@ -8823,7 +8823,7 @@ function restoreRT ()
 						chars_mobs_npcs[i].fear = 0;
 						chars_mobs_npcs[i].panic = 0;
 						chars_mobs_npcs[i].charm = 0;
-						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.cheeredup[chars_mobs_npcs[i].gender]);
+						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.cheeresup[chars_mobs_npcs[i].gender]);
 					end;
 				end;
 			end;

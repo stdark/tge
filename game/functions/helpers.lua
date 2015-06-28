@@ -3004,7 +3004,7 @@ function helpers.drinkFromWell ()
 end;
 
 function helpers.randomCurse (char)
-	local curselist = {"curse","misfortune","darkgasp","darkcontamination","flith","fingerofdeath"};
+	local curselist = {"curse","misfortune","darkgasp","darkcontamination","filth","fingerofdeath"};
 	if char then
 		table.insert(curselist,"evileye");
 		table.insert(curselist,"basiliskbreath");
@@ -3016,7 +3016,7 @@ end;
 function helpers.inspectScullpile ()
 	--log
 	local current_curse = helpers.randomCurse (true);
-	if current_curse ~= "misfortune" and current_curse ~= "flith" then
+	if current_curse ~= "misfortune" and current_curse ~= "filth" then
 		local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,current_curse,"darkness",false,"spothidden",1,true);
 		chars_mobs_npcs[current_mob][current_curse] = math.max(chars_mobs_npcs[current_mob][current_curse],condition);
 	else
@@ -4122,10 +4122,10 @@ function helpers.recalcBattleStats (index)
 	end;
 	if chars_mobs_npcs[index].poison_dur > 0  then --POISON
 		if  chars_mobs_npcs[index].poison_status <  chars_mobs_npcs[index].hp then
-			poison_mod1 = 0.75-chars_mobs_npcs[index].poison_power/100;
+			poison_mod1 = math.max(0.75,1-chars_mobs_npcs[index].poison_power/100);
 		else
-			poison_mod1 = 0.5-chars_mobs_npcs[index].poison_power/100;
-			poison_mod2 = 0.75-chars_mobs_npcs[index].poison_power/100;
+			poison_mod1 =  math.max(0.5,1-chars_mobs_npcs[index].poison_power/100);
+			poison_mod2 =  math.max(0.75,1-chars_mobs_npcs[index].poison_power/100);
 		end;
 	end;
 	
@@ -4185,6 +4185,9 @@ function helpers.recalcBattleStats (index)
 	chars_mobs_npcs[index].sp_max = chars_mobs_npcs[index].sp_base + chars_mobs_npcs[index].sp_coff * chars_mobs_npcs[index].sp_stat + mysticism_bonus;
 	chars_mobs_npcs[index].st_max = 200 + chars_mobs_npcs[index].st_base + chars_mobs_npcs[index].st_coff * chars_mobs_npcs[index].enu + bodybuilding_bonus;
 	
+	chars_mobs_npcs[index].hp = math.min(chars_mobs_npcs[index].hp,chars_mobs_npcs[index].hp_max);
+	chars_mobs_npcs[index].sp = math.min(chars_mobs_npcs[index].sp,chars_mobs_npcs[index].sp_max);
+	chars_mobs_npcs[index].st = math.min(chars_mobs_npcs[index].st,chars_mobs_npcs[index].st_max);
 	--MELEE
 	for i=1, #chars_mobs_npcs[index].arms do
 		local hand = chars_mobs_npcs[index]["arms"][i];

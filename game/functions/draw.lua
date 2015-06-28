@@ -4,7 +4,8 @@ function draw.background ()
 	for i=1,bgmap_h do
 		for h=1,bgmap_w do  
 			--draw.irradiation (i,h);
-			if (h-map_x) <= 8 and (i-map_y) <= 3 and bgmap[i] and bgmap[i][h] then
+			--if (h-map_x) <= 8 and (i-map_y) <= 3 and bgmap[i] and bgmap[i][h] then
+			if bgmap[i] and bgmap[i][h] then
 				love.graphics.draw(media.images.back, background_[bgmap[i][h]], (h-1)*back_size-map_x*64, (i-1)*back_size-map_y*32*0.75);
 			end;
 		end;
@@ -1028,7 +1029,7 @@ function draw.boom ()
 		end;
 	end;
 	
-	if missle_type == "flith" then
+	if missle_type == "filth" then
 		local boomarea = boomareas.sightArea(); 
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
@@ -1587,7 +1588,7 @@ function draw.stats(index)
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
 	end;
-	if chars_mobs_npcs[current_mob].slow > 0 then
+	if chars_mobs_npcs[current_mob].slow_dur > 0 then
 		local str = tips_conditions.slow;
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
@@ -1649,17 +1650,17 @@ function draw.stats(index)
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].paralyze > 0 then
-		local str = tips_conditions.paralyzed;
+		local str = tips_conditions.paralyze;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].stun > 0 then
-		local str = tips_conditions.stunned;
+		local str = tips_conditions.stun;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].enslave > 0 then
-		local str = tips_conditions.enslaved;
+		local str = tips_conditions.enslave;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
@@ -1674,7 +1675,7 @@ function draw.stats(index)
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].charm > 0 then
-		local str = tips_conditions.charmed;
+		local str = tips_conditions.charm;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
@@ -1704,7 +1705,7 @@ function draw.stats(index)
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].fear > 0 then
-		local str = tips_conditions.feared;
+		local str = tips_conditions.fear;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
@@ -1714,52 +1715,52 @@ function draw.stats(index)
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].silence > 0 then
-		local str = tips_conditions.silenced;
+		local str = tips_conditions.silence;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
-	if chars_mobs_npcs[current_mob].madness > 0 then
-		local str = tips_conditions.mad;
+	if chars_mobs_npcs[current_mob].insane > 0 then
+		local str = tips_conditions.insane;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].filth_dur > 0 then
-		local str = tips_conditions.filthed;
+		local str = tips_conditions.filth;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].darkgasp > 0 then
-		local str = tips_conditions.darkgasped;
+		local str = tips_conditions.darkgasp;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].despondency_dur > 0 then
-		local str = tips_conditions.desponded;
+		local str = tips_conditions.despondency;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].blind_dur > 0 then
-		local str = tips_conditions.blinded;
+		local str = tips_conditions.blind;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].flame_dur > 0 then
-		local str = tips_conditions.flamed;
+		local str = tips_conditions.flame;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].poison_dur > 0 then
-		local str = tips_conditions.poisoned;
+		local str = tips_conditions.poison;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].cold_dur > 0 then
-		local str = tips_conditions.cooled;
+		local str = tips_conditions.cold;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].acid_dur > 0 then
-		local str = tips_conditions.acided;
+		local str = tips_conditions.acid;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
@@ -1769,7 +1770,7 @@ function draw.stats(index)
 		addy4 = addy4 + 1;
 	end;
 	if chars_mobs_npcs[current_mob].disease > 0 then
-		local str = tips_conditions.diseased;
+		local str = tips_conditions.disease;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
@@ -3809,7 +3810,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 		end;
 	end;
 	local addy3 = 0;
-	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 then
+	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 then --FIXME add positive powers too for lv 5
 		love.graphics.setColor(255, 0, 0);
 		if chars_mobs_npcs[tmpc].freeze > 0 then
 			local string = tips_conditions.freeze;
@@ -3822,17 +3823,17 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].paralyze > 0 then
-			local string = tips_conditions.paralyzed;
+			local string = tips_conditions.paralyze;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].stun > 0 then
-			local string = tips_conditions.stunned;
+			local string = tips_conditions.stun;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].enslave > 0 then
-			local string = tips_conditions.enslaved;
+			local string = tips_conditions.enslave;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
@@ -3847,7 +3848,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].charm > 0 then
-			local string = tips_conditions.charmed;
+			local string = tips_conditions.charm;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
@@ -3857,7 +3858,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].immobilize > 0 then
-			local string = tips_conditions.immobilized;
+			local string = tips_conditions.immobilize;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
@@ -3877,7 +3878,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].fear > 0 then
-			local string = tips_conditions.feared;
+			local string = tips_conditions.fear;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
@@ -3887,7 +3888,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].silence > 0 then
-			local string = tips_conditions.silenced;
+			local string = tips_conditions.silence;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
@@ -3897,42 +3898,42 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].filth_dur > 0 then
-			local string = tips_conditions.filthed;
+			local string = tips_conditions.filth;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].darkgasp > 0 then
-			local string = tips_conditions.darkgasped;
+			local string = tips_conditions.darkgasp;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].despondency_dur > 0 then
-			local string = tips_conditions.desponded;
+			local string = tips_conditions.despondency;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].blind_dur > 0 then
-			local string = tips_conditions.blinded;
+			local string = tips_conditions.blind;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].flame_dur > 0 then
-			local string = tips_conditions.flamed;
+			local string = tips_conditions.flame;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].poison_dur > 0 then
-			local string = tips_conditions.poisoned;
+			local string = tips_conditions.poison;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].cold_dur > 0 then
-			local string = etips_conditionscooled;
+			local string = tips_conditions.cold;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].acid_dur > 0 then
-			local string = tips_conditions.acided;
+			local string = tips_conditions.acid;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
@@ -3942,7 +3943,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			addy3 = addy3 + 1;
 		end;
 		if chars_mobs_npcs[tmpc].disease > 0 then
-			local string = tips_conditions.diseased;
+			local string = tips_conditions.disease;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
@@ -4594,6 +4595,7 @@ function draw.ui ()
 		end;
 		love.graphics.print(_txt,250,10);
 	end;
+	love.graphics.print(game_status,450,10);
 	--love.graphics.print(missle_type,100,10);
 	--love.graphics.print(missle_drive,150,10);
 end;

@@ -325,7 +325,7 @@ function ai.behavior()
 			boomx = chars_mobs_npcs[previctim].x;
 			boomy = chars_mobs_npcs[previctim].y;
 			for j=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[j].party == chars_mobs_npcs[current_mob].party and chars_mobs_npcs[j].stone == 0 and chars_mobs_npcs[j].freeze == 0 and chars_mobs_npcs[j].flith == 0 then
+				if chars_mobs_npcs[j].party == chars_mobs_npcs[current_mob].party and chars_mobs_npcs[j].stone == 0 and chars_mobs_npcs[j].freeze == 0 and chars_mobs_npcs[j].filth == 0 then
 					if chars_mobs_npcs[j].status == 1
 					and (chars_mobs_npcs[j].hp_max - chars_mobs_npcs[j].hp) >= chars_mobs_npcs[current_mob].lvl_body*chars_mobs_npcs[current_mob].num_body
 					and helpers.aliveNature(j)
@@ -422,7 +422,7 @@ function ai.behavior()
 		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
 			local array_to_buff = {};
 			for j=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[j].party == chars_mobs_npcs[current_mob].party and chars_mobs_npcs[j].stone == 0 and chars_mobs_npcs[j].freeze == 0 and chars_mobs_npcs[j].flith == 0 then
+				if chars_mobs_npcs[j].party == chars_mobs_npcs[current_mob].party and chars_mobs_npcs[j].stone == 0 and chars_mobs_npcs[j].freeze == 0 and chars_mobs_npcs[j].filth == 0 then
 					if chars_mobs_npcs[j].status == 1 and j ~= current_mob then
 						table.insert(array_to_buff,j);
 					end;

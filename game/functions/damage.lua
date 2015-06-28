@@ -4728,15 +4728,15 @@ function damage.instantCast () --FIXME use lvl, num
 			prebuff = prebuff-_buff;
 			buff = buff + _buff;
 		end;
-		if chars_mobs_npcs[victim].flith > 0 then
-			local delta = chars_mobs_npcs[victim].flith_dur - prebuff;
+		if chars_mobs_npcs[victim].filth > 0 then
+			local delta = chars_mobs_npcs[victim].filth_dur - prebuff;
 			local _buff = 0;
 			if delta > 0 then
-				_buff = chars_mobs_npcs[victim].flith_dur - prebuff;
+				_buff = chars_mobs_npcs[victim].filth_dur - prebuff;
 			else
 				_buff = prebuff+delta;
 			end;
-			chars_mobs_npcs[victim].flith_dur = chars_mobs_npcs[victim].flith_dur-_buff;
+			chars_mobs_npcs[victim].filth_dur = chars_mobs_npcs[victim].filth_dur-_buff;
 			prebuff = prebuff-_buff;
 			buff = buff + _buff;
 		end;
@@ -5022,10 +5022,10 @@ function damage.instantCast () --FIXME use lvl, num
 				chars_mobs_npcs[victim].curse = debuff;
 			end;
 		end;
-		if chars_mobs_npcs[donor].flith > 0 then
-			debuff = damage.applyCondition (victim,lvl[1],num[3],"flith","darkness",false,false,1,true);
+		if chars_mobs_npcs[donor].filth > 0 then
+			debuff = damage.applyCondition (victim,lvl[1],num[3],"filth","darkness",false,false,1,true);
 			if debuff > 0 then
-				chars_mobs_npcs[victim].flith = debuff;
+				chars_mobs_npcs[victim].filth = debuff;
 			end;
 		end;
 		if chars_mobs_npcs[donor].misfortune_dur > 0 then
@@ -6738,7 +6738,7 @@ function damage.landscapeHex(index,x,y)
 		local name = helpers.mobName(index);
 		if chars_mobs_npcs[index].poison_power <= alandscape_power[y][x] then
 			chars_mobs_npcs[index].poison_power = alandscape_power[y][x];
-			chars_mobs_npcs[index].poison_dur = chars_mobs_npcs[index].poison_dur + 3;
+			chars_mobs_npcs[index].poison_dur = chars_mobs_npcs[index].poison_dur + alandscape_power[y][x];
 			helpers.addToActionLog( name .. lognames.actions.poisoned[chars_mobs_npcs[index].gender])
 		end;
 		alandscape_duration[y][x]=alandscape_duration[y][x] - 1;
