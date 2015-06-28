@@ -178,6 +178,12 @@ function playingState.load()
 	current_herb = 1;
 	current_herb_dencity = 100;
 	
+	if not bags_table then
+		bags_table = {};
+	end;
+	if not objects_table then
+		objects_table = {};
+	end;
 	special_objects_texts = {
 		"ob","al","pd","cm","pt",
 		"wl","br","cl","cn","tr",

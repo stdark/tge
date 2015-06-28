@@ -6725,6 +6725,10 @@ function damage.landscapeHex(index,x,y)
 		local dmg = damage.magicalRes (index,dmgland,"fire");
 		damage.HPminus(index,dmg);
 		dlandscape_duration[y][x] = dlandscape_duration[y][x] - 1;
+		if chars_mobs_npcs[index].flame_power <= dlandscape_power[y][x] then
+			damage.applyConditionTwoFactors(index,3,dlandscape_power[y][x],"flame","fire",false,false,1,true);
+			helpers.addToActionLog( name .. lognames.actions.flamed[chars_mobs_npcs[index].gender]);
+		end;
 		if dlandscape_duration[y][x] == 0 then
 			dlandscape_power[y][x] = 0;
 			dlandscape_obj[y][x] = 0;
@@ -6737,15 +6741,30 @@ function damage.landscapeHex(index,x,y)
 		local dmg=alandscape_power[y][x]
 		local name = helpers.mobName(index);
 		if chars_mobs_npcs[index].poison_power <= alandscape_power[y][x] then
-			chars_mobs_npcs[index].poison_power = alandscape_power[y][x];
-			chars_mobs_npcs[index].poison_dur = chars_mobs_npcs[index].poison_dur + alandscape_power[y][x];
-			helpers.addToActionLog( name .. lognames.actions.poisoned[chars_mobs_npcs[index].gender])
+			--chars_mobs_npcs[index].poison_power = alandscape_power[y][x];
+			--chars_mobs_npcs[index].poison_dur = chars_mobs_npcs[index].poison_dur + alandscape_power[y][x];
+			damage.applyConditionTwoFactors(index,3,alandscape_power[y][x],"poison","poison",false,false,1,true);
+			helpers.addToActionLog( name .. lognames.actions.poisoned[chars_mobs_npcs[index].gender]);
 		end;
 		alandscape_duration[y][x]=alandscape_duration[y][x] - 1;
 		if alandscape_duration[y][x] == 0 then
 			alandscape_power[y][x] = 0;
 			alandscape_obj[y][x] = 0;
 			helpers.clearLights (x,y);
+		end;
+	end;
+	if alandscape_obj[y][x] == "disease" then
+		local dmg=alandscape_power[y][x]
+		local name = helpers.mobName(index);
+		if chars_mobs_npcs[index].disease <= alandscape_power[y][x] then
+			damage.applyCondition(index,3,alandscape_power[y][x],"disease","disease",false,false,1,true);
+			helpers.addToActionLog( name .. lognames.actions.diseased[chars_mobs_npcs[index].gender]);
+		end;
+		alandscape_duration[y][x]=alandscape_duration[y][x] - 1;
+		if alandscape_duration[y][x] == 0 then
+			alandscape_power[y][x] = 0;
+			alandscape_obj[y][x] = 0;
+			--helpers.clearLights (x,y);
 		end;
 	end;
 	if dlandscape_obj[y][x] == "holy" and dlandscape_duration[y][x] > 0 then
