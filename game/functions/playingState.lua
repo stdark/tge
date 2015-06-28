@@ -363,10 +363,10 @@ function playingState.load()
 
 		table.insert(chars_mobs_npcs,{uid=1,person="npc",control="ai",defaultai="cruiser",ai="cruiser",dangerai="away",waypoint={{16,11},{13,11},{8,11},{8,5},{13,4},{17,6}},nextpoint=2,x=16,y=11,rot=5,class="goblin",fraction="vagrants", party=2, name="Nils Larsen", chat=2, face = 8,
 		personality={
-		current={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblins"},{"elfs"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblins"},{"elfs"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		alternative={chat=2,etiquette = "criminal",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="disdain",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblins"},{"elfs"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblins"},{"elfs"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		alternative={chat=2,etiquette = "criminal",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="disdain",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		table.insert(chars_mobs_npcs,{uid=2,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=20,y=10,rot=2,class="goblin",fraction="vagrants",  party=2, name="Ivan Susanin", face = 8,
@@ -1191,6 +1191,7 @@ function playingState.update(dt)
 				end;
 			end;
 		end;
+		--print(cursor_world_x,cursor_world_y);
 		if game_status == "spellbook"
 		or game_status == "warbook"
 		or game_status == "questbook"
@@ -8797,7 +8798,7 @@ function restoreRT ()
 				--trace.lookaround(i); --FIXME slowdown?
 			end;
 			if global.status == "peace" and ai.enemyWatchesYou () then
-				letaBattleBegin ();
+				letaBattleBegin (); --FIXME need or not?
 			end;
 			if chars_mobs_npcs[i].ai ~= "building" then
 				local moral = helpers.countMoral(i);
@@ -8806,12 +8807,15 @@ function restoreRT ()
 					if demoralEffect == 1 then -- panic
 						chars_mobs_npcs[i].control = "ai";
 						chars_mobs_npcs[i].panic = 3+math.abs(moral);
+						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.panic[chars_mobs_npcs[i].gender]);
 					elseif demoralEffect == 2 and chars_mobs_npcs[i].fear == 0 then --  dumbfounded (petrified)
 						chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt + 100;
 						chars_mobs_npcs[i].control = "ai";
 						chars_mobs_npcs[i].ai = "stay";
+						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.dumbfounded[chars_mobs_npcs[i].gender]);
 					elseif demoralEffect == 3 and chars_mobs_npcs[i].fear == 0 then --fear
 						chars_mobs_npcs[i].fear = 3+math.abs(moral);
+						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.feared[chars_mobs_npcs[i].gender]);
 					end;
 				elseif moral > chars_mobs_npcs[i].base_moral*2 then
 					local roll = math.random(1,2);
@@ -8819,6 +8823,7 @@ function restoreRT ()
 						chars_mobs_npcs[i].fear = 0;
 						chars_mobs_npcs[i].panic = 0;
 						chars_mobs_npcs[i].charm = 0;
+						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.cheeredup[chars_mobs_npcs[i].gender]);
 					end;
 				end;
 			end;

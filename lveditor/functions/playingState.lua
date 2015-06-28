@@ -162,8 +162,8 @@ function playingState.load()
 	tempbb={};
 	tmp_ppoint={};
 	tmp_ppoint2={};
-	map_limit_w=1;
-	map_limit_h=1;
+	map_limit_w=0;
+	map_limit_h=0;
 	hex_pass=" ";
 	hex_costs="";
 	hex_type=" ";
@@ -2639,6 +2639,7 @@ function playingState.mousereleased(x, y, button)
 	end;
 	if mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "objects" and passCheck (cursor_world_x,cursor_world_y) then
 		findBagOrObject(cursor_world_x,cursor_world_y);
+		clearHerb(cursor_world_x,cursor_world_y);
 		if  special_objects_status == "clear"  then
 			--
 		elseif special_objects_status == "ob"  then

@@ -258,6 +258,8 @@ function helpers.cursorWorldCoordinates () -- in hexes
 	else
 		coordx = math.ceil((mX-left_space)/tile_w+0.5)+map_x;
 	end;
+	coordx= math.min(coordx,map_h);
+	coordy= math.min(coordy,map_w);
 	return coordx,coordy;
 end;
 
@@ -2150,23 +2152,10 @@ function helpers.interrupt ()
 end;
 
 function helpers.cam_to_mob ()
-	if chars_mobs_npcs[current_mob].x >= 15 then
-		map_x = chars_mobs_npcs[current_mob].x - 12;
-	else
-		map_x = 0;
-	end;
-	if chars_mobs_npcs[current_mob].y >= 30 then
-		map_y = chars_mobs_npcs[current_mob].y - 18;
-	else
-		map_y = 0;
-	end;
-	helpers.castShadows();
+	helpers.cam_to_hex (chars_mobs_npcs[current_mob].x, chars_mobs_npcs[current_mob].y);
 end;
 
 function helpers.cam_to_hex (x, y)
-   -- map_x = x - map_x;
-   -- map_y = y - map_y;
-
    --  map_x, map_y - coordinates of upper left corner tile !
    local w, _ = math.modf(map_display_w / 2); -- get x margin for current screen size
    local h, _ = math.modf(map_display_h / 2); -- get y margin for current screen size
