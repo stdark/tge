@@ -4046,8 +4046,8 @@ function helpers.recalcBattleStats (index)
 	end;
 
 	if chars_mobs_npcs[index].fear > 0 then --FEAR
-		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_buff_power + math.ceil(0.2*chars_mobs_npcs[index].mgt);
-		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_buff_power + math.ceil(0.2*chars_mobs_npcs[index].spd);
+		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_buff_power + math.ceil(1.2*chars_mobs_npcs[index].mgt);
+		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_buff_power + math.ceil(1.2*chars_mobs_npcs[index].spd);
 		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(0.5*chars_mobs_npcs[index].dex);
 		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(0.5*chars_mobs_npcs[index].int);
 		chars_mobs_npcs[index].acu_debuff_power = chars_mobs_npcs[index].acu_debuff_power + math.ceil(0.5*chars_mobs_npcs[index].acu);
@@ -4056,7 +4056,7 @@ function helpers.recalcBattleStats (index)
 		chars_mobs_npcs[index].chr_debuff_power = chars_mobs_npcs[index].chr_debuff_power + math.ceil(0.5*chars_mobs_npcs[index].chr);
 	end;
 	if chars_mobs_npcs[index].drunk > 0 then --DRUNK
-		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + math.ceil(0.5*chars_mobs_npcs[index].mgt);
+		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_buff_power + math.ceil(1.2*chars_mobs_npcs[index].mgt);
 		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + math.ceil(0.5*chars_mobs_npcs[index].enu);
 		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(0.75*chars_mobs_npcs[index].spd);
 		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(0.75*chars_mobs_npcs[index].dex);
@@ -4072,11 +4072,11 @@ function helpers.recalcBattleStats (index)
 		end;
 	end;
 	if chars_mobs_npcs[index].drunk > 0 then --HOUR OF POWER
-		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_debuff_power + chars_mobs_npcs[index].hourofpower_power;
-		chars_mobs_npcs[index].enu_buff_power = chars_mobs_npcs[index].enu_debuff_power + chars_mobs_npcs[index].hourofpower_power;
-		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_debuff_power + chars_mobs_npcs[index].hourofpower_power;
-		chars_mobs_npcs[index].dex_buff_power = chars_mobs_npcs[index].dex_debuff_power + chars_mobs_npcs[index].hourofpower_power;
-		chars_mobs_npcs[index].acu_buff_power = chars_mobs_npcs[index].acu_debuff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].mgt_buff_power = chars_mobs_npcs[index].mgt_buff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].enu_buff_power = chars_mobs_npcs[index].enu_buff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].spd_buff_power = chars_mobs_npcs[index].spd_buff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].dex_buff_power = chars_mobs_npcs[index].dex_buff_power + chars_mobs_npcs[index].hourofpower_power;
+		chars_mobs_npcs[index].acu_buff_power = chars_mobs_npcs[index].acu_buff_power + chars_mobs_npcs[index].hourofpower_power;
 	end;
 	if chars_mobs_npcs[index].misfortune_dur > 0 then --MISFORTUNE
 		chars_mobs_npcs[index].luk_debuff_power = chars_mobs_npcs[index].luk_debuff_power + chars_mobs_npcs[index].misfortune_power;
@@ -4121,14 +4121,34 @@ function helpers.recalcBattleStats (index)
 		chars_mobs_npcs[index].acu_debuff_power = math.max(chars_mobs_npcs[index].acu_debuff_power,math.ceil(chars_mobs_npcs[index].acu/2));
 	end;
 	if chars_mobs_npcs[index].poison_dur > 0  then --POISON
-		if  chars_mobs_npcs[index].poison_status <  chars_mobs_npcs[index].hp then
-			poison_mod1 = math.max(0.75,1-chars_mobs_npcs[index].poison_power/100);
-		else
-			poison_mod1 =  math.max(0.5,1-chars_mobs_npcs[index].poison_power/100);
-			poison_mod2 =  math.max(0.75,1-chars_mobs_npcs[index].poison_power/100);
-		end;
+		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + math.ceil(chars_mobs_npcs[index].mgt*0.25);
+		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + math.ceil(chars_mobs_npcs[index].enu*0.25);
+		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.25);
+		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.25);
+		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(chars_mobs_npcs[index].int*0.1);
+		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.1);
+	else
+		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + math.ceil(chars_mobs_npcs[index].mgt*0.5);
+		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + math.ceil(chars_mobs_npcs[index].enu*0.5);
+		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.5);
+		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.5);
+		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(chars_mobs_npcs[index].int*0.25);
+		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.25);
 	end;
-	
+	if chars_mobs_npcs[index].disease > 0  then --DISEASE
+		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + math.ceil(chars_mobs_npcs[index].mgt*0.75);
+		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + math.ceil(chars_mobs_npcs[index].enu*0.75);
+		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.75);
+		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.75);
+		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(chars_mobs_npcs[index].int*0.5);
+		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.5);
+		chars_mobs_npcs[index].chr_debuff_power = chars_mobs_npcs[index].chr_debuff_power + math.ceil(chars_mobs_npcs[index].chr*0.5);
+	end;
+	if chars_mobs_npcs[index].disease > 0  then --INSANE
+		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(chars_mobs_npcs[index].int*0.75);
+		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.75);
+		chars_mobs_npcs[index].chr_debuff_power = chars_mobs_npcs[index].chr_debuff_power + math.ceil(chars_mobs_npcs[index].chr*0.75);
+	end;
 	for e=1,#chars_mobs_npcs[index]["equipment"] do
 		if chars_mobs_npcs[index]["equipment"][e] > 0 then
 			for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][e]].w].atkadd) do
@@ -4151,15 +4171,15 @@ function helpers.recalcBattleStats (index)
 		end;
 	end;
 	
-	chars_mobs_npcs[index].mgt=math.ceil(math.max(1,chars_mobs_npcs[index].mgt*poison_mod1+chars_mobs_npcs[index].mgt_buff_power-chars_mobs_npcs[index].mgt_debuff_power));
-	chars_mobs_npcs[index].enu=math.ceil(math.max(1,chars_mobs_npcs[index].enu*poison_mod1+chars_mobs_npcs[index].enu_buff_power-chars_mobs_npcs[index].enu_debuff_power));
-	chars_mobs_npcs[index].dex=math.ceil(math.max(1,chars_mobs_npcs[index].dex*poison_mod1+chars_mobs_npcs[index].dex_buff_power-chars_mobs_npcs[index].dex_debuff_power));
-	chars_mobs_npcs[index].spd=math.ceil(math.max(1,chars_mobs_npcs[index].spd*poison_mod1+chars_mobs_npcs[index].spd_buff_power-chars_mobs_npcs[index].spd_debuff_power));
-	chars_mobs_npcs[index].acu=math.ceil(math.max(1,chars_mobs_npcs[index].acu*poison_mod1+chars_mobs_npcs[index].acu_buff_power-chars_mobs_npcs[index].acu_debuff_power));
-	chars_mobs_npcs[index].sns=math.ceil(math.max(1,chars_mobs_npcs[index].sns*poison_mod2+chars_mobs_npcs[index].sns_buff_power-chars_mobs_npcs[index].sns_debuff_power));
-	chars_mobs_npcs[index].int=math.ceil(math.max(1,chars_mobs_npcs[index].int*poison_mod2+chars_mobs_npcs[index].int_buff_power-chars_mobs_npcs[index].int_debuff_power));
-	chars_mobs_npcs[index].spr=math.ceil(math.max(1,chars_mobs_npcs[index].spr*poison_mod2+chars_mobs_npcs[index].spr_buff_power-chars_mobs_npcs[index].spr_debuff_power));
-	chars_mobs_npcs[index].chr=math.ceil(math.max(1,chars_mobs_npcs[index].chr*poison_mod2+chars_mobs_npcs[index].chr_buff_power-chars_mobs_npcs[index].chr_debuff_power));
+	chars_mobs_npcs[index].mgt=math.max(1,chars_mobs_npcs[index].mgt+chars_mobs_npcs[index].mgt_buff_power-chars_mobs_npcs[index].mgt_debuff_power);
+	chars_mobs_npcs[index].enu=math.max(1,chars_mobs_npcs[index].enu+chars_mobs_npcs[index].enu_buff_power-chars_mobs_npcs[index].enu_debuff_power);
+	chars_mobs_npcs[index].dex=math.max(1,chars_mobs_npcs[index].dex+chars_mobs_npcs[index].dex_buff_power-chars_mobs_npcs[index].dex_debuff_power);
+	chars_mobs_npcs[index].spd=math.max(1,chars_mobs_npcs[index].spd+chars_mobs_npcs[index].spd_buff_power-chars_mobs_npcs[index].spd_debuff_power);
+	chars_mobs_npcs[index].acu=math.max(1,chars_mobs_npcs[index].acu+chars_mobs_npcs[index].acu_buff_power-chars_mobs_npcs[index].acu_debuff_power);
+	chars_mobs_npcs[index].sns=math.max(1,chars_mobs_npcs[index].sns+chars_mobs_npcs[index].sns_buff_power-chars_mobs_npcs[index].sns_debuff_power);
+	chars_mobs_npcs[index].int=math.max(1,chars_mobs_npcs[index].int+chars_mobs_npcs[index].int_buff_power-chars_mobs_npcs[index].int_debuff_power);
+	chars_mobs_npcs[index].spr=math.max(1,chars_mobs_npcs[index].spr+chars_mobs_npcs[index].spr_buff_power-chars_mobs_npcs[index].spr_debuff_power);
+	chars_mobs_npcs[index].chr=math.max(1,chars_mobs_npcs[index].chr+chars_mobs_npcs[index].chr_buff_power-chars_mobs_npcs[index].chr_debuff_power);
 	chars_mobs_npcs[index].luk=math.max(1,chars_mobs_npcs[index].luk+chars_mobs_npcs[index].luk_buff_power-chars_mobs_npcs[index].luk_debuff_power);
 
 	chars_mobs_npcs[index].mgt=math.ceil(chars_mobs_npcs[index].mgt+chars_mobs_npcs[index].hourofpower_power);

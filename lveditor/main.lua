@@ -46,8 +46,11 @@ function love.load()
 	for i=2,20 do
 		randomize[i],tmp = math.modf((84589*randomize[i-1] + 45989 ),(217728));
 	end;
+	--love.window.setMode(1366, 768, {resizable=false});
 	--love.window.setMode(1920, 1080, {resizable=true});
 	--love.window.setMode(1280, 960, {resizable=false});
+	local width, height = love.window.getDesktopDimensions(1); -- get our display size
+	love.window.setMode(width, height, {resizable=false}); 
 end;
 
 function love.update(dt)

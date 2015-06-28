@@ -10,9 +10,9 @@
     t.author = "AlexYeCu"
     t.window.title = "level editor"
     t.window.icon = nil
-    t.window.width = 1920
-    t.window.height = 1080
-    t.window.minwidth = 1280
+    t.window.width = 1366
+    t.window.height = 768
+    t.window.minwidth = 1366
     t.window.minheight = 768
     t.window.borderless = false
     t.window.resizable = false

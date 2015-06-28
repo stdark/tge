@@ -394,6 +394,8 @@ function playingState.load()
 	drawnumbers = false;
 	love.window.setMode(1920, 1080, {resizable=false});
 	drawUIButtons();
+	local width, height = love.window.getDesktopDimensions(1); -- get our display size
+	love.window.setMode(width, height, {resizable=false});      
 end;
  
 function playingState.update(dt)
