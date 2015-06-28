@@ -2317,7 +2317,7 @@ function playingState.mousepressed(x, y, button)
 				map_value = current_hex_type+row_status*10;
 			else
 				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = current_hex_type+rnd+row_status*10;
+				map_value = math.min(200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				map[cursor_world_y][cursor_world_x] = map_value;
@@ -2328,7 +2328,7 @@ function playingState.mousepressed(x, y, button)
 				map_value = current_hex_type+row_status*10;
 			else
 				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = current_hex_type+rnd+row_status*10;
+				map_value = math.min(200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				map[cursor_world_y][cursor_world_x] = map_value;
@@ -2341,7 +2341,7 @@ function playingState.mousepressed(x, y, button)
 						map_value = current_hex_type+row_status*10;
 					else
 						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = current_hex_type+rnd+row_status*10;
+						map_value = math.min(200,current_hex_type+rnd+row_status*10);
 					end;
 					if insideMap(rings[h][i].y,rings[h][i].x) then
 						map[rings[h][i].y][rings[h][i].x] = map_value;
@@ -2357,7 +2357,7 @@ function playingState.mousepressed(x, y, button)
 						map_value = current_hex_type+row_status*10;
 					else
 						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = current_hex_type+rnd+row_status*10;
+						map_value = math.min(200,current_hex_type+rnd+row_status*10);
 					end;
 					map[boomarea[i].y][boomarea[i].x] = map_value;
 					checkHerb(boomarea[i].x,boomarea[i].y);
@@ -2441,17 +2441,17 @@ function playingState.mousepressed(x, y, button)
 				map_value = current_hex_type+row_status*10;
 			else
 				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = current_hex_type+rnd+row_status*10;
+				map_value = math.min(200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				submap[cursor_world_y][cursor_world_x] = map_value;
 			end;
 		elseif brush == 1 or brush == 2 or brush == 3 then
 			if global.randomize_hexes == -1 then
-				map_value = current_hex_type+row_status*10;
+				map_value = math.min(current_hex_type+row_status*10);
 			else
 				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = current_hex_type+rnd+row_status*10;
+				map_value = math.min(200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				submap[cursor_world_y][cursor_world_x] = map_value;
@@ -2463,7 +2463,7 @@ function playingState.mousepressed(x, y, button)
 						map_value = current_hex_type+row_status*10;
 					else
 						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = current_hex_type+rnd+row_status*10;
+						map_value = math.min(200,current_hex_type+rnd+row_status*10);
 					end;
 					if insideMap(rings[h][i].y,rings[h][i].x) then
 						submap[rings[h][i].y][rings[h][i].x] = map_value;
@@ -2478,7 +2478,7 @@ function playingState.mousepressed(x, y, button)
 						map_value = current_hex_type+row_status*10;
 					else
 						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = current_hex_type+rnd+row_status*10;
+						map_value = math.min(200,current_hex_type+rnd+row_status*10);
 					end;
 					submap[boomarea[i].y][boomarea[i].x] = map_value;
 				end;
@@ -3573,7 +3573,7 @@ function startDiggers(x,y,count,flag) --FIXME submap only
 			checkHerb(cursor_world_x,cursor_world_y);
 		else
 			local _rnd = math.random(1,global.rnd_value+1)-1;
-			map[cursor_world_y][cursor_world_x] = row_status*10+current_hex_type+_rnd;
+			map[cursor_world_y][cursor_world_x] = math.min(200,row_status*10+current_hex_type+_rnd);
 			checkHerb(cursor_world_x,cursor_world_y);
 		end;
 	end;
@@ -3601,7 +3601,7 @@ function startDiggers(x,y,count,flag) --FIXME submap only
 							checkHerb(diggers[i].x+xdirections[i],diggers[i].y+directions[1]["y"][i]);
 						else
 							local _rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-							map[diggers[i].y+directions[1]["y"][i]][diggers[i].x+xdirections[i]] = row_status*10+current_hex_type+_rnd;
+							map[diggers[i].y+directions[1]["y"][i]][diggers[i].x+xdirections[i]] = math.min(200,row_status*10+current_hex_type+_rnd);
 							checkHerb(diggers[i].x+xdirections[i],diggers[i].y+directions[1]["y"][i]);
 						end;
 					end;
@@ -3616,7 +3616,7 @@ function startDiggers(x,y,count,flag) --FIXME submap only
 					checkHerb(diggers[i].x,diggers[i].y);
 				else
 					local _rnd = math.random(1,global.rnd_value+1)-1;
-					map[diggers[i].y][diggers[i].x] = row_status*10+current_hex_type+_rnd;
+					map[diggers[i].y][diggers[i].x] = math.min(200,row_status*10+current_hex_type+_rnd);
 					checkHerb(diggers[i].x,diggers[i].y);
 				end;
 			end;
@@ -4161,7 +4161,7 @@ function addHerb(x,y)
 			_array = {current_herb};
 		else
 			for i=1, global.rnd_value do
-				table.insert(_array,(current_herb+math.random(1,i)-1));
+				table.insert(_array,math.min(50,current_herb+math.random(1,i)-1));
 			end;
 		end;
 		harvest_table[y][x] = {current_herb,current_herb_dencity,_array};
@@ -4176,7 +4176,7 @@ function addHerb(x,y)
 			_array = {current_herb};
 		else
 			for i=1, global.rnd_value do
-				table.insert(_array,(current_herb+math.random(1,i)-1));
+				table.insert(_array,math.min(50,current_herb+math.random(1,i)-1));
 			end;
 		end;
 		harvest_table[y][x] = {current_herb,current_herb_dencity,_array};
