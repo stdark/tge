@@ -2582,7 +2582,7 @@ function draw.objects ()
 					local addy = buildings_stats[index].addy;
 					if  darkness[1][my+map_y][mx+map_x] == 0 then
 					elseif darkness[1][my+map_y][mx+map_x] == 1 then
-						love.graphics.setColor(125, 125,125);
+						--love.graphics.setColor(125, 125,125);
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0, 0,0);
 					end;
@@ -2608,7 +2608,7 @@ function draw.objects ()
 					local addy = buildings_stats[index].addy;
 					if  darkness[1][my+map_y][mx+map_x] == 0 then
 					elseif darkness[1][my+map_y][mx+map_x] == 1 then
-						love.graphics.setColor(125, 125,125);
+						--love.graphics.setColor(125, 125,125);
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0, 0,0);
 					end;
