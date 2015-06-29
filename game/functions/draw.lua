@@ -105,6 +105,9 @@ function draw.cursor ()
 				if helpers.cursorAtMaterialBag(cursor_world_x,cursor_world_y) then
 					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
 				end;
+				if helpers.cursorAtBuilding(cursor_world_x,cursor_world_y) then
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
+				end;
 			else
 				draw.drawHex (cursor_world_x,cursor_world_y,cursor_red);
 			end;

@@ -3092,9 +3092,9 @@ function helpers.trapInFrontOf(index)
 end;
 
 function helpers.cursorAtBuilding(x,y)
-	for i=1,#localtriggers do
-		if cursor_world_x == localtriggers[i].x and cursor_world_y == localtriggers[i].y then
-			return true,localtriggers[i].dir;
+	for i=1,#localtriggers[global.level_to_load] do
+		if cursor_world_x == localtriggers[global.level_to_load][i].x and cursor_world_y == localtriggers[global.level_to_load][i].y then
+			return true,localtriggers[global.level_to_load][i].dir;
 		end;
 	end;
 	return false,nil,nil,nil;
