@@ -392,6 +392,7 @@ function playingState.load()
 		bags_list={};
 	end;
 	drawnumbers = false;
+	drawtypes = false;
 	love.window.setMode(1920, 1080, {resizable=false});
 	drawUIButtons();
 	local width, height = love.window.getDesktopDimensions(1); -- get our display size
@@ -3480,7 +3481,7 @@ function drawUIButtons()
 	---
 	
 	uibuttons[10] = loveframes.Create("button")
-	uibuttons[10]:SetPos(680,global.screenHeight-120);
+	uibuttons[10]:SetPos(1020,global.screenHeight-120);
 	uibuttons[10]:SetHeight(30);
 	uibuttons[10]:SetWidth(80);
 	uibuttons[10]:SetText("cursor");
@@ -3491,6 +3492,20 @@ function drawUIButtons()
 			hex_mouse_visible = false;
 		end;
 	end;
+	
+	uibuttons[28] = loveframes.Create("button")
+	uibuttons[28]:SetPos(680,global.screenHeight-120);
+	uibuttons[28]:SetHeight(30);
+	uibuttons[28]:SetWidth(80);
+	uibuttons[28]:SetText("hex_types");
+	uibuttons[28].OnClick = function(object)
+		if drawtypes then
+			drawtypes  = false;
+		else
+			drawtypes  = true;
+		end;
+	end;
+	
 	
 	uibuttons[9] = loveframes.Create("button")
 	uibuttons[9]:SetPos(680,global.screenHeight-90);
@@ -3842,6 +3857,15 @@ function draw_numbers()
 	love.graphics.setColor(255, 255, 255);
  end;
  
+ function draw_types()
+	for my=1, math.min(map_display_h, map_h-map_y) do
+		for mx=1, math.min(map_display_w, map_w-map_x) do
+			drawNumberHex (mx+map_x,my+map_y,32,map[my+map_y][mx+map_x]);
+		end;
+	end;
+	love.graphics.setColor(255, 255, 255);
+ end;
+ 
  function draw_homelandNumbers()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
@@ -3882,6 +3906,10 @@ function playingState.draw()
 	if drawnumbers and (editor_status == "hexes" or editor_status == "subhexes" or editor_status == "buildings") then
 		draw_numbers();
 	end;
+	if drawtypes and (editor_status == "hexes" or editor_status == "subhexes" or editor_status == "buildings") then
+		draw_types();
+	end;
+	
 	
 	if editor_status == "homelands" then
 		draw_homelandNumbers();

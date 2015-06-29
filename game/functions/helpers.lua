@@ -2739,10 +2739,10 @@ function helpers.delta(i)
 end;
 
 function helpers.knockToDoor () --FIXME: housewatch then chat/buying/selling/npcidentify/npcrepair
- for i=1,#localtriggers do
-	if chars_mobs_npcs[current_mob].x == localtriggers[i].x and chars_mobs_npcs[current_mob].y == localtriggers[i].y then
-		chars_mobs_npcs[current_mob].rot = localtriggers[i].dir;
-		current_house = localtriggers[i].id;
+ for i=1,#localtriggers[global.level_to_load] do
+	if chars_mobs_npcs[current_mob].x == localtriggers[global.level_to_load][i].x and chars_mobs_npcs[current_mob].y == localtriggers[global.level_to_load][i].y then
+		chars_mobs_npcs[current_mob].rot = localtriggers[global.level_to_load][i].dir;
+		current_house = localtriggers[global.level_to_load][i].id;
 		game_status = "housewatch";
 		return;
 	end;

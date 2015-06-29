@@ -5325,8 +5325,8 @@ function draw.housewatch (current_house)
 	loveframes.util.RemoveAll();
 	local x,y = helpers.centerObject(media.images.map);
 	love.graphics.draw(media.images.map, x,y-50);
-	for i=1, #buildings_stats[current_house].npcs do
-		local index = helpers.findNPCindex(buildings_stats[current_house]["npcs"][i]);
+	for i=1, #localtriggers[global.level_to_load][current_house].npcs do
+		local index = helpers.findNPCindex(localtriggers[global.level_to_load][current_house]["npcs"][i]);
 		love.graphics.draw(media.images.npcfaces, npcfaces[chars_mobs_npcs[index].face], x+55+100*(i-1), y);
 		local name = chars_mobs_npcs[index].name;
 		love.graphics.print(name, x+55+100*(i-1), y+100);

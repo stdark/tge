@@ -51,6 +51,7 @@ function playingState.load()
 	require "data.threats"
 	require "data.npc"
 	require "data.sfx"
+	require "data.triggers"
 	--love.audio.stop(media.sounds.mainmenu, 0);
 	
 	--currentState = loadingState;
@@ -146,6 +147,7 @@ function playingState.load()
 	calendar.calendar_data ();
 	tricks_tips_load ();
 	quests_load ();
+	triggers_data ();
 
 	fractions={
 	party={party=0,greens=-100,bandidos=-100,vagrants = 0,merchants=0},
@@ -702,11 +704,6 @@ function playingState.load()
 			local rndmod = modifers_assortiment[1][math.random(1,#modifers_assortiment[1])];
 			table.insert(bars_list[4],{ttxid=rndid,q=inventory_ttx[rndid].material,w=rndmod,e=0,r=1,h=0});
 		end;
-
-		localtriggers={
-		{x=27,y=9,dir=6,id=1},
-		{x=37,y=14,dir=6,id=2},
-		};
 
 		traders={
 		{typ="armor",bars={1,1,2,4},prices={3,0.5},assortiment=1
@@ -5454,9 +5451,9 @@ function  playingState.mousepressed(x,y,button)
 -- building buttons
 	if current_house and game_status == "housewatch" then
 		local x,y = helpers.centerObject(media.images.map);
-		for i=1,#buildings_stats[current_house].npcs do
+		for i=1,#localtriggers[global.level_to_load][current_house].npcs do
 			if love.mouse.isDown("l") and mY >= y and mY <= y+190 and mX >= x+55+100*(i-1) and mX <= x+55+100*(i-1)+80 then
-				local index = buildings_stats[current_house].npcs[i];
+				local index = localtriggers[global.level_to_load][current_house].npcs[i];
 				victim = helpers.findNPCindex(index);
 				chat (victim);
 			end;
