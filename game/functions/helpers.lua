@@ -133,22 +133,22 @@ function helpers.cornersOfBuilding(index,x,y)
 		evornot = "hexes_ne"
 	end;
 	for i=1,#buildings_stats[index][evornot] do
-		local xx = x + buildings_stats[index][evornot][i][1];
-		local yy = y + buildings_stats[index][evornot][i][2];
+		local xx = x - buildings_stats[index][evornot][i][1];
+		local yy = y - buildings_stats[index][evornot][i][2];
 		if helpers.insideMap(xx,yy) then
-			if xx <= corner_lt[1] and yy <= corner_lt[2] then
+			if xx <= corner_lt[1] and yy >= corner_lt[2] then
 				corner_lt[1] = xx;
 				corner_lt[2] = yy;
 			end;
-			if xx >= corner_rt[1] and yy <= corner_rt[2] then
+			if xx >= corner_rt[1] and yy >= corner_rt[2] then
 				corner_rt[1] = xx;
 				corner_rt[2] = yy;
 			end;
-			if xx >= corner_rb[1] and yy >= corner_rb[2] then
+			if xx >= corner_rb[1] and yy <= corner_rb[2] then
 				corner_rb[1] = xx;
 				corner_rb[2] = yy;
 			end;
-			if xx <= corner_lb[1] and yy >= corner_lb[2] then
+			if xx <= corner_lb[1] and yy <= corner_lb[2] then
 				corner_lb[1] = xx;
 				corner_lb[2] = yy;
 			end;
@@ -158,7 +158,7 @@ function helpers.cornersOfBuilding(index,x,y)
 	table.insert(corner_hexes_array,corner_rt);
 	table.insert(corner_hexes_array,corner_rb);
 	table.insert(corner_hexes_array,corner_lb);
-	--print("CRNR",index,corner_hexes_array[1][1],corner_hexes_array[1][2],corner_hexes_array[2][1],corner_hexes_array[2][2],corner_hexes_array[3][1],corner_hexes_array[3][2],corner_hexes_array[4][1],corner_hexes_array[4][2]);
+	--print("CRNR",index,x,y,corner_hexes_array[1][1],corner_hexes_array[1][2],corner_hexes_array[2][1],corner_hexes_array[2][2],corner_hexes_array[3][1],corner_hexes_array[3][2],corner_hexes_array[4][1],corner_hexes_array[4][2]);
 	return corner_hexes_array;
 end;
 

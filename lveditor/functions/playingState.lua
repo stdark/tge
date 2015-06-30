@@ -1824,7 +1824,7 @@ function draw_objects ()
 					--addx = 64;
 					--addy = 64;
 					addx = 16;
-					addy = 32;
+					addy = -4;
 				end;
 				if objects_list[j].xi == mx_ and objects_list[j].yi == my_ then
 					if (my_)/2 == math.ceil((my_)/2) then
