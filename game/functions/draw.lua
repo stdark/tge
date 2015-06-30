@@ -2602,7 +2602,13 @@ function draw.objects ()
 					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 2 then
 						love.graphics.setColor(0, 0, 0);
 					end;
-					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					if not buildings_stats[index].animation then
+						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					else
+						local animation = loadstring("return " .. buildings_stats[index].animation)();
+						local image = media.images[buildings_stats[index].animation_source];
+						animation:draw(image, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					end;
 					love.graphics.setColor(255, 255, 255);
 				end;      
 			else
@@ -2641,7 +2647,13 @@ function draw.objects ()
 					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 2 then
 						love.graphics.setColor(0, 0, 0);
 					end;
-					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
+					if not buildings_stats[index].animation then
+						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					else
+						local animation = loadstring("return " .. buildings_stats[index].animation)();
+						local image = media.images[buildings_stats[index].animation_source];
+						animation:draw(image, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					end;
 					love.graphics.setColor(255, 255, 255);	
 				end;  
 			end;

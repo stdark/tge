@@ -1291,6 +1291,7 @@ function playingState.update(dt)
 			animation_deadlyswarm:update(dt);
 			animation_deadlywave:update(dt);
 		end;
+		animation_fountain:update(dt);
 		if game_status == "damage" or game_status == "multidamage" or game_status == "attack" then
 			for i=1,6 do
 				animation_dmg[i]:update(dt);

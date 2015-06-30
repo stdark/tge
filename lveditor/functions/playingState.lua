@@ -8,7 +8,7 @@ end;
 
 function playingState.load()
 	require("lib.loveframes");
-	--local anim8 = require 'anim8';
+	anim8 = require "lib.anim8"
 	require 'levels.level1';
 	require 'lib.Tserial';
 	require 'data.buildings';
@@ -42,6 +42,9 @@ function playingState.load()
 	crystals_img = love.graphics.newQuad(4*32, 21*32, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	fountain_img = love.graphics.newQuad(6*32, 21*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	fake_img  = love.graphics.newQuad(31*32, 31*32, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+	
+	fountain = anim8.newGrid(250, 224, media.images.animatedobjects:getWidth(), media.images.animatedobjects:getHeight(),0,0,0);
+	animation_fountain = anim8.newAnimation(fountain("1-5",1), 0.05);
 	
 	barrel_img = {};
 	for i=1,13 do
@@ -421,6 +424,7 @@ function playingState.update(dt)
 	cursor_world_x = math.max(1,cursor_world_x);
 	cursor_world_y = math.max(1,cursor_world_y);
 	loveframes.update(dt);
+	animation_fountain:update(dt);
 end;
 
 function newLevel()	
@@ -1728,7 +1732,13 @@ function draw_objects ()
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
+					if not buildings_stats[index].animation then
+						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					else
+						local animation = loadstring("return " .. buildings_stats[index].animation)();
+						local image = media.images[buildings_stats[index].animation_source];
+						animation:draw(image, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					end;
 				end;
 			else
 				if map[my_][mx_]>120 and  map[my_][mx_]<=220 then
@@ -1740,7 +1750,13 @@ function draw_objects ()
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
+					if not buildings_stats[index].animation then
+						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
+					else
+						local animation = loadstring("return " .. buildings_stats[index].animation)();
+						local image = media.images[buildings_stats[index].animation_source];
+						animation:draw(image, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					end;
 				end;   
 			end;
 			for j=1,#bags_list do
