@@ -8602,7 +8602,7 @@ function restoreRT ()
 							end;
 						end;
 					elseif chars_mobs_npcs[i].y/2 ~= math.cail(chars_mobs_npcs[i].y/2) then
-						for j=1,#chars_movs_npcs do
+						for j=1,#chars_mobs_npcs do
 							for k=1,6 do
 								if chars_mobs_npcs[i].y == chars_mobs_npcs[j].y+directions[1].y[k] and chars_mobs_npcs[i].x == chars_mobs_npcs[j].x+directions[1].xn[k]
 								and chars_mobs_npcs[i].person == chars_mobs_npcs[j].person and c(chars_mobs_npcs[i].status == 1 or (chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[i].status == 0)) and helpers.doNotFeelHunger(j) then

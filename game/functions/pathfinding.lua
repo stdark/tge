@@ -96,10 +96,13 @@ function path_finding (mode,ignore_mobs)
 			if helpers.cursorAtObject(cursor_world_x,cursor_world_y) then
 				point_to_go_x = cursor_world_x;
 				point_to_go_y = cursor_world_y;
-				local newx,newy = findAltWayToHex(cursor_world_x,cursor_world_y);
-				if newx and newy then
-					point_to_go_x = newx;
-					point_to_go_y = newy;
+				atk_direction = helpers.bestAttackDirection (current_mob,point_to_go_x,point_to_go_y);
+				if not helpers.passCheck(cursor_world_x,cursor_world_y) or helpers.cursorAtMob(cursor_world_x,cursor_world_y) then
+					local newx,newy = findAltWayToHex(cursor_world_x,cursor_world_y);
+					if newx and newy then
+						point_to_go_x = newx;
+						point_to_go_y = newy;
+					end;
 				end;
 				mob_is_going_to_useobject = 1;
 				if point_to_go_x and helpers.passWalk(point_to_go_x,point_to_go_y) and not helpers.isAimOnMob (point_to_go_x,point_to_go_y) then
@@ -109,8 +112,7 @@ function path_finding (mode,ignore_mobs)
 				else
 					path_status = 0;
 					--print("path not found!");
-				end;
-				
+				end;	
 			end;
 		end;
 	elseif chars_mobs_npcs[current_mob].control == "ai" then

@@ -2578,16 +2578,29 @@ function draw.objects ()
 					love.graphics.setColor(255, 255, 255);
 				elseif map[my+map_y][mx+map_x] > 300 then
 					local index = map[my+map_y][mx+map_x] - 300;
+					local corner_hexes_array = helpers.cornersOfBuilding(index,mx+map_x,my+map_y);
 					--local img = media.images[buildings_stats[index].img];
 					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					if  darkness[1][my+map_y][mx+map_x] == 0 then
-					elseif darkness[1][my+map_y][mx+map_x] == 1 then
-						--love.graphics.setColor(125, 125,125);
-					elseif darkness[1][my+map_y][mx+map_x] == 2 then
-						love.graphics.setColor(0, 0,0);
+					if darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 0
+					or darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 0
+					or darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 0
+					or darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 0
+					or darkness[1][my+map_y+buildings_stats[index]["door_ev"][1]][mx+map_x+buildings_stats[index]["door_ev"][2]] == 0
+					then
+						--
+					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 1
+					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 1
+					and darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 1
+					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 1 then
+						love.graphics.setColor(125, 125,125);
+					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 2
+					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 2
+					and darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 2
+					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 2 then
+						love.graphics.setColor(0, 0, 0);
 					end;
 					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					love.graphics.setColor(255, 255, 255);
@@ -2604,16 +2617,29 @@ function draw.objects ()
 					love.graphics.setColor(255, 255, 255);
 				elseif map[my+map_y][mx+map_x] > 300 then
 					local index = map[my+map_y][mx+map_x] - 300;
+					local corner_hexes_array = helpers.cornersOfBuilding(index,mx+map_x,my+map_y);
 					--local img = media.images[buildings_stats[index].img];
 					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					if  darkness[1][my+map_y][mx+map_x] == 0 then
-					elseif darkness[1][my+map_y][mx+map_x] == 1 then
-						--love.graphics.setColor(125, 125,125);
-					elseif darkness[1][my+map_y][mx+map_x] == 2 then
-						love.graphics.setColor(0, 0,0);
+					if darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 0
+					or darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 0
+					or darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 0
+					or darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 0
+					or darkness[1][my+map_y+buildings_stats[index]["door_ne"][1]][mx+map_x+buildings_stats[index]["door_ne"][2]] == 0
+					then
+						--
+					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 1
+					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 1
+					and darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 1
+					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 1 then
+						love.graphics.setColor(125, 125,125);
+					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 2
+					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 2
+					and darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 2
+					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 2 then
+						love.graphics.setColor(0, 0, 0);
 					end;
 					love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
 					love.graphics.setColor(255, 255, 255);	

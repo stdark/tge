@@ -122,6 +122,46 @@ function helpers.passWalk (x,y)
 	end;
 end;
 
+function helpers.cornersOfBuilding(index,x,y)
+	local corner_hexes_array = {};
+	local corner_lt = {x,y};
+	local corner_rt = {x,y};
+	local corner_rb = {x,y};
+	local corner_lb = {x,y};
+	local evornot = "hexes_ev"
+	if y/2 ~= math.ceil(y/2) then
+		evornot = "hexes_ne"
+	end;
+	for i=1,#buildings_stats[index][evornot] do
+		local xx = x + buildings_stats[index][evornot][i][1];
+		local yy = y + buildings_stats[index][evornot][i][2];
+		if helpers.insideMap(xx,yy) then
+			if xx <= corner_lt[1] and yy <= corner_lt[2] then
+				corner_lt[1] = xx;
+				corner_lt[2] = yy;
+			end;
+			if xx >= corner_rt[1] and yy <= corner_rt[2] then
+				corner_rt[1] = xx;
+				corner_rt[2] = yy;
+			end;
+			if xx >= corner_rb[1] and yy >= corner_rb[2] then
+				corner_rb[1] = xx;
+				corner_rb[2] = yy;
+			end;
+			if xx <= corner_lb[1] and yy >= corner_lb[2] then
+				corner_lb[1] = xx;
+				corner_lb[2] = yy;
+			end;
+		end;
+	end;
+	table.insert(corner_hexes_array,corner_lt);
+	table.insert(corner_hexes_array,corner_rt);
+	table.insert(corner_hexes_array,corner_rb);
+	table.insert(corner_hexes_array,corner_lb);
+	--print("CRNR",index,corner_hexes_array[1][1],corner_hexes_array[1][2],corner_hexes_array[2][1],corner_hexes_array[2][2],corner_hexes_array[3][1],corner_hexes_array[3][2],corner_hexes_array[4][1],corner_hexes_array[4][2]);
+	return corner_hexes_array;
+end;
+
 function whatNpcsAreNear (x,y)
 	if not helpers.insideMap(x,y) then
 		return false;
@@ -2819,6 +2859,15 @@ end;
 function helpers.cursorAtObject(x,y)
 	for i=1,#objects_list do
 		if objects_list[i].xi == x and objects_list[i].yi == y then
+			return true;
+		end;
+	end;
+	return false;
+end;
+
+function helpers.cursorAtPortal(x,y)
+	for i=1,#objects_list do
+		if objects_list[i].xi == x and objects_list[i].yi == y and objects_list[i].typ == "portal" then
 			return true;
 		end;
 	end;
