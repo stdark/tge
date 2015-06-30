@@ -2666,7 +2666,7 @@ function draw.objects ()
 					addy = 8;
 				elseif bags_list[j].typ == "crystals" then
 					addx = 32;
-					addy = 46;
+					addy = 64;
 				elseif bags_list[j].typ == "trashheap" then
 					addx = 32;
 					addy = 32;
