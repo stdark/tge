@@ -97,6 +97,12 @@ function path_finding (mode,ignore_mobs)
 				point_to_go_x = cursor_world_x;
 				point_to_go_y = cursor_world_y;
 				atk_direction = helpers.bestAttackDirection (current_mob,point_to_go_x,point_to_go_y);
+				point_to_go_y = cursor_world_y+directions[1]["y"][atk_direction];
+				if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
+					point_to_go_y = cursor_world_y+directions[1]["xc"][atk_direction];
+				else
+					point_to_go_y = cursor_world_y+directions[1]["xn"][atk_direction];
+				end;
 				if not helpers.passCheck(cursor_world_x,cursor_world_y) or helpers.cursorAtMob(cursor_world_x,cursor_world_y) then
 					local newx,newy = findAltWayToHex(cursor_world_x,cursor_world_y);
 					if newx and newy then
@@ -120,13 +126,13 @@ function path_finding (mode,ignore_mobs)
 		point_to_go_y = ai_world_y;
 		atk_direction = math.random(1,6); --dirtyfix
 	end;
-	--if  game_status == "path_finding" and chars_mobs_npcs[current_mob].control == "player" and not helpers.passWalk(point_to_go_x,point_to_go_y) then --FIXME spikes and razors also
-	if  game_status == "path_finding" and chars_mobs_npcs[current_mob].control == "player" and not helpers.passMove(point_to_go_x,point_to_go_y,current_mob) then
+	--if  game_status == "pathfinding" and chars_mobs_npcs[current_mob].control == "player" and not helpers.passWalk(point_to_go_x,point_to_go_y) then --FIXME spikes and razors also
+	if  game_status == "pathfinding" and chars_mobs_npcs[current_mob].control == "player" and not helpers.passMove(point_to_go_x,point_to_go_y,current_mob) then
 		path_status = 0;
 		--print ("path not found (char)!");
 		--find_the_path = 0;
 		global.hang = false;
-		game_status = "path_finding";--do not move if neutral
+		game_status = "pathfinding";--do not move if neutral
 	end;
 --just walk or hit for a char
 	if not helpers.cursorAtMob (point_to_go_x,point_to_go_y) and not helpers.cursorAtObject(cursor_world_x,cursor_world_y) then
@@ -449,8 +455,10 @@ function path_finding (mode,ignore_mobs)
 				else
 					animation_walk = anim8.newAnimation(mob_walk[chars_mobs_npcs[current_mob].rot]("4-8",1), 0.075,"pauseAtEnd");
 				end;
+				--global.hang = false;
+				path_counter = #way_of_the_mob;
 				game_status = "moving";
-				find_the_path=0;
+				find_the_path = 0;
 				m_timer = 0;
 			end;
 		else --path not found

@@ -4043,8 +4043,6 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			exp_for_what(alldmg,current_mob);
 		end;
 	end;
-	
-	
 	local mode,lvl,num,effect,element,stat,skill,coff,luck = damage.classPassives(current_mob);
 	if mode and mode == "melee" then
 		if algorythm == "2factors" then
@@ -4101,7 +4099,6 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		--helpers.countMoral(i);
 	--end;
 	a_timer = 0;
-	
 	if chars_mobs_npcs[victim].holyblood_dur>0 and chars_mobs_npcs[current_mob].nature == "undead" then
 		local predmg = damage.magicalRes (current_mob,chars_mobs_npcs[victim].holyblood_power,"light");
 		local dmg = predmg;
@@ -4115,10 +4112,8 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].holyblood_dur,dur);
 		end;
 	end;
-	
 	local damaged_mobs = {};
 	table.insert(damaged_mobs,victim);
-	--damage.deathsWatcher(damaged_mobs);
 	chars_mobs_npcs[current_mob].rage = 0;
 end;
 

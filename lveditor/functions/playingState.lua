@@ -2674,6 +2674,7 @@ function playingState.mousereleased(x, y, button)
 	if mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "objects" and passCheck (cursor_world_x,cursor_world_y) then
 		findBagOrObject(cursor_world_x,cursor_world_y);
 		clearHerb(cursor_world_x,cursor_world_y);
+		local bag_id = #bags_list+1;
 		if  special_objects_status == "clear"  then
 			--
 		elseif special_objects_status == "ob"  then
@@ -2699,7 +2700,7 @@ function playingState.mousereleased(x, y, button)
 			elseif well_current_type_name == "dry" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="well", subtyp="drink", story="welldry", plus=false, plusvalue=0, minus=false, minusvalue=0, conditions={}, wimg="well_dry", img=well_img});
 			elseif well_current_type_name == "bag" then
-				table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", opened=false, locked=false, dir=0, img=well_img});
+				table.insert(bags_list,{id=bag_id,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", opened=false, locked=false, dir=0, img=well_img});
 			elseif well_current_type_name == "dungeon" then
 				table.insert(objects_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="well", subtyp="dungeon", story="wellclean", wimg="well_dungeon", opened=false, locked=false, dir=0, img=well_img});
 			elseif well_current_type_name == "magical add" then
@@ -2746,17 +2747,17 @@ function playingState.mousereleased(x, y, button)
 			_mask = trap_current_mask;
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="trap", detected=false, inspected=false, opened=false, locked=true, locktype=0, lockcode=999999999, dir=0, traped = true, inspected = false, trapcode=_trapcode, trapmodel=_traptype, trappower = _trappower, img=trap_img});
 		elseif special_objects_status == "cr" then
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="crystals",charged = true, power = 25, opened=false, locked=false, img=crystals_img});
+			table.insert(bags_list,{id=bag_id,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="crystals",charged = true, power = 25, opened=false, locked=false, img=crystals_img});
 		elseif special_objects_status == "th"  then
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="trashheap", condition_lvl=1,condition_num=5, opened=false, locked=false, img=trashheap_img});
+			table.insert(bags_list,{id=bag_id,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="trashheap", condition_lvl=1,condition_num=5, opened=false, locked=false, img=trashheap_img});
 		elseif special_objects_status == "sp" then
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img});
+			table.insert(bags_list,{id=bag_id,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="scullpile", condition_lvl=1,condition_num=5, opened=false, locked=false, img=scullpile_img});
 		elseif special_objects_status == "bg" then
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="bag", opened=false, locked=false, img=bag_img});
+			table.insert(bags_list,{id=bag_id,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="bag", opened=false, locked=false, img=bag_img});
 		elseif special_objects_status == "bx" then
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="box", opened=false, locked=false, img=box_img});
+			table.insert(bags_list,{id=bag_id,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="box", opened=false, locked=false, img=box_img});
 		elseif special_objects_status == "bl" then
-			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="barrel", opened=false, locked=false, img=barrel_img[13]});
+			table.insert(bags_list,{id=bag_id,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="barrel", opened=false, locked=false, img=barrel_img[13]});
 		elseif special_objects_status == "cd" then
 			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y, typ="cauldron", opened=false, locked=false, img=cauldron_img[13]});
 		elseif special_objects_status == "fn" then

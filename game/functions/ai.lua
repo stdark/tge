@@ -527,13 +527,13 @@ function ai.behavior()
 				damage.meleeAttack (damage.meleeAttackTool (current_mob));
 				return;
 			else
-				--print("hiu",path_status);
-					mob_can_move = 1;
-					mob_is_going_to_hit = 1;
-					ai_world_x = chars_mobs_npcs[target_roll].x;
-					ai_world_y = chars_mobs_npcs[target_roll].y;
-					game_status = "path_finding";
-					path_finding(0,0);
+				mob_can_move = 1;
+				mob_is_going_to_hit = 1;
+				ai_world_x = chars_mobs_npcs[target_roll].x;
+				ai_world_y = chars_mobs_npcs[target_roll].y;
+				game_status = "pathfinding";
+				path_finding(0,0);
+				return;
 			end;
 		elseif #mob_detects_enemies == 0 then
 			if all_agro > 0 then
@@ -545,7 +545,6 @@ function ai.behavior()
 	end;
 --MOVING TO AN ENEMY
 	if chars_mobs_npcs[current_mob].ai == "toenemy" then
-		print(current_mob,"global.hang",global.hang);
 		if not global.hang then
 			local roll_point = 1;
 			local free_hexes = helpers.findFreeHexes (current_mob);

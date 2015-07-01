@@ -89,10 +89,10 @@ function draw.cursor ()
 				if game_status == "neutral" then
 					draw.drawHex (cursor_world_x,cursor_world_y,cursor_q);
 				end;
-				if global.status == "battle" and game_status == "path_finding" and (helpers.cursorAtEnemy (cursor_world_x,cursor_world_y) or helpers.cursorAtNPC (cursor_world_x,cursor_world_y)) then
+				if global.status == "battle" and game_status == "pathfinding" and (helpers.cursorAtEnemy (cursor_world_x,cursor_world_y) or helpers.cursorAtNPC (cursor_world_x,cursor_world_y)) then
 					draw.drawHitHex (cursor_world_x,cursor_world_y);
 				end;
-				if global.status == "peace" and game_status == "path_finding" and helpers.cursorAtNPC (cursor_world_x,cursor_world_y) then
+				if global.status == "peace" and game_status == "pathfinding" and helpers.cursorAtNPC (cursor_world_x,cursor_world_y) then
 					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
 				end;
 				local cursor_at_chest, pointx,pointy,rotation_to_chest = helpers.cursorAtChest(cursor_world_x,cursor_world_y);
@@ -3156,7 +3156,7 @@ function draw.objects ()
 					or game_status == "premoving" --ai only
 					or (game_status == "moving" and i ~= current_mob)
 					or game_status =="sensing"
-					or game_status =="path_finding"
+					or game_status =="pathfinding"
 					or game_status == "missle"
 					or game_status == "boom"
 					or game_status == "pause"
@@ -3850,7 +3850,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 	if chars_mobs_npcs[current_mob].lvl_monsterid >= 5 then
 		for i=1, #slots do
 			local slot = chars_mobs_npcs[tmpc]["equipment"][slots[i]];
-			if slot > 0 then
+			if slot and slot > 0 then
 				local tmp = chars_mobs_npcs[tmpc]["inventory_list"][slot].ttxid;
 				local title = inventory_ttx[tmp].title;
 				love.graphics.print(title, mX+w,mY+300 + addy3*15);
@@ -4377,7 +4377,7 @@ function draw.ui ()
 				add_effect_rt = delta_rt2spend;
 			end;
 			
-			if game_status == "path_finding" then
+			if game_status == "pathfinding" then
 				delta_rt2spend = math.max(#way_of_the_mob*5/200,0);
 				delta_st2spend = math.max(#way_of_the_mob*5/chars_mobs_npcs[i].st_max,0);
 				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
@@ -4461,14 +4461,14 @@ function draw.ui ()
 	end;]]
 	draw.miniLog ();
 	if chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" and game_status ~= "chat" and game_status ~= "mindgame" and global.status ~= "mindgame" then
-		love.graphics.draw(media.images.ui, warbook_icon, global.screenWidth-200,global.screenHeight-200); -- draw spellbook icon at HUD
+		love.graphics.draw(media.images.ui, warbook_icon, global.screenWidth-200,global.screenHeight-200); -- draw warbook icon at HUD
 		love.graphics.draw(media.images.ui, questbook_icon, global.screenWidth-330,global.screenHeight-185); -- draw questbook icon at HUD
 		if game_status == "neutral" then
 			love.graphics.draw(media.images.ui, glove_icon_1, 520,global.screenHeight-200);	
 		else
 			love.graphics.draw(media.images.ui, glove_icon_2, 520,global.screenHeight-160);	
 		end;
-		if game_status == "path_finding" then
+		if game_status == "pathfinding" then
 			love.graphics.draw(media.images.ui, boot_icon_1, 520,global.screenHeight-140);
 		else
 			love.graphics.draw(media.images.ui, boot_icon_2, 520,global.screenHeight-140);
@@ -4654,7 +4654,7 @@ function draw.lineOfOrder ()
 	for k=1,#order_of_turns do
 		local pshift = 0;
 		if chars_mobs_npcs[current_mob].control=="player" then
-			if helpers.cursorAtMobID(cursor_world_x,cursor_world_y) == order_of_turns[k][1] and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "damage" or game_status == "missle" or game_status == "boom") then
+			if helpers.cursorAtMobID(cursor_world_x,cursor_world_y) == order_of_turns[k][1] and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "damage" or game_status == "missle" or game_status == "boom") then
 				pshift = 5;
 			else
 				pshift = 0;

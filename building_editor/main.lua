@@ -538,5 +538,6 @@ function love.draw()
 	love.graphics.setColor(255, 255, 255);
 	local hexarray = count_hexes (true);
 	love.graphics.print(#hexarray,250,10);
+	love.graphics.print(cursor_world_y,750,10);
     loveframes.draw();
 end;

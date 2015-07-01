@@ -324,18 +324,10 @@ function playingState.load()
 
 	chars_mobs_npcs={};
 	if global.first_load then
-		table.insert(chars_mobs_npcs,{uid=-1,person="char",control="player",party=1,x=15,y=10,rot=1}); --battle
-		--table.insert(chars_mobs_npcs,{uid=-1,person="char",control="player",party=1,x=28,y=14,rot=1}); --shops
-		--table.insert(chars_mobs_npcs,{uid=-1,person="char",control="player",party=1,x=46,y=56,rot=1}); --grass
-
+		table.insert(chars_mobs_npcs,{uid=-1,person="char",control="player",party=1,x=15,y=10,rot=1});
 		table.insert(chars_mobs_npcs,{uid=-2,erson="char",control="player",party=1,x=12,y=13,rot=3 });
 		table.insert(chars_mobs_npcs,{uid=-3,person="char",control="player",party=1,x=7,y=7,rot=3 });
 		table.insert(chars_mobs_npcs,{uid=-4,person="char",control="player",party=1,x=10,y=14,rot=3 });
-
-		--table.insert(chars_mobs_npcs,{person="char",control="player",x=16,y=38,rot=1});
-		--table.insert(chars_mobs_npcs,{person="char",control="player",x=16,y=28,rot=3 });
-		--table.insert(chars_mobs_npcs,{person="char",control="player",x=19,y=30,rot=5 });
-		--table.insert(chars_mobs_npcs,{person="char",control="player",x=18,y=32,rot=3 });
 
 		for i = 1,chars do
 			helpers.addMob(i,"char");
@@ -348,11 +340,12 @@ function playingState.load()
 --NEW LEVEL
 	if global.level_to_load == 1 then
 	--mobs
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=15,y=15,rot=5,class="goblin",fraction="greens",party=4});
+		--table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=15,y=15,rot=5,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=13,y=16,rot=5,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=6,rot=6,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=9,y=6,rot=4,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=11,y=5,rot=2,class="goblin",fraction="greens",party=4});
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=23,y=2,rot=3,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=43,y=27,rot=3,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=16,y=5,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=14,y=7,rot=1,class="naga",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});
@@ -969,7 +962,7 @@ function playingState.update(dt)
 			end;
 		end;
 		for j=1,#order_of_turns do
-			if mX>=(j*45+global.screenWidth/2-240) and mX<=(j*45+global.screenWidth/2-200) and mY>=2 and mY<47 and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding") and global.status == "battle" then
+			if mX>=(j*45+global.screenWidth/2-240) and mX<=(j*45+global.screenWidth/2-200) and mY>=2 and mY<47 and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding") and global.status == "battle" then
 				selected_mob = order_of_turns[j][1];
 			end;
 		end;
@@ -1218,10 +1211,10 @@ function playingState.update(dt)
 		if game_status ~= "inventory" and game_status ~= "alchemy" and game_status ~= "picklocking" and gamePstatus ~= "crafting" and game_status ~= "buying" and game_status ~= "showinventory" then
 			show_inventory_tips = 0;
 		end;
-		if game_status == "path_finding" and global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false then
+		if game_status == "pathfinding" and global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false then
 			path_finding(0,0);
 		end;
-		if game_status == "path_finding" and global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false then
+		if game_status == "pathfinding" and global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false then
 			if love.keyboard.isDown("lctrl") then
 				global.steal = true;
 			else
@@ -1391,12 +1384,13 @@ function playingState.update(dt)
 			global.timers.m_timer=0;
 		else
 		end;
-		if game_status == "path_finding" and #way_of_the_mob > 0 then
+		if game_status == "pathfinding" and #way_of_the_mob > 0 then
 			chars_mobs_npcs[current_mob].rot=way_of_the_mob[#way_of_the_mob][6];
 		end;
 		if game_status == "moving" then
 			if not global.hang then
-				path_counter = #way_of_the_mob
+				--mobs gets path_counter at pathfinding.lua
+				path_counter = #way_of_the_mob;
 				global.hang = true;
 				if #way_of_the_mob > 0 then --dirty fix
 					rot = way_of_the_mob[#way_of_the_mob][6] -- nil
@@ -1793,7 +1787,7 @@ function playingState.keypressed(key, unicode)
 			end;
 		end;
 		if key=="p" then
-			if chars_mobs_npcs[current_mob].person=="char" and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" ) then
+			if chars_mobs_npcs[current_mob].person=="char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" ) then
 				game_status="picklocking";
 				inventory_bag_call();
 				helpers.repackBag();
@@ -1803,7 +1797,7 @@ function playingState.keypressed(key, unicode)
 			end;
 		end;
 
-		if key==" " and (game_status == "neutral" or game_status == "path_finding" or game_status == "sensing") and chars_mobs_npcs[current_mob].control == "player" and ignore_kb==0 then  --spacebar
+		if key==" " and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing") and chars_mobs_npcs[current_mob].control == "player" and ignore_kb==0 then  --spacebar
 			utils.printDebug("spacebar");
 			local switch_level = helpers.ifSwitchLevel();
 			if switch_level then
@@ -1846,7 +1840,7 @@ function playingState.keypressed(key, unicode)
 
 		if key == "f" and (game_status == "neutral" or game_status == "sensing") then
 			find_the_path=1;
-			game_status = "path_finding";
+			game_status = "pathfinding";
 			global.wheeled = 0;
 			global.traced = 0;
 			for i = 1, #chars_mobs_npcs do
@@ -1858,7 +1852,7 @@ function playingState.keypressed(key, unicode)
 		   trace.clear_rounded();
 		end
 
-		if key == "n" and (game_status == "sensing" or game_status == "path_finding") then
+		if key == "n" and (game_status == "sensing" or game_status == "pathfinding") then
 		   find_the_path=0;
 		   path_status=0;
 		   game_status="neutral";
@@ -1867,7 +1861,7 @@ function playingState.keypressed(key, unicode)
 
 		if key == "s"
 		and (game_status == "neutral"
-		or game_status == "path_finding"
+		or game_status == "pathfinding"
 		or game_status == "sensing") then
 			find_the_path=0;
 			game_status="sensing";
@@ -1915,7 +1909,7 @@ function playingState.keypressed(key, unicode)
 			end;
 		end;
 
-		if key == "m" and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
+		if key == "m" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
 			game_status="map"
 			utils.playSfx(media.sounds.paper,1);
 		elseif game_status == "map" then
@@ -1927,7 +1921,7 @@ function playingState.keypressed(key, unicode)
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
 		and chars_stats[current_mob].spellbook==1
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook"  or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats" or game_status == "mindgame") then
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook"  or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats" or game_status == "mindgame") then
 			loveframes.util.RemoveAll();
 			if game_status~="spellbook" then
 				page=1;
@@ -1941,7 +1935,7 @@ function playingState.keypressed(key, unicode)
 		if key == "q"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
 			if game_status~="questbook" then
 				page=1;
 				questbook_call();
@@ -1954,7 +1948,7 @@ function playingState.keypressed(key, unicode)
 		if key == "w"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats") then
 			if game_status~="warbook" then
 				page=1;
 				warbook_call();
@@ -1967,7 +1961,7 @@ function playingState.keypressed(key, unicode)
 		if key == "c"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "stats" or game_status == "skills") then
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "stats" or game_status == "skills") then
 			tmp_mob = current_mob;
 			if game_status~="stats" then
 				charstats_call();
@@ -1980,7 +1974,7 @@ function playingState.keypressed(key, unicode)
 		if key == "k"
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "stats"or game_status == "skills") then
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or game_status == "questbook" or game_status == "warbook" or game_status == "stats"or game_status == "skills") then
 			tmp_mob = current_mob;
 			if game_status~="skills" then
 				charskills_call(current_mob);
@@ -1992,7 +1986,7 @@ function playingState.keypressed(key, unicode)
 
 		if key == "i" then
 			if chars_mobs_npcs[current_mob].person=="char"
-			and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "mindgame") then
+			and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "mindgame") then
 				loveframes.util.RemoveAll();
 				game_status="inventory";
 				inventory_bag_call();
@@ -2010,7 +2004,7 @@ function playingState.keypressed(key, unicode)
 
 		if key == "a" then
 			if chars_mobs_npcs[current_mob].person=="char"
-			and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" ) then
+			and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" ) then
 				game_status="alchemy";
 				inventory_bag_call();
 				helpers.repackBag();
@@ -2042,7 +2036,7 @@ function playingState.keypressed(key, unicode)
 		if key == "e" and chars_mobs_npcs[current_mob].control=="player"
 		and (game_status == "neutral"
 		or game_status == "sensing"
-		or game_status == "path_finding"
+		or game_status == "pathfinding"
 		or game_status == "menu"
 		or game_status == "inventory"
 		or game_status == "alchemy"
@@ -2078,7 +2072,7 @@ function playingState.keypressed(key, unicode)
 		if key == "d" and chars_mobs_npcs[current_mob].control=="player"
 		and (game_status == "neutral"
 		or game_status == "sensing"
-		or game_status == "path_finding"
+		or game_status == "pathfinding"
 		or game_status == "menu"
 		or game_status == "inventory"
 		or game_status == "alchemy"
@@ -2120,7 +2114,7 @@ function playingState.keypressed(key, unicode)
 		if key == "escape"
 		and (game_status == "neutral"
 		or game_status == "sensing"
-		or game_status == "path_finding"
+		or game_status == "pathfinding"
 		or game_status == "menu"
 		or (game_status == "inventory" and global.status ~= "mindgame")
 		or game_status == "alchemy"
@@ -2231,7 +2225,7 @@ function playingState.keypressed(key, unicode)
 			end;
 		end;
 
-		if key == "g" and game_status == "path_finding" then
+		if key == "g" and game_status == "pathfinding" then
 			modepf=-1*modepf;
 		end;
 
@@ -4767,7 +4761,7 @@ function  playingState.mousepressed(x,y,button)
 	end;
 
 	if  button == "l" and mX>global.screenWidth-180 and mX<global.screenWidth-130 and mY>global.screenHeight-110 and mY<global.screenHeight and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
-		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
+		if game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" then
 			game_status = "inventory";
 			inventory_bag_call();
 			helpers.repackBag();
@@ -4781,7 +4775,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 	end;
 	if  button == "l" and mX>=global.screenWidth-320 and mX<global.screenWidth-270 and mY>global.screenHeight-110 and mY<global.screenHeight-35 and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
-		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
+		if game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" then
 			game_status="alchemy";
 			inventory_bag_call();
 			helpers.repackBag();
@@ -4792,7 +4786,7 @@ function  playingState.mousepressed(x,y,button)
 	end;
 
 	if  button == "l" and mX>=global.screenWidth-335 and mX<global.screenWidth-220 and mY>global.screenHeight-35 and mY<global.screenHeight and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
-		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
+		if game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" then
 			game_status="picklocking";
 			inventory_bag_call();
 			helpers.repackBag();
@@ -4804,7 +4798,7 @@ function  playingState.mousepressed(x,y,button)
 
 	--if  button == "l" and mX>=math.min(930,global.screenWidth-280) and mX<math.min(990,global.screenWidth-220) and mY>global.screenHeight-150 and mY<global.screenHeight-80 and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
 	if  button == "l" and mX>=global.screenWidth-380 and mX<global.screenWidth-350 and mY>global.screenHeight-150 and mY<global.screenHeight-80 and chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" then
-		if game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" then
+		if game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" then
 			game_status="map";
 			utils.playSfx(media.sounds.paper,1);
 		elseif game_status == "map"  then
@@ -6122,7 +6116,7 @@ function  playingState.mousepressed(x,y,button)
 		if button == "l" -- pass turn
 		and mX>=global.screenWidth-50 and mX<=global.screenWidth
 		and mY>=global.screenHeight-160 and mY<=global.screenHeight-60
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding")
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding")
 		and chars_mobs_npcs[current_mob].person=="char"
 		and chars_mobs_npcs[current_mob].control=="player"
 		then
@@ -6147,7 +6141,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 		--status buttons
 		if button == "l"  and mX > 530 and mX < 580 and mY > global.screenHeight-133 and mY < global.screenHeight-10 and (game_status == "neutral" or game_status == "sensing") then
-			game_status = "path_finding";
+			game_status = "pathfinding";
 			global.wheeled = 0;
 			global.traced = 0;
 			for i = 1, #chars_mobs_npcs do
@@ -6157,9 +6151,9 @@ function  playingState.mousepressed(x,y,button)
 			end;
 			trace.chars_around();
 			trace.clear_rounded();
-		elseif  button == "l"  and mX > 580 and mX < 620 and mY > global.screenHeight-93 and mY < global.screenHeight-10 and (game_status == "neutral" or game_status == "path_finding") then
+		elseif  button == "l"  and mX > 580 and mX < 620 and mY > global.screenHeight-93 and mY < global.screenHeight-10 and (game_status == "neutral" or game_status == "pathfinding") then
 			game_status = "sensing";
-		elseif  button == "l"  and mX > 530 and mX < 560 and mY > global.screenHeight-160 and mY < global.screenHeight-40 and game_status == "path_finding" then
+		elseif  button == "l"  and mX > 530 and mX < 560 and mY > global.screenHeight-160 and mY < global.screenHeight-40 and game_status == "pathfinding" then
 			game_status = "neutral";
 			helpers.neutralWatch ();
 		elseif  button == "l"  and mX > 530 and mX < 580 and mY > global.screenHeight-160 and mY < global.screenHeight-130 and game_status == "sensing" then
@@ -6224,7 +6218,7 @@ function  playingState.mousepressed(x,y,button)
 		if button == "l"
 		and mX>=global.screenWidth-255 and mX<=global.screenWidth-170
 		and mY >= global.screenHeight-160 and mY<=global.screenHeight-60
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
 		and chars_mobs_npcs[current_mob].person == "char"
 		and chars_mobs_npcs[current_mob].control == "player"
 		and chars_stats[current_mob].spellbook == 1 then
@@ -6240,7 +6234,7 @@ function  playingState.mousepressed(x,y,button)
 		if button == "l"
 		and mX>= global.screenWidth-330 and mX<=global.screenWidth-280
 		and mY>=global.screenHeight-160 and mY<=global.screenHeight-80
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
 		and chars_mobs_npcs[current_mob].person == "char"
 		and chars_mobs_npcs[current_mob].control == "player" then
 			if game_status ~= "questbook" then
@@ -6255,7 +6249,7 @@ function  playingState.mousepressed(x,y,button)
 		if button == "l"
 		and mX>=global.screenWidth-280 and mX<=global.screenWidth-230
 		and mY>=global.screenHeight-180 and mY<=global.screenHeight-160
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "path_finding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
 		and chars_mobs_npcs[current_mob].person == "char"
 		and chars_mobs_npcs[current_mob].control == "player" then
 			if game_status ~= "warbook" then
@@ -6269,7 +6263,7 @@ function  playingState.mousepressed(x,y,button)
 
 		if  game_status == "neutral"
 		or game_status == "sensing"
-		or game_status == "path_finding" then
+		or game_status == "pathfinding" then
 			for i=1,#chars_mobs_npcs do
 				if chars_mobs_npcs[current_mob].control == "player" and chars_mobs_npcs[i].x == cursor_world_x and chars_mobs_npcs[i].y == cursor_world_y then
 					cursor_on_mob = 1;
@@ -6279,7 +6273,7 @@ function  playingState.mousepressed(x,y,button)
 			end;
 		end;
 
-		if button == "r" and (game_status == "neutral" or game_status == "sensing " or game_status == "path_finding") --monsterid
+		if button == "r" and (game_status == "neutral" or game_status == "sensing " or game_status == "pathfinding") --monsterid
 		and chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player"
 		then
 			--for i= chars+1,#chars_mobs_npcs do
@@ -6292,12 +6286,12 @@ function  playingState.mousepressed(x,y,button)
 		end;
 	----//////
 
-		if love.mouse.isDown("m") and game_status == "path_finding" then
+		if love.mouse.isDown("m") and game_status == "pathfinding" then
 			global.wheeled=0;
 		end;
 		--close combat
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 ))
+		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "pathfinding" and #way_of_the_mob == 0 ))
 		and not love.keyboard.isDown("lctrl") then
 			helpers.turnMob(current_mob);
 			if chars_mobs_npcs[current_mob].rot==1 then
@@ -6322,7 +6316,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "path_finding" and #way_of_the_mob == 0 ))
+		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "pathfinding" and #way_of_the_mob == 0 ))
 		and love.keyboard.isDown("lctrl") and chars_mobs_npcs[current_mob].num_thievery > 0 and global.status == "peace" then
 			steal(previctim);
 		end;
@@ -6422,7 +6416,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 
 		if button=="wu" then
-			if game_status == "path_finding" or (game_status == "sensing" and (missle_type=="spikes" or missle_type=="razors")) then
+			if game_status == "pathfinding" or (game_status == "sensing" and (missle_type=="spikes" or missle_type=="razors")) then
 				if cursor_on_mob==1 then
 					global.wheeled=1;
 					if atk_direction>1 then
@@ -6451,7 +6445,7 @@ function  playingState.mousepressed(x,y,button)
 		end;
 
 		if button=="wd" then
-			if game_status == "path_finding" or (game_status == "sensing" and (missle_type=="spikes" or missle_type=="razors")) then
+			if game_status == "pathfinding" or (game_status == "sensing" and (missle_type=="spikes" or missle_type=="razors")) then
 				if cursor_on_mob==1 then
 					global.wheeled=1;
 					if atk_direction<6 then
@@ -6483,7 +6477,7 @@ function  playingState.mousepressed(x,y,button)
 			helpers.globalRandom();
 		end;
 
-		if love.mouse.isDown("l") and mY < global.screenHeight-160 and chars_mobs_npcs[current_mob].control=="player" and path_status==1 and game_status == "path_finding" and aim_on_mob==0  then --GO!
+		if love.mouse.isDown("l") and mY < global.screenHeight-160 and chars_mobs_npcs[current_mob].control=="player" and path_status==1 and game_status == "pathfinding" and aim_on_mob==0  then --GO!
 			tmp= chars_mobs_npcs[current_mob].sprite .. "_walk"
 			mob_walk=loadstring("return " .. tmp)()
 			animation_walk = anim8.newAnimation(mob_walk[way_of_the_mob[#way_of_the_mob][6] ]("5-8",1), 0.075, "pauseAtEnd")
@@ -7645,11 +7639,11 @@ function find_free_space_at_inv ()
 end;
 
 function potion_in_inventory_ttx ()
-	print("potion_in_inventory_ttx called");
+	--print("potion_in_inventory_ttx called");
 	for i = 1,#inventory_ttx do
 		if inventory_ttx[i].class == "potion" then
 			if inventory_ttx[i].c == potioncode then
-				print("potion found");
+				--print("potion found");
 				if alchstatus == "boiledfromcomponents" then
 					local tmpbottleid = alchlab[current_mob].bottle1;
 					local temppower=0;
@@ -7665,7 +7659,7 @@ function potion_in_inventory_ttx ()
 					else
 						tempcomp=0
 					end;
-					print("tempcomp",tempcomp);
+					--print("tempcomp",tempcomp);
 					if (tempcomp>0 and temppower==0) or (tempcomp>0 and chars_mobs_npcs[current_mob]["inventory_list"][tempcomp].q<temppower) then
 						temppower=tempcomp;
 					end;
@@ -7683,7 +7677,7 @@ function potion_in_inventory_ttx ()
 				elseif alchlab[current_mob].tool2>0 and homogenization==1 then
 					temppower2=temppower;
 				end;
-				print("temppower2",temppower2);
+				--print("temppower2",temppower2);
 				local powerlimit = (chars_stats[current_mob].lvl_alchemy*chars_stats[current_mob].num_alchemy+(chars_mobs_npcs[current_mob].num_alchemy-chars_stats[current_mob].num_alchemy));
 				local tmppotionpower=math.ceil((temppower2+powerlimit)*inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].tool1].ttxid].a/100);
 				table.remove(chars_mobs_npcs[current_mob]["inventory_list"],alchlab[current_mob].bottle1);
@@ -7704,7 +7698,7 @@ function potion_in_inventory_ttx ()
 				alchlab[current_mob].bottle1=#chars_mobs_npcs[current_mob]["inventory_list"];
 				helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.boiled[chars_stats[current_mob].gender] .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle1].ttxid].title .. lognames.actions.ofpower .. tmppotionpower);
 				elseif alchstatus == "mixedpotions" then
-				print("potion found2");
+				--print("potion found2");
 				mixedpotion = i;
 				end;
 			end;
@@ -7713,12 +7707,11 @@ function potion_in_inventory_ttx ()
 end;
 
 function mobMoving()
-	--clear_elandscape();
 	local trapped = 0;
+	local price = 0;
 	if path_counter > 0 and #way_of_the_mob > 0 then
-		if way_of_the_mob and #way_of_the_mob > 0 then
-			chars_mobs_npcs[current_mob].rot = way_of_the_mob[path_counter][6]; --FIXME nil
-		end;
+		chars_mobs_npcs[current_mob].rot = way_of_the_mob[path_counter][6];
+		price = helpers.countCurrentHexPrice(path_counter,current_mob);
 	end;
 	if (walked_before == 0 and global.timers.n_timer >= 0.2*global.walk_animation_speed) or global.timers.n_timer >= 0.4*global.walk_animation_speed then
 		local sound_of_step = stepsound_table[map[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]]
@@ -7738,7 +7731,6 @@ function mobMoving()
 		if global.status == "peace" then
 			calendar.add_time_interval(calendar.delta_walk_in_peace);
 		end;
-		local price = helpers.countCurrentHexPrice(path_counter,current_mob);
 		if helpers.aliveNature(current_mob) and global.status == "battle" then
 			if chars_mobs_npcs[current_mob].st >= price then
 				chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st-price;
@@ -9079,7 +9071,7 @@ function playingState.draw()
 	draw.map();
 	--draw.numbers();
 	if chars_mobs_npcs[current_mob].control=="player" then --FIXME
-		if (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and game_status == "path_finding" and path_status==1 then
+		if (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and game_status == "pathfinding" and path_status==1 then
 			draw.way();
 		end;
 	end;

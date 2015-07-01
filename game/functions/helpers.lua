@@ -3958,11 +3958,10 @@ function helpers.handsIfPossible (index)
 	end;
 end;
 
-
 function helpers.protectionOff (index)
-	if not helpers.mobCanDefendHimself (index) then
+	--if not helpers.mobCanDefendHimself (index) then
 		chars_mobs_npcs[index].protectionmode = "none";
-	end;
+	--end;
 end;
 
 function helpers.createSpellbookBySpellNames(spellarray)
@@ -4362,7 +4361,6 @@ function helpers.recalcBattleStats (index)
 
 	chars_mobs_npcs[index].rng = 5+math.ceil((chars_mobs_npcs[index].spd+chars_mobs_npcs[index].dex)/10);
 	chars_mobs_npcs[index].sense =10+math.ceil(chars_mobs_npcs[index].sns/5);
-
 	helpers.recalcResistances(index);
 end;
 
@@ -4840,9 +4838,7 @@ end;
 
 function helpers.battleorder ()
 	utils.printDebug("helpers.battleorder called");
-	while (#order_of_turns > 0) do
-		table.remove(order_of_turns,1);
-	end;
+	order_of_turns = {};
 	for i=1,#chars_mobs_npcs do
 		if chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].ai ~= "building" then
 			if global.battle_start then
