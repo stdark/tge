@@ -1622,14 +1622,14 @@ function resize_map ()
 				submap[my] = {};
 				harvest_table[my] = {};
 				buildings_table[my] = {};
-				homelands_table = {};
+				homelands_table[my] = {};
 			end;
 			if not map[my][mx] then
 				map[my][mx] = current_hex_type;
 				submap[my][mx] = current_hex_type;
 				harvest_table[my][mx] = {0,0,{}};
 				buildings_table[my][mx] = 0;
-				homelands_table = 0;
+				homelands_table[my][mx] = 0;
 			end;
 
 		end;

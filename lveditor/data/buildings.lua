@@ -16,5 +16,10 @@ hexes_ne={{-3,2},{-1,1},{-2,1},{-3,1},{-4,1},{0,0},{-1,0},{-2,0},{-3,0},{-4,0},{
 {img=media.images.buildings1,sprite=love.graphics.newQuad(1296,4,250,226, media.images.buildings1:getWidth(), media.images.buildings1:getHeight()),addx=-100,addy=-180,
 door_ev={0,0},door_ne={0,0}, animation="animation_fountain", animation_source="animatedobjects",
 hexes_ne={{0,4},{-1,4},{0,3},{-1,3},{-2,3},{1,2},{0,2},{-1,2},{-2,2},{1,1},{0,1},{-1,1},{-2,1},{1,0},{0,0},{-1,0},{-1,-1},{-2,-1}},hexes_ev={{0,4},{-1,4},{1,3},{0,3},{-1,3},{1,2},{0,2},{-1,2},{-2,2},{2,1},{1,1},{0,1},{-1,1},{1,0},{0,0},{-1,0},{0,-1},{-1,-1}}},
+
+{img=media.images.buildings1,sprite=love.graphics.newQuad(1554,-1,317,319, media.images.buildings1:getWidth(), media.images.buildings1:getHeight()),addx=-56,addy=-212,
+door_ev={-2,-3},door_ne={-3,0},
+hexes_ne={{0,0},{-1,0},{-2,0},{-3,0},{0,-1},{-1,-1},{-2,-1},{-3,-1},{0,-2},{-1,-2},{-2,-2},{-3,-2},{-1,-3},{-2,-3},{-3,-3}},hexes_ev={{0,0},{-1,0},{-2,0},{-3,0},{1,-1},{0,-1},{-1,-1},{-2,-1},{0,-2},{-1,-2},{-2,-2},{-3,-2},{0,-3},{-1,-3},{-2,-3}}},
+
 };
 end;
