@@ -5219,6 +5219,30 @@ function damage.instantCast () --FIXME use lvl, num
 		table.insert(damaged_mobs,victim);
 	end;
 	
+	if missle_type == "curse" then
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
+		debuff = damage.applyCondition (victim,lvl[1],num[1],"curse","curse",false,false,1,false);
+		if debuff > 0 then
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.cursed[chars_mobs_npcs[victim].gender]);
+		else
+			helpers.addToActionLog(lognames.actions.noeffect);
+		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
+	end;
+	
+	if missle_type == "filth" then
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
+		debuff = damage.applyCondition (victim,lvl[1],num[1],"filth","filth",false,false,1,false);
+		if debuff > 0 then
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.filthed[chars_mobs_npcs[victim].gender]);
+		else
+			helpers.addToActionLog(lognames.actions.noeffect);
+		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
+	end;
+	
 	if missle_type == "darkgasp" then
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"darkgasp","darkness",false,false,1,false);
@@ -5236,6 +5260,30 @@ function damage.instantCast () --FIXME use lvl, num
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"fingerofdeath","darkness",false,false,1,false);
 		if debuff > 0 then
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.fingerofdeathed[chars_mobs_npcs[victim].gender]);
+		else
+			helpers.addToActionLog(lognames.actions.noeffect);
+		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
+	end;
+	
+	if missle_type == "basiliskbreath" then
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
+		debuff = damage.applyCondition (victim,lvl[1],num[1],"basiliskbreath","basiliskbreath",false,false,1,false);
+		if debuff > 0 then
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.basiliskbreathd[chars_mobs_npcs[victim].gender]);
+		else
+			helpers.addToActionLog(lognames.actions.noeffect);
+		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
+	end;
+	
+	if missle_type == "evileye" then
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
+		debuff = damage.applyCondition (victim,lvl[1],num[1],"evileye","evileye",false,false,1,false);
+		if debuff > 0 then
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.evileyed[chars_mobs_npcs[victim].gender]);
 		else
 			helpers.addToActionLog(lognames.actions.noeffect);
 		end;

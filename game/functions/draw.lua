@@ -2590,6 +2590,7 @@ function draw.objects ()
 					or darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 0
 					--or darkness[1][my+map_y+buildings_stats[index]["door_ev"][1]][mx+map_x+buildings_stats[index]["door_ev"][2]] == 0
 					then
+						love.graphics.setColor(255, 255, 255);
 						for i=1,#buildings_stats[index].hexes_ev do
 							--if helpers.insideMap(mx-map_x+buildings_stats[index].hexes_ev[i][1],my+map_y-buildings_stats[index].hexes_ev[i][2]) then
 								darkness[1][my+map_y-buildings_stats[index].hexes_ev[i][1]][mx+map_x-buildings_stats[index].hexes_ev[i][2]] = 0;
@@ -2639,6 +2640,7 @@ function draw.objects ()
 					or darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 0
 					--or darkness[1][my+map_y+buildings_stats[index]["door_ne"][1]][mx+map_x+buildings_stats[index]["door_ne"][2]] == 0
 					then
+						love.graphics.setColor(255, 255, 255);
 						for i=1,#buildings_stats[index].hexes_ne do
 							--if helpers.insideMap(mx+map_x-buildings_stats[index].hexes_ne[i][1],my+map_y-buildings_stats[index].hexes_ne[i][2]) then
 								darkness[1][my+map_y-buildings_stats[index].hexes_ne[i][1]][mx+map_x-buildings_stats[index].hexes_ne[i][2]] = 0;

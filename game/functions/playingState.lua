@@ -82,8 +82,8 @@ function playingState.load()
 	global.use_walk_animation = false;
 	global.walk_animation_speed = 0.1;
 
-	map_w = 100;
-	map_h = 100;
+	map_w = #map;
+	map_h = #map[1];
 	map_size=map_w*map_h;
 	map_x = 0;
 	map_y = 0;
@@ -123,7 +123,6 @@ function playingState.load()
 	end;]]
 	--spelliconcoods={{180,108},{340,108},{340,238},{180,238},{180,368},{340,368},{550,108},{710,108},{550,238},{710,238},{550,368},{710,368},{550,368},{710,368}};
 
-	all_ground_hexes={};
 	holding_smth=0;
 
 	sprites.load();
@@ -185,43 +184,42 @@ function playingState.load()
 	find_the_path=0;
 	way_of_the_mob={};
 
-	tile_counter=0;
 	mob_add_mov_x=0;
 	mob_add_mov_y=0;
 	current_mob=1;
 	modepf=1;
 
-	array_of_map ()
-	shot_line={}
+	
+	shot_line={};
 
-	darkness = {}
+	darkness = {};
 
-	trace.array_of_darkness()
+	trace.array_of_darkness();
 
 	dlandscape_obj={} -- fire, ice, etc. effects
 	dlandscape_power={}
 	dlandscape_duration={}
 
-	alandscape_obj={} -- poison/air/clod effects
-	alandscape_power={}
-	alandscape_duration={}
+	alandscape_obj={}; -- poison/air/clod effects
+	alandscape_power={};
+	alandscape_duration={};
 
-	rlandscape_obj={} -- radiation
-	rlandscape_power={}
-	rlandscape_duration={}
+	rlandscape_obj={}; -- radiation
+	rlandscape_power={};
+	rlandscape_duration={};
 
-	vlandscape_obj={} -- void
-	vlandscape_id={}
-	vlandscape_duration={}
+	vlandscape_obj={} ;-- void
+	vlandscape_id={};
+	vlandscape_duration={};
 
-	mlandscape_obj={} -- mines, spikes
-	mlandscape_power={}
-	mlandscape_duration={}
-	mlandscape_id={}
+	mlandscape_obj={}; -- mines, spikes
+	mlandscape_power={};
+	mlandscape_duration={};
+	mlandscape_id={};
 
 	xlandscape = {}; --traps;
 
-	elandscape={} -- temporary explosion effects
+	elandscape={}; -- temporary explosion effects
 
 	wlandscape={} -- wizard eye level
 
@@ -234,6 +232,8 @@ function playingState.load()
 	plandscape={}; -- switch level
 
 	arrays_of_tmp_landscape ();
+	
+	array_of_map ();
 
 	back_size = 256;
 	back_count = 8;
@@ -1612,6 +1612,8 @@ function all_bags ()
 end;
 
 function array_of_map ()
+	all_ground_hexes={};
+	tile_counter = 1;
 	for my=1, map_h do
 		for mx=1, map_w do
 			local visibility = 0;
@@ -1619,12 +1621,19 @@ function array_of_map ()
 			if map[mx][my] <= 300 then
 				visibility = visibility_table[map[mx][my]];
 				pass = heights_table[map[mx][my]];
+				if dlandscape_obj[mx][my] == "stone" then
+					pass = 2;
+					visibility = 1;
+				end;
+				if dlandscape_obj[mx][my] == "pit" then
+					pass = -1;
+				end;
 			else
 				visibility = 1;
 				pass = 2;
 			end;
-
-			table.insert(all_ground_hexes,{id=tile_counter+1, type=map[my][mx], x=my,y=mx, pass=pass,visibility=visibility,stepsound=stepsound_table[map[mx][my]] });
+			all_ground_hexes[tile_counter] = {id=tile_counter+1, type=map[my][mx], x=my,y=mx, pass=pass,visibility=visibility,stepsound=stepsound_table[map[mx][my]]};
+			--table.insert(all_ground_hexes,{id=tile_counter+1, type=map[my][mx], x=my,y=mx, pass=pass,visibility=visibility,stepsound=stepsound_table[map[mx][my]] });
 			tile_counter = tile_counter+1;
 		end;
 	end;

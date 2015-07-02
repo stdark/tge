@@ -3586,7 +3586,6 @@ function drawUIButtons()
 		newLevel();
 	end;
 	
-	
 	uibuttons[13] = loveframes.Create("button")
 	uibuttons[13]:SetPos(840,global.screenHeight-120);
 	uibuttons[13]:SetHeight(30);
@@ -3595,7 +3594,16 @@ function drawUIButtons()
 	uibuttons[13].OnClick = function(object)
 		save();
 	end;
-	
+		
+	uibuttons[29] = loveframes.Create("button")
+	uibuttons[29]:SetPos(840,global.screenHeight-60);
+	uibuttons[29]:SetHeight(30);
+	uibuttons[29]:SetWidth(80);
+	uibuttons[29]:SetText("screenshot");
+	uibuttons[29].OnClick = function(object)
+	    local screenshot = love.graphics.newScreenshot();
+		screenshot:encode(os.time() .. '.png');
+	end;
 end;
 
 function startDiggers(x,y,count,flag) --FIXME submap only

@@ -1358,17 +1358,18 @@ function boomareas.wallGround (x,y,i,lvl,num) --affect map! FIXME
 			dlandscape_obj[y][x] = "stone";
 			dlandscape_power[y][x] = math.ceil(lvl*1/i);
 			dlandscape_duration[y][x] = math.ceil(num*1/i);
-			map[y][x]=7;
+			--map[y][x]=7;
 			helpers.clearHlandscape(x,y);
 		elseif dlandscape_obj[y][x] == "stone" or dlandscape_obj[y][x] == "pit" then
 			dlandscape_obj[y][x] = 0;
 			dlandscape_power[y][x] = 0;
 			dlandscape_duration[y][x] = 0;
-			map[y][x]=1;
+			--map[y][x]=1;
 			helpers.clearHlandscape(x,y);
 		end;
 	end;
 end;
+
 
 function boomareas.pitGround (x,y,i,lvl,num) --affect map! FIXME
 	local cursor_at_chest,pointx,pointy,rotation_to_chest = helpers.cursorAtChest(x,y);
@@ -1377,13 +1378,13 @@ function boomareas.pitGround (x,y,i,lvl,num) --affect map! FIXME
 			dlandscape_obj[y][x] = "pit";
 			dlandscape_power[y][x] = math.ceil(lvl*1/i);
 			dlandscape_duration[y][x] = math.ceil(num*1/i);
-			map[y][x]=9;
+			--map[y][x]=9;
 		elseif dlandscape_obj[y][x] == "stone" or dlandscape_obj[y][x] == "pit" then
 			elandscape[y][x] = "dust";
 			dlandscape_obj[y][x] = 0;
 			dlandscape_power[y][x] = 0;
 			dlandscape_duration[y][x] = 0;
-			map[y][x]=1;
+			--map[y][x]=1;
 		end;
 	end;
 end;
