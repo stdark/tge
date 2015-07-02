@@ -7443,7 +7443,6 @@ function  playingState.mousepressed(x,y,button)
 	and  (magic.spell_tips[missle_type].form == "wall" or magic.spell_tips[missle_type].form == "summon")
 	and heights_table[map[cursor_world_y][cursor_world_x] ]==0
 	then
-		print("SUMMON");
 		helpers.beforeShoot();
 		helpers.turnMob(current_mob);
 		game_status="shot";

@@ -857,7 +857,7 @@ function draw.boom ()
 	if missle_type == "stonewall" then
 		local boomarea = boomareas.wallArea(cursor_world_x,cursor_world_y,spell_rotation,1);
 		for i=1,#boomarea do
-			boomareas.startWallGround(boomarea[i].y,boomarea[i].x,1,lvl[1],num[1]);
+			boomareas.startWallGround(boomarea[i].x,boomarea[i].y,1,lvl[1],num[1]);
 		end;
 	end;
 	
@@ -2796,6 +2796,7 @@ function draw.objects ()
 					end;
 				end;
 				if elandscape[my+map_y][mx+map_x] == "stone" then
+					print("stone",game_status,my+map_y,mx+map_x);
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						animation_stonewall:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-95);
 					else
