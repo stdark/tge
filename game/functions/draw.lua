@@ -4482,19 +4482,19 @@ function draw.ui ()
 			love.graphics.draw(media.images.ui, spyglass_icon_2, 580,global.screenHeight-155);
 		end;
 	end;
-	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sense")  and global.status ~= "mindgame" then
+	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing")  and global.status ~= "mindgame" then
 		love.graphics.draw(media.images.ui, bin_icon, global.screenWidth-180, global.screenHeight-160,0);
 	end;	
-	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and game_status ~= "chat" and chars_stats[current_mob].spellbook == 1 and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sense" or game_status == "mindgame") then
+	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and game_status ~= "chat" and chars_stats[current_mob].spellbook == 1 and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing" or game_status == "mindgame") then
 		love.graphics.draw(media.images.ui, spellbook_icon, global.screenWidth-280,global.screenHeight-160); -- draw spellbook icon at HUD
 	end;	
-	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sense")  and global.status ~= "mindgame" then
+	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing")  and global.status ~= "mindgame" then
 		love.graphics.draw(media.images.ui, gnomon_icon,global.screenWidth-300,global.screenHeight-105);
     end;
-    if chars_mobs_npcs[current_mob].person=="char" then
+    if chars_mobs_npcs[current_mob].person == "char" then
 		love.graphics.draw(media.images.ui, current_char_img,chars_mobs_npcs[current_mob].id*125-70,screen_mod_y - 20);
     end;
-	if chars_mobs_npcs[current_mob].person=="char" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sense" or game_status == "mindgame") then
+	if chars_mobs_npcs[current_mob].person=="char" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing" or game_status == "mindgame") then
 		love.graphics.draw(media.images.ui, bag_inv,global.screenWidth-210,global.screenHeight-110);
 		love.graphics.draw(media.images.ui,veksel_icon,global.screenWidth-180,global.screenHeight-90);
 		local addx=0;
@@ -4528,7 +4528,7 @@ function draw.ui ()
 			love.graphics.setColor(255,255,255);
 	   end;
    end;
-   if chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sense" or game_status == "mindgame") then
+   if chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing" or game_status == "mindgame") then
 		love.graphics.draw(media.images.ui, pass_turn,global.screenWidth-80,global.screenHeight-160);
     end;
 	if global.status == "peace"  and game_status ~= "chat" and game_status ~= "mindgame" and global.status ~= "mindgame" then
@@ -4540,7 +4540,7 @@ function draw.ui ()
 	if global.status == "battle"  and game_status ~= "chat" and game_status ~= "mindgame" and global.status ~= "mindgame" then
 		draw.lineOfOrder();
 	end;
-	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sense") and global.status ~= "mindgame" then
+	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing") and global.status ~= "mindgame" then
 		love.graphics.setColor(255, 255, 255)
 		love.graphics.draw(media.images.ui, mask_icon, global.screenWidth-580, global.screenHeight-30,0);
 		love.graphics.draw(media.images.ui, map_icon, global.screenWidth-380, global.screenHeight-150,0);

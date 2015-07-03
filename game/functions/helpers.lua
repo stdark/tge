@@ -729,10 +729,9 @@ function helpers.notCharUnderCursor ()
 	end;
 end;
 
-function helpers.allyUnderCursor ()
-	mob_under_cursor=0;
+function helpers.allyUnderCursor (x,y)
 	for i=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[i].x == point_to_go_x and chars_mobs_npcs[i].y == point_to_go_y  and chars_mobs_npcs[previctim].status == 1 and (chars_mobs_npcs[current_mob].person == "char" or chars_mobs_npcs[current_mob].control == "player") then
+		if chars_mobs_npcs[i].x == x and chars_mobs_npcs[i].y == y and (chars_mobs_npcs[previctim].status >= 0 and chars_mobs_npcs[current_mob].person == "char") or (chars_mobs_npcs[current_mob].control == "player" and chars_mobs_npcs[previctim].status == 1) then
 			return true;
 		else
 			return false;

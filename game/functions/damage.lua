@@ -1153,7 +1153,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				end;
 				damage.HPminus(victim,dmghp,true);
 			end;
-			if missle_type == "windfist" and chars_mobs_npcs[victim].size ~= "giant" then
+			--[[if missle_type == "windfist" and chars_mobs_npcs[victim].size ~= "giant" then
 				chars_mobs_npcs[victim].stun = damage.applyCondition (victim,lvl[1],num[1],"stun",false,"enu",false,1,false);
 				local dmgrt = math.max(chars_mobs_npcs[victim].rt,20 +  damage.damageRandomizator(current_mob,1,lvl[1]*num[1]));
 				damage.RTminus(victim,dmgrt,true);
@@ -1163,7 +1163,34 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					chars_mobs_npcs[victim].y = ring[chars_mobs_npcs[current_mob].rot].y;
 				end;
 				helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.stunned[chars_mobs_npcs[victim].gender]);
+			end;]]
+			
+			if missle_type == "windfist" then
+				chars_mobs_npcs[victim].stun = damage.applyCondition (victim,lvl[1],num[1],"stun",false,"enu",false,1,false);
+				local dmgrt = damage.damageRandomizator(current_mob,20,lvl[1]*num[1]);
+				damage.RTminus(victim,dmgrt,true);
+				local ring = boomareas.ringArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+				local penalty = 0;
+				if chars_mobs_npcs[victim].size == "giant" then
+					penalty = 3;
+				end;
+				if chars_mobs_npcs[victim].nature == "golem" or chars_mobs_npcs[victim].class == "earthelemental" then
+					penalty = 2;
+				end;
+				if chars_mobs_npcs[victim].nature == "droid" or chars_mobs_npcs[victim].size == "big" then
+					penalty = 1;
+				end;
+				local sixrows_dir = chars_mobs_npcs[current_mob].rot;
+				for i=1,math.max(1,math.min(3,lvl[1]-1-penalty)) do
+					if helpers.passCheck(ring[i][sixrows[i][sixrows_dir]].x,ring[i][sixrows[i][sixrows_dir]].y) and chars_mobs_npcs[victim].status == 1 then
+						chars_mobs_npcs[victim].x = ring[i][sixrows[i][sixrows_dir]].x;
+						chars_mobs_npcs[victim].y = ring[i][sixrows[i][sixrows_dir]].y;
+						damage.landscapeHex(victim,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+					end;
+				end;
+				helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.stunned[chars_mobs_npcs[victim].gender]);
 			end;
+			
 			if missle_type=="lightning" then
 				dmghp = damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,8)*num[1],"static");
 				damage.HPminus(victim,dmghp,true);
@@ -2134,6 +2161,73 @@ function damage.multidamage () --FIXME two hexes
 				end;
 			end;
 		end;
+	end;
+	
+	if missle_type == "divineintervantion" then
+		local price = 0;
+		for i = 1,chars do
+			price = price+chars_mobs_npcs[i].bleeding + chars_mobs_npcs[i].flame_power*chars_mobs_npcs[i].flame_dur + chars_mobs_npcs[i].poison_power*chars_mobs_npcs[i].poison_dur
+			+chars_mobs_npcs[i].cold_power*chars_mobs_npcs[i].cold_dur+chars_mobs_npcs[i].acid_power*chars_mobs_npcs[i].acid_dur+ chars_mobs_npcs[i].disease*10
+			+chars_mobs_npcs[i].drunk*10+chars_mobs_npcs[i].insane*10+chars_mobs_npcs[i].fear*10+chars_mobs_npcs[i].feeblemind*10+chars_mobs_npcs[i].paralyze*10
+			+chars_mobs_npcs[i].madness*10+chars_mobs_npcs[i].filth_power*chars_mobs_npcs[i].filth_dur
+			+chars_mobs_npcs[i].darkgasp*10+chars_mobs_npcs[i].despondency_power*chars_mobs_npcs[i].despondency_dur
+			+chars_mobs_npcs[i].blind_dur*chars_mobs_npcs[i].blind_power+chars_mobs_npcs[i].curse*10
+			+chars_mobs_npcs[i].ac_debuff_power*chars_mobs_npcs[i].ac_debuff_dur
+			+chars_mobs_npcs[i].darkcontamination+chars_mobs_npcs[i].basiliskbreath+chars_mobs_npcs[i].evileye
+			+chars_mobs_npcs[i].deadlyswarm+chars_mobs_npcs[i].immobilize+chars_mobs_npcs[i].stone*50+chars_mobs_npcs[i].freeze*20;
+			if chars_mobs_npcs[i].status == 0 then
+				price = price+100;
+			elseif chars_mobs_npcs[i].status == -1 then
+				price = price+1000;
+			end;
+			chars_mobs_npcs[i].status = 1;
+			chars_mobs_npcs[i].hp = chars_mobs_npcs[i].hp_max;
+			chars_mobs_npcs[i].sp = chars_mobs_npcs[i].sp_max;
+			chars_mobs_npcs[i].st = chars_mobs_npcs[i].st_max;
+			chars_mobs_npcs[i].rt = 200;
+
+			chars_mobs_npcs[i].bleeding = 0;
+			chars_mobs_npcs[i].flame_power=0;
+			chars_mobs_npcs[i].flame_dur=0;
+			chars_mobs_npcs[i].poison_power=0;
+			chars_mobs_npcs[i].poison_dur=0;
+			chars_mobs_npcs[i].poison_status=0;
+			chars_mobs_npcs[i].cold_power=0;
+			chars_mobs_npcs[i].cold_dur=0;
+			chars_mobs_npcs[i].acid_power=0;
+			chars_mobs_npcs[i].acid_dur=0;
+			chars_mobs_npcs[i].disease = 0;
+			chars_mobs_npcs[i].drunk = 0;
+			chars_mobs_npcs[i].insane = 0;
+			chars_mobs_npcs[i].fear=0;
+			chars_mobs_npcs[i].feeblemind = 0;
+			chars_mobs_npcs[i].paralyze = 0;
+			chars_mobs_npcs[i].madness = 0;
+			chars_mobs_npcs[i].filth_power=0;
+			chars_mobs_npcs[i].filth_dur=0;
+			chars_mobs_npcs[i].darkgasp = 0
+			chars_mobs_npcs[i].darkcontamination = 0;
+			chars_mobs_npcs[i].basiliskbreath = 0;
+			chars_mobs_npcs[i].evileye = 0;
+			chars_mobs_npcs[i].despondency_power=0;
+			chars_mobs_npcs[i].despondency_dur=0;
+			chars_mobs_npcs[i].blind_power = 0;
+			chars_mobs_npcs[i].blind_dur = 0;
+			chars_mobs_npcs[i].curse = 0;
+			chars_mobs_npcs[i].deadlyswarm = 0;
+			chars_mobs_npcs[i].freeze = 0;
+			chars_mobs_npcs[i].stone = 0;
+			chars_mobs_npcs[i].immobilize = 0;
+
+			chars_mobs_npcs[i].reye = 1;
+			chars_mobs_npcs[i].leye = 1;
+			chars_mobs_npcs[i]["arms_health"].rh = 1;
+			chars_mobs_npcs[i]["arms_health"].lh = 1;
+			chars_mobs_npcs[i].pneumothorax = 0;
+		end;
+		local ageprice = math.ceil(price)/365;
+		chars_mobs_npcs[i].age = chars_mobs_npcs[i].age + ageprice;
+		exp_for_what(ageprice,current_mob);
 	end;
 	
 	if missle_type == "pandemia" then
@@ -4269,6 +4363,28 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "telekinesis" then --traps, herbs
 		helpers.harvestOne (boomx,boomy)
 		local x,y = helpers.hexInFronTOfMob(current_mob);
+		if victim nad victim ~= current_mob then
+				local ring = boomareas.ringArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+				local penalty = 0;
+				if chars_mobs_npcs[victim].size == "giant" then
+					penalty = 3;
+				end;
+				if chars_mobs_npcs[victim].nature == "golem" or chars_mobs_npcs[victim].class == "earthelemental" then
+					penalty = 2;
+				end;
+				if chars_mobs_npcs[victim].nature == "droid" or chars_mobs_npcs[victim].size == "big" then
+					penalty = 1;
+				end;
+				local sixrows_dir = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
+				for i=1,math.max(1,math.min(3,lvl[1]-3-penalty)) do
+					if helpers.passCheck(ring[i][sixrows[i][sixrows_dir]].x,ring[i][sixrows[i][sixrows_dir]].y) then
+						chars_mobs_npcs[victim].x = ring[i][sixrows[i][sixrows_dir]].x;
+						chars_mobs_npcs[victim].y = ring[i][sixrows[i][sixrows_dir]].y;
+						damage.landscapeHex(victim,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+					end;
+				end;
+				helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.feelstheforce[chars_mobs_npcs[victim].gender]);
+		end;
 		for i=1,#bags_list do
 			if bags_list[i].x == boomx and bags_list[i].y == boomy then
 				if bags_list[i].typ == "bag" and helpers.passCheck(x,y) then
@@ -5996,7 +6112,7 @@ function damage.PoisonPlus(index,poisonPlus)
 end;
 
 function damage.SPminus(index,damageSP,flag)
-	local realdamage = math.max(0,chars_mobs_npcs[index].sp - damageSP);
+	local realdamage = math.max(chars_mobs_npcs[index].sp,chars_mobs_npcs[index].sp - damageSP);
 	chars_mobs_npcs[index].sp = chars_mobs_npcs[index].sp - realdamage;
 	if flag then
 		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.lost[chars_mobs_npcs[index].gender] .. realdamage .. lognames.actions.metr .. lognames.actions.ofsp);
@@ -6004,7 +6120,7 @@ function damage.SPminus(index,damageSP,flag)
 end;
 
 function damage.STminus(index,damageST,flag)
-	local realdamage = math.max(0,chars_mobs_npcs[index].st - damageST);
+	local realdamage = math.max(chars_mobs_npcs[index].st,chars_mobs_npcs[index].st - damageST);
 	chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - realdamage;
 	if flag then
 		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.lost[chars_mobs_npcs[index].gender] .. realdamage .. lognames.actions.metr .. lognames.actions.ofst);
@@ -6016,7 +6132,7 @@ function damage.STminus(index,damageST,flag)
 end;
 
 function damage.RTminus(index,damageRT,flag)
-	local realdamage = math.max(0,chars_mobs_npcs[index].rt - damageRT);
+	local realdamage = math.max(chars_mobs_npcs[index].rt,chars_mobs_npcs[index].rt - damageRT);
 	chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - realdamage;
 	if flag then
 		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.lost[chars_mobs_npcs[index].gender] .. realdamage .. lognames.actions.metr .. lognames.actions.ofrt);

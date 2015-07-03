@@ -26,7 +26,6 @@ function path_finding (mode,ignore_mobs)
 	path_status = 0;
 	path_print = "";
 	path_can_be_found = 0;
-	cursor_on_mob = 0;
 	aim_on_mob = 0;
 	if chars_mobs_npcs[current_mob].control == "player" then
 		if helpers.insideMap(cursor_world_x,cursor_world_y) then

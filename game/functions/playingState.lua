@@ -1487,6 +1487,7 @@ function playingState.update(dt)
 			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball"
 			or magic.spell_tips[missle_type].form == "rico" or magic.spell_tips[missle_type].form == "rain" or magic.spell_tips[missle_type].form == "skyrock"
 			or magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy"
+			or magic.spell_tips[missle_type].form == "area"
 			or missle_type == "armageddon" then
 				game_status="missle";
 				in_fly=0;
@@ -1543,13 +1544,15 @@ function playingState.update(dt)
 			if helpers.missleIsAweapon () then
 				missle_fly();
 			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball"
-			or missle_type == "windfist"
-			or missle_type == "acidburst"
 			or missle_type=="icefield" then
 				missle_fly();
 			elseif magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy" then
 				boomy= chars_mobs_npcs[victim].y;
 				boomx= chars_mobs_npcs[victim].x;
+				draw.boom();
+			elseif magic.spell_tips[missle_type].form == "area" then
+				boomx = cursor_world_x;
+				boomy = cursor_world_y;
 				draw.boom();
 			elseif magic.spell_tips[missle_type].form == "rain" or magic.spell_tips[missle_type].form == "skyrock" then
 				meteor_fly();
@@ -1568,7 +1571,7 @@ function playingState.update(dt)
 			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "skyray" or magic.spell_tips[missle_type].form == "direct" then
 				game_status="damage";
 				damage.singledamage();
-			elseif magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy" or missle_type=="torchlight" or missle_type=="ritualofthevoid" then
+			elseif magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "area" or magic.spell_tips[missle_type].form == "deadenemy" or missle_type=="torchlight" or missle_type=="ritualofthevoid" then
 				game_status="damage";
 				damage.instantCast();
 			elseif magic.spell_tips[missle_type].form == "ring" or magic.spell_tips[missle_type].form == "proactive"
@@ -2353,16 +2356,6 @@ function playingState.mousereleased (x,y,button)
 					+chars_mobs_npcs[current_mob].madness*10+chars_mobs_npcs[current_mob].filth_power*chars_mobs_npcs[current_mob].filth_dur
 					+chars_mobs_npcs[current_mob].darkgasp*10+chars_mobs_npcs[current_mob].despondency_power*chars_mobs_npcs[current_mob].despondency_dur
 					+chars_mobs_npcs[current_mob].blind_dur*chars_mobs_npcs[current_mob].blind_power+chars_mobs_npcs[current_mob].curse*10
-					+chars_mobs_npcs[current_mob].mgt_debuff_power*chars_mobs_npcs[current_mob].mgt_debuff_dur
-					+chars_mobs_npcs[current_mob].enu_debuff_power*chars_mobs_npcs[current_mob].enu_debuff_dur
-					+chars_mobs_npcs[current_mob].dex_debuff_power*chars_mobs_npcs[current_mob].dex_debuff_dur
-					+chars_mobs_npcs[current_mob].spd_debuff_power*chars_mobs_npcs[current_mob].spd_debuff_dur
-					+chars_mobs_npcs[current_mob].acu_debuff_power*chars_mobs_npcs[current_mob].acu_debuff_dur
-					+chars_mobs_npcs[current_mob].sns_debuff_power*chars_mobs_npcs[current_mob].sns_debuff_dur
-					+chars_mobs_npcs[current_mob].int_debuff_power*chars_mobs_npcs[current_mob].int_debuff_dur
-					+chars_mobs_npcs[current_mob].spr_debuff_power*chars_mobs_npcs[current_mob].spr_debuff_dur
-					+chars_mobs_npcs[current_mob].chr_debuff_power*chars_mobs_npcs[current_mob].chr_debuff_dur
-					+chars_mobs_npcs[current_mob].luk_debuff_power*chars_mobs_npcs[current_mob].luk_debuff_dur
 					+chars_mobs_npcs[current_mob].ac_debuff_power*chars_mobs_npcs[current_mob].ac_debuff_dur
 					+chars_mobs_npcs[current_mob].darkcontamination+chars_mobs_npcs[current_mob].basiliskbreath+chars_mobs_npcs[current_mob].evileye
 					+chars_mobs_npcs[current_mob].deadlyswarm;
@@ -2429,29 +2422,6 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[current_mob].blind_dur = 0;
 						chars_mobs_npcs[current_mob].curse = 0;
 						chars_mobs_npcs[current_mob].deadlyswarm = 0;
-
-						chars_mobs_npcs[current_mob].mgt_debuff_power=0;
-						chars_mobs_npcs[current_mob].mgt_debuff_dur=0;
-						chars_mobs_npcs[current_mob].enu_debuff_power=0;
-						chars_mobs_npcs[current_mob].enu_debuff_dur=0;
-						chars_mobs_npcs[current_mob].dex_debuff_power=0;
-						chars_mobs_npcs[current_mob].dex_debuff_dur=0;
-						chars_mobs_npcs[current_mob].spd_debuff_power=0;
-						chars_mobs_npcs[current_mob].spd_debuff_dur=0;
-						chars_mobs_npcs[current_mob].acu_debuff_power=0;
-						chars_mobs_npcs[current_mob].acu_debuff_dur=0;
-						chars_mobs_npcs[current_mob].sns_debuff_power=0;
-						chars_mobs_npcs[current_mob].sns_debuff_dur=0;
-						chars_mobs_npcs[current_mob].int_debuff_power=0;
-						chars_mobs_npcs[current_mob].int_debuff_dur=0;
-						chars_mobs_npcs[current_mob].spr_debuff_power=0;
-						chars_mobs_npcs[current_mob].spr_debuff_dur=0;
-						chars_mobs_npcs[current_mob].chr_debuff_power=0;
-						chars_mobs_npcs[current_mob].chr_debuff_dur=0;
-						chars_mobs_npcs[current_mob].luk_debuff_power=0;
-						chars_mobs_npcs[current_mob].luk_debuff_dur=0;
-						chars_mobs_npcs[current_mob].ac_debuff_power=0;
-						chars_mobs_npcs[current_mob].ac_debuff_dur=0;
 
 						chars_mobs_npcs[current_mob].reye = 1;
 						chars_mobs_npcs[current_mob].leye = 1;
@@ -6275,7 +6245,6 @@ function  playingState.mousepressed(x,y,button)
 		or game_status == "pathfinding" then
 			for i=1,#chars_mobs_npcs do
 				if chars_mobs_npcs[current_mob].control == "player" and chars_mobs_npcs[i].x == cursor_world_x and chars_mobs_npcs[i].y == cursor_world_y then
-					cursor_on_mob = 1;
 					previctim = chars_mobs_npcs[i].id;
 				else
 				end;
@@ -6426,7 +6395,7 @@ function  playingState.mousepressed(x,y,button)
 
 		if button=="wu" then
 			if game_status == "pathfinding" or (game_status == "sensing" and (missle_type=="spikes" or missle_type=="razors")) then
-				if cursor_on_mob==1 then
+				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
 					global.wheeled=1;
 					if atk_direction>1 then
 						atk_direction=atk_direction-1;
@@ -6455,7 +6424,7 @@ function  playingState.mousepressed(x,y,button)
 
 		if button=="wd" then
 			if game_status == "pathfinding" or (game_status == "sensing" and (missle_type=="spikes" or missle_type=="razors")) then
-				if cursor_on_mob==1 then
+				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
 					global.wheeled=1;
 					if atk_direction<6 then
 						atk_direction=atk_direction+1;
@@ -6490,9 +6459,9 @@ function  playingState.mousepressed(x,y,button)
 			tmp= chars_mobs_npcs[current_mob].sprite .. "_walk"
 			mob_walk=loadstring("return " .. tmp)()
 			animation_walk = anim8.newAnimation(mob_walk[way_of_the_mob[#way_of_the_mob][6] ]("5-8",1), 0.075, "pauseAtEnd")
-			if cursor_on_mob==1 and chars_mobs_npcs[previctim].status==1 then
+			if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and chars_mobs_npcs[previctim].status==1 then
 				going_to_hit=1
-			elseif cursor_on_mob==0 or chars_mobs_npcs[previctim].status<1 then
+			elseif not helpers.cursorAtMob (cursor_world_x,cursor_world_y) or chars_mobs_npcs[previctim].status<1 then
 				going_to_hit=0
 			end;
 		   if chars_mobs_npcs[current_mob].wingsoflight == 0 then
@@ -6575,14 +6544,31 @@ function  playingState.mousepressed(x,y,button)
 					point_to_go_x=cursor_world_x;
 					point_to_go_y=cursor_world_y;
 					helpers.turnMob(current_mob);
-					if helpers.allyUnderCursor () then
+					if helpers.allyUnderCursor (cursor_world_x,cursor_world_y) then
 						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
 						helpers.beforeShoot();
 						game_status="shot";
 						damage.shoot();
 					end;
 				end;
-
+				
+				if love.mouse.isDown("l") and mY < global.screenHeight-160
+				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+				and game_status == "sensing"
+				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].sense --not too far!
+				and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
+				and magic.spell_tips[missle_type].form == "area" then
+					point_to_go_x=cursor_world_x;
+					point_to_go_y=cursor_world_y;
+					helpers.turnMob(current_mob);
+					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
+						previctim = helpers.mobIDUnderCursor (point_to_go_x,point_to_go_y);
+						helpers.beforeShoot();
+						game_status="shot";
+						damage.shoot();
+					end;
+				end;
+				
 				if love.mouse.isDown("l") and mY < global.screenHeight-1600
 				and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
 				and game_status == "sensing"
@@ -6654,8 +6640,8 @@ function  playingState.mousepressed(x,y,button)
 				end;
 
 				if love.mouse.isDown("l") and mY < global.screenHeight-160
-				and (chars_mobs_npcs[previctim].control=="ai"	or person_under_cursor=="mob")
-				and cursor_on_mob==1
+				and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
+				and (chars_mobs_npcs[previctim].control=="ai" or person_under_cursor=="mob")
 				and game_status == "sensing"
 				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
 				and (missle_type=="spikes" or missle_type=="razors")
@@ -6668,7 +6654,7 @@ function  playingState.mousepressed(x,y,button)
 				end;
 
 				if love.mouse.isDown("l") and mY < global.screenHeight-160
-				and cursor_on_mob==1
+				and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
 				and game_status == "sensing"
 				and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
 				and chars_mobs_npcs[previctim].nature == "undead"
@@ -8096,11 +8082,13 @@ function steal (index)
 	global.hang = false;
 end;
 
-function exp_for_what(alldmg,index)
-	if chars_mobs_npcs[index].person=="char" then
-		chars_mobs_npcs[index].tmpexpdmg = chars_mobs_npcs[index].tmpexpdmg + alldmg;
-	elseif chars_mobs_npcs[index].person == "mob" and chars_mobs_npcs[victim].person == "char" then
-		chars_mobs_npcs[victim].tmpexplost = chars_mobs_npcs[victim].tmpexplost + alldmg;
+function exp_for_what(value,index) --FIXME
+	if global.status == "battle" then
+		if chars_mobs_npcs[index].person=="char" then
+			chars_mobs_npcs[index].tmpexpdmg = chars_mobs_npcs[index].tmpexpdmg + value;
+		elseif chars_mobs_npcs[index].person == "mob" and chars_mobs_npcs[current_mob].person == "char" then
+			chars_mobs_npcs[victim].tmpexplost = chars_mobs_npcs[victim].tmpexplost + value;
+		end;
 	end;
 end;
 

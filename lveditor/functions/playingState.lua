@@ -399,7 +399,8 @@ function playingState.load()
 	love.window.setMode(1920, 1080, {resizable=false});
 	drawUIButtons();
 	local width, height = love.window.getDesktopDimensions(1); -- get our display size
-	love.window.setMode(width, height, {resizable=false});      
+	love.window.setMode(width, height, {resizable=false}); 
+	global.loaded = true;    
 end;
  
 function playingState.update(dt)
@@ -2766,6 +2767,19 @@ function playingState.mousereleased(x, y, button)
 		end;
 	end;
 end;
+
+function love.resize(w, h)
+	if global.loaded then
+		editor_status='hexes';
+		hexes_status=1;
+		object_status=1;
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		draw_buttons();
+		draw_hexbuttons ();
+		boxes();
+	end;
+end
 
 function findBagOrObject(x,y)
 	for i=1,#bags_list do
