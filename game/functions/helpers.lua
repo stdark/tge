@@ -5193,57 +5193,65 @@ function helpers.musicPull() --FIXME not completed
 end;
 
 function helpers.turnMob (index) --FIXME 2hex
+	local need_rot = chars_mobs_npcs[index].rot;
 	if chars_mobs_npcs[index].hexes == 1 then
 		if  point_to_go_x<chars_mobs_npcs[index].x and point_to_go_y<chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=6;
+			need_rot=6;
 		end;
 		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y<chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=1;
+			need_rot=1;
 		end;
 		if  point_to_go_x<chars_mobs_npcs[index].x and point_to_go_y>chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=4;
+			need_rot=4;
 		end;
 		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y>chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=3;
+			need_rot=3;
 		end;
 		if point_to_go_x>chars_mobs_npcs[index].x and point_to_go_y== chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=2;
+			need_rot=2;
 		end;
 		if point_to_go_x<chars_mobs_npcs[index].x and point_to_go_y== chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=5;
+			need_rot=5;
 		end;
 		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2~=math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y<chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=6;
+			need_rot=6;
 		end;
 		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2~=math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y>chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=4;
+			need_rot=4;
 		end;
 		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2==math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y<chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=1;
+			need_rot=1;
 		end;
 		if point_to_go_x== chars_mobs_npcs[index].x and chars_mobs_npcs[index].y/2==math.ceil(chars_mobs_npcs[index].y/2) and point_to_go_y>chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].rot=3;
+			need_rot=3;
 		end;
-		if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].view=8; --look straight up
-		elseif point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y > chars_mobs_npcs[index].y then
-			chars_mobs_npcs[index].view=7; --look straight down
-		elseif point_to_go_x ~= chars_mobs_npcs[index].x then
-			chars_mobs_npcs[index].view= chars_mobs_npcs[index].rot; --standart
-		end;
-		if chars_mobs_npcs[index].control=="player" and game_status == "sensing" then
-			trace.all_to_darkness();
-			trace.trace_hexes(index,false,trace.sightArray (index));
-			trace.one_around(index);
-			trace.clear_rounded();
-		elseif chars_mobs_npcs[index].control=="player" and game_status == "attack" then
-			trace.first_watch(index);
-			trace.clear_rounded();
+		--if need_rot ~= chars_mobs_npcs[index].rot then
+		if global.rem_cursor_world_x ~= cursor_world_x or global.rem_cursor_world_y ~= cursor_world_y then
+			chars_mobs_npcs[index].rot = need_rot;
+			if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
+				chars_mobs_npcs[index].view=8; --look straight up
+			elseif point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y > chars_mobs_npcs[index].y then
+				chars_mobs_npcs[index].view=7; --look straight down
+			elseif point_to_go_x ~= chars_mobs_npcs[index].x then
+				chars_mobs_npcs[index].view= chars_mobs_npcs[index].rot; --standart
+			end;
+			
+			if chars_mobs_npcs[index].control=="player" and game_status == "sensing" then
+				trace.all_to_darkness();
+				trace.trace_hexes(index,false,trace.sightArray (index)); --FIXME: TOO SLOW
+				trace.one_around(index);
+				trace.clear_rounded();
+			elseif chars_mobs_npcs[index].control=="player" and game_status == "attack" then
+				trace.first_watch(index);
+				trace.clear_rounded();
+			end;
 		end;
 	else
 		--check where is opponent
 		--do not turn or anti-turn
 	end;
+	global.rem_cursor_world_x = cursor_world_x;
+	global.rem_cursor_world_y = cursor_world_y;
 end;
 
 function helpers.ifUmbrella ()

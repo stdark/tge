@@ -1690,21 +1690,11 @@ function arrays_of_tmp_landscape ()
 	end;
 end;
 
-function playingState.keyreleased(key, unicode)
-	if key == "u" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting") then
-		th = current_mob;
-		sorttarget = "char"
-		oldsorttarget = "char";
-		for i=1,15 do
-			for j=1,11 do
-				inventory_bag[current_mob][i][j] = 0;
-			end;
-		end;
-		helpers.resort_inv(current_mob);
-   end;
+function playingState.keypressed(key, unicode)
+
 end;
 
-function playingState.keypressed(key, unicode)
+function playingState.keyreleased(key, unicode)
 	
 	if key == "x" and find_the_path == 0 and (game_status ~= "neutral" and game_status ~= "sensing")then
 		for j=1,#chars_mobs_npcs do
@@ -1739,6 +1729,18 @@ function playingState.keypressed(key, unicode)
 	if key == "5" then
 		game_status = "obelisk"; --FIXME from diary
 	end;
+	
+	if key == "u" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting") then
+		th = current_mob;
+		sorttarget = "char"
+		oldsorttarget = "char";
+		for i=1,15 do
+			for j=1,11 do
+				inventory_bag[current_mob][i][j] = 0;
+			end;
+		end;
+		helpers.resort_inv(current_mob);
+   end;
 
 	if chars_mobs_npcs[current_mob].control == "player" or game_status == "menu" then
 		if key == "lctrl" then
@@ -8816,6 +8818,8 @@ function restoreRT ()
 			helpers.recalcBattleStats (i);
 			helpers.battleorder();
 			global.lookaround = true;
+			global.rem_cursor_world_x = chars_mobs_npcs[i].x;
+			global.rem_cursor_world_y = chars_mobs_npcs[i].y;
 			break;
 		end;
 	end;

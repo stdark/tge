@@ -469,7 +469,6 @@ function path_finding (mode,ignore_mobs)
 			end;
 		end;
 	end;
-	redraw_path = 1;
 	return way_of_the_mob;
 end;
 
