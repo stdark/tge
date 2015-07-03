@@ -5226,7 +5226,7 @@ function helpers.turnMob (index) --FIXME 2hex
 			need_rot=3;
 		end;
 		--if need_rot ~= chars_mobs_npcs[index].rot then
-		if global.rem_cursor_world_x ~= cursor_world_x or global.rem_cursor_world_y ~= cursor_world_y then
+		if global.rem_cursor_world_x ~= cursor_world_x or global.rem_cursor_world_y ~= cursor_world_y or chars_mobs_npcs[index].control == "ai" then
 			chars_mobs_npcs[index].rot = need_rot;
 			if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
 				chars_mobs_npcs[index].view=8; --look straight up
