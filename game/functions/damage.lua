@@ -4363,7 +4363,7 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "telekinesis" then --traps, herbs
 		helpers.harvestOne (boomx,boomy)
 		local x,y = helpers.hexInFronTOfMob(current_mob);
-		if victim nad victim ~= current_mob then
+		if victim and victim ~= current_mob then
 				local ring = boomareas.ringArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
 				local penalty = 0;
 				if chars_mobs_npcs[victim].size == "giant" then
