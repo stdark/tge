@@ -539,7 +539,7 @@ function draw_hexbuttons ()
 				btn_x-2,  240+(j-1)*40+36,
 				btn_x-2,  240+(j-1)*40);
 			end;
-			if row_status*10+current_hex_type>120 then
+			if row_status*10+current_hex_type > global.objects_start_row*10 then
 				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-global.objects_start_row*10], global.screenWidth-150, global.screenHeight-300);
 			end;
 		end;
