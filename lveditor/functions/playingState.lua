@@ -3882,7 +3882,7 @@ function draw_numbers()
 				local _color2 = global.homelands_colors[index][2];
 				local _color3 = global.homelands_colors[index][3];
 				love.graphics.setColor(_color1, _color2, _color3,200);
-				drawHex (mx+map_x,my+map_y,tile_cursor_white);
+				drawHex (mx+map_x,my+map_y,tile_cursor_white,media.images.hex_ui);
 				love.graphics.setColor(255, 255, 255,255);
 				drawNumberHex (mx+map_x,my+map_y,32,homelands_table[my+map_y][mx+map_x]);
 			end;
