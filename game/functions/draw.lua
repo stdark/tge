@@ -17,7 +17,7 @@ function draw.map()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
 			--draw.irradiation(mx,my);
-			if map[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] < 300 then
+			if map[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] < 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
 			for i=3,1,-1 do
@@ -51,7 +51,7 @@ function draw.map()
 function draw.submap()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
-			if submap[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] <= 20 then
+			if submap[my+map_y][mx+map_x] > 20 and submap[my+map_y][mx+map_x] <= 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
 		end;
@@ -2588,17 +2588,17 @@ function draw.objects ()
 				draw.drawHarvest (mx+map_x,my+map_y,hlandscape[my+map_y][mx+map_x]);
 			end;
 			if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-				if map[my+map_y][mx+map_x]>120 and  map[my+map_y][mx+map_x] <= 220 then
+				if map[my+map_y][mx+map_x] > 500 and  map[my+map_y][mx+map_x] <= 1200 then
 					if  darkness[1][my+map_y][mx+map_x] == 0 then
 					elseif darkness[1][my+map_y][mx+map_x] == 1 then
 						love.graphics.setColor(125,125,125);
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0,0,0);				
 					end;
-					love.graphics.draw(media.images.obj, objects[map[my+map_y][mx+map_x]-120], ((mx-1)*tile_w+left_space)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-120][6]);
+					love.graphics.draw(media.images.obj, objects[map[my+map_y][mx+map_x]-500], ((mx-1)*tile_w+left_space)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-500][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-500][6]);
 					love.graphics.setColor(255, 255, 255);
-				elseif map[my+map_y][mx+map_x] > 300 then
-					local index = map[my+map_y][mx+map_x] - 300;
+				elseif map[my+map_y][mx+map_x] > 1500 then
+					local index = map[my+map_y][mx+map_x] - 1500;
 					local corner_hexes_array = helpers.cornersOfBuilding(index,mx+map_x,my+map_y);
 					--local img = media.images[buildings_stats[index].img];
 					local img = buildings_stats[index].img;
@@ -2644,17 +2644,17 @@ function draw.objects ()
 					love.graphics.setColor(255, 255, 255);
 				end;      
 			else
-				if map[my+map_y][mx+map_x]>120 and  map[my+map_y][mx+map_x] <= 220 then
+				if map[my+map_y][mx+map_x] > 500 and  map[my+map_y][mx+map_x] <= 1200 then
 					if  darkness[1][my+map_y][mx+map_x] == 0 then
 					elseif darkness[1][my+map_y][mx+map_x] == 1 then
 						love.graphics.setColor(125,125,125);
 					elseif darkness[1][my+map_y][mx+map_x] == 2 then
 						love.graphics.setColor(0,0,0);						
 					end;
-					love.graphics.draw(media.images.obj, objects[map[my+map_y][mx+map_x]-120], ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-120][6]);
+					love.graphics.draw(media.images.obj, objects[map[my+map_y][mx+map_x]-500], ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-500][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-500][6]);
 					love.graphics.setColor(255, 255, 255);
-				elseif map[my+map_y][mx+map_x] > 300 then
-					local index = map[my+map_y][mx+map_x] - 300;
+				elseif map[my+map_y][mx+map_x] > 1500 then
+					local index = map[my+map_y][mx+map_x] - 1500;
 					local corner_hexes_array = helpers.cornersOfBuilding(index,mx+map_x,my+map_y);
 					--local img = media.images[buildings_stats[index].img];
 					

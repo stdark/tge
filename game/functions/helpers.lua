@@ -23,13 +23,13 @@ function helpers.passCheck (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 300 then
+	if map[y][x] < 1200 then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
 	end;
 	if helpers.insideMap(x,y) and height_value <= 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) 
-	and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) 
+	and map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) 
 	and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
 	then
@@ -44,7 +44,7 @@ function helpers.passLev (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) 
+	if map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) 
 	and dlandscape_obj[y][x] ~= "stone"
 	then
 		height_value = heights_table[map[y][x]];
@@ -63,7 +63,7 @@ function helpers.passJump (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 300 then
+	if map[y][x] < 1200 then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
@@ -83,7 +83,7 @@ function helpers.passFly (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 300 then
+	if map[y][x] < 1200 then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
@@ -122,7 +122,7 @@ function helpers.passWalk (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y)
+	if map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
 	then
 		height_value = heights_table[map[y][x]];

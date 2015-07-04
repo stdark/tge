@@ -334,37 +334,37 @@ function sprites.load()
     minimap_hexes = {};
     for ty=12,16 do
 		for tx=11,13 do
-			table.insert(minimap_hexes,love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, 1024, 1024));
+			table.insert(minimap_hexes,love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight()));
 		end;
     end;
-	cursor_q = love.graphics.newQuad(819, 5, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_flag = love.graphics.newQuad(893, 9, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_arrow = love.graphics.newQuad(745, 131, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_broken_arrow = love.graphics.newQuad(819, 131, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_empty = love.graphics.newQuad(745, 174, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_yellow = love.graphics.newQuad(745, 217, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_red = love.graphics.newQuad(819, 217, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_spot = love.graphics.newQuad(893, 217, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_hand = love.graphics.newQuad(745, 300, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_white = love.graphics.newQuad(745, 260, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_danger = love.graphics.newQuad(819, 260, tile_w+2, tile_h+2, 1024, 1024);
+	cursor_q = love.graphics.newQuad(819, 5, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_flag = love.graphics.newQuad(893, 9, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_arrow = love.graphics.newQuad(745, 131, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_broken_arrow = love.graphics.newQuad(819, 131, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_empty = love.graphics.newQuad(745, 174, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_yellow = love.graphics.newQuad(745, 217, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_red = love.graphics.newQuad(819, 217, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_spot = love.graphics.newQuad(893, 217, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_hand = love.graphics.newQuad(745, 300, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_white = love.graphics.newQuad(745, 260, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_danger = love.graphics.newQuad(819, 260, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
 	cursor_way = {};
-	cursor_way[1] = love.graphics.newQuad(745, 297, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_way[2] = love.graphics.newQuad(819, 297, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_way[3] = love.graphics.newQuad(893, 297, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_way[4] = love.graphics.newQuad(745, 340, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_way[5] = love.graphics.newQuad(819, 340, tile_w+2, tile_h+2, 1024, 1024);
-	cursor_way[6] = love.graphics.newQuad(893, 340, tile_w+2, tile_h+2, 1024, 1024);
+	cursor_way[1] = love.graphics.newQuad(745, 297, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_way[2] = love.graphics.newQuad(819, 297, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_way[3] = love.graphics.newQuad(893, 297, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_way[4] = love.graphics.newQuad(745, 340, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_way[5] = love.graphics.newQuad(819, 340, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	cursor_way[6] = love.graphics.newQuad(893, 340, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
   
-	tile_grey=love.graphics.newQuad(893, 930, tile_w+2, tile_h+2, 1024, 1024);
-	tile_black=love.graphics.newQuad(893, 971, tile_w+2, tile_h+2, 1024, 1024);
-	tile_shadow=love.graphics.newQuad(893, 889, tile_w+2, tile_h+2, 1024, 1024);
+	tile_grey=love.graphics.newQuad(893, 930, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	tile_black=love.graphics.newQuad(893, 971, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
+	tile_shadow=love.graphics.newQuad(893, 889, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(),media.images.hex_ui:getHeight());
 	
 --landscape tiles  
 	tile = {};
-	for ty=1,22 do
-		for tx=1,10 do
-			tile[(ty-1)*10+tx] = love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, 1024, 1024)
+	for ty=1,48 do
+		for tx=1,25 do
+			tile[(ty-1)*25+tx] = love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, media.images.hex:getWidth(), media.images.hex:getHeight())
 		end;
 	end;
 	

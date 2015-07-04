@@ -1650,7 +1650,7 @@ function array_of_map ()
 		for mx=1, map_w do
 			local visibility = 0;
 			local pass = 0;
-			if map[mx][my] <= 300 then
+			if map[mx][my] <= 1200 then
 				visibility = visibility_table[map[mx][my]];
 				pass = heights_table[map[mx][my]];
 				if dlandscape_obj[mx][my] == "stone" then
