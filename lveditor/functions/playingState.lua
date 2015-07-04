@@ -83,18 +83,23 @@ function playingState.load()
 	tile_path={};
 	tile_w=64;
 	tile_h=32;
-	tile_moveto =  love.graphics.newQuad(5, 48, tile_w+2, tile_h, 1024, 1024);
-	tile_cursor_empty = love.graphics.newQuad(745,172, tile_w+2, tile_h+2, 1024, 1024);
-	tile_cursor_white = love.graphics.newQuad(745,260, tile_w+2, tile_h+2, 1024, 1024);
-    for ty=1,20 do
-		for tx=1,10 do
-			tile[(ty-1)*10+tx] = love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, 1024, 1024);
+	tile_moveto =  love.graphics.newQuad(5, 48, tile_w+2, tile_h, media.images.img:getWidth(), media.images.img:getHeight());
+	tile_cursor_empty = love.graphics.newQuad(745,172, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(), media.images.hex_ui:getHeight());
+	tile_cursor_white = love.graphics.newQuad(745,260, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(), media.images.hex_ui:getHeight());
+    for ty=1,48 do
+		for tx=1,25 do
+			tile[(ty-1)*25+tx] = love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, media.images.img:getWidth(),  media.images.img:getHeight());
+		end;
+    end;
+    for ty=1,48 do
+		for tx=26,27 do
+			table.insert(tile,love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, media.images.img:getWidth(),  media.images.img:getHeight()));
 		end;
     end;
     minimap_hexes = {};
     for ty=12,16 do
 		for tx=11,13 do
-			table.insert(minimap_hexes,love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, 1024, 1024));
+			table.insert(minimap_hexes,love.graphics.newQuad(5+74*(tx-1), 5+42*(ty-1), tile_w, tile_h, media.images.hex_ui:getWidth(), media.images.hex_ui:getHeight()));
 		end;
     end;
     level ();
@@ -107,11 +112,10 @@ function playingState.load()
 
     area_names = {"ground","sand","water","magma","acid","poison"};
     area_stepsounds = {"ground","swamp","stone","sand","snow","metal"};
-	tile_empty =  love.graphics.newQuad(301, 48, tile_w+2, tile_h+2, 1024, 1024);
+	tile_empty =  love.graphics.newQuad(301, 48, tile_w+2, tile_h+2, media.images.hex_ui:getWidth(), media.images.hex_ui:getHeight());
 	objects={};
 	flood_objects();
-	all_ground_={};
-		level ();
+	level ();
 	map_w = #map;
 	map_h = #map[1];
 	
@@ -184,9 +188,19 @@ function playingState.load()
 	if not bags_table then
 		bags_table = {};
 	end;
+	
+	global.objects_start_row = 50;
+	
 	if not objects_table then
 		objects_table = {};
 	end;
+	for i = global.objects_start_row, 48*25 do
+		if not objects_table[i] then
+			table.insert(objects_table,{0,0,0,0,0,0});	
+		end;
+	end;
+	flood_objects();
+
 	special_objects_texts = {
 		"ob","al","pd","cm","pt",
 		"wl","br","cl","cn","tr",
@@ -317,7 +331,7 @@ function playingState.load()
 	showhidden = 1;
 	global.show_harvest = 1;
 	global.show_decals = 1;
-	array_of_map ();
+
 	savename = "level1.lua";
 	row_buttons={};
 	--global={};
@@ -350,9 +364,9 @@ function playingState.load()
 	bgmap_w=25;
 	bgmap_h=12;
 
-	for i=1,5 do
-		for h=1,5 do
-			row_buttons[(i-1)*5+h]={btn_x+(h-1)*36,36*i};
+	for i=1,12 do
+		for h=1,10 do
+			row_buttons[(i-1)*10+h]={btn_x+(h-1)*18,18*i};
 		end;
 	end;
 	row_button_w=32;
@@ -409,9 +423,9 @@ function playingState.update(dt)
 	global.screenWidth = love.graphics.getWidth();
 	global.screenHeight = love.graphics.getHeight();
 	row_buttons = {};
-	for i=1,5 do
-		for h=1,5 do
-			row_buttons[(i-1)*5+h]={btn_x+(h-1)*40,40*i};
+	for i=1,12 do
+		for h=1,10 do
+			row_buttons[(i-1)*10+h]={btn_x+(h-1)*18,18*i};
 		end;
 	end;
 	btn_x=global.screenWidth - 210;
@@ -433,16 +447,18 @@ function newLevel()
         buildings_table[i]={};
 		for z=1, map_h do
 			buildings_table[i][z]=0;
-			if map[i][z] < 300 then
-			else
-			end;
 		end;
 	end;
-	
-	for i=1, 250 do
+	area_table = {};
+	minimap_table = {};
+	stepsound_table = {};
+	heights_table = {};
+	for i=1, 48*25 do
 		table.insert(area_table,1);
 		table.insert(minimap_table,1);
 		table.insert(stepsound_table,1);
+		table.insert(heights_table,0);
+		table.insert(visibility_table,0);
     end;
 	
 	for i=1, map_w do
@@ -466,7 +482,7 @@ end;
 
 function flood_objects ()
 	for i=1,#objects_table do
-		objects[i] =  love.graphics.newQuad(objects_table[i][1], objects_table[i][2], objects_table[i][3], objects_table[i][4], 1024, 1024);
+		objects[i] =  love.graphics.newQuad(objects_table[i][1], objects_table[i][2], objects_table[i][3], objects_table[i][4], media.images.img_obj:getWidth(), media.images.img_obj:getHeight());
 	end;
 end;
 
@@ -481,15 +497,6 @@ function draw_background ()
 				object_status=-1;
 				love.graphics.draw(media.images.img_back, background_[bgmap[i][h]], (h-1)*back_size/5+100-add_bg_x*back_size/5, (i-1)*back_size/5+100-add_bg_y*back_size/5,0,0.2,0.2); -- in background mode
 			end;
-		end;
-	end;
-end;
-
-function array_of_map ()
-	for my=1, map_h do
-		for mx=1, map_w do	
-			table.insert(all_ground_,{tile_counter+1, map[my][mx], my,mx, heights_table[map[my][mx]],costs_table[map[my][mx]],visibility_table[map[mx][my]] });
-			tile_counter=tile_counter+1;
 		end;
 	end;
 end;
@@ -510,11 +517,11 @@ function draw_hexbuttons ()
 				btn_x-2,  240+(j-1)*40+36,
 				btn_x-2,  240+(j-1)*40);
 			end;
-			if row_status*10+current_hex_type>120 then
-				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-120], global.screenWidth-150, global.screenHeight-300);
+			if row_status*10+current_hex_type > global.objects_start_row*10 then
+				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-global.objects_start_row*10], global.screenWidth-150, global.screenHeight-300);
 			end;
 		end;
-		love.graphics.draw(media.images.img, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
+		love.graphics.draw(media.images.hex_ui, minimap_hexes[current_minimap_hex],global.screenWidth-60, 465, 0, 0.5);
 	end;
 	
 	if editor_status == "subhexes" then
@@ -533,10 +540,10 @@ function draw_hexbuttons ()
 				btn_x-2,  240+(j-1)*40);
 			end;
 			if row_status*10+current_hex_type>120 then
-				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-120], global.screenWidth-150, global.screenHeight-300);
+				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-global.objects_start_row*10], global.screenWidth-150, global.screenHeight-300);
 			end;
 		end;
-		love.graphics.draw(media.images.img, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
+		love.graphics.draw(media.images.hex_ui, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
 	end;
 	
 	if editor_status == "background" then
@@ -1375,7 +1382,7 @@ end;
 
 function draw_buttons ()
 	if editor_status == "hexes" or editor_status == "subhexes" then
-		cc=4;
+		cc=12;
 	elseif editor_status == "objects" then
 		cc=5;
 	elseif editor_status == "background" then
@@ -1390,8 +1397,8 @@ function draw_buttons ()
 			for h=1,5 do        
 				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
 				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1], row_buttons[(i-1)*5+h][2]);
-				togglebuttons[#togglebuttons]:SetHeight(40);
-				togglebuttons[#togglebuttons]:SetWidth(40);
+				togglebuttons[#togglebuttons]:SetHeight(20);
+				togglebuttons[#togglebuttons]:SetWidth(20);
 				togglebuttons[#togglebuttons]:SetText(special_objects_texts[5*(i-1)+h]);
 				togglebuttons[#togglebuttons].OnClick = function(object)
 					special_objects_status=special_objects_texts[5*(i-1)+h];
@@ -1419,12 +1426,12 @@ function draw_buttons ()
 	if editor_status == "subhexes" then
 		local togglebuttons = {};
 		for i=1,cc do
-			for h=1,5 do        
+			for h=1,10 do        
 				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1],  row_buttons[(i-1)*5+h][2]);
-				togglebuttons[#togglebuttons]:SetHeight(40);
-				togglebuttons[#togglebuttons]:SetWidth(40);
-				togglebuttons[#togglebuttons]:SetText(5*(i-1)+h);
+				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*10+h][1],  row_buttons[(i-1)*10+h][2]);
+				togglebuttons[#togglebuttons]:SetHeight(20);
+				togglebuttons[#togglebuttons]:SetWidth(20);
+				togglebuttons[#togglebuttons]:SetText(10*(i-1)+h);
 				togglebuttons[#togglebuttons].OnClick = function(object)
 					row_status=(i-1)*5+h-1;
 					boxes();
@@ -1437,26 +1444,29 @@ function draw_buttons ()
 	if editor_status == "hexes" then
 		local togglebuttons = {};
 		for i=1,cc do
-			for h=1,5 do        
+			for h=1,10 do        
 				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1],  row_buttons[(i-1)*5+h][2]);
-				togglebuttons[#togglebuttons]:SetHeight(40);
-				togglebuttons[#togglebuttons]:SetWidth(40);
-				togglebuttons[#togglebuttons]:SetText(5*(i-1)+h);
+				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*10+h][1],  row_buttons[(i-1)*10+h][2]);
+				togglebuttons[#togglebuttons]:SetHeight(20);
+				togglebuttons[#togglebuttons]:SetWidth(20);
+				togglebuttons[#togglebuttons]:SetText(10*(i-1)+h);
 				togglebuttons[#togglebuttons].OnClick = function(object)
-					row_status=(i-1)*5+h-1;
+					row_status=(i-1)*10+h-1;
+					
+					loveframes.util.RemoveAll();
+					drawUIButtons();
+					draw_buttons();	
 					boxes();
 					draw_hexbuttons ();
-
+					
 				end;
 			end;
 		end;
-		
 	
 		love.graphics.draw(media.images.img, minimap_hexes[current_minimap_hex],global.screenWidth-60, 440, 0, 0.5);
 		
 		togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-125,440);
+		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-125,465);
 		togglebuttons[#togglebuttons]:SetHeight(20);
 		togglebuttons[#togglebuttons]:SetWidth(20);
 		togglebuttons[#togglebuttons]:SetText("<");
@@ -1464,18 +1474,18 @@ function draw_buttons ()
 			if current_minimap_hex > 1 then
 				current_minimap_hex = current_minimap_hex - 1;
 			else
-				current_minimap_hex = #minimap_table;
+				current_minimap_hex = #minimap_hexes;
 			end;
 			minimap_table[row_status*10+current_hex_type] = current_minimap_hex;
 			end;
 		
 		togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-105,440);
+		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-105,465);
 		togglebuttons[#togglebuttons]:SetHeight(20);
 		togglebuttons[#togglebuttons]:SetWidth(20);
 		togglebuttons[#togglebuttons]:SetText(">");
 		togglebuttons[#togglebuttons].OnClick = function(object)
-			if current_minimap_hex < #minimap_table then
+			if current_minimap_hex < #minimap_hexes then
 				current_minimap_hex = current_minimap_hex + 1;
 			else
 				current_minimap_hex = 1;
@@ -1484,52 +1494,52 @@ function draw_buttons ()
 			end;
 		
 		togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-125,480);
+		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-125,505);
 		togglebuttons[#togglebuttons]:SetHeight(20);
 		togglebuttons[#togglebuttons]:SetWidth(20);
 		togglebuttons[#togglebuttons]:SetText("<");
 		togglebuttons[#togglebuttons].OnClick = function(object)
 			current_area_type = current_area_type - 1;
 			if current_area_type < 1 then
-				current_area_type = #area_table;
+				current_area_type = #area_names;
 			end;
 			area_table[row_status*10+current_hex_type] = current_area_type;
 			end;
 		
 		togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-105,480);
+		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-105,505);
 		togglebuttons[#togglebuttons]:SetHeight(20);
 		togglebuttons[#togglebuttons]:SetWidth(20);
 		togglebuttons[#togglebuttons]:SetText(">");
 		togglebuttons[#togglebuttons].OnClick = function(object)
 			current_area_type = current_area_type + 1;
-			if current_area_type > #area_table then
+			if current_area_type > #area_names then
 				current_area_type = 1;
 			end;
 			area_table[row_status*10+current_hex_type] = current_area_type;
 			end;
 			
 		togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-125,520);
+		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-125,545);
 		togglebuttons[#togglebuttons]:SetHeight(20);
 		togglebuttons[#togglebuttons]:SetWidth(20);
 		togglebuttons[#togglebuttons]:SetText("<");
 		togglebuttons[#togglebuttons].OnClick = function(object)
 			current_area_stepsound = current_area_stepsound - 1;
 			if current_area_stepsound < 1 then
-				current_area_stepsound = #stepsound_table;
+				current_area_stepsound = #area_stepsounds;
 			end;
 			stepsound_table[row_status*10+current_hex_type] = current_area_stepsound;
 			end;
 		
 		togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-105,520);
+		togglebuttons[#togglebuttons]:SetPos(global.screenWidth-105,545);
 		togglebuttons[#togglebuttons]:SetHeight(20);
 		togglebuttons[#togglebuttons]:SetWidth(20);
 		togglebuttons[#togglebuttons]:SetText(">");
 		togglebuttons[#togglebuttons].OnClick = function(object)
 			current_area_stepsound = current_area_stepsound + 1;
-			if current_area_stepsound > #stepsound_table then
+			if current_area_stepsound > #area_stepsounds then
 				current_area_stepsound = 1;
 			end;
 			stepsound_table[row_status*10+current_hex_type] = current_area_stepsound;
@@ -1540,14 +1550,14 @@ function draw_buttons ()
 	if editor_status == "buildings" then
 		local togglebuttons = {};
 		for i=1,cc do
-			for h=1,5 do        
+			for h=1,10 do        
 				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
-				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*5+h][1],  row_buttons[(i-1)*5+h][2]);
-				togglebuttons[#togglebuttons]:SetHeight(40);
-				togglebuttons[#togglebuttons]:SetWidth(40);
-				togglebuttons[#togglebuttons]:SetText(5*(i-1)+h);
+				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*10+h][1],row_buttons[(i-1)*10+h][2]);
+				togglebuttons[#togglebuttons]:SetHeight(20);
+				togglebuttons[#togglebuttons]:SetWidth(20);
+				togglebuttons[#togglebuttons]:SetText(10*(i-1)+h);
 				togglebuttons[#togglebuttons].OnClick = function(object)
-					current_building = (i-1)*5+h;
+					current_building = (i-1)*10+h;
 					if current_building <= 0 then
 						current_building = 1;
 					end;
@@ -1565,8 +1575,8 @@ function draw_buttons ()
 			for h=1,4 do        
 				togglebuttons[#togglebuttons+1] = loveframes.Create("button")
 				togglebuttons[#togglebuttons]:SetPos(row_buttons[(i-1)*4+h][1],  row_buttons[(i-1)*4+h][2]);
-				togglebuttons[#togglebuttons]:SetHeight(40);
-				togglebuttons[#togglebuttons]:SetWidth(40);
+				togglebuttons[#togglebuttons]:SetHeight(20);
+				togglebuttons[#togglebuttons]:SetWidth(20);
 				togglebuttons[#togglebuttons]:SetText(4*(i-1)+h);
 				togglebuttons[#togglebuttons].OnClick = function(object)
 					row_back = h;
@@ -1589,10 +1599,10 @@ function draw_map()
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				mxx = math.max(1,mx+map_x);
 				myy = math.max(1,my+map_y);
-				if show_invisible and map[myy][mxx]<20  and map[myy][mxx]<300 then
-					drawHex(mxx,myy,tile[map[myy][mxx]]);
-				elseif map[myy][mxx]>20 and map[myy][mxx]<300 then
-					drawHex(mxx,myy,tile[map[myy][mxx]]);
+				if show_invisible  and map[myy][mxx] <= 1200 then
+					drawHex(mxx,myy,tile[map[myy][mxx]],media.images.img);
+				elseif map[myy][mxx] > 20 and map[myy][mxx] <= 1200 then
+					drawHex(mxx,myy,tile[map[myy][mxx]],media.images.img);
 				end;
 			end;
 		end;
@@ -1605,10 +1615,10 @@ function draw_submap()
 			for mx=1, math.min(map_display_w, map_w-map_x) do	
 				mxx = math.max(1,mx+map_x);
 				myy = math.max(1,my+map_y);
-				if show_invisible and submap[myy][mxx]<20  and submap[myy][mxx]<300 then
-					drawHex(mxx,myy,tile[submap[myy][mxx]]);
-				elseif submap[myy][mxx]>20 and submap[myy][mxx]<300 then
-					drawHex(mxx,myy,tile[submap[myy][mxx]]);
+				if show_invisible and submap[myy][mxx] <= 1200 then
+					drawHex(mxx,myy,tile[submap[myy][mxx]],media.images.img);
+				elseif submap[myy][mxx] > 20 and submap[myy][mxx] <= 1200 then
+					drawHex(mxx,myy,tile[submap[myy][mxx]],media.images.img);
 				end;
 			end;
 		end;
@@ -1695,7 +1705,7 @@ function passCheck (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 300 then
+	if map[y][x] <= 1200 then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
@@ -1724,11 +1734,11 @@ function draw_objects ()
 			mx_ = math.max(1,mx+map_x);
 			my_ = math.max(1,my+map_y);
 			if (my_)/2 == math.ceil((my_)/2) then
-				if map[my_][mx_]>120 and  map[my_][mx_]<=220 then
-					love.graphics.draw(media.images.img_obj, objects[map[my_][mx_]-120], ((mx-1)*tile_w+left_space)-tile_w+top_space+objects_table[map[my_][mx_]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my_][mx_]-120][6])
+				if map[my_][mx_] > global.objects_start_row*10 and  map[my_][mx_] <= 1500 then
+					love.graphics.draw(media.images.img_obj, objects[map[my_][mx_]-global.objects_start_row*10], ((mx-1)*tile_w+left_space)-tile_w+top_space+objects_table[map[my_][mx_]-global.objects_start_row*10][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my_][mx_]-global.objects_start_row*10][6])
 				end;       
-				if map[my_][mx_] > 300 then
-					local index = map[my_][mx_] - 300;
+				if map[my_][mx_] > 1500 then
+					local index = map[my_][mx_] - 1500;
 					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
@@ -1742,11 +1752,11 @@ function draw_objects ()
 					end;
 				end;
 			else
-				if map[my_][mx_]>120 and  map[my_][mx_]<=220 then
-					love.graphics.draw(media.images.img_obj, objects[map[my_][mx_]-120], ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+objects_table[map[my_][mx_]-120][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my_][mx_]-120][6])
+				if map[my_][mx_] > global.objects_start_row*10 and  map[my_][mx_] <= 1500 then
+					love.graphics.draw(media.images.img_obj, objects[map[my_][mx_]-global.objects_start_row*10], ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+objects_table[map[my_][mx_]-global.objects_start_row*10][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my_][mx_]-global.objects_start_row*10][6])
 				end;
-				if map[my_][mx_] > 300 then
-					local index = map[my_][mx_] - 300;
+				if map[my_][mx_] > 1500 then
+					local index = map[my_][mx_] - 1500;
 					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
@@ -1870,8 +1880,6 @@ function switchLevel()
 		levelname = "level1";
 		global.level=1;
 	end;
-	all_ground = {};
-	array_of_map ();
 	level ();
 	global.screenWidth = love.graphics.getWidth();
 	global.screenHeight = love.graphics.getHeight();
@@ -2328,14 +2336,15 @@ function playingState.mousepressed(x, y, button)
 		
 		end;
 	end;
+	
 	if love.mouse.isDown("l") and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "hexes" and global.digger == -1 and global.copy == -1 then
 		local mapvalue = 1;
 		if brush == 0 then
 			if global.randomize_hexes == -1 then
 				map_value = current_hex_type+row_status*10;
 			else
-				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = math.min(200,current_hex_type+rnd+row_status*10);
+				local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+				map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				map[cursor_world_y][cursor_world_x] = map_value;
@@ -2345,8 +2354,8 @@ function playingState.mousepressed(x, y, button)
 			if global.randomize_hexes == -1 then
 				map_value = current_hex_type+row_status*10;
 			else
-				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = math.min(200,current_hex_type+rnd+row_status*10);
+				local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+				map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				map[cursor_world_y][cursor_world_x] = map_value;
@@ -2358,8 +2367,8 @@ function playingState.mousepressed(x, y, button)
 					if global.randomize_hexes == -1 then
 						map_value = current_hex_type+row_status*10;
 					else
-						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = math.min(200,current_hex_type+rnd+row_status*10);
+						local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+						map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 					end;
 					if insideMap(rings[h][i].y,rings[h][i].x) then
 						map[rings[h][i].y][rings[h][i].x] = map_value;
@@ -2374,8 +2383,8 @@ function playingState.mousepressed(x, y, button)
 					if global.randomize_hexes == -1 then
 						map_value = current_hex_type+row_status*10;
 					else
-						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = math.min(200,current_hex_type+rnd+row_status*10);
+						local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+						map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 					end;
 					map[boomarea[i].y][boomarea[i].x] = map_value;
 					checkHerb(boomarea[i].x,boomarea[i].y);
@@ -2458,8 +2467,8 @@ function playingState.mousepressed(x, y, button)
 			if global.randomize_hexes == -1 then
 				map_value = current_hex_type+row_status*10;
 			else
-				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = math.min(200,current_hex_type+rnd+row_status*10);
+				local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+				map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				submap[cursor_world_y][cursor_world_x] = map_value;
@@ -2468,8 +2477,8 @@ function playingState.mousepressed(x, y, button)
 			if global.randomize_hexes == -1 then
 				map_value = math.min(current_hex_type+row_status*10);
 			else
-				local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-				map_value = math.min(200,current_hex_type+rnd+row_status*10);
+				local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+				map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 			end;
 			if insideMap(cursor_world_y,cursor_world_x) then
 				submap[cursor_world_y][cursor_world_x] = map_value;
@@ -2480,8 +2489,8 @@ function playingState.mousepressed(x, y, button)
 					if global.randomize_hexes == -1 then
 						map_value = current_hex_type+row_status*10;
 					else
-						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = math.min(200,current_hex_type+rnd+row_status*10);
+						local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+						map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 					end;
 					if insideMap(rings[h][i].y,rings[h][i].x) then
 						submap[rings[h][i].y][rings[h][i].x] = map_value;
@@ -2495,8 +2504,8 @@ function playingState.mousepressed(x, y, button)
 					if global.randomize_hexes == -1 then
 						map_value = current_hex_type+row_status*10;
 					else
-						local rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
-						map_value = math.min(200,current_hex_type+rnd+row_status*10);
+						local rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
+						map_value = math.min(1200,current_hex_type+rnd+row_status*10);
 					end;
 					submap[boomarea[i].y][boomarea[i].x] = map_value;
 				end;
@@ -2511,7 +2520,7 @@ function playingState.mousepressed(x, y, button)
 	----SUBHEXES/
 	
 	if love.mouse.isDown("l") and insideMap(cursor_world_x,cursor_world_y) and mX < global.screenWidth-274 and mY < global.screenHeight-115 and editor_status == "buildings" then
-		map[cursor_world_y][cursor_world_x] = 300 + current_building;
+		map[cursor_world_y][cursor_world_x] = 1500 + current_building;
 		if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
 			hexes = "hexes_ev";
 		else
@@ -2811,9 +2820,6 @@ function flood_map ()
 	map_w=tonumber(input_size_w);
 	map_h=tonumber(input_size_h);
 	tile_counter=0;
-	while #all_ground_>0 do
-		table.remove(all_ground_,1);
-	end;
 	while #map>0 do
 		table.remove(map,1);
 	end;
@@ -2823,30 +2829,26 @@ function flood_map ()
 			if global.randomize_hexes == -1 and global.copy == -1 then
 				map[i][z]= current_hex_type+row_status*10;
 			elseif global.randomize_hexes == 1 and global.copy == -1 then
-				local _rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+				local _rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
 				map[i][z]= current_hex_type+row_status*10+_rnd;
 			elseif global.copy == 1 and #global.copied > 0 then
 				local _tmp_array = global.copied;
 				if global.randomize_hexes == 1 then
 					_tmp_array = randomizeArray(global.copied);
 				end;
-				map[i][z] = _tmp_array[1];--lala
+				map[i][z] = _tmp_array[1];
 			end;
 		end;
 	end;
-	array_of_map();
-end;
 
+end;
 
 function flood_submap ()
 	map_w=tonumber(input_size_w);
 	map_h=tonumber(input_size_h);
 	tile_counter=0;
-	while #all_ground_>0 do
-		table.remove(all_ground_,1);
-	end;
-	while #map>0 do
-		table.remove(map,1);
+	while #submap>0 do
+		table.remove(submap,1);
 	end;
 	for i=1, map_w do
 		submap[i]={};
@@ -2854,18 +2856,18 @@ function flood_submap ()
 			if global.randomize_hexes == -1 and global.copy == -1 then
 				submap[i][z]= current_hex_type+row_status*10;
 			elseif global.randomize_hexes == 1 and global.copy == -1 then
-				local _rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+				local _rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
 				submap[i][z]= current_hex_type+row_status*10+_rnd;
 			elseif global.copy == 1 and #global.copied > 0 then
 				local _tmp_array = global.copied;
 				if global.randomize_hexes == 1 then
 					_tmp_array = randomizeArray(global.copied);
 				end;
-				submap[i][z] = _tmp_array[1];--lala
+				submap[i][z] = _tmp_array[1];
 			end;
 		end;
 	end;
-	--array_of_map();
+
 end;
 
 function draw_cursor ()
@@ -2880,25 +2882,25 @@ function draw_cursor ()
 	end;
 	if cursor_world_x>0 and cursor_world_x<map_w-map_limit_w  and cursor_world_y>0 and cursor_world_y<map_h-map_limit_h and mX < global.screenWidth-274 and mY < global.screenHeight-150 and editor_status ~= "background" then
 		if brush == 0 then
-			drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty);
+			drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty,media.images.hex_ui);
 		elseif brush == 1 or brush == 2 or brush == 3 then
-			drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty);
+			drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty,media.images.hex_ui);
 			local rings = ringArea(cursor_world_x,cursor_world_y);
 			for h=1,brush do
 				for i=1,#rings[h] do
-					drawHex(rings[h][i].x,rings[h][i].y,tile_cursor_empty);
+					drawHex(rings[h][i].x,rings[h][i].y,tile_cursor_empty,media.images.hex_ui);
 				end;
 			end;
 		elseif brush >= 4 and brush <= 10 then
 			local boomarea = squareArea(cursor_world_x,cursor_world_y,brush);
 			for i=1,#boomarea do
-				drawHex(boomarea[i].x,boomarea[i].y,tile_cursor_empty);
+				drawHex(boomarea[i].x,boomarea[i].y,tile_cursor_empty,media.images.hex_ui);
 			end;
 		end;
 	end;
 	
 	if mX < global.screenWidth-274 and editor_status == "buildings" then
-		drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty);
+		drawHex(cursor_world_x,cursor_world_y,tile_cursor_empty,media.images.hex_ui);
 		local hexes = "";
 		if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
 			hexes = "hexes_ev";
@@ -2906,7 +2908,7 @@ function draw_cursor ()
 			hexes = "hexes_ne";
 		end;
 		for i=1,#buildings_stats[current_building][hexes] do
-			drawHex(cursor_world_x-buildings_stats[current_building][hexes][i][1],cursor_world_y-buildings_stats[current_building][hexes][i][2],tile_cursor_empty);
+			drawHex(cursor_world_x-buildings_stats[current_building][hexes][i][1],cursor_world_y-buildings_stats[current_building][hexes][i][2],tile_cursor_empty,media.images.hex_ui);
 		end;
 	end;
 end;
@@ -2940,10 +2942,7 @@ function save()
 end;
 
 function load()
-	while (#all_ground_>0) do
-		table.remove(all_ground_,1);
-		table.remove(background_,1);
-	end
+	loveframes.util.RemoveAll();
 	love.load();
 end;
 
@@ -2979,7 +2978,7 @@ function boxes ()
 		end;
 --pass through
 		local textinput = loveframes.Create("textinput",frame);
-		textinput:SetPos(global.screenWidth-130, 375);
+		textinput:SetPos(global.screenWidth-130, 400);
 		textinput:SetWidth(46);
 		textinput:SetText(heights_table[row_status*10+current_hex_type]);
 		textinput:SetLimit(4);
@@ -2992,7 +2991,7 @@ function boxes ()
 		end;
 --viz/inviz   
 		local textinput = loveframes.Create("textinput");
-		textinput:SetPos(global.screenWidth-80, 375);
+		textinput:SetPos(global.screenWidth-80, 400);
 		textinput:SetWidth(46);
 		textinput:SetText(visibility_table[row_status*10+current_hex_type]);
 		textinput:SetLimit(4);
@@ -3005,7 +3004,7 @@ function boxes ()
 		end ;
 --st/rt costs
 		local textinput = loveframes.Create("textinput");
-		textinput:SetPos(global.screenWidth-130, 550);
+		textinput:SetPos(global.screenWidth-130, 575);
 		textinput:SetWidth(46);
 		textinput:SetText(heights_table[row_status*10+current_hex_type]);
 		textinput:SetLimit(4);
@@ -3017,76 +3016,76 @@ function boxes ()
 			end;
 		end;
 --objects
-		if row_status>=12 then
+		if row_status >= global.objects_start_row then
 			local textinput = loveframes.Create("textinput");
-			textinput:SetPos(global.screenWidth-130, 325);
+			textinput:SetPos(global.screenWidth-130, 350);
 			textinput:SetWidth(46);
-			textinput:SetText(objects_table[row_status*10+current_hex_type-120][5]);
+			textinput:SetText(objects_table[row_status*10+current_hex_type-global.objects_start_row*10][5]);
 			textinput:SetLimit(4);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9","-"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					objects_table[row_status*10+current_hex_type-120][5]=tonumber(text);
+					objects_table[row_status*10+current_hex_type-global.objects_start_row*10][5]=tonumber(text);
 					flood_objects ();
 				end;
 			end ;
 			local textinput = loveframes.Create("textinput");
-			textinput:SetPos(global.screenWidth-80, 325);
+			textinput:SetPos(global.screenWidth-80, 350);
 			textinput:SetWidth(46);
-			textinput:SetText(objects_table[row_status*10+current_hex_type-120][6]);
+			textinput:SetText(objects_table[row_status*10+current_hex_type-global.objects_start_row*10][6]);
 			textinput:SetLimit(4);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9","-"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					objects_table[row_status*10+current_hex_type-120][6]=tonumber(text);
+					objects_table[row_status*10+current_hex_type-global.objects_start_row*10][6]=tonumber(text);
 					flood_objects ();
 				end;
 			end;
     
 			local textinput = loveframes.Create("textinput");
-			textinput:SetPos(global.screenWidth-80, 270);
+			textinput:SetPos(global.screenWidth-80, 295);
 			textinput:SetWidth(46);
-			textinput:SetText(objects_table[row_status*10+current_hex_type-120][4]);
+			textinput:SetText(objects_table[row_status*10+current_hex_type-global.objects_start_row*10][4]);
 			textinput:SetLimit(4);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					objects_table[row_status*10+current_hex_type-120][4]=tonumber(text);
+					objects_table[row_status*10+current_hex_type-global.objects_start_row*10][4]=tonumber(text);
 					flood_objects ();
 				end;
 			end;
 			local textinput = loveframes.Create("textinput");
-			textinput:SetPos(global.screenWidth-130, 270);
+			textinput:SetPos(global.screenWidth-130, 295);
 			textinput:SetWidth(46);
-			textinput:SetText(objects_table[row_status*10+current_hex_type-120][3]);
+			textinput:SetText(objects_table[row_status*10+current_hex_type-global.objects_start_row*10][3]);
 			textinput:SetLimit(4);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					objects_table[row_status*10+current_hex_type-120][3]=tonumber(text);
+					objects_table[row_status*10+current_hex_type-global.objects_start_row*10][3]=tonumber(text);
 					flood_objects ();
 				end;
 			end;
 			local textinput = loveframes.Create("textinput");
-			textinput:SetPos(global.screenWidth-80, 220);
+			textinput:SetPos(global.screenWidth-80, 245);
 			textinput:SetWidth(46);
-			textinput:SetText(objects_table[row_status*10+current_hex_type-120][2]);
+			textinput:SetText(objects_table[row_status*10+current_hex_type-global.objects_start_row*10][2]);
 			textinput:SetLimit(4);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
 				if text ~= nil then
-					objects_table[row_status*10+current_hex_type-120][2]=tonumber(text);
+					objects_table[row_status*10+current_hex_type-global.objects_start_row*10][2]=tonumber(text);
 					flood_objects ();
 				end;
 			end;
 			local textinput = loveframes.Create("textinput");
-			textinput:SetPos(global.screenWidth-130, 220);
+			textinput:SetPos(global.screenWidth-130, 245);
 			textinput:SetWidth(46);
-			textinput:SetText(objects_table[row_status*10+current_hex_type-120][1]);
+			textinput:SetText(objects_table[row_status*10+current_hex_type-global.objects_start_row*10][1]);
 			textinput:SetLimit(4);
 			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 			textinput.OnEnter = function(object, text)
-				objects_table[row_status*10+current_hex_type-120][1]=tonumber(text);
+				objects_table[row_status*10+current_hex_type-global.objects_start_row*10][1]=tonumber(text);
 				flood_objects ();
 			end;
 		end;
@@ -3654,7 +3653,7 @@ function startDiggers(x,y,count,flag) --FIXME submap only
 							map[diggers[i].y+directions[1]["y"][i]][diggers[i].x+xdirections[i]] = row_status*10+current_hex_type;
 							checkHerb(diggers[i].x+xdirections[i],diggers[i].y+directions[1]["y"][i]);
 						else
-							local _rnd = math.random(0,math.min(global.rnd_value-1,200 - current_hex_type+row_status*10));
+							local _rnd = math.random(0,math.min(global.rnd_value-1,1200 - current_hex_type+row_status*10));
 							map[diggers[i].y+directions[1]["y"][i]][diggers[i].x+xdirections[i]] = math.min(200,row_status*10+current_hex_type+_rnd);
 							checkHerb(diggers[i].x+xdirections[i],diggers[i].y+directions[1]["y"][i]);
 						end;
@@ -3749,58 +3748,27 @@ function draw_papermap ()
 	for my=1, map_h do
 		for mx=1, map_w do	
 			if (my)/2 == math.ceil((my)/2) then
-				if map[my][mx] <= 300 then
+				if map[my][mx] <= 1200 then
 					love.graphics.setColor(255, 255, 255,125);
 					love.graphics.draw(media.images.img, tile[map[my][mx]],((mx-1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 					love.graphics.setColor(255, 255, 255,255);
-					love.graphics.draw(media.images.img, minimap_hexes[minimap_table[map[my][mx]]],((mx  -1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
+					love.graphics.draw(media.images.hex_ui, minimap_hexes[minimap_table[map[my][mx]]],((mx  -1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 				else
-					love.graphics.draw(media.images.img, minimap_hexes[13],((mx  -1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
+					love.graphics.draw(media.imageshex_ui, minimap_hexes[13],((mx  -1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 				end;
 			else
-				if map[my][mx] <= 300 then
+				if map[my][mx] <= 1200 then
 					love.graphics.setColor(255, 255, 255,125);
 					love.graphics.draw(media.images.img, tile[map[my][mx]],((mx-1)*tile_w_paper+tile_w_paper/2)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 					love.graphics.setColor(255, 255, 255,255);
-					love.graphics.draw(media.images.img, minimap_hexes[minimap_table[map[my][mx]]],((mx-1)*tile_w_paper+tile_w_paper/2)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
+					love.graphics.draw(media.images.hex_ui, minimap_hexes[minimap_table[map[my][mx]]],((mx-1)*tile_w_paper+tile_w_paper/2)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 				else
-					love.graphics.draw(media.images.img, minimap_hexes[13],((mx-1)*tile_w_paper+tile_w_paper/2)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
+					love.graphics.draw(media.images.hex_ui, minimap_hexes[13],((mx-1)*tile_w_paper+tile_w_paper/2)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 				end;
 			end;
 		end;
 	end;
 end;
-
-function draw_papermap_ ()
-	local x,y = centerObject(media.images.img_map);
-	love.graphics.draw(media.images.img_map, x-50,y-50)
-	tile_w_paper=8
-	tile_h_paper=4
-	for my=1 + map_y, map_h do
-		for mx=1 + map_x, map_w do	
-			if (my)/2 == math.ceil((my)/2) then
-				if map[my][mx] <= 300 then
-					love.graphics.setColor(255, 255, 255,125);
-					love.graphics.draw(media.images.img, tile[map[my][mx]],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
-					love.graphics.setColor(255, 255, 255,255);
-					love.graphics.draw(media.images.img, minimap_hexes[minimap_table[map[my][mx]]],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
-				else
-					love.graphics.draw(media.images.img, minimap_hexes[13],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
-				end;
-			else
-				if map[my][mx] <= 300 then
-					love.graphics.setColor(255, 255, 255,125);
-					love.graphics.draw(media.images.img, tile[map[my][mx]],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
-					love.graphics.setColor(255, 255, 255,255);
-					love.graphics.draw(media.images.img, minimap_hexes[minimap_table[map[my][mx]]],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
-				else
-					love.graphics.draw(media.images.img, minimap_hexes[13],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
-				end;
-			end;
-		end;
-	end;
-end;
-
 
 function smallRingArea(x,y)
 	local ring = {};
@@ -3875,14 +3843,14 @@ function squareArea (x,y,radius)
 	return boomarea;	
 end;
 
-function drawHex (x,y,cursor)
+function drawHex (x,y,hex,img)
 	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space);
 	if y/2 == math.ceil(y/2) then
 		moveto_hex_x = (x-2-map_x)*tile_w+left_space;
 	else
 		moveto_hex_x = (x-2-map_x)*tile_w+tile_w/2+left_space;
 	end;
-	love.graphics.draw(media.images.img, cursor, moveto_hex_x, moveto_hex_y);
+	love.graphics.draw(img, hex, moveto_hex_x, moveto_hex_y);
 end;
 
 function draw_numbers()
@@ -4040,17 +4008,20 @@ function playingState.draw()
 			love.graphics.print("hex type selected:", 200, 10);
 		end;
 		love.graphics.print(row_status*10+current_hex_type, 330, 10);
-		love.graphics.print(" unpass  untrace",global.screenWidth-130, 400);
-		love.graphics.print(" minimap",global.screenWidth-130, 420);
-		love.graphics.print(" type",global.screenWidth-130, 460);
-		love.graphics.print(" sound",global.screenWidth-130, 500);
-		love.graphics.print(" st/rt",global.screenWidth-130, 580);
-		love.graphics.print(area_names[current_area_type],global.screenWidth-80, 460);
-		love.graphics.print(area_stepsounds[current_area_stepsound],global.screenWidth-80, 500);
-		if row_status>=12 then
-			love.graphics.print("  +x        +y  ",global.screenWidth-130, 350);
-			love.graphics.print(" width   height ",global.screenWidth-130, 300);
-			love.graphics.print("   x        y   ",global.screenWidth-130, 250);
+		love.graphics.setColor(0, 0, 0,255);
+		love.graphics.print(" unpass  untrace",global.screenWidth-130, 425);
+		love.graphics.print(" minimap",global.screenWidth-130, 445);
+		love.graphics.print(" type",global.screenWidth-130, 485);
+		love.graphics.print(" sound",global.screenWidth-130, 525);
+		love.graphics.print(" st/rt",global.screenWidth-130, 605);
+	
+		love.graphics.print(area_names[current_area_type],global.screenWidth-80, 500);
+		love.graphics.print(area_stepsounds[current_area_stepsound],global.screenWidth-80, 545);
+		love.graphics.setColor(255, 255, 255,255);
+		if row_status >= global.objects_start_row then
+			love.graphics.print("  +x        +y  ",global.screenWidth-130, 375);
+			love.graphics.print(" width   height ",global.screenWidth-130, 325);
+			love.graphics.print("   x        y   ",global.screenWidth-130, 275);
 		end;
 	end;
 	
@@ -4180,6 +4151,8 @@ function playingState.draw()
 	if global.copy == 1 then 
 		love.graphics.print("copy mode",565, global.screenHeight-140);
 	end;
+	local  str = "mode: " .. editor_status;
+	love.graphics.print(str, 50, global.screenHeight-140);
 	draw_cursor();
     loveframes.draw();
 end;

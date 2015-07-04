@@ -47,6 +47,9 @@ sixrows[1] = {1,2,3,4,5,6};
 sixrows[2] = {1,3,5,7,9,11};
 sixrows[3] = {1,4,7,10,13,15};
 
+--sixrows[2] = {2,4,6,8,10,12};
+--sixrows[3] = {2,5,6,11,14,17};
+
 function utils.printDebug(message)
    -- Send message to log
    if debug then

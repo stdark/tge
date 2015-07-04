@@ -4698,7 +4698,15 @@ function helpers.trickReady ()
 	price_in_st = tricks.tricks_tips[missle_type].stamina;
 	price_in_rt = tricks.tricks_tips[missle_type].recovery;
 	missle_drive = "muscles";
-	game_status = "sensing";
+	if tricks.tricks_tips[missle_type].form == "range"
+	or tricks.tricks_tips[missle_type].form == "ball"
+	or tricks.tricks_tips[missle_type].form == "fun"
+	or tricks.tricks_tips[missle_type].form == "pose"
+	or tricks.tricks_tips[missle_type].form == "selfbuff" then
+		game_status = "sensing";
+	elseif tricks.tricks_tips[missle_type].form == "melee" then
+		game_status = "pathfinding";
+	end;
 end;
 
 function helpers.castFailed ()

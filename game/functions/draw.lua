@@ -18,7 +18,7 @@ function draw.map()
 		for mx=1, math.min(map_display_w, map_w-map_x) do
 			--draw.irradiation(mx,my);
 			if map[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] < 300 then
-				draw.drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]]);
+				draw.drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
 			for i=3,1,-1 do
 				if tlandscape[my+map_y][mx+map_x][i].decal == "ash" and darkness[1][my+map_y][mx+map_x] == 0 then
@@ -52,7 +52,7 @@ function draw.submap()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
 			if submap[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] <= 20 then
-				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]]);
+				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
 		end;
 	end;
@@ -87,29 +87,29 @@ function draw.cursor ()
 		if chars_mobs_npcs[current_mob].control == "player" then
 			if not helpers.isAimOnMob () then
 				if game_status == "neutral" then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_q);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_q,media.images.hex_ui);
 				end;
 				if global.status == "battle" and game_status == "pathfinding" and (helpers.cursorAtEnemy (cursor_world_x,cursor_world_y) or helpers.cursorAtNPC (cursor_world_x,cursor_world_y)) then
 					draw.drawHitHex (cursor_world_x,cursor_world_y);
 				end;
 				if global.status == "peace" and game_status == "pathfinding" and helpers.cursorAtNPC (cursor_world_x,cursor_world_y) then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow,media.images.hex_ui);
 				end;
 				local cursor_at_chest, pointx,pointy,rotation_to_chest = helpers.cursorAtChest(cursor_world_x,cursor_world_y);
 				if cursor_at_chest then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow,media.images.hex_ui);
 				end;
 				if helpers.cursorAtObject(cursor_world_x,cursor_world_y) then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow,media.images.hex_ui);
 				end;
 				if helpers.cursorAtMaterialBag(cursor_world_x,cursor_world_y) then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow,media.images.hex_ui);
 				end;
 				if helpers.cursorAtBuilding(cursor_world_x,cursor_world_y) then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_yellow,media.images.hex_ui);
 				end;
 			else
-				draw.drawHex (cursor_world_x,cursor_world_y,cursor_red);
+				draw.drawHex (cursor_world_x,cursor_world_y,cursor_red,media.images.hex_ui);
 			end;
 			cursor_px_x = moveto_hex_x-tile_w;
 			cursor_px_y = moveto_hex_y;
@@ -121,62 +121,62 @@ function draw.cursor ()
 					missle_form = tricks.tricks_tips[missle_type].form;
 				end;
 				if helpers.singleShot () and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,cursor_danger,media.images.hex_ui);
 				elseif missle_type == "bottle" and helpers.passWalk(cursor_world_x,cursor_world_y) then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and missle_form == "fan" then
 				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and missle_form == "arrow" then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and missle_form == "ball" then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 				elseif (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand") then
 					missle_form = magic.spell_tips[missle_type].form;
 					if missle_form == "arrow" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "direct" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then --and trace.arrowStatus(current_mob) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "enemy" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then --and trace.arrowStatus(current_mob) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "ally" and helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "proactive" and helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "deadally" and helpers.cursorAtDeadPartyMember (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "deadenemy" and helpers.cursorAtDeadMob (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "skyray" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "skyrock" then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "ring" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "ball" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "rico" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "wall" and not helpers.cursorAtMob (cursor_world_x,cursor_world_y) and helpers.passCheck (cursor_world_x,cursor_world_y) then
-						--draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						--draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "mine" and not helpers.cursorAtMob (cursor_world_x,cursor_world_y) and helpers.passWalk (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "portal" and not helpers.cursorAtMob (cursor_world_x,cursor_world_y) and helpers.passWalk (cursor_world_x,cursor_world_y) then
-						draw.drawHex (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_danger);
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_danger,media.images.hex_ui);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "area" then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form ~= "mole" and missle_form ~= "rain" and missle_form ~= "area" and missle_form ~= "sight" then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_white);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_white,media.images.hex_ui);
 					elseif missle_type == "twister" then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "sign" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "mole" then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "baff3stage" then
 						--[[if stage == 1 and helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y) then --ally
-							draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+							draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 						elseif stage == 2 then --ball 1
-							draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger);
+							draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 						elseif stage == 3 then -- level
 						end;]]
 					end;
@@ -185,14 +185,14 @@ function draw.cursor ()
 				if missle_type == "bottle" then
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for i=1,#rings[1] do
-						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 	
 				if missle_type=="inferno" or missle_type=="prismaticlight" or missle_type=="eyeofthestorm"  or missle_type=="moonlight" or missle_type=="souldrinker" or missle_type =="masscurse" or missle_type == "massdispell" or missle_type =="misfortune" or missle_type == "despondency" or missle_type == "weakness"  or missle_type == "violation" then
 					local boomarea = boomareas.sightArea(); 
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);	
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);	
 					end;
 				end;
 			 
@@ -200,7 +200,7 @@ function draw.cursor ()
 					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 						for i=1,#rings[1] do
-							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -208,7 +208,7 @@ function draw.cursor ()
 				if missle_type == "bitingcloud" then
 					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,3+math.ceil(chars_mobs_npcs[current_mob].mgt/10),false);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -216,7 +216,7 @@ function draw.cursor ()
 					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 						for i=1,#rings[1] do
-							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -225,7 +225,7 @@ function draw.cursor ()
 					if not helpers.cursorAtMob (cursor_world_x,cursor_world_y) and helpers.passCheck (cursor_world_x,cursor_world_y) then
 						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 						for i=1,#rings[1] do
-							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -235,20 +235,20 @@ function draw.cursor ()
 					local ringB = boomareas.smallRingArea(cursor_world_x,cursor_world_y);
 					for i=1,6 do
 						if helpers.passCheck(ringA[i].x,ringA[i].y) and  helpers.passCheck(ringB[i].x,ringB[i].y) and not helpers.cursorAtMob (ringB[i].x,ringB[i].y) then
-							draw.drawHex(ringA[i].x,ringA[i].y,cursor_danger);
-							draw.drawHex(ringB[i].x,ringB[i].y,cursor_danger);
+							draw.drawHex(ringA[i].x,ringA[i].y,cursor_danger,media.images.hex_ui);
+							draw.drawHex(ringB[i].x,ringB[i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 					if helpers.passCheck(cursor_world_x,cursor_world_y) and not helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
-						draw.drawHex(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_danger);
-						draw.drawHex(cursor_world_x,cursor_world_y,cursor_danger);
+						draw.drawHex(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_danger,media.images.hex_ui);
+						draw.drawHex(cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "firebelt" then
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for i=1,#rings[1] do
-						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -256,7 +256,7 @@ function draw.cursor ()
 					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 						for i=1,#rings[1] do
-							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -265,12 +265,12 @@ function draw.cursor ()
 					local lvl,num = helpers.countBoomNumbers (missle_drive);
 					local rings,line = boomareas.ricoBallArea(5 + num[current_mob],1, 0, false);
 					rockline = line;
-					draw.drawHex(rings[4][1].x,rings[4][1].y,cursor_danger);
+					draw.drawHex(rings[4][1].x,rings[4][1].y,cursor_danger,media.images.hex_ui);
 					for i=1,#rings[1] do
-						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 					end;
 					for i=1,#line do
-						draw.drawHex(line[i].x,line[i].y,cursor_white);
+						draw.drawHex(line[i].x,line[i].y,cursor_white,media.images.hex_ui);
 					end;
 				end;
 				
@@ -278,12 +278,12 @@ function draw.cursor ()
 					local lvl,num = helpers.countBoomNumbers (missle_drive);
 					local rings,line = boomareas.ricoBallArea(5 + num[current_mob],1, 1, false);
 					rockline = line;
-					draw.drawHex(rings[4][1].x,rings[4][1].y,cursor_danger);
+					draw.drawHex(rings[4][1].x,rings[4][1].y,cursor_danger,media.images.hex_ui);
 					for i=1,#rings[1] do
-						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 					end;
 					for i=1,#line do
-						draw.drawHex(line[i].x,line[i].y,cursor_white);
+						draw.drawHex(line[i].x,line[i].y,cursor_white,media.images.hex_ui);
 					end;
 				end;
 				
@@ -291,7 +291,7 @@ function draw.cursor ()
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for h=1,2 do
 						for i=1,#rings[h] do
-							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -300,7 +300,7 @@ function draw.cursor ()
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for h=1,3 do
 						for i=1,#rings[h] do
-							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end
@@ -309,10 +309,10 @@ function draw.cursor ()
 					local power = 1;
 					local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,12,power);
 					for i=2, #boomarea[1] do
-						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger);	
+						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger,media.images.hex_ui);	
 					end;
 					for h=1, #sharea do
-						draw.drawHex(sharea[h].x,sharea[h].y,cursor_danger);
+						draw.drawHex(sharea[h].x,sharea[h].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -320,10 +320,10 @@ function draw.cursor ()
 					local power = 1;
 					local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
 					for i=2, #boomarea[1] do
-						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger);	
+						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger,media.images.hex_ui);	
 					end;
 					for h=1, #sharea do
-						draw.drawHex(sharea[h].x,sharea[h].y,cursor_danger);
+						draw.drawHex(sharea[h].x,sharea[h].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -331,31 +331,31 @@ function draw.cursor ()
 					local power = 1;
 					local boomarea,sharea = boomareas.showerArea(cursor_world_x,cursor_world_y,18,power);
 					for i=2, #boomarea[1] do
-						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger);	
+						draw.drawHex(boomarea[1][i].x,boomarea[1][i].y,cursor_danger,media.images.hex_ui);	
 					end;
 					for h=1, #sharea do
-						draw.drawHex(sharea[h].x,sharea[h].y,cursor_danger);
+						draw.drawHex(sharea[h].x,sharea[h].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "firewall" then
 					local boomarea = boomareas.wallArea(cursor_world_x,cursor_world_y,spell_rotation,1);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "stonewall" then
 					local boomarea = boomareas.wallArea(cursor_world_x,cursor_world_y,spell_rotation,1);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "pitfall" then
 					local boomarea = boomareas.wallArea(cursor_world_x,cursor_world_y,spell_rotation,1);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -363,7 +363,7 @@ function draw.cursor ()
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for h=1,2 do
 						for i=1,#rings[h] do
-							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -371,42 +371,42 @@ function draw.cursor ()
 				if missle_type == "icefield" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "mud" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "coldray" then
 					local boomarea = boomareas.rayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "lightray" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "razors" then
 					local boomarea = boomareas.pathArea(2,0);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_white);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_white,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "spikes" then
 					local boomarea = boomareas.pathArea(2,1);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -414,7 +414,7 @@ function draw.cursor ()
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for h=1,3 do
 						for i=1,#rings[h] do
-							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -423,7 +423,7 @@ function draw.cursor ()
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for h=1,3 do
 						for i=1,#rings[h] do
-							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -432,7 +432,7 @@ function draw.cursor ()
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for h=1,3 do
 						for i=1,#rings[h] do
-							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -442,7 +442,7 @@ function draw.cursor ()
 						local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 						for h=1,3 do
 							for i=1,#rings[h] do
-								draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+								draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 							end;
 						end;
 					end;
@@ -451,35 +451,35 @@ function draw.cursor ()
 				if missle_type == "coldray" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,0);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "lightray" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,0);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "fireblast" then
 					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,4,true);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "bell" then
 					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,7,true);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type == "megavolts" then
 					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,5,true);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -487,14 +487,14 @@ function draw.cursor ()
 				if missle_type == "shrapmetal" then
 					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,3+lvl[1],false);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
 				if missle_type=="genocide" then
 					local boomarea = boomareas.signArea("class",genocidetheme);
 					for i=1,#boomarea do
-						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
 				end;
 				
@@ -506,11 +506,11 @@ function draw.cursor ()
 							local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 							if lvl[1] == 5 then
 								for i=1,#rings[3] do
-									draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger);
+									draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
 								end;
 							end;
 							for i=1,#rings[2] do
-								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger);
+								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
 							end;
 						end;
 					end;
@@ -523,10 +523,10 @@ function draw.cursor ()
 						if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
 							local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 							for i=1,#rings[3] do
-								draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger);
+								draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
 							end;
 							for i=1,#rings[2] do
-								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger);
+								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
 							end;
 						end;
 					end;
@@ -539,10 +539,10 @@ function draw.cursor ()
 						if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
 							local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 							for i=1,#rings[3] do
-								draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger);
+								draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
 							end;
 							for i=1,#rings[2] do
-								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger);
+								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
 							end;
 						end;
 					end;
@@ -555,7 +555,7 @@ function draw.cursor ()
 						if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
 							local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 							for i=1,#rings[1] do
-								draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+								draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 							end;
 						end;
 					end;
@@ -567,7 +567,7 @@ function draw.cursor ()
 						local boomarea, linetable, mobs = boomareas.chainArea(cursor_world_x,cursor_world_y, lvl[1], 3);
 						mobsmarked = mobs; -- ARGH!!!
 						for i=1,#boomarea do
-							draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger);
+							draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 							
 						end;
 						if #linetable >= 4 then
@@ -582,7 +582,7 @@ function draw.cursor ()
 					local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 					for h=1,3 do
 						for i=1,#rings[h] do
-							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger);
+							draw.drawHex(rings[h][i].x,rings[h][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;
@@ -591,10 +591,10 @@ function draw.cursor ()
 						local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 						local rings2 = boomareas.ringArea(cursor_world_x,cursor_world_y);
 						for i=1,#rings[1] do
-							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger);
+							draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 						end;
 						for i=1,#rings2[1] do
-							draw.drawHex(rings2[1][i].x,rings2[1][i].y,cursor_danger);
+							draw.drawHex(rings2[1][i].x,rings2[1][i].y,cursor_danger,media.images.hex_ui);
 						end;
 					end;
 				end;]]
@@ -602,7 +602,7 @@ function draw.cursor ()
 				if missle_type == "armageddon" then
 					for mx = map_x,math.min(map_w + map_display_w) do
 						for my = map_y,math.min(map_h + map_display_h) do
-							draw.drawHex(mx,my,cursor_danger);	
+							draw.drawHex(mx,my,cursor_danger,media.images.hex_ui);	
 						end;
 					end;
 				end;
@@ -800,14 +800,35 @@ function draw.boom ()
 	if missle_type == "bell" then
 		local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,7,1);
 		for i=1,#boomarea do
-			boomareas.windAir (boomarea[i].x,boomarea[i].y)
+			boomareas.windAir (boomarea[i].x,boomarea[i].y);
 		end;
 	end;
+	
+	if missle_type == "windfist" then
+		local ring = boomareas.ringArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+		local penalty = 0;
+		if chars_mobs_npcs[victim].size == "giant" then
+			penalty = 3;
+		end;
+		if chars_mobs_npcs[victim].nature == "golem" or chars_mobs_npcs[victim].class == "earthelemental" then
+			penalty = 2;
+		end;
+		if chars_mobs_npcs[victim].nature == "droid" or chars_mobs_npcs[victim].size == "big" then
+			penalty = 1;
+		end;
+		local sixrows_dir = chars_mobs_npcs[current_mob].rot;
+		for i=1,math.max(1,math.min(3,lvl[1]-1-penalty)) do
+			if helpers.passCheck(ring[i][sixrows[i][sixrows_dir]].x,ring[i][sixrows[i][sixrows_dir]].y) and chars_mobs_npcs[victim].status == 1 then
+				boomareas.windAir (ring[i][sixrows[i][sixrows_dir]].x,ring[i][sixrows[i][sixrows_dir]].y);
+			end;
+		end;
+	end;
+				
 	
 	if missle_type == "megavolts" then
 		local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,5,0);
 		for i=1,#boomarea do
-			boomareas.staticGround (boomarea[i].x,boomarea[i].y)
+			boomareas.staticGround (boomarea[i].x,boomarea[i].y);
 		end;
 	end;
 	
@@ -1235,9 +1256,9 @@ function draw.papermap ()
 						love.graphics.setColor(255, 255, 255,125);
 						love.graphics.draw(media.images.hex, tile[map[my][mx]],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
 						love.graphics.setColor(255, 255, 255,255);
-						love.graphics.draw(media.images.hex, minimap_hexes[minimap_table[map[my][mx]]],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
+						love.graphics.draw(media.images.hex_ui, minimap_hexes[minimap_table[map[my][mx]]],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
 					else
-						love.graphics.draw(media.images.hex, minimap_hexes[13],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
+						love.graphics.draw(media.images.hex_ui, minimap_hexes[13],((mx - map_x -1)*tile_w_paper)+x+55, (my- map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
 					end;
 					for e=1,chars do
 						if chars_mobs_npcs[e].x == mx and chars_mobs_npcs[e].y == my then
@@ -1250,9 +1271,9 @@ function draw.papermap ()
 						love.graphics.setColor(255, 255, 255,125);
 						love.graphics.draw(media.images.hex, tile[map[my][mx]],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
 						love.graphics.setColor(255, 255, 255,255);
-						love.graphics.draw(media.images.hex, minimap_hexes[minimap_table[map[my][mx]]],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
+						love.graphics.draw(media.images.hex_ui, minimap_hexes[minimap_table[map[my][mx]]],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
 					else
-						love.graphics.draw(media.images.hex, minimap_hexes[13],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
+						love.graphics.draw(media.images.hex_ui, minimap_hexes[13],((mx - map_x - 1)*tile_w_paper+tile_w_paper/2)+x+55, (my - map_y - 1)*tile_h_paper*0.75+y+15,0,0.15);
 					end;
 					for e=1,chars do
 						if chars_mobs_npcs[e].x==mx and chars_mobs_npcs[e].y==my then
@@ -1279,9 +1300,9 @@ function draw.obelisk ()
 	for my=1,23 do
 		for mx=1,11 do	
 			if (my)/2 == math.ceil((my)/2) then
-				love.graphics.draw(media.images.hex, minimap_hexes[global.grail_maparray[my][mx]],((mx-1)*tile_w_paper)+x+8, (my-1)*tile_h_paper*0.75+y+45,0,1);
+				love.graphics.draw(media.images.hex_ui, minimap_hexes[global.grail_maparray[my][mx]],((mx-1)*tile_w_paper)+x+8, (my-1)*tile_h_paper*0.75+y+45,0,1);
 			else
-				love.graphics.draw(media.images.hex, minimap_hexes[global.grail_maparray[my][mx]],((mx-1)*tile_w_paper+tile_w_paper/2)+x+8, (my-1)*tile_h_paper*0.75+y+45,0,1);
+				love.graphics.draw(media.images.hex_ui, minimap_hexes[global.grail_maparray[my][mx]],((mx-1)*tile_w_paper+tile_w_paper/2)+x+8, (my-1)*tile_h_paper*0.75+y+45,0,1);
 			end;
 		end;
 	end;
@@ -2048,7 +2069,7 @@ function draw.mindgame()
 		end;
 	end;
 	if draw_cursor and _near then
-		draw.drawMindHex (global.mindcursor_x,global.mindcursor_y,cursor_danger);
+		draw.drawMindHex (global.mindcursor_x,global.mindcursor_y,cursor_danger,media.images.hex_ui);
 	end;
 	draw.mindgameCycle(true);
 	draw.drawMindObject(media.images.ui,green_fishka,global.mindhero_x,global.mindhero_y,-348,-210);
@@ -2584,11 +2605,17 @@ function draw.objects ()
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
+					
+					--[[
+					draw.drawHex(corner_hexes_array[1][1],corner_hexes_array[1][2],cursor_danger,media.images.hex_ui);
+					draw.drawHex(corner_hexes_array[2][1],corner_hexes_array[2][2],cursor_danger,media.images.hex_ui);
+					draw.drawHex(corner_hexes_array[3][1],corner_hexes_array[3][2],cursor_danger,media.images.hex_ui);
+					draw.drawHex(corner_hexes_array[4][1],corner_hexes_array[4][2],cursor_danger,media.images.hex_ui);
+					]]
 					if darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 0
 					or darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 0
 					or darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 0
 					or darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 0
-					--or darkness[1][my+map_y+buildings_stats[index]["door_ev"][1]][mx+map_x+buildings_stats[index]["door_ev"][2]] == 0
 					then
 						love.graphics.setColor(255, 255, 255);
 						for i=1,#buildings_stats[index].hexes_ev do
@@ -2630,6 +2657,13 @@ function draw.objects ()
 					local index = map[my+map_y][mx+map_x] - 300;
 					local corner_hexes_array = helpers.cornersOfBuilding(index,mx+map_x,my+map_y);
 					--local img = media.images[buildings_stats[index].img];
+					
+					--[[
+					draw.drawHex(corner_hexes_array[1][1],corner_hexes_array[1][2],cursor_danger,media.images.hex_ui);
+					draw.drawHex(corner_hexes_array[2][1],corner_hexes_array[2][2],cursor_danger,media.images.hex_ui);
+					draw.drawHex(corner_hexes_array[3][1],corner_hexes_array[3][2],cursor_danger,media.images.hex_ui);
+					draw.drawHex(corner_hexes_array[4][1],corner_hexes_array[4][2],cursor_danger,media.images.hex_ui);
+					]]
 					local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
@@ -2638,7 +2672,6 @@ function draw.objects ()
 					or darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 0
 					or darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 0
 					or darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 0
-					--or darkness[1][my+map_y+buildings_stats[index]["door_ne"][1]][mx+map_x+buildings_stats[index]["door_ne"][2]] == 0
 					then
 						love.graphics.setColor(255, 255, 255);
 						for i=1,#buildings_stats[index].hexes_ne do
@@ -4373,7 +4406,16 @@ function draw.ui ()
 				--add_effect_st = hold_tips[missle_effect].stamina;			
 			--end;
 			
-			if missle_drive == "muscles" and helpers.missleAtWarBook() then
+			if missle_drive == "muscles" and helpers.missleAtWarBook() 
+			and (
+			(tricks.tricks_tips[missle_type].form == "melee" and helpers.cursorAtMob (cursor_world_x,cursor_world_y))
+			or (tricks.tricks_tips[missle_type].form == "range" and helpers.cursorAtMob (cursor_world_x,cursor_world_y))
+			or (tricks.tricks_tips[missle_type].form == "ball" and helpers.cursorAtMob (cursor_world_x,cursor_world_y))
+			or (tricks.tricks_tips[missle_type].form == "fan" and helpers.cursorAtMob (cursor_world_x,cursor_world_y))
+			or tricks.tricks_tips[missle_type].form == "pose"
+			or tricks.tricks_tips[missle_type].form == "selfbuff"
+			)
+			then
 				delta_st2spend = delta_st2spend + price_in_st/chars_mobs_npcs[i].st_max;
 				add_effect_st = delta_st2spend;
 				delta_rt2spend = delta_rt2spend + price_in_rt/200;
@@ -4383,7 +4425,7 @@ function draw.ui ()
 			if game_status == "pathfinding" then
 				delta_rt2spend = math.max(#way_of_the_mob*5/200,0);
 				delta_st2spend = math.max(#way_of_the_mob*5/chars_mobs_npcs[i].st_max,0);
-				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
+				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and (not helpers.missleAtWarBook() or tricks.tricks_tips[missle_type].form ~= "pose" or tricks.tricks_tips[missle_type].form ~= "selfbuff") then
 					local recovery = 0;
 					recovery = helpers.countMeleeRecoveryChar (current_mob) + helpers.countPathPrice(current_mob) + add_effect_st;
 					delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max;
@@ -4395,8 +4437,8 @@ function draw.ui ()
 				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
 					local recovery = 0;
 					if missle_type == "arrow" or missle_type == "bolt" or missle_type == "throwing" or missle_type == "bullet" or missle_type == "battery" 
-					or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
-					or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing")
+					--or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
+					--or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing")
 					then
 						recovery = helpers.countRangeRecoveryChar (current_mob);
 						delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max + add_effect_st;
@@ -4648,6 +4690,7 @@ function draw.ui ()
 		love.graphics.print(_txt,250,10);
 	end;
 	love.graphics.print(game_status,450,10);
+	love.graphics.print(missle_type,650,10);
 	--love.graphics.print(missle_type,100,10);
 	--love.graphics.print(missle_drive,150,10);
 end;
@@ -5287,7 +5330,7 @@ end;
 function draw.line()
 	if #shot_line>0 and game_status == "sensing" then
 		for i=1,#shot_line do
-			draw.drawHex(shot_line[i][1],shot_line[i][2],cursor_empty);
+			draw.drawHex(shot_line[i][1],shot_line[i][2],cursor_empty,media.images.hex_ui);
 		end;
 	end;
 end;
@@ -5345,14 +5388,14 @@ end;
 
 function draw.way ()
 	for i=1,#way_of_the_mob do
-		draw.drawHex (way_of_the_mob[i][1],way_of_the_mob[i][2],cursor_way[way_of_the_mob[i][6]]);
+		draw.drawHex (way_of_the_mob[i][1],way_of_the_mob[i][2],cursor_way[way_of_the_mob[i][6]],media.images.hex_ui);
 	end;
 end;
 
 function draw.mindway ()
 	if global.mindway then
 		for i=1,#global.mindway do
-			draw.drawMindHex (global.mindway[i][1],global.mindway[i][2],cursor_white);
+			draw.drawMindHex (global.mindway[i][1],global.mindway[i][2],cursor_white,media.images.hex_ui);
 		end;
 	end;
 end;
@@ -5364,10 +5407,10 @@ function draw.fogOfWar()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
 			if darkness[1][my+map_y][mx+map_x] == 2 then
-				draw.drawHex (mx+map_x,my+map_y,tile_black);
+				draw.drawHex (mx+map_x,my+map_y,tile_black,media.images.hex_ui);
 			end
 			if darkness[1][my+map_y][mx+map_x] == 1 and global.grey then
-				draw.drawHex (mx+map_x,my+map_y,tile_grey);
+				draw.drawHex (mx+map_x,my+map_y,tile_grey,media.images.hex_ui);
 			end;
 		end;
 	end;
@@ -5462,19 +5505,16 @@ function draw.drawMindObject (image,object,hx,hy,addx,addy)
 	love.graphics.draw(image, object, moveto_hex_x, moveto_hex_y);
 end;
 
-function draw.drawHex (x,y,cursor)
+function draw.drawHex (x,y,cursor,img)
 	local moveto_hex_x = 0;
 	local moveto_hex_y = 0;
-	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space);
+	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space,img);
 	if y/2 == math.ceil(y/2) then
 		moveto_hex_x = (x-2-map_x)*tile_w+left_space;
 	else
 		moveto_hex_x = (x-2-map_x)*tile_w+tile_w/2+left_space;
 	end;
-	local newhex = love.graphics.draw(media.images.hex, cursor, moveto_hex_x, moveto_hex_y);
-	--love.graphics.print(slandscape[y][x],moveto_hex_x+32, moveto_hex_y+16)
-	--love.graphics.print(visibility_table[map[y][x]],moveto_hex_x+2, moveto_hex_y+16)
-	--love.graphics.print(darkness[1][y][x],moveto_hex_x+4, moveto_hex_y+20)
+	local newhex = love.graphics.draw(img, cursor, moveto_hex_x, moveto_hex_y);
 end;
 
 function draw.drawNumberHex (x,y,add,txt)
@@ -5499,7 +5539,7 @@ end;
 
 function draw.drawHitHex (hitHex_x,hitHex_y)
 	if hitHex_x > 0 and hitHex_y > 0 then
-		draw.drawHex(hitHex_x,hitHex_y,cursor_red);
+		draw.drawHex(hitHex_x,hitHex_y,cursor_red,media.images.hex_ui);
 	end;
 end;
 

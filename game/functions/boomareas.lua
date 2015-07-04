@@ -508,7 +508,7 @@ function boomareas.chainArea (x,y,length,width)
 		end;  
 	end;
 	for i=1,#mobsmarked do
-		draw.drawHex(chars_mobs_npcs[mobsmarked[i]].x,chars_mobs_npcs[mobsmarked[i]].y,cursor_danger);
+		draw.drawHex(chars_mobs_npcs[mobsmarked[i]].x,chars_mobs_npcs[mobsmarked[i]].y,cursor_danger,hex_ui);
 		moveto_hex_y=math.ceil(chars_mobs_npcs[mobsmarked[i]].y-1)*tile_h*0.75+top_space
 		if chars_mobs_npcs[mobsmarked[i]].y/2 == math.ceil(chars_mobs_npcs[mobsmarked[i]].y/2 ) then
 			moveto_hex_x=math.ceil(chars_mobs_npcs[mobsmarked[i]].x-1)*tile_w+left_space

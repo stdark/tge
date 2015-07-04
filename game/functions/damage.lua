@@ -1153,18 +1153,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				end;
 				damage.HPminus(victim,dmghp,true);
 			end;
-			--[[if missle_type == "windfist" and chars_mobs_npcs[victim].size ~= "giant" then
-				chars_mobs_npcs[victim].stun = damage.applyCondition (victim,lvl[1],num[1],"stun",false,"enu",false,1,false);
-				local dmgrt = math.max(chars_mobs_npcs[victim].rt,20 +  damage.damageRandomizator(current_mob,1,lvl[1]*num[1]));
-				damage.RTminus(victim,dmgrt,true);
-				local ring = boomareas.smallRingArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
-				if helpers.passCheck(ring[chars_mobs_npcs[current_mob].rot].x,ring[chars_mobs_npcs[current_mob].rot].y) then
-					chars_mobs_npcs[victim].x = ring[chars_mobs_npcs[current_mob].rot].x;
-					chars_mobs_npcs[victim].y = ring[chars_mobs_npcs[current_mob].rot].y;
-				end;
-				helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.stunned[chars_mobs_npcs[victim].gender]);
-			end;]]
-			
+
 			if missle_type == "windfist" then
 				chars_mobs_npcs[victim].stun = damage.applyCondition (victim,lvl[1],num[1],"stun",false,"enu",false,1,false);
 				local dmgrt = damage.damageRandomizator(current_mob,20,lvl[1]*num[1]);

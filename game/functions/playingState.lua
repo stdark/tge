@@ -903,6 +903,35 @@ function playingState.load()
 		utils.playThemeMusic (media.sounds.peace,0,"peace");
 	end;
 	global.first_load = false;
+	
+	--[[
+	
+	lightMouse = lightWorld.newLight(100, 100, 1, 1, 1,10)
+    lightMouse.setGlowStrength(0.3) -- optional
+	
+	
+	local x = 200
+	local y = 200
+	local strength = 1
+	
+	imgNormal = love.graphics.newImage("img/lightsvsshadows/refraction_normal.png")
+	imgHeightMap = love.graphics.newImage("img/lightsvsshadows/refraction_height.png")
+	
+	print("IMG",imgNormal,imgHeightMap)
+	
+	lightWorld.setRefractionStrength(16.0)
+   -- set the global reflection strength to 32 (default: 16)
+   lightWorld.setReflectionStrength(32)
+   -- set the global reflection visibility to 0.5 (default: 1.0)
+   lightWorld.setReflectionVisibility(0.5)
+   -- create a refraction from a normal map
+   refraction = lightWorld.newRefraction(imgNormal, x, y)
+   -- create a refraction from a height map and choose the strength (default: 1.0)
+   refraction = lightWorld.newRefractionHeightMap(imgHeightMap, x, y)
+   print("REF",refraction)
+   -- move the normal map texture within the boundary
+   refraction.setNormalTileOffset(x, y)]]
+	
 end;
 
 --======================================================================
@@ -1691,7 +1720,34 @@ function arrays_of_tmp_landscape ()
 end;
 
 function playingState.keypressed(key, unicode)
-
+	if chars_mobs_npcs[current_mob].control == "player" or game_status == "menu" then
+		if game_status ~= "moving" then
+			if key == "up" then
+				if map_y > 0 then
+					map_y = map_y-1;
+					helpers.castShadows();
+				end;
+			end;
+			if key == "down" then
+				if map_y < (map_h-40) then
+					map_y = map_y+1;
+					helpers.castShadows();
+				end;
+			end;
+			if key == "left" then
+				if map_x >= 2 then
+					map_x = map_x-1;
+					helpers.castShadows();
+				end;
+			end;
+			if key == "right" then
+				if map_x <= (map_w-30) then
+					map_x = map_x+1;
+					helpers.castShadows();
+				end;
+			end;
+		end;
+	end;
 end;
 
 function playingState.keyreleased(key, unicode)
@@ -1748,32 +1804,6 @@ function playingState.keyreleased(key, unicode)
 		end;
 		if key == "rctrl" then --set to whatever key you want to use
 			love.mouse.setVisible(false);
-		end;
-		if game_status ~= "moving" then
-			if key == "up" then
-				if map_y > 0 then
-					map_y = map_y-1;
-					helpers.castShadows();
-				end;
-			end;
-			if key == "down" then
-				if map_y < (map_h-40) then
-					map_y = map_y+1;
-					helpers.castShadows();
-				end;
-			end;
-			if key == "left" then
-				if map_x >= 2 then
-					map_x = map_x-1;
-					helpers.castShadows();
-				end;
-			end;
-			if key == "right" then
-				if map_x <= (map_w-30) then
-					map_x = map_x+1;
-					helpers.castShadows();
-				end;
-			end;
 		end;
 		if key=="y" then
 			love.audio.pause(media.sounds.battle, 0);
@@ -6489,6 +6519,16 @@ function  playingState.mousepressed(x,y,button)
 		and tricks.tricks_tips[missle_type].form == "pose" then
 			damage.setProtectionMode();
 		end;
+		
+		--[[if love.mouse.isDown("l") and mY < global.screenHeight-160
+		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
+		and (game_status == "sensing" or game_status == "pathfinding")
+		and missle_drive == "muscles"
+		and helpers.missleAtWarBook()
+		and tricks.tricks_tips[missle_type].form == "melee" then
+		
+		end;]]
+		
 		--[[
 		if love.mouse.isDown("l") and mY < global.screenHeight-160
 		and (chars_mobs_npcs[current_mob].control=="player"	or person_under_cursor=="char")
@@ -9065,6 +9105,10 @@ end;
 function playingState.draw()
 	--currentState.draw();
 	lightWorld.update();
+	
+	   -- set your canvas
+  -- love.graphics.setCanvas(myCanvas) --REF
+	
 	love.graphics.setFont(mainFont);
 	draw.background();
 	draw.submap();
@@ -9086,6 +9130,15 @@ function playingState.draw()
 
 	lightWorld.drawShadow();
 	lightWorld.drawGlow();
+	 --REF
+	  -- draw the reflection
+   --lightWorld.drawReflection()
+
+   -- draw the refraction
+   --lightWorld.drawRefraction()
+
+	
+	
 	if global.weather == "rain" then
 		draw.rain (100,10,10,255,255,255,150);
 	end;
@@ -9146,6 +9199,10 @@ function playingState.draw()
 	loveframes.draw();
 
 	local x,y = helpers.centerObject(media.images.inv1);
+	
+	   -- draw Canvas --REF
+   --love.graphics.setCanvas()
+   --love.graphics.draw(myCanvas)
 
  end;
 

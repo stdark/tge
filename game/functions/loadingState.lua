@@ -72,6 +72,7 @@ function loadingState.start(media, finishCallback)
 		loader.newImage(media.images, "hex", images_table[2]);
 		loader.newImage(media.images, "obj", images_table[3]);
 		if global.first_load  then
+			loader.newImage(media.images, "hex_ui", "img/hex_ui.dds");
 			loader.newImage(media.images, "hud_bottom_left", "img/hud/hud_bottom_left.dds");
 			loader.newImage(media.images, "hud_bottom_right", "img/hud/hud_bottom_right.dds");
 			loader.newImage(media.images, "hud_bottom_tile", "img/hud/hud_bottom_tile.dds");		
