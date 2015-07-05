@@ -6231,7 +6231,7 @@ function damage.deadNow (index)
 	if chars_mobs_npcs[index].revenge_type ~= 0 then
 		table.insert(mobs_revengers,j);
 	end;
-	if hlandscape[b][a] > 25 then
+	if hlandscape[chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] > 25 then
 		hlandscape[chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] = 0;
 	end;
 	chars_mobs_npcs[index].status = -1;

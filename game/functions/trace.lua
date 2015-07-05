@@ -266,6 +266,7 @@ function trace.one_around (index)
 end;
 
 function trace.first_watch (index)
+	darkness[chars_mobs_npcs[index].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] = 0;
 	if chars_mobs_npcs[index].status == 1 then
 		if chars_mobs_npcs[index].control == "player" then
 			local temp_array = trace.trace_hexes(index,false,trace.sightArray (index),false);

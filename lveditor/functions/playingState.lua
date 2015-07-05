@@ -331,7 +331,7 @@ function playingState.load()
 	showhidden = 1;
 	global.show_harvest = 1;
 	global.show_decals = 1;
-
+	global.herb_random = -1;
 	savename = "level1.lua";
 	row_buttons={};
 	--global={};
@@ -3377,6 +3377,22 @@ function drawUIButtons()
 		draw_harvest_buttons();
 	end;
 	
+	uibuttons[30] = loveframes.Create("button")
+	uibuttons[30]:SetPos(200,global.screenHeight-60);
+	uibuttons[30]:SetHeight(30);
+	uibuttons[30]:SetWidth(80);
+	uibuttons[30]:SetText("herb rnd");
+	uibuttons[30].OnClick = function(object)
+		checkHerbs();
+		editor_status="harvest"
+		global.herb_random = -1*global.herb_random;
+		loveframes.util.RemoveAll();
+		drawUIButtons();
+		love.mouse.setVisible(false);
+		draw_harvest_buttons();
+	end;
+	
+	
 	uibuttons[5] = loveframes.Create("button")
 	uibuttons[5]:SetPos(200,global.screenHeight-90);
 	uibuttons[5]:SetHeight(30);
@@ -4157,7 +4173,10 @@ function playingState.draw()
 		love.graphics.print("x", 35, 10);
 		love.graphics.print(cursor_world_y, 55, 10)
 	end;
-
+	if editor_status == "harvest" then
+		love.graphics.print("herb_rnd", 220, global.screenHeight-140);
+		love.graphics.print(global.herb_random, 300, global.screenHeight-140);
+	end;
 	if global.randomize_hexes == 1 then 
 		local _str = "value:" .. global.rnd_value;
 		love.graphics.print(_str,740, global.screenHeight-140);
@@ -4207,9 +4226,14 @@ function addHerb(x,y)
 		clearHerb(x,y);
 		return;	
 	end;
-	if harvest_table[y][x][1] == 0 then --no herb (apply)
-		harvest_table[y][x] = {current_herb,current_herb_dencity,{}};
-	elseif current_herb >=1 and current_herb <=25 and 
+	if harvest_table[y][x][1] == 0 or (harvest_table[y][x][1] > 25 and global.herb_random == -1)  then --no herb (apply) or trash herb (change)
+		if global.randomize_hexes == -1 then
+			harvest_table[y][x] = {current_herb,current_herb_dencity,{}};
+		else
+			local _rnd = math.min(100,math.random(1,global.rnd_value)-1)
+			harvest_table[y][x] = {current_herb+_rnd,current_herb_dencity,{}};
+		end;
+	elseif current_herb >= 1 and current_herb <= 25 and 
 	harvest_table[y][x][1] >= 1 and harvest_table[y][x][1] <= 25
 	then --comp herb at simple herb (move)
 		local _array = harvest_table[y][x][3];
@@ -4222,7 +4246,7 @@ function addHerb(x,y)
 			_array = {current_herb};
 		else
 			for i=1, global.rnd_value do
-				table.insert(_array,math.min(50,current_herb+math.random(1,i)-1));
+				table.insert(_array,math.min(100,current_herb+math.random(1,i)-1));
 			end;
 		end;
 		harvest_table[y][x] = {current_herb,current_herb_dencity,_array};
@@ -4230,14 +4254,14 @@ function addHerb(x,y)
 		--comp herb at simple herb (apply comp, simple to fix array)
 		local _array = {harvest_table[y][x][1]};
 		harvest_table[y][x] = {current_herb,current_herb_dencity,_array};
-	elseif current_herb > 25 and harvest_table[y][x][1] > 25 then
+	elseif current_herb > 25 and harvest_table[y][x][1] > 25 and global.herb_random == 1 then
 		--simple herb at simple herb (new simple to fix array)
 		local _array = {};
-		if global.randomize_hex == -1 then
+		if global.randomize_hexes == -1 then
 			_array = {current_herb};
 		else
 			for i=1, global.rnd_value do
-				table.insert(_array,math.min(50,current_herb+math.random(1,i)-1));
+				table.insert(_array,math.min(100,current_herb+math.random(1,i)-1));
 			end;
 		end;
 		harvest_table[y][x] = {current_herb,current_herb_dencity,_array};

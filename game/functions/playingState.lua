@@ -715,6 +715,7 @@ function playingState.load()
 			for z=1,map_h do
 				if harvest_table[i][z][1] > 0 and math.random(1,100) <= harvest_table[i][z][2] then
 					hlandscape[i][z] = harvest_table[i][z][1];
+				--elseif harvest_table[i][z][1] > 0 and harvest_table[i][z][3] and #harvest_table[i][z][3] > 0 then
 				elseif harvest_table[i][z][1] > 0 and harvest_table[i][z][3] and #harvest_table[i][z][3] > 0 then
 					local _rnd = math.random(1,#harvest_table[i][z][3]);
 					hlandscape[i][z] = harvest_table[i][z][3][_rnd];

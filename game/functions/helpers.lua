@@ -32,7 +32,7 @@ function helpers.passCheck (x,y) --final point
 	and map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) 
 	and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
-	and	(hlandscape[y][x] <= 50 or helpers.mobIgnoresBooshes(current_mob))
+	and	(hlandscape[y][x] <= 75 or helpers.mobIgnoresBooshes(current_mob))
 	then
 		return true
 	else
@@ -41,7 +41,7 @@ function helpers.passCheck (x,y) --final point
 end;
 
 function helpers.mobIgnoresBooshes(index)
-	if chars_mobs_npcs[index].locomotion ~= "walking" or chars_mobs_npcs[index].size == "giant" or chars_mobs_npcs[index].nature == "golem" or chars_mobs_npcs[index].nature == "droid" then
+	if chars_mobs_npcs[index].motion ~= "walking" or chars_mobs_npcs[index].size == "giant" or chars_mobs_npcs[index].nature == "golem" or chars_mobs_npcs[index].nature == "droid" then
 		return true
 	end;
 	return false;
@@ -132,9 +132,11 @@ function helpers.passWalk (x,y)
 	local height_value = 0;
 	if map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
-	and	(hlandscape[y][x] <= 50 or helpers.mobIgnoresBooshes(current_mob))
 	then
 		height_value = heights_table[map[y][x]];
+		if hlandscape[y][x] > 75 and not helpers.mobIgnoresBooshes(current_mob) then
+			height_value = 1;
+		end;
 	else
 		height_value = 2;
 	end;
