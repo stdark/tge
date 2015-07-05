@@ -113,27 +113,32 @@ function damage.applyCondition (index,lvl,num,condition,element,stat,skill,coff,
 	local roll = math.random(1,100);
 	local luckfactorCaster = 1;
 	local luckfactorTarget = 1;
-	local condition = 0;
+	local condition_value = 0;
 	if luck then
 		luckfactorCaster = chars_mobs_npcs[current_mob].luk;
 		luckfactorTarget = chars_mobs_npcs[index].luk;
 	end;
 	if element and num*lvl*luckfactorCaster > chars_mobs_npcs[index]["rez" .. element]*luckfactorTarget then
-		condition =  math.ceil(coff*num);
+		condition_value =  math.ceil(coff*num);
 	elseif stat and lvl*num > chars_mobs_npcs[current_mob][stat] then
-		condition = math.ceil(num*coff);
+		condition_value = math.ceil(num*coff);
 	elseif skill and lvl*num > chars_mobs_npcs[current_mob].skill then
-		condition = math.ceil(num*coff);
+		condition_value = math.ceil(num*coff);
 	else
-		condition = math.ceil(num*coff);
+		condition_value = math.ceil(num*coff);
 	end;
 	if condition == "bleeding" and not helpers.traumaNature(index) then
-		condition = 0;
+		condition_value = 0;
 	end;
-	if condition > 0 then
-		chars_mobs_npcs[index][condition] = condtion; --FIXME
+	if condition_value > 0 then
+		chars_mobs_npcs[index][condition] = condtion_value; --FIXME
 	end;
-	return condition;
+	for i=1, #chars_mobs_npcs[index].immunities do
+		if chars_mobs_npcs[index]["immunities"][i] == condition then
+			condition_value = 0;
+		end;
+	end;
+	return condition_value;
 end;
 
 function damage.applyConditionTwoFactors (index,lvl,num,condition,element,stat,skill,coff,luck)
@@ -158,6 +163,12 @@ function damage.applyConditionTwoFactors (index,lvl,num,condition,element,stat,s
 	else
 		condition_power = math.ceil(num*coff);
 		condition_dur = math.ceil(lvl*coff);
+	end;
+	for i=1, #chars_mobs_npcs[index].immunities do
+		if chars_mobs_npcs[index]["immunities"][i] == condition then
+			condition_power = 0;
+			condition_dur = 0;
+		end;
 	end;
 	return condition_power,condition_dur;
 end;
@@ -300,14 +311,30 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		end;
 		--/tricks
 		if helpers.likeAStar () then
-			chance_to_hit = math.ceil(chance_to_hit*(chars_mobs_npcs[current_mob].leye + chars_mobs_npcs[current_mob].reye)/2);
+			local eye_mod = 1;
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+				eye_mod = math.max(0,eye_mod-0.5);
+			end;
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+				eye_mod = math.max(0,eye_mod-0.5);
+			end;
+			if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
+				eye_mod = 0;
+			end;
+			chance_to_hit = math.ceil(chance_to_hit*eye_mod);
 		elseif helpers.likeABow () then
-			if chars_mobs_npcs[current_mob].reye == 0 then
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+				chance_to_hit = 0;
+			end;
+			if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
 				chance_to_hit = 0;
 			end;
 		elseif helpers.likeAGun () then
-			if chars_mobs_npcs[current_mob].reye == 0 and chars_mobs_npcs[current_mob].leye == 1 then
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 and chars_mobs_npcs[current_mob].leye and chars_mobs_npcs[current_mob].leye == 1 then
 				chance_to_hit = math.ceil(0.25*chance_to_hit);
+			end;
+			if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
+				chance_to_hit = 0;
 			end;
 		end;
 		utils.randommore ();
@@ -909,8 +936,9 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			end;
 
 			if missle_type == "blinding" then
-				chars_mobs_npcs[victim].reye = 0;
-				chars_mobs_npcs[victim].leye = 0;
+				damage.operateAnEye(victim,"reye",false);
+				damage.operateAnEye(victim,"leye",false);
+				damage.operateAnEye(victim,"ceye",false);
 				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
 			elseif missle_type == "nailing" then
 				chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_crossbow;
@@ -2208,8 +2236,10 @@ function damage.multidamage () --FIXME two hexes
 			chars_mobs_npcs[i].stone = 0;
 			chars_mobs_npcs[i].immobilize = 0;
 
-			chars_mobs_npcs[i].reye = 1;
-			chars_mobs_npcs[i].leye = 1;
+			damage.operateAnEye(i,"reye",true);
+			damage.operateAnEye(i,"leye",true);
+			damage.operateAnEye(i,"ceye",true);
+			
 			chars_mobs_npcs[i]["arms_health"].rh = 1;
 			chars_mobs_npcs[i]["arms_health"].lh = 1;
 			chars_mobs_npcs[i].pneumothorax = 0;
@@ -2262,8 +2292,6 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				
-				--lala
 				if helpers.aliveNature(j) then
 					debuff = damage.applyCondition (j,lvl[1],1,"bleeding",false,false,false,2,true);
 					boomareas.bloodGround (boomx,boomy);
@@ -3418,8 +3446,18 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		delta_spd = 100;
 	end;
 	helpers.recalcBattleStats (current_mob);
-	chance_not_to_miss = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob]["melee_stats"][attacking_hand].atkm+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
-	chance_to_hit_norandom = math.ceil(chance_not_to_miss*(chars_mobs_npcs[current_mob].leye + chars_mobs_npcs[current_mob].reye)/2);
+	chance_not_to_miss = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob]["melee_stats"][attacking_hand].atkm+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;	
+	local eye_mod = 1;
+	if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+		eye_mod = math.max(0,eye_mod-0.5);
+	end;
+	if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+		eye_mod = math.max(0,eye_mod-0.5);
+	end;
+	if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
+		eye_mod = 0;
+	end;
+	chance_to_hit_norandom = math.ceil(chance_not_to_miss*eye_mod);
 	utils.randommore ();
 	random_chance = math.random(1,100)-50;
 	total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
@@ -4540,14 +4578,19 @@ function damage.instantCast () --FIXME use lvl, num
 			chars_mobs_npcs[victim].pneumothorax = 0;
 			_total = _total - buff;
 		end;
-		if chars_mobs_npcs[victim].leye == 0 and _total >= 10 then
+		if chars_mobs_npcs[victim].leye and chars_mobs_npcs[victim].leye == 0 and _total >= 10 then
 			buff = buff+10;
 			chars_mobs_npcs[victim].leye = 1;
 			_total = _total - buff;
 		end;
-		if chars_mobs_npcs[victim].reye == 0 and _total >= 10 then
+		if chars_mobs_npcs[victim].reye and chars_mobs_npcs[victim].reye == 0 and _total >= 10 then
 			buff = buff+10;
 			chars_mobs_npcs[victim].reye = 1;
+			_total = _total - buff;
+		end;
+		if chars_mobs_npcs[victim].ceye and chars_mobs_npcs[victim].ceye == 0 and _total >= 10 then
+			buff = buff+10;
+			chars_mobs_npcs[victim].ceye = 1;
 			_total = _total - buff;
 		end;
 		if chars_mobs_npcs[victim].rh and chars_mobs_npcs[victim].rh == 0 and _total >= 10 then
@@ -4613,7 +4656,7 @@ function damage.instantCast () --FIXME use lvl, num
 	end;
 	
 	if missle_type == "invisibility" then
-		if not  ai.enemyWatchesTheMob (victim) then
+		if not  ai.mobWatchesTheMob (victim,false) then
 			buff = num[1]
 			chars_mobs_npcs[victim].invisibility = buff;
 			helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
@@ -5389,6 +5432,18 @@ function damage.instantCast () --FIXME use lvl, num
 		debuff = damage.applyCondition (victim,lvl[1],num[1],"evileye","evileye",false,false,1,false);
 		if debuff > 0 then
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.evileyed[chars_mobs_npcs[victim].gender]);
+		else
+			helpers.addToActionLog(lognames.actions.noeffect);
+		end;
+		local damaged_mobs = {};
+		table.insert(damaged_mobs,victim);
+	end;
+	
+	if missle_type == "blind" then
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
+		debuff = damage.applyCondition (victim,lvl[1],num[1],"curse","curse",false,false,1,false);
+		if debuff > 0 then
+			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.cursed[chars_mobs_npcs[victim].gender]);
 		else
 			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
@@ -6176,6 +6231,9 @@ function damage.deadNow (index)
 	if chars_mobs_npcs[index].revenge_type ~= 0 then
 		table.insert(mobs_revengers,j);
 	end;
+	if hlandscape[b][a] > 25 then
+		hlandscape[chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] = 0;
+	end;
 	chars_mobs_npcs[index].status = -1;
 	chars_mobs_npcs[index].protectionmode = "none";
 	chars_mobs_npcs[index].trick = "none";
@@ -6294,17 +6352,11 @@ function damage.deadNow (index)
 -- creating a loot bag --FIX check if there is no bag at coords, check fullness, create another bag at other coordinates if fulness is 75% or more		
 		table.insert(bags_list,{x=chars_mobs_npcs[index].x,y=chars_mobs_npcs[index].y,xi= chars_mobs_npcs[index].x,yi= chars_mobs_npcs[index].y,typ="bag",opened=false,locked=false,dir=0,img=bag_img});
 		for i=1,#chars_mobs_npcs[index].inventory_list do
-			table.insert(bags_list[#bags_list],{ttxid=chars_mobs_npcs[index].inventory_list[i].ttxid,q=chars_mobs_npcs[index].inventory_list[i].q,w=chars_mobs_npcs[index].inventory_list[i].w,e=chars_mobs_npcs[index].inventory_list[i].e,r=chars_mobs_npcs[index].inventory_list[i].r,h=chars_mobs_npcs[index].inventory_list[i].h});
+			if not helpers.bodySlot(index,i) then
+				table.insert(bags_list[#bags_list],{ttxid=chars_mobs_npcs[index].inventory_list[i].ttxid,q=chars_mobs_npcs[index].inventory_list[i].q,w=chars_mobs_npcs[index].inventory_list[i].w,e=chars_mobs_npcs[index].inventory_list[i].e,r=chars_mobs_npcs[index].inventory_list[i].r,h=chars_mobs_npcs[index].inventory_list[i].h});
+			end;
 		end;
 		chars_mobs_npcs[index].inventory_list = {};
-		--[[
-		table.insert(bags,{});
-		for k=1,15 do
-			bags[#bags_list][k] = {};
-			for l=1,11 do
-				bags[#bags_list][k][l] = 0;
-			end;
-		end;]]
 		helpers.zeroLastBag ();
 		sorttarget = "bag";
 		dragfrom="bag"
@@ -6665,14 +6717,17 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 		if hitzone == "head" then
 			if helpers.traumaNature(victim) then
 				local randomEye = math.random(1,2);
-				if randomEye == 1 and chars_mobs_npcs[index].reye == 1 then
+				if randomEye == 1 and chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 1 then
 					chars_mobs_npcs[index].reye = 0;
-				elseif randomEye ==1 and chars_mobs_npcs[index].leye == 1 then
+				elseif randomEye ==1 and chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 1 then
 					chars_mobs_npcs[index].leye = 0;
 				elseif randomEye == 2 and chars_mobs_npcs[index].leye == 1  then
 					chars_mobs_npcs[index].leye = 0;
 				elseif randomEye == 2 and chars_mobs_npcs[index].reye == 1  then
 					chars_mobs_npcs[index].reye = 0;
+				end;
+				if chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 1 then
+					chars_mobs_npcs[index].ceye = 0;
 				end;
 				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
 			end;
@@ -6972,4 +7027,16 @@ function damage.countDamage(index,hand,flag)
 	end;
 	local dmg = math.ceil((dice*chars_mobs_npcs[index]["melee_stats"][hand].amel+chars_mobs_npcs[index]["melee_stats"][hand].cmel+might_modifer*chars_mobs_npcs[index].mgt)+chars_mobs_npcs[index].heroism_power);
 	return dmg;
+end;
+
+function damage.operateAnEye(index,eye,todo)
+	if not todo then
+		if chars_mobs_npcs[index][eye] and chars_mobs_npcs[index][eye] == 1 then
+			chars_mobs_npcs[index][eye] = 0;
+		end;
+	else
+		if chars_mobs_npcs[index][eye] and chars_mobs_npcs[index][eye] == 0 then
+			chars_mobs_npcs[index][eye] = 1;
+		end;
+	end;
 end;

@@ -502,8 +502,15 @@ function draw_background ()
 end;
 
 function draw_hexbuttons ()
+	love.graphics.setColor(0,0,0);
+	local str = "[" .. row_status+1 .. "]";
+	love.graphics.print(str, btn_x-40, 20);
+	love.graphics.setColor(255,255,255);
 	if editor_status == "hexes" then
 		for j=1,10 do
+			love.graphics.setColor(0,0,0);
+			love.graphics.print(row_status*10+j, btn_x-40, 10+240+(j-1)*40);
+			love.graphics.setColor(255,255,255);
 			love.graphics.draw(media.images.img, tile[row_status*10+j], btn_x+2, 240+(j-1)*40);
 			love.graphics.line( btn_x,  240+(j-1)*40-2,
 			btn_x+tile_w+8,  240+(j-1)*40-2,
@@ -511,11 +518,13 @@ function draw_hexbuttons ()
 			btn_x,  240+(j-1)*40-2+36,
 			btn_x,  240+(j-1)*40-2);
 			if current_hex_type==j then
+				love.graphics.setColor(255,0,0);
 				love.graphics.line( btn_x-2,  240+(j-1)*40,
 				btn_x+tile_w+10,  240+(j-1)*40,
 				btn_x+tile_w+10,  240+(j-1)*40+36,
 				btn_x-2,  240+(j-1)*40+36,
 				btn_x-2,  240+(j-1)*40);
+				love.graphics.setColor(255,255,255);
 			end;
 			if row_status*10+current_hex_type > global.objects_start_row*10 then
 				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-global.objects_start_row*10], global.screenWidth-150, global.screenHeight-300);
@@ -525,7 +534,14 @@ function draw_hexbuttons ()
 	end;
 	
 	if editor_status == "subhexes" then
+		love.graphics.setColor(0,0,0);
+		local str = "[" .. row_status+1 .. "]";
+		love.graphics.print(str, btn_x-40, 20);
+		love.graphics.setColor(255,255,255);
 		for j=1,10 do
+			love.graphics.setColor(0,0,0);
+			love.graphics.print(row_status*10+j, btn_x-40, 10+240+(j-1)*40);
+			love.graphics.setColor(255,255,255);
 			love.graphics.draw(media.images.imgsub, tile[row_status*10+j], btn_x+2, 240+(j-1)*40);
 			love.graphics.line( btn_x,  240+(j-1)*40-2,
 			btn_x+tile_w+8,  240+(j-1)*40-2,
@@ -533,11 +549,13 @@ function draw_hexbuttons ()
 			btn_x,  240+(j-1)*40-2+36,
 			btn_x,  240+(j-1)*40-2);
 			if current_hex_type==j then
+				love.graphics.setColor(255,0,0);
 				love.graphics.line( btn_x-2,  240+(j-1)*40,
 				btn_x+tile_w+10,  240+(j-1)*40,
 				btn_x+tile_w+10,  240+(j-1)*40+36,
 				btn_x-2,  240+(j-1)*40+36,
 				btn_x-2,  240+(j-1)*40);
+				love.graphics.setColor(255,255,255);
 			end;
 			if row_status*10+current_hex_type > global.objects_start_row*10 then
 				love.graphics.draw(media.images.img_obj, objects[row_status*10+current_hex_type-global.objects_start_row*10], global.screenWidth-150, global.screenHeight-300);
@@ -550,11 +568,13 @@ function draw_hexbuttons ()
 		for j=1,8 do
 			love.graphics.draw(media.images.img_back, background_[(row_back-1)*8+j], btn_x+2, 150+(j-1)*60,0,0.2 ,0.2);
 			if current_back == j then
+				love.graphics.setColor(255,0,0);
 				love.graphics.line( btn_x-2,  150+(j-1)*60-5,
 				btn_x+back_size/5+5,  150+(j-1)*60-5,
 				btn_x+back_size/5+5,  150+(j-1)*60+back_size/5+5,
 				btn_x-2,  150+(j-1)*60+back_size/5+5,
 				btn_x-2,  150+(j-1)*60-5);
+				love.graphics.setColor(255,255,255);
 			end;
 		end;
 	end;
@@ -1855,11 +1875,13 @@ function draw_objects ()
 end;
 
 function drawHarvest (x,y,img_index)
-	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space)-tile_h*2;
+	local addx = harvest_ttx[img_index].addx;
+	local addy = harvest_ttx[img_index].addy;
+	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space)-tile_h*2+addy;
 	if y/2 == math.ceil(y/2) then
-		moveto_hex_x = (x-2-map_x)*tile_w+left_space;
+		moveto_hex_x = (x-2-map_x)*tile_w+left_space+addx;
 	else
-		moveto_hex_x = (x-2-map_x)*tile_w+tile_w/2+left_space;
+		moveto_hex_x = (x-2-map_x)*tile_w+tile_w/2+left_space+addx;
 	end;
 		love.graphics.draw(media.images.harvest, harvest_ttx[img_index].sprite, moveto_hex_x, moveto_hex_y);
 end;
@@ -3212,12 +3234,12 @@ function draw_harvest_buttons()
 	
 	harvestbuttons = {};
 	for i=1,#harvest_ttx do
-		local _addx = (i-1)*40-(math.ceil(i/5)-1)*200;
-		local _addy = math.floor((i-1)/5)*40;
+		local _addx = (i-1)*20-(math.ceil(i/10)-1)*200;
+		local _addy = math.floor((i-1)/10)*20;
 		harvestbuttons[#harvestbuttons+1] = loveframes.Create("button")
 		harvestbuttons[#harvestbuttons]:SetPos(global.screenWidth-220+_addx,40+_addy);
-		harvestbuttons[#harvestbuttons]:SetHeight(40);
-		harvestbuttons[#harvestbuttons]:SetWidth(40);
+		harvestbuttons[#harvestbuttons]:SetHeight(20);
+		harvestbuttons[#harvestbuttons]:SetWidth(20);
 		harvestbuttons[#harvestbuttons]:SetText(i);
 		harvestbuttons[#harvestbuttons].OnClick = function(object)
 			current_herb = i;
@@ -4014,7 +4036,6 @@ function playingState.draw()
 		love.graphics.print(" type",global.screenWidth-130, 485);
 		love.graphics.print(" sound",global.screenWidth-130, 525);
 		love.graphics.print(" st/rt",global.screenWidth-130, 605);
-	
 		love.graphics.print(area_names[current_area_type],global.screenWidth-80, 500);
 		love.graphics.print(area_stepsounds[current_area_stepsound],global.screenWidth-80, 545);
 		love.graphics.setColor(255, 255, 255,255);
@@ -4034,7 +4055,7 @@ function playingState.draw()
 	end;
 	
 	if editor_status == "harvest" and current_herb > 0 then
-			love.graphics.draw(media.images.harvest,harvest_ttx[current_herb].sprite,global.screenWidth-160,500);
+			love.graphics.draw(media.images.harvest,harvest_ttx[current_herb].sprite,global.screenWidth-160,420);
 			love.graphics.print("current: ",global.screenWidth-200, 600);
 			love.graphics.print("chance : ",global.screenWidth-200, 630);
 			love.graphics.print("pool   : ",global.screenWidth-200, 660);

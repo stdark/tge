@@ -41,7 +41,7 @@ function ai.behavior()
 	trace.first_watch (current_mob);
 --CALLED	
 	if chars_mobs_npcs[current_mob].ai == "called" then
-		if ai.enemyWatchesTheMob (current_mob) then
+		if ai.mobWatchesTheMob (current_mob,true) then
 			chars_mobs_npcs[current_mob].ai = chars_mobs_npcs[current_mob].dangerai;
 		else
 			mob_is_going_to_hit = 0;
@@ -80,7 +80,7 @@ function ai.behavior()
 	end;
 --CRUISER
 	if chars_mobs_npcs[current_mob].ai == "cruiser" then
-		if ai.enemyWatchesTheMob (current_mob) then
+		if ai.mobWatchesTheMob (current_mob,true) then
 			chars_mobs_npcs[current_mob].ai = chars_mobs_npcs[current_mob].dangerai;
 		else
 			mob_is_going_to_hit = 0;
@@ -679,7 +679,7 @@ function ai.behavior()
 	end;
 --STAY
 	if chars_mobs_npcs[current_mob].ai == "stay" then
-		if ai.enemyWatchesTheMob (current_mob) then
+		if ai.mobWatchesTheMob (current_mob,true) then
 			chars_mobs_npcs[current_mob].ai = chars_mobs_npcs[current_mob].dangerai;
 			game_status = "restoring";
 			return;
@@ -722,32 +722,30 @@ function ai.friendOrFoe (watcher,index)
 end;
 
 function ai.enemyWatchesYou ()
+	local value = false;
 	for index=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[index].control == "player" and chars_mobs_npcs[index].invisibility == 0 and chars_mobs_npcs[index].stealth == 0 then --FIXME: scouting
-			for i = 1, #chars_mobs_npcs do
-				if chars_mobs_npcs[i].ai ~= "building" and chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].dangerai == "agr" 
-				and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 
-				and ai.fractionRelations (i,index) 
-				and chars_mobs_npcs[i].blind_dur == 0 and chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 and (chars_mobs_npcs[i].reye == 1 or chars_mobs_npcs[i].leye == 1) then
-					return true;
-				end;
+		if chars_mobs_npcs[index].control == "player" then
+			value = ai.mobWatchesTheMob(index,true);
+			if value then
+				return true;
 			end;
 		end;
 	end;
 	return false;
 end;
 
-function ai.enemyWatchesTheMobNum () --for stealth
+function ai.mobWatchesTheMobNum (index,enemyonly) --for stealth
 	local counter = 0;
 	local value = 0;
 	for i = 1, #chars_mobs_npcs do
 		if chars_mobs_npcs[i].ai ~= "building" and chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].dangerai == "agr" 
 		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 
-		and ai.fractionRelations (i,index) 
 		and chars_mobs_npcs[i].blind_dur == 0 and chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 and (chars_mobs_npcs[i].reye == 1 or chars_mobs_npcs[i].leye == 1) then
-			local value = 2+chars_mobs_npcs[i].num_spothidden*chars_mobs_npcs[i].lvl_spothidden;
-			if helpers.blindedWithLight (current_mob,chars_mobs_npcs[i].x,chars_mobs_npcs[i].y) then
-				value = math.ceil(value*2);
+			if not enemyonly or (enemyonly and ai.fractionRelations (i,index) < 0) then
+				local value = 2 + chars_mobs_npcs[i].num_spothidden*chars_mobs_npcs[i].lvl_spothidden;
+				if helpers.blindedWithLight (current_mob,chars_mobs_npcs[i].x,chars_mobs_npcs[i].y) then
+					value = math.ceil(value/2);
+				end;
 			end;
 			counter = counter + value;
 		end;
@@ -755,11 +753,13 @@ function ai.enemyWatchesTheMobNum () --for stealth
 	return counter;
 end;
 
-function ai.enemyWatchesTheMob (index)
+function ai.mobWatchesTheMob (index,enemyonly)
 	for i = 1, #chars_mobs_npcs do
-		if darkness[chars_mobs_npcs[index].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 and chars_mobs_npcs[i].status > 0 and ai.fractionRelations (i,index) > 0 and chars_mobs_npcs[index].x == mx and chars_mobs_npcs[index].x == my 
-		and chars_mobs_npcs[index].blind_dur == 0 and chars_mobs_npcs[index].sleep == 0 and chars_mobs_npcs[index].stone == 0 then
-			return true;
+		if darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].status > 0
+		and chars_mobs_npcs[i].blind_dur == 0 and chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 then
+			if not enemyonly or (enemyonly and ai.fractionRelations (i,index) < 0) then
+				return true;
+			end;
 		end;
 	end;
 	return false;
@@ -767,7 +767,7 @@ end;
 
 function ai.sendCall(index,trigger,party,fraction)
 	for i = 1, #chars_mobs_npcs do
-		if ((party and chars_mobs_npcs[i].party == chars_mobs_npcs[index].party) or (fraction and chars_mobs_npcs[i].fraction == chars_mobs_npcs[index].fraction)) and chars_mobs_npcs[i].control == "ai" and not ai.enemyWatchesTheMob (i) then
+		if ((party and chars_mobs_npcs[i].party == chars_mobs_npcs[index].party) or (fraction and chars_mobs_npcs[i].fraction == chars_mobs_npcs[index].fraction)) and chars_mobs_npcs[i].control == "ai" and not ai.mobWatchesTheMob (i,true) then
 			if not trigger then
 				chars_mobs_npcs[i].call = {chars_mobs_npcs[index].x,chars_mobs_npcs[index].y};
 			else

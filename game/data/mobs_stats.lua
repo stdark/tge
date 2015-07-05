@@ -8,6 +8,7 @@ mobs_stats.goblin={class="goblin", subclass=1, race="goblin",  sprite = "goblin"
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=100,
             perks={},
             rezfire=0, rezcold=10, rezstatic=0, rezpoison=20, rezacid=5, rezmind=0, rezspirit=0, rezdisease=20, rezlight=0, rezdarkness=0, --resistances
+			immunities = {},
 			revenge_type = 0, revenge_power = 0,
             spellbook=0, warbook=0, spellnames={}, battleai="melee", protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=0, dr=0, block=0, amel=1,bmel=3,cmel=1, atkm=3, arng=0,brng=0,crng=0, atkr=0, multiattack = 1,--battle stats
@@ -22,6 +23,7 @@ mobs_stats.goblin={class="goblin", subclass=1, race="goblin",  sprite = "goblin"
             --inventory_list={{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50},{ttxid=53,q=math.random(1,inventory_ttx[53].material),w=0,e=0,r=0,h=0,v=50},{ttxid=413,q=1,w=0,e=0,r=0,v=20},{ttxid=415,q=1,w=0,e=0,r=0,v=75},{ttxid=416,q=1,w=0,e=0,r=0,h=0,v=50}},
 			inventory_list={{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50},{ttxid=53,q=math.random(1,inventory_ttx[53].material),w=0,e=0,r=0,h=0,v=50}},
 			equipment={rh=1,lh=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0,horns=0,tail=0},
+			flayloot={},
 			loot_gold_min=0, loot_gold_max=10
                    };
 mobs_stats.rogue={class="rogue", subclass=1, race="human",  sprite = "rogue", name="nonameandnick", face=5, lv=1, nature="humanoid", size="normal",  age=25, gender=1, motion="walking",  track=1, hexes=1,
@@ -31,6 +33,7 @@ mobs_stats.rogue={class="rogue", subclass=1, race="human",  sprite = "rogue", na
             mvcoff=1, recmel=50, recrng=50, recmag=0, expa=100,
             perks={},
             rezfire=0, rezcold=10, rezstatic=0, rezpoison=20, rezacid=5, rezmind=0, rezspirit=0, rezdisease=20, rezlight=0, rezdarkness=0, --resistances
+            immunities = {},
             revenge_type = 0, revenge_power = 0,
             spellbook=0, warbook=0, spellnames={}, battleai="shooter", protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=0, dr=0, block=0, amel=1,bmel=2,cmel=1, atkm=3, arng=1,brng=3,crng=3, atkr=0, multiattack = 1,--battle stats
@@ -45,6 +48,7 @@ mobs_stats.rogue={class="rogue", subclass=1, race="human",  sprite = "rogue", na
             --inventory_list={{ttxid=22,q=math.random(1,inventory_ttx[22].material),w=0,e=0,r=0,h=0,v=50},{ttxid=131,q=math.random(1,inventory_ttx[131].material),w=0,e=0,r=0,h=0,v=50},{ttxid=146,q=math.random(1,10),w=0,e=0,r=0,h=0,v=50},{ttxid=147,q=math.random(1,10),w=0,e=0,r=0,h=0,v=50},{ttxid=148,q=math.random(1,10),w=0,e=0,r=0,h=0,v=50},{ttxid=413,q=1,w=0,e=0,r=0,v=20},{ttxid=415,q=1,w=0,e=0,r=0,h=0,v=50},{ttxid=418,q=1,w=0,e=0,r=0,h=0,v=50},{ttxid=418,q=1,w=0,e=0,r=0,h=0,v=50}},
 			inventory_list={{ttxid=22,q=math.random(1,inventory_ttx[22].material),w=0,e=0,r=0,h=0,v=50},{ttxid=131,q=math.random(1,inventory_ttx[131].material),w=0,e=0,r=0,h=0,v=50},{ttxid=146,q=math.random(10,30),w=0,e=0,r=0,h=0,v=50},{ttxid=147,q=math.random(1,10),w=0,e=0,r=0,h=0,v=50},{ttxid=148,q=math.random(1,10),w=0,e=0,r=0,h=0,v=50}},
 			equipment={rh=1,lh=0,ranged=2,ammo=3, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+			flayloot={},
 			loot_gold_min=0, loot_gold_max=10
                    };
 mobs_stats.mage={class="mage", subclass=1, race="human",  sprite = "rogue", name="nonameandnick", face=5, lv=1, nature="humanoid", size="normal",  age=35, gender=1, motion="walking",  track=1, hexes=1,
@@ -54,6 +58,7 @@ mobs_stats.mage={class="mage", subclass=1, race="human",  sprite = "rogue", name
             mvcoff=1, recmel=50, recrng=50, recmag=0, expa=100,
             perks={},
             rezfire=0, rezcold=10, rezstatic=0, rezpoison=20, rezacid=5, rezmind=0, rezspirit=0, rezdisease=20, rezlight=0, rezdarkness=0, --resistances
+            immunities = {},
             revenge_type = 0, revenge_power = 0,
             spellbook=1, spellnames={"flamearrow","fireball","fireblast","coldbeam","poisonedspit","acidburst","iceball"}, sp_limit = 0,battleai="battlemage",protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=0, dr=0, block=0, amel=1,bmel=2,cmel=1, atkm=3, arng=1,brng=3,crng=3, atkr=0, multiattack = 1,--battle stats
@@ -67,6 +72,7 @@ mobs_stats.mage={class="mage", subclass=1, race="human",  sprite = "rogue", name
             lvl_alchemy=0,lvl_repair=0,lvl_bodybuilding=0,lvl_armmastery=0,lvl_meditation=3,lvl_mysticism=3,lvl_trading=0,lvl_diplomacy=0, lvl_stealth=0, lvl_picklocking=0, lvl_traps=0, lvl_spothidden=0, lvl_monsterid=0, lvl_stuffid=0, lvl_thievery=0, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
 			inventory_list={{ttxid=86,q=math.random(1,inventory_ttx[86].material),w=0,e=0,r=0,h=0,v=50}},
 			equipment={rh=1,lh=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+			flayloot={},
 			loot_gold_min=0, loot_gold_max=10
                    };
 mobs_stats.golem={class="golem", subclass=1, race="golem",  sprite = "golem", name="гркх", face=9,  age=1, lv=1, nature="golem", size="normal", gender=1, motion="walking",  track=9, hexes=1,--personalities
@@ -76,6 +82,7 @@ mobs_stats.golem={class="golem", subclass=1, race="golem",  sprite = "golem", na
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
             rezfire=70, rezcold=70, rezstatic=70, rezpoison=20, rezacid=10, rezmind=100, rezspirit=100, rezdisease=100, rezlight=0, rezdarkness=0, --resistances
+			immunities = {"stone","freeze"},
 			revenge_type = 0, revenge_power = 0,
             spellbook=0, warbook=0, spellnames={}, battleai="melee", protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=10, dr=50, block=0, amel=2,bmel=6,cmel=5, atkm=3, arng=0,brng=0,crng=0, atkr=0, multiattack = 1,--battle stats
@@ -89,6 +96,7 @@ mobs_stats.golem={class="golem", subclass=1, race="golem",  sprite = "golem", na
             lvl_alchemy=0,lvl_repair=0,lvl_bodybuilding=0,lvl_armmastery=0,lvl_meditation=0,lvl_mysticism=0,lvl_trading=0,lvl_diplomacy=0, lvl_stealth=0, lvl_picklocking=0, lvl_traps=0, lvl_spothidden=0, lvl_monsterid=0, lvl_stuffid=0, lvl_thievery=0,lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
             inventory_list={}, 
             equipment={rh=0,lh=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+            flayloot={},
             loot_gold_min=0, loot_gold_max=0
                    };
 mobs_stats.fireelemental={class="fireelemental", subclass=1, race="elemental",  sprite = "fireelemental", name="пшш", face=9,  age=50, lv=1, nature="elemental", size="normal", gender=1, motion="levitation",  track=9, hexes=1,hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
@@ -98,6 +106,7 @@ mobs_stats.fireelemental={class="fireelemental", subclass=1, race="elemental",  
             perks={},
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             rezfire=100, rezcold=0, rezstatic=100, rezpoison=100, rezacid=100, rezmind=100, rezspirit=0, rezdisease=100, rezlight=100, rezdarkness=100, --resistances
+			immunities = {"stone","freeze"},
 			revenge_type = "fire", revenge_power = 5,
             spellbook=1, spellnames={"fireball","fireblast"}, battleai="battlemage", protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=0, dr=0, block=0, amel=2,bmel=6,cmel=5, atkm=3, arng=0,brng=0,crng=0, atkr=0, multiattack = 1,--battle stats
@@ -111,6 +120,7 @@ mobs_stats.fireelemental={class="fireelemental", subclass=1, race="elemental",  
             lvl_alchemy=0,lvl_repair=0,lvl_bodybuilding=0,lvl_armmastery=0,lvl_meditation=5,lvl_mysticism=5,lvl_trading=0,lvl_diplomacy=0, lvl_stealth=0, lvl_picklocking=0, lvl_traps=0, lvl_spothidden=0, lvl_monsterid=0, lvl_stuffid=0, lvl_thievery=0,lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
             inventory_list={}, 
             equipment={rh=0,lh=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+            flayloot={},
             loot_gold_min=0, loot_gold_max=0
                    };
 mobs_stats.airelemental={class="airelemental", subclass=1, race="elemental",  sprite = "airelemental", name="фью", face=9, age=50, lv=1, nature="elemental", size="normal", gender=1, motion="levitation",  track=9, hexes=1,--personalities
@@ -120,6 +130,7 @@ mobs_stats.airelemental={class="airelemental", subclass=1, race="elemental",  sp
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
             rezfire=100, rezcold=100, rezstatic=100, rezpoison=100, rezacid=100, rezmind=100, rezspirit=0, rezdisease=100, rezlight=100, rezdarkness=100, --resistances
+			immunities = {"stone","freeze"},
 			revenge_type = "static", revenge_power = 5,
             spellbook=0, warbook=0, spellnames={"staticcharge","windfist","bell"}, battleai="battlemage", protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=0, dr=0, block=0, amel=2,bmel=6,cmel=5, atkm=3, arng=0,brng=0,crng=0, atkr=0, multiattack = 1,--battle stats
@@ -133,6 +144,7 @@ mobs_stats.airelemental={class="airelemental", subclass=1, race="elemental",  sp
             lvl_alchemy=0,lvl_repair=0,lvl_bodybuilding=0,lvl_armmastery=0,lvl_meditation=5,lvl_mysticism=5,lvl_trading=0,lvl_diplomacy=0, lvl_stealth=0, lvl_picklocking=0, lvl_traps=0, lvl_spothidden=0, lvl_monsterid=0, lvl_stuffid=0, lvl_thievery=0,lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
             inventory_list={}, 
             equipment={rh=0,lh=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+            flayloot={},
             loot_gold_min=0, loot_gold_max=0
                    };
 mobs_stats.waterelemental={class="waterelemental", subclass=1, race="elemental",  sprite = "waterelemental", name="буль", face=9, age=50, lv=1, nature="elemental", size="normal", gender=1, motion="walking",  track=9, hexes=1,--personalities
@@ -142,6 +154,7 @@ mobs_stats.waterelemental={class="waterelemental", subclass=1, race="elemental",
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
             rezfire=0, rezcold=100, rezstatic=100, rezpoison=100, rezacid=100, rezmind=100, rezspirit=0, rezdisease=100, rezlight=100, rezdarkness=100, --resistances
+			immunities = {"stone","freeze"},
 			revenge_type = "cold", revenge_power = 5,
             spellbook=1, spellnames={"coldbeam","poisonedspit","acidburst","iceball"}, battleai="battlemage", protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=0, dr=0, block=0, amel=2,bmel=6,cmel=5, atkm=3, arng=0,brng=0,crng=0, atkr=0, multiattack = 1,--battle stats
@@ -155,6 +168,7 @@ mobs_stats.waterelemental={class="waterelemental", subclass=1, race="elemental",
             lvl_alchemy=0,lvl_repair=0,lvl_bodybuilding=0,lvl_armmastery=0,lvl_meditation=5,lvl_mysticism=5,lvl_trading=0,lvl_diplomacy=0, lvl_stealth=0, lvl_picklocking=0, lvl_traps=0, lvl_spothidden=0, lvl_monsterid=0, lvl_stuffid=0, lvl_thievery=0,lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
             inventory_list={}, 
             equipment={rh=0,lh=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+            flayloot={},
             loot_gold_min=0, loot_gold_max=0
                    };
 mobs_stats.earthelemental={class="earthelemental", subclass=1, race="elemental",  sprite = "elemental", name="гркх", face=9, age=50, lv=1, nature="elemental", size="normal", gender=1, motion="walking",  track=9, hexes=1,--personalities
@@ -164,6 +178,7 @@ mobs_stats.earthelemental={class="earthelemental", subclass=1, race="elemental",
             mvcoff=1, recmel=50, recrng=0, recmag=0, expa=250,
             perks={},
             rezfire=70, rezcold=70, rezstatic=70, rezpoison=20, rezacid=10, rezmind=100, rezspirit=100, rezdisease=100, rezlight=0, rezdarkness=0, --resistances
+			immunities = {"stone","freeze"},
 			revenge_type = 0, revenge_power = 0,
             spellbook=0, warbook=0, spellnames={}, battleai="melee", protectionmode="none", rh=1, lh=1, rh2=1, lh2=1, rh3=0, lh3=0, rh4=0, lh4=0, --flags
             ac=0, dt=10, dr=50, block=0, amel=2,bmel=6,cmel=5, atkm=3, arng=0,brng=0,crng=0, atkr=0, multiattack = 1,--battle stats
@@ -175,8 +190,9 @@ mobs_stats.earthelemental={class="earthelemental", subclass=1, race="elemental",
             lvl_fire=0,lvl_water=0,lvl_air=0,lvl_earth=0,lvl_body=0,lvl_spirit=0,lvl_mind=0,lvl_light=0,lvl_darkness=0,---skills magic lv
             num_alchemy=0,num_repair=0,num_bodybuilding=0,num_armmastery=0,num_meditation=0,num_mysticism=0,num_trading=0,num_diplomacy=0, num_stealth=0, num_picklocking=0, num_traps=0, num_spothidden=0, num_monsterid=0, num_stuffid=0, num_thievery=0, num_leadership = 0, num_regeneration = 0,--skills other num
             lvl_alchemy=0,lvl_repair=0,lvl_bodybuilding=0,lvl_armmastery=0,lvl_meditation=0,lvl_mysticism=0,lvl_trading=0,lvl_diplomacy=0, lvl_stealth=0, lvl_picklocking=0, lvl_traps=0, lvl_spothidden=0, lvl_monsterid=0, lvl_stuffid=0, lvl_thievery=0,lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
-            inventory_list={}, 
+            inventory_list={},
             equipment={rh=0,lh=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+            flayloot={},
             loot_gold_min=0, loot_gold_max=0
                    };
 mobs_stats.naga={class="naga", subclass=1, race="naga",  sprite = "golem", name="нья", face=5, age=50, lv=1, nature="hybrid", size="normal", gender=2, motion="walking", track=7, hexes=1,--personalities
@@ -199,6 +215,7 @@ mobs_stats.naga={class="naga", subclass=1, race="naga",  sprite = "golem", name=
             lvl_alchemy=0,lvl_repair=0,lvl_bodybuilding=0,lvl_armmastery=0,lvl_meditation=0,lvl_mysticism=0,lvl_trading=0,lvl_diplomacy=0, lvl_stealth=0, lvl_picklocking=0, lvl_traps=0, lvl_spothidden=0, lvl_monsterid=0, lvl_stuffid=0, lvl_thievery=0,lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
             inventory_list={{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50},{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50},{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50},{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50},{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50},{ttxid=16,q=math.random(1,inventory_ttx[16].material),w=0,e=0,r=0,h=0,v=50}},
 			equipment={rh=1,lh=0,rh1=0,lh1=0,rh2=0,lh2=0,ranged=0,ammo=0, armor=0,head=0,boots=0,gloves=0,cloak=0,belt=0,amulet=0,ring1=0,ring2=0,ring3=0,ring4=0,ring5=0,ring6=0,art,teeth=0,horns=0,tail=0},
+            flayloot={},
             loot_gold_min=0, loot_gold_max=100
                    };
 end;

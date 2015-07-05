@@ -3230,7 +3230,7 @@ function draw.objects ()
 						end
 						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
 							if chars_mobs_npcs[i].control=="player" and i == current_mob then --mark player character whoose turn is now
-								love.graphics.draw(media.images.hex, cursor_yellow,mobto_hex_x-tile_w,mobto_hex_y+86); --current char marked
+								love.graphics.draw(media.images.hex_ui, cursor_yellow,mobto_hex_x-tile_w,mobto_hex_y+86); --current char marked
 							end;
 							if chars_mobs_npcs[i].invisibility > 0 then
 								love.graphics.setColor(255, 255, 255, 150);
@@ -5528,11 +5528,13 @@ function draw.drawNumberHex (x,y,add,txt)
 end;
 
 function draw.drawHarvest (x,y,img_index)
-	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space)-tile_h*2;
+	local addx = harvest_ttx[img_index].addx;
+	local addy = harvest_ttx[img_index].addy;
+	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space)-tile_h*2+addy;
 	if y/2 == math.ceil(y/2) then
-		moveto_hex_x = (x-2-map_x)*tile_w+left_space;
+		moveto_hex_x = (x-2-map_x)*tile_w+left_space+addx;
 	else
-		moveto_hex_x = (x-2-map_x)*tile_w+tile_w/2+left_space;
+		moveto_hex_x = (x-2-map_x)*tile_w+tile_w/2+left_space+addx;
 	end;
 		love.graphics.draw(media.images.harvest, harvest_ttx[img_index].sprite, moveto_hex_x, moveto_hex_y);
 end;

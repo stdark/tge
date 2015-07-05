@@ -1826,7 +1826,7 @@ function playingState.keyreleased(key, unicode)
 		if key=="g" and chars_mobs_npcs[current_mob].person == "char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding") and global.status == "peace" then
 			if chars_mobs_npcs[current_mob].stealth > 0 then
 				 chars_mobs_npcs[current_mob].stealth = 0;
-			elseif not ai.enemyWatchesTheMob (current_mob) then
+			elseif not ai.mobWatchesTheMob (current_mob,false) then
 				 chars_mobs_npcs[current_mob].stealth = chars_mobs_npcs[current_mob].num_stealth*chars_mobs_npcs[current_mob].lvl_stealth;
 			end;
 		end;
@@ -2393,10 +2393,13 @@ function playingState.mousereleased (x,y,button)
 					+chars_mobs_npcs[current_mob].deadlyswarm;
 					
 					price = 3*deltahp + 2*deltasp + math.max(0,deltast-deltart) + effects*10;
-					if chars_mobs_npcs[current_mob].reye == 0 then
+					if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
 						price = price + 500;
 					end;
-					if chars_mobs_npcs[current_mob].leye == 0 then
+					if chars_mobs_npcs[current_mob].leye and chars_mobs_npcs[current_mob].leye == 0 then
+						price = price + 500;
+					end;
+					if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
 						price = price + 500;
 					end;
 					if chars_mobs_npcs[current_mob]["arms_health"].rh == 0 then
@@ -2454,9 +2457,9 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[current_mob].blind_dur = 0;
 						chars_mobs_npcs[current_mob].curse = 0;
 						chars_mobs_npcs[current_mob].deadlyswarm = 0;
-
-						chars_mobs_npcs[current_mob].reye = 1;
-						chars_mobs_npcs[current_mob].leye = 1;
+						damage.operateAnEye(current_mob,"reye",true);
+						damage.operateAnEye(current_mob,"leye",true);
+						damage.operateAnEye(current_mob,"ceye",true);
 						chars_mobs_npcs[current_mob]["arms_health"].rh = 1;
 						chars_mobs_npcs[current_mob]["arms_health"].lh = 1;
 						chars_mobs_npcs[current_mob].pneumothorax = 0;
@@ -7793,7 +7796,10 @@ function mobMoving()
 			chars_mobs_npcs[current_mob].x = way_of_the_mob[path_counter][1];
 			chars_mobs_npcs[current_mob].y = way_of_the_mob[path_counter][2];
 			if chars_mobs_npcs[current_mob].stealth > 0 then
-				chars_mobs_npcs[current_mob].stealth =  chars_mobs_npcs[current_mob].stealth - ai.enemyWatchesTheMobNum ();
+				chars_mobs_npcs[current_mob].stealth =  chars_mobs_npcs[current_mob].stealth - ai.mobWatchesTheMobNum (current_mob,false);
+				if chars_mobs_npcs[current_mob].stealth < 0 then
+					chars_mobs_npcs[current_mob].stealth = 0;
+				end;
 			end;
 			if chars_mobs_npcs[current_mob].ai == "cruiser" then
 				for i=1, #chars_mobs_npcs[current_mob].waypoint do
@@ -7830,10 +7836,19 @@ function mobMoving()
 
 		if chars_mobs_npcs[current_mob].motion == "walking" then
 			boomareas.trackGround (a,b,chars_mobs_npcs[current_mob].track,chars_mobs_npcs[current_mob].rot);
-			if hlandscape[b][a] > 25 then
+			if hlandscape[b][a] > 25 and hlandscape[b][a] <= 50 then
+				hlandscape[b][a] = 0;
+			end;
+			if hlandscape[b][a] > 50 and helpers.mobIgnoresBooshes(current_mob) then
 				hlandscape[b][a] = 0;
 			end;
 		end;
+		if chars_mobs_npcs[current_mob].motion == "underground" then
+			if hlandscape[b][a] > 25 and hlandscape[b][a] <= 50 then
+				hlandscape[b][a] = 0;
+			end;
+		end;
+		
 		if chars_mobs_npcs[current_mob].fireprint_dur > 0 then
 			local lvl =  chars_mobs_npcs[current_mob].fireprint_power;
 			local num =  chars_mobs_npcs[current_mob].fireprint_power;
@@ -8027,7 +8042,7 @@ function steal (index)
 	end;
 	local chance_not_to_be_noticed = math.ceil(steal_dir_coff*chars_mobs_npcs[current_mob].dex) - delta_spd + math.ceil(chars_mobs_npcs[index].sns*penalty);
 
-	if chars_mobs_npcs[index].blind > 0 or chars_mobs_npcs[index].sleep > 0 or chars_mobs_npcs[index].dark_gasp > 0 or (chars_mobs_npcs[index].reye == 0 and chars_mobs_npcs[index].leye == 0) then
+	if chars_mobs_npcs[index].blind > 0 or chars_mobs_npcs[index].sleep > 0 or chars_mobs_npcs[index].dark_gasp > 0 or (chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 0 and chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 0) or (chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 0) then
 		chance_not_to_be_noticed = chance_not_to_be_noticed*2;
 	end;
 	if chars_mobs_npcs[index].fov == 90 then
@@ -8305,7 +8320,10 @@ function restoreRT ()
 					end;
 				end;
 				if chars_mobs_npcs[i].stealth > 0 then
-					chars_mobs_npcs[i].stealth =  chars_mobs_npcs[i].stealth - ai.enemyWatchesTheMobNum ();
+					chars_mobs_npcs[i].stealth =  chars_mobs_npcs[i].stealth - ai.mobWatchesTheMobNum (i,false);
+					if chars_mobs_npcs[i].stealth < 0 then
+						chars_mobs_npcs[i].stealth = 0;
+					end;
 				end;
 				
 				if chars_mobs_npcs[i].dayofgods_dur > 0 then

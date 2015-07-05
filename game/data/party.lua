@@ -9,6 +9,7 @@ chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
             rezfire=0, rezcold=0, rezstatic=0, rezpoison=0, rezacid=0, rezmind=0, rezspirit=0, rezdisease=0, rezlight=0, rezdarkness=0,--resistances
+            immunities = {},
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},
@@ -27,6 +28,7 @@ chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
 			hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
             rezfire=0, rezcold=0, rezstatic=0, rezpoison=0, rezacid=0, rezmind=0, rezspirit=0, rezdisease=0, rezlight=0, rezdarkness=0,--resistances
+            immunities = {},
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},
@@ -44,6 +46,7 @@ chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             mgt=5,enu=17,dex=5,spd=10,acu=5,sns=15,int=25,spr=15,chr=5,luk=5, --stats
 			hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
+            immunities = {},
             rezfire=0, rezcold=0, rezstatic=0, rezpoison=0, rezacid=0, rezmind=0, rezspirit=0, rezdisease=0, rezlight=0, rezdarkness=0,--resistances
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
@@ -63,6 +66,7 @@ chars_stats[4]={class="rogue", subclass=1, race="woodelf", sprite = "rogue", nam
 			hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
             rezfire=0, rezcold=0, rezstatic=0, rezpoison=0, rezacid=0, rezmind=0, rezspirit=0, rezdisease=0, rezlight=0, rezdarkness=0,--resistances
+            immunities = {},
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},

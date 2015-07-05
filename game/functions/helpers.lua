@@ -18,7 +18,7 @@ function helpers.passMove (x,y,index)
 	return passable;
 end;
 
-function helpers.passCheck (x,y)
+function helpers.passCheck (x,y) --final point
 	if not helpers.insideMap(x,y) then
 		return false;
 	end;
@@ -32,11 +32,19 @@ function helpers.passCheck (x,y)
 	and map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) 
 	and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
+	and	(hlandscape[y][x] <= 50 or helpers.mobIgnoresBooshes(current_mob))
 	then
 		return true
 	else
 		return false
 	end;
+end;
+
+function helpers.mobIgnoresBooshes(index)
+	if chars_mobs_npcs[index].locomotion ~= "walking" or chars_mobs_npcs[index].size == "giant" or chars_mobs_npcs[index].nature == "golem" or chars_mobs_npcs[index].nature == "droid" then
+		return true
+	end;
+	return false;
 end;
 
 function helpers.passLev (x,y)
@@ -124,6 +132,7 @@ function helpers.passWalk (x,y)
 	local height_value = 0;
 	if map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
+	and	(hlandscape[y][x] <= 50 or helpers.mobIgnoresBooshes(current_mob))
 	then
 		height_value = heights_table[map[y][x]];
 	else
@@ -1631,6 +1640,16 @@ function helpers.zeroLastBag ()
 end;
 
 function helpers.flayMob(index)
+	if #mob_stats[chars_mobs_npcs[index].calss].flayloot > 0 then
+		table.insert(bags_list,{x=chars_mobs_npcs[index].x,y=chars_mobs_npcs[index].y,xi= chars_mobs_npcs[index].x,yi= chars_mobs_npcs[index].y,typ="bag",opened=false,locked=false,dir=0,img=bag_img});
+	end;
+	for i=1,#mob_stats[chars_mobs_npcs[index].calss].flayloot do
+		local chance = chars_mobs_npcs[current_mob].luk*chars_mobs_npcs[current_mob].num_monsterid*chars_mobs_npcs[current_mob].lvl_monsterid/10000;
+		local rnd = damage.damageRandomizator(index,1,chance)
+		if rnd > mob_stats[chars_mobs_npcs[index].calss]["flayloot"][i].v then
+			table.insert(bags_list[#bags_list],{ttxid=mob_stats[chars_mobs_npcs[index].calss]["flayloot"][i].id,q=1,w=0,e=0,r=1,h=0});
+		end;
+	end;
 end;
 
 function helpers.ifItemIsNotBroken(index,ifbag,bagid)
@@ -1732,6 +1751,7 @@ function helpers.addMob(index,person)
 	chars_mobs_npcs[index].aggro = 0;
 	chars_mobs_npcs[index].aggressor = 0;
 	chars_mobs_npcs[index].perks = tmpclass2.perks;
+	chars_mobs_npcs[index].immunities = tmpclass2.immunities;
 
 	--chars_mobs_npcs[index].class = tmpclass2.class;
 
@@ -5507,4 +5527,26 @@ function helpers.oilItemInSlot(index,slot,oiltype,oilpower,oileffect)
 	if global.status == "battle" then
 		damage.RTminus(index,10,false);
 	end;
+end;
+
+function helpers.bodySlot(index,itemid)
+	if ((chars_mobs_npcs[index]["equipment"].rh and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].rh)
+	or (chars_mobs_npcs[index]["equipment"].lh and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].lh)
+	or (chars_mobs_npcs[index]["equipment"].rh1 and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].rh1)
+	or (chars_mobs_npcs[index]["equipment"].lh1 and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].lh1)
+	or (chars_mobs_npcs[index]["equipment"].rh2 and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].rh2)
+	or (chars_mobs_npcs[index]["equipment"].lh2 and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].lh2)
+	) and (inventory_ttx[chars_mobs_npcs[index]["inventory_list"][itemid].ttxid].class == "claws" 
+	or inventory_ttx[chars_mobs_npcs[index]["inventory_list"][itemid].ttxid].class  == "tentacles"
+	or inventory_ttx[chars_mobs_npcs[index]["inventory_list"][itemid].ttxid].class == "nipper")
+	then
+		return true
+	elseif chars_mobs_npcs[index]["equipment"].tail and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].tail then
+		return true
+	elseif chars_mobs_npcs[index]["equipment"].horns and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].horns then
+		return true
+	elseif chars_mobs_npcs[index]["equipment"].teeth and chars_mobs_npcs[index]["inventory_list"][itemid] == chars_mobs_npcs[index]["equipment"].teeth then
+		return true
+	end;
+	return false
 end;

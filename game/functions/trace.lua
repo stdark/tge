@@ -373,9 +373,9 @@ function trace.sightArray (index)
 			end;
 		end;
 	end;
-	for l=1,#all_ground_hexes do --FIXME this works only vs. creatures with 2 eyes, remember of hydras, chimeras, adau, ooz, medusas (snakes)
+	for l=1,#all_ground_hexes do --FIXME this works only vs. creatures with 1/2 eyes, remember of hydras, chimeras, adau, ooz, medusas (snakes)
 		if math.sqrt((all_ground_hexes[l].x-chars_mobs_npcs[index].x)^2+(all_ground_hexes[l].y-chars_mobs_npcs[index].y)^2) <= chars_mobs_npcs[index].sense then	
-			if chars_mobs_npcs[index].leye == 0 or chars_mobs_npcs[index].blind_dur > 0 then -- left eye blinded
+			if chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 0 then -- left eye blinded
 				if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
 					chars_mobs_npcs[index].view = 8; --look straight up
 				elseif point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y > chars_mobs_npcs[index].y then
@@ -402,7 +402,7 @@ function trace.sightArray (index)
 				end;
 			end;
 			
-			if chars_mobs_npcs[index].reye == 0 or chars_mobs_npcs[index].blind_dur > 0 then -- right eye blinded
+			if chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 0 then -- right eye blinded
 				if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
 					chars_mobs_npcs[index].view = 8; --look straight up
 				elseif point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y > chars_mobs_npcs[index].y then
@@ -428,9 +428,37 @@ function trace.sightArray (index)
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				end;
 			end;
+			
+			if chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 0 then -- central eye blinded
+				if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
+					chars_mobs_npcs[index].view = 8; --look straight up
+				elseif point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y > chars_mobs_npcs[index].y then
+					chars_mobs_npcs[index].view = 7; --look straight down
+				elseif point_to_go_x ~= chars_mobs_npcs[index].x then
+					chars_mobs_npcs[index].view = chars_mobs_npcs[index].rot; --standart
+				end;
+				if chars_mobs_npcs[index].view == 2 and all_ground_hexes[l].x >= chars_mobs_npcs[index].x and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) >= 0 and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) >= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				elseif chars_mobs_npcs[index].view == 5 and all_ground_hexes[l].x <= chars_mobs_npcs[index].x  and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) >= 0 and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) >= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				elseif chars_mobs_npcs[index].view == 3 and (all_ground_hexes[l].x+all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) >= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) >= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) <= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) <= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				elseif chars_mobs_npcs[index].view == 4 and (all_ground_hexes[l].x-all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) <= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) >= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) >= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) <= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				elseif chars_mobs_npcs[index].view == 7 and all_ground_hexes[l].y >= chars_mobs_npcs[index].y and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) <= 0 and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) <= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				elseif chars_mobs_npcs[index].view == 8 and all_ground_hexes[l].y <= chars_mobs_npcs[index].y and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) <= 0 and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) <= 0 then
+					table.insert(hexes_in_fov, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
+				end;
+			end;
+			
 		end;
 	end;
-	if (chars_mobs_npcs[index].leye == 1 and chars_mobs_npcs[index].reye == 1) or chars_mobs_npcs[index].fov == 360 then
+	if (chars_mobs_npcs[index].reye and chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 1 and chars_mobs_npcs[index].reye == 1) or (chars_mobs_npcs[index].ceye == 1 and chars_mobs_npcs[index].ceye == 1) or chars_mobs_npcs[index].fov == 360 then
 		for i=1,#hexes_in_fov do
 			hexes_to_sense[i] = hexes_in_fov[i];
 		end;
