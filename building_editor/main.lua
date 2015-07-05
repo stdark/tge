@@ -416,10 +416,22 @@ function count_hexes (evenornot)
 		for mx=1, 20 do
 			if hex_table[mx][my] > 0 then
 				if not evenornot then
-					addx = central_hex_x-mx;
+					if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
+						addx = central_hex_x-mx;
+					else
+						if my/2 ~= math.ceil(my/2) then
+							addx = central_hex_x-mx - 1;
+						else
+							addx = central_hex_x-mx;
+						end;
+					end;
 				else
-					if my/2 ~= math.ceil(my/2) then
-						addx = central_hex_x-mx - 1;
+					if cursor_world_y/2 == math.ceil(cursor_world_y/2) then
+						if my/2 ~= math.ceil(my/2) then
+							addx = central_hex_x-mx - 1;
+						else
+							addx = central_hex_x-mx;
+						end;
 					else
 						addx = central_hex_x-mx;
 					end;
