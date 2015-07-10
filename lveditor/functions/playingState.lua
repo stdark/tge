@@ -4233,9 +4233,7 @@ function addHerb(x,y)
 			local _rnd = math.min(100,math.random(1,global.rnd_value)-1)
 			harvest_table[y][x] = {current_herb+_rnd,current_herb_dencity,{}};
 		end;
-	elseif current_herb >= 1 and current_herb <= 25 and 
-	harvest_table[y][x][1] >= 1 and harvest_table[y][x][1] <= 25
-	then --comp herb at simple herb (move)
+	elseif current_herb >= 1 and current_herb <= 25 and harvest_table[y][x][1] >= 1 and harvest_table[y][x][1] <= 25 then --comp herb at simple herb (move)
 		local _array = harvest_table[y][x][3];
 		harvest_table[y][x] = {current_herb,current_herb_dencity,_array};
 	elseif current_herb > 25 and harvest_table[y][x][1] >= 1

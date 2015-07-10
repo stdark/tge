@@ -34,7 +34,7 @@ function love.load()
 	--font = love.graphics.newFont("fonts/DroidSans.ttf", 16);
 	--font = love.graphics.newFont("fonts/HoMMFontCyr.ttf", 16);
 	--love.graphics.setFont(font);
-	img_preloader =  love.graphics.newImage("img/loadscreens/preloader0.jpg");
+	img_preloader =  love.graphics.newImage("img/loadscreens/preloader0.dds");
 	currentState = loadingState;
 	nextState = playingState;
 	currentState.start(media, loadingFinished);

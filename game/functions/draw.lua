@@ -375,7 +375,7 @@ function draw.cursor ()
 					end;
 				end;
 				
-				if missle_type == "mud" then
+				if missle_type == "quicksands" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
@@ -628,6 +628,16 @@ function draw.boom ()
 	sfx.boomSound ();
 	--print(missle_type ,missle_subtype);
 	if (missle_type == "bottle" and missle_subtype == "firebomb") or missle_type == "firebomb" then
+		boomareas.fireExploGround (boomx,boomy);
+		local rings = boomareas.ringArea(boomx,boomy);
+		for h=1,boompower do
+			for i=1,#rings[h] do
+				boomareas.startFireGround(rings[1][i].x,rings[1][i].y,1,lvl,num);
+			end;
+		end;
+	end;
+	
+	if missle_type == "firemine" then
 		boomareas.fireExploGround (boomx,boomy);
 		local rings = boomareas.ringArea(boomx,boomy);
 		for h=1,boompower do
@@ -1093,7 +1103,7 @@ function draw.boom ()
 		end;
 	end;
 	
-	if missle_type == "mud" then
+	if missle_type == "quicksands" then
 		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 		for i=1,#boomarea do
 			--boomareas.coldAir (boomarea[i].x,boomarea[i].y);
@@ -1104,6 +1114,14 @@ function draw.boom ()
 		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,0);
 		for i=1,#boomarea do
 			boomareas.coldAir (boomarea[i].x,boomarea[i].y);
+		end;
+	end;
+	
+	if missle_type == "firelance" then
+		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,0);
+		for i=1,#boomarea do
+			boomareas.fireAir (boomarea[i].x,boomarea[i].y);
+			boomareas.ashGround (boomarea[1][i].x,boomarea[1][i].y);
 		end;
 	end;
 				
@@ -4690,7 +4708,7 @@ function draw.ui ()
 		love.graphics.print(_txt,250,10);
 	end;
 	love.graphics.print(game_status,450,10);
-	love.graphics.print(missle_type,650,10);
+	--love.graphics.print(missle_type,650,10);
 	--love.graphics.print(missle_type,100,10);
 	--love.graphics.print(missle_drive,150,10);
 end;

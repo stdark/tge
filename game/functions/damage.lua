@@ -1552,6 +1552,70 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
+	if missle_type == "firemine" then
+		boomareas.ashGround (boomx,boomy);
+		for j=1,#chars_mobs_npcs do
+			if helpers.cursorAtCurrentMob (j,boomx,boomy) then
+				local damageFireHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,5)*num[1] + lvl[1],"fire");
+				local damagePhysicalHP = damage.physicalRes (j,damageRandomizator(current_mob,1,5)*num[2] + lvl[2],false);
+				local damageHP = damageFireHP + damagePhysicalHP;
+				damage.HPminus(j,damageHP,true);
+				table.insert(damaged_mobs,j);
+				if missle_drive ~= "trap" then
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob);
+				else
+					damage.mobDamaged(j,global.trapindex,damageHP);
+					exp_for_what(damageHP,global.trapindex);
+				end;
+				if lvl[1] >= 3 then
+					local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[j].flame_power = dot_power;
+						chars_mobs_npcs[j].flame_dur = dot_dur;
+						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.flamed[chars_mobs_npcs[j].gender]);
+					end;
+				end;
+			end;
+		end;
+		if lvl[1] >= 4 then
+			boomareas.fireGround(boomx,boomy,1,lvl[1],num[1]);
+		end;
+		local rings = boomareas.ringArea(boomx,boomy);
+		for h=1,boompower do
+			for i=1,#rings[h] do
+				boomareas.ashGround (rings[h][i].x,rings[h][i].y);
+				for j=1,#chars_mobs_npcs do
+					if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
+						local damageFireHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,5)*num[1] + lvl[1],"fire");
+						local damagePhysicalHP = damage.physicalRes (j,damageRandomizator(current_mob,1,5)*num[2] + lvl[2],false);
+						local damageHP = damageFireHP + damagePhysicalHP;
+						damage.HPminus(j,damageHP,true);
+						table.insert(damaged_mobs,j);
+						if missle_drive ~= "trap" then
+							damage.mobDamaged(j,current_mob,damageHP);
+							exp_for_what(damageHP,current_mob);
+						else
+							damage.mobDamaged(j,global.trapindex,damageHP);
+							exp_for_what(damageHP,global.trapindex);
+						end;
+						if lvl[1] >= 3 then
+							local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
+							if dot_power > 0 and dot_dur > 0 then
+								chars_mobs_npcs[j].flame_power = dot_power;
+								chars_mobs_npcs[j].flame_dur = dot_dur;
+								helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.flamed[chars_mobs_npcs[j].gender]);
+							end;
+						end;
+					end;
+				end;
+				if lvl[1] >= 4 then
+					boomareas.fireGround(rings[h][i].x,rings[h][i].y,2,lvl[1],num[1]);
+				end;
+			end;
+		end;
+	end;
+	
 	if missle_type == "dragonbreath" then
 		local index = 1;
 		local boompower = 3;
@@ -1899,6 +1963,29 @@ function damage.multidamage () --FIXME two hexes
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
 					local damageHP = damage.magicalRes (j,4+damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"fire",false);
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
+					if lvl[1] >= 3 then
+						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
+						if dot_power > 0 and dot_dur > 0 then
+							chars_mobs_npcs[j].flame_power = dot_power;
+							chars_mobs_npcs[j].flame_dur = dot_dur;
+							helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.flamed[chars_mobs_npcs[j].gender]);
+						end;
+					end;
+				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "firelance" then
+		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,1);
+		for i=1,#boomarea do
+			for j=1,#chars_mobs_npcs do
+				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
+					local damageHP = damage.magicalRes (j,4+damage.damageRandomizator(current_mob,1,4)*num[1] + lvl[1],"fire",false);
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
@@ -2795,7 +2882,7 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
-	if missle_type == "mud" then
+	if missle_type == "quicksands" then
 		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 		for i=1,#boomarea do
 			boomareas.mudGround(boomarea[i].x,boomarea[i].y,1,lvl[1],num[2]);
@@ -5564,8 +5651,8 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "firemine" then
 		debuff=30;
 		mlandscape_obj[cursor_world_y][cursor_world_x] ="firemine";
-		mlandscape_power[cursor_world_y][cursor_world_x] = 5;
-		mlandscape_duration[cursor_world_y][cursor_world_x] = 10;
+		mlandscape_power[cursor_world_y][cursor_world_x] = num[1];
+		mlandscape_duration[cursor_world_y][cursor_world_x] = num[2];
 		mlandscape_id[cursor_world_y][cursor_world_x] = current_mob;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( lognames.actions.trapinstalled);

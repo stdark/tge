@@ -1829,6 +1829,8 @@ function playingState.keyreleased(key, unicode)
 				 chars_mobs_npcs[current_mob].stealth = 0;
 			elseif not ai.mobWatchesTheMob (current_mob,false) then
 				 chars_mobs_npcs[current_mob].stealth = chars_mobs_npcs[current_mob].num_stealth*chars_mobs_npcs[current_mob].lvl_stealth;
+			else
+				helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.in_enemies_FOV);
 			end;
 		end;
 		if key=="p" then
@@ -7867,7 +7869,7 @@ function mobMoving()
 			boomx = a;
 			boomy = b;
 			trapped = 1;
-			missle_type = "fireball"; --FIXME firebomb?
+			missle_type = "firemine";
 			missle_drive = "trap";
 			game_status = "boom";
 			dmg = mlandscape_power[b][a];

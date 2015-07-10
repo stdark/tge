@@ -237,9 +237,9 @@ mindgame=false,
 form="ring",
 },
 
-firemine = {
-title="огненная мина",
-story="Устанавливает мину, взрывающуюся если на неё наступить.",
+firelance = {
+title="копьё огня",
+story="Вызывает поток огня, поражающий всех существ, попавших в поле действия.",
 dmg1="нет",
 dmg2="нет",
 dmg3="нет описания",
@@ -259,7 +259,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="mine",
+form="vray",
 },
 
 fireblast = {
@@ -3155,9 +3155,9 @@ mindgame=false,
 form="ally",
 },
 
-mud = {
-title="грязевой поток",
-story="Покрывает землю грязью, затрудняющей передвижение.",
+quicksands = {
+title="зыбучие пески",
+story="Покрывает землю песком, затрудняющим передвижение.",
 dmg1="нет",
 dmg2="нет",
 dmg3="нет",
@@ -3235,9 +3235,9 @@ mindgame=false,
 form="vray",
 },
 
-groundbor = {
-title="бур",
-story="Пробивает стены.",
+firemine = {
+title="огненная мина",
+story="Устанавливает мину, взрывающуюся если на неё наступить.",
 dmg1="нет",
 dmg2="нет",
 dmg3="25 + 2 на ед навыка",
@@ -3250,14 +3250,14 @@ recovery=100,
 mana=40,
 school=10,
 spell=6,
-skill = {"lvl_earth","lvl_fire","none","none"},
-level = {4,4,0,0},
+skill = {"lvl_fire","lvl_earth","none","none"},
+level = {3,3,0,0},
 day=true,
 night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="ray",
+form="mine",
 },
 
 megavolts = {
@@ -4749,7 +4749,7 @@ form="party",
 };
 
 	magic.allspells = {
-{"flamearrow","torchlight","protfromfire","fireball","firewall","firebelt","firering","firemine","fireblast","inferno","meteorshower","incineration"},
+{"flamearrow","torchlight","protfromfire","fireball","firewall","firebelt","firering","firelance","fireblast","inferno","meteorshower","incineration"},
 {"staticharge","shockring","protfromstatic","windfist","bell","shield","lightning","jump","invisibility","twister","chainlightning","starburst"},
 {"coldbeam","poisonedspit","douse","protfromcold","acidburst","freeze","coldring","waterwalking","iceball","icefield","dehydratation","eyeofthestorm"},
 {"razors","mobility","spikes","protfromacid","roots","stoneskin","stonewall","pitfall","rockblast","deathblossom","earthquake","massdistortion"},
@@ -4758,7 +4758,7 @@ form="party",
 {"spiritualarrow","fate","turnundead","protofspirit","bless","preservation","heroism","protection","luckyday","curecurse","prayer","ritualofthevoid"},
 {"lightbolt","lightelemental","shieldoflight","destroyundead","blindflash","slow","massdispell","streamoflight","lightoftruth","sunray","prismaticlight","wheelofsun"},
 {"raisedead","darkgasp","painreflection","masscurse","controlundead","filth","misfortune","violation","sacrifice","fingerofdeath","souldrinker","genocide"},
-{"acidrain","levitation","mud","golemstopper","coldray","groundbor","megavolts","implosion","townportal","rechargeitem","enchantitem","elementalriot"},
+{"acidrain","levitation","golemstopper","quicksands","megavolts","firemine","coldray","implosion","townportal","rechargeitem","enchantitem","elementalriot"},
 {"despondency","precision","protfromdisease","weakness","sleep","concentration","haste","thirstofblood","myrth","resurrect","rage","spiritlash"},
 {"stonetoflesh","melt","boilingblood","deadlyswarm","turntostone","manaburn","wizardeye","clone","fireelemental","airelemental","waterelemental","earthelemental"},
 {"darkflame","shrapmetal","dragonbreath","toxiccloud","pandemia","restoreundead","massfear","darkcontamination","deadlywave","transfusion","moonlight","armageddon"},
