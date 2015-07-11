@@ -2723,8 +2723,8 @@ function draw.objects ()
 					addx = 16;
 					addy = 12;
 				elseif bags_list[j].typ == "chest" then
-					addx = 16;
-					addy = 12;
+					addx = 32;
+					addy = 28;
 				elseif bags_list[j].typ == "barrel" or  bags_list[j].typ == "cauldron" then
 					addx = 32;
 					addy = 32;

@@ -103,15 +103,15 @@ function sprites.load()
 	btn_apply = love.graphics.newQuad(0, 980, 90,30, media.images.ui:getWidth(), media.images.ui:getHeight());
 	bag_img = love.graphics.newQuad(0, 0, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	trap_img = love.graphics.newQuad(224, 0, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+
+	chest_img = {};
+	for i=1,4 do
+		chest_img[i] = {};
+		for h=1,5 do
+			chest_img[i][h]=love.graphics.newQuad(20*32+(h-1)*64, (i-1)*64, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+		end;
+	end;
 	
-	chest_img = {
-	love.graphics.newQuad(10, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(182, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(96, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(10, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(180, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(100, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	};
 	track_img = {
 	{love.graphics.newQuad(0, 96, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
 	love.graphics.newQuad(32, 96, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),

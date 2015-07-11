@@ -451,17 +451,17 @@ function playingState.load()
 		};
 
 		bags_list[2]={
-		x=8,y=8, xi=8, yi=7, typ="chest", opened=false, material=30, locked=true, locktype=1, lockcode=2232543314, traped = false, dir=1, img=chest_img[1],
+		x=8,y=8, xi=8, yi=7, typ="chest", opened=false, material=30, locked=true, locktype=1, lockcode=2232543314, traped = false, dir=1, img=chest_img[1][1],
 		{ttxid=1,q=1,w=0,e=0,r=0,h=0},
 		};
 		--trapcode="123456789" --FIXME: 1st item removes if trap activated, cause it`s trap`s part, other lost (q)antity: all types of armor, weapon and ammo, potions, books and scrolls can be destroyed, but only if firebomb or acidbomb, or mb electricity/cold (not scrolls!)
 		bags_list[3]={
-		x=14,y=7, xi=15, yi=7, typ="chest", opened=false, material=50, locked=true, locktype=2, lockcode=1234512345, traped = true, inspected = false, trapcode="0000000012312345678999300", triggers="0001000100", trapmodel="firebomb", trappower = 5, dir=2, img=chest_img[2],
+		x=14,y=7, xi=15, yi=7, typ="chest", opened=false, material=50, locked=true, locktype=2, lockcode=1234512345, traped = true, inspected = false, trapcode="0000000012312345678999300", triggers="0001000100", trapmodel="firebomb", trappower = 5, dir=2, img=chest_img[2][2],
 		{ttxid=2,q=1,w=0,e=0,r=0,h=0},
 		};
 
 		bags_list[4]={
-		x=17,y=14, xi=17, yi=15, typ="chest", opened=false, material=70, locked=true, locktype=3, lockcode=7457612465, traped = true, inspected = false, trapcode="333062520", triggers="0100010001", trapmodel="firebomb", trappower = 5, dir=3, img=chest_img[1],
+		x=17,y=14, xi=17, yi=15, typ="chest", opened=false, material=70, locked=true, locktype=3, lockcode=7457612465, traped = true, inspected = false, trapcode="333062520", triggers="0100010001", trapmodel="firebomb", trappower = 5, dir=3, img=chest_img[3][3],
 		{ttxid=2,q=1,w=0,e=0,r=0,h=0},
 		};
 

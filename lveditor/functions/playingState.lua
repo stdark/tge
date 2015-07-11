@@ -59,14 +59,13 @@ function playingState.load()
 	end;
 	bag_img = love.graphics.newQuad(0, 0, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	trap_img = love.graphics.newQuad(224, 0, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
-	chest_img = {
-	love.graphics.newQuad(10, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(182, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(96, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(10, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(180, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	love.graphics.newQuad(100, 40, 48,48, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()),
-	};
+	chest_img = {};
+	for i=1,4 do
+		chest_img[i] = {};
+		for h=1,5 do
+			chest_img[i][h]=love.graphics.newQuad(20*32+(h-1)*64, (i-1)*64, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+		end;
+	end;
 	door_img = {};
 	for i=1,4 do
 		local _x = (i-1)*64;
@@ -300,7 +299,7 @@ function playingState.load()
 	well_current_duration = 10;
 	well_current_map = 1;
 	chest_current_rotation = 1;
-	chest_current_material = 1;
+	chest_current_material = 25;
 	chest_current_opened = 1;
 	chest_current_locked = 1;
 	chest_locktypes = {"none","simple","cylinder","disk"};
@@ -933,8 +932,8 @@ function special_objects_parametres (special_objects_status)
 		textinput:SetLimit(9);
 		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
 		textinput.OnEnter = function(object, text)
-			if text ~= nil then
-				chest_current_material  = text; --"random","random3","random4","random5","123456789"
+			if text ~= nil and tonumber(text) > 0 then
+				chest_current_material  = tonumber(text); --"random","random3","random4","random5","123456789"
 			end;
 		end;
 
@@ -1795,8 +1794,8 @@ function draw_objects ()
 					addx = 16;
 					addy = 12;
 				elseif bags_list[j].typ == "chest" then
-					addx = 16;
-					addy = 12;
+					addx = 32;
+					addy = 28;
 				elseif bags_list[j].typ == "barrel" or  bags_list[j].typ == "cauldron" then
 					addx = 32;
 					addy = 32;
@@ -2771,7 +2770,7 @@ function playingState.mousereleased(x, y, button)
 				_traptype = chest_traptypes[chest_current_traptype_index];
 				_trapcode = chest_current_trapcode;
 			end;
-			table.insert(bags_list,{x=ring[chest_current_rotation].x,y=ring[chest_current_rotation].y,xi=cursor_world_x,yi=cursor_world_y,typ="chest", dir=chest_current_rotation,inspected=false, material=chest_current_material,opened = false, locked=_locked, locktype=_locktype, lockcode =_lockcode, traped=_traped, triggers="", trapmodel=_traptype, trappower=_trappower,trapcode=_trapcode, img=chest_img[chest_current_rotation]});
+			table.insert(bags_list,{x=ring[chest_current_rotation].x,y=ring[chest_current_rotation].y,xi=cursor_world_x,yi=cursor_world_y,typ="chest", dir=chest_current_rotation,inspected=false, material=chest_current_material,opened = false, locked=_locked, locktype=_locktype, lockcode =_lockcode, traped=_traped, triggers="", trapmodel=_traptype, trappower=_trappower,trapcode=_trapcode, img=chest_img[chestImageIndexFromMaterial(chest_current_material)][chest_current_rotation]});
 		elseif special_objects_status == "tr" then
 			_traptype = trap_traptypes[trap_current_traptype_index];
 			_trapcode = trap_current_trapcode;
@@ -2814,7 +2813,7 @@ end
 
 function findBagOrObject(x,y)
 	for i=1,#bags_list do
-		if (bags_list[i].x == x and bags_list[i].y == y) or (bags_list[i].x == xi and bags_list[i].yi == y) then
+		if (bags_list[i].x == x and bags_list[i].y == y) or (bags_list[i].xi == x and bags_list[i].yi == y) then
 			table.remove(bags_list,i);
 		end;
 	end;
@@ -2836,6 +2835,18 @@ function playingState.keyreleased(key)
 	end;
     -- your code
     loveframes.keyreleased(key)
+end;
+
+function chestImageIndexFromMaterial (material)
+	local index = 1;
+	if material > 25 and material <= 50 then
+		index = 2;
+	elseif material > 50 and material <= 75 then
+		index = 3;
+	elseif material > 75 then
+		index = 4;
+	end;
+	return index;
 end;
 
 function flood_map ()
@@ -4106,7 +4117,7 @@ function playingState.draw()
 		tr=trap_img,
 		
 		bg=bag_img,
-		ch=chest_img[chest_current_rotation],
+		ch=chest_img[chestImageIndexFromMaterial(chest_current_material)][chest_current_rotation],
 		cr=crystals_img,
 		th=trashheap_img,
 		sp=scullpile_img,
