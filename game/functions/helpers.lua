@@ -5555,3 +5555,25 @@ function helpers.bodySlot(index,itemid)
 	end;
 	return false
 end;
+
+function helpers.mineCanBeInstalledByCurrentMob (x,y)
+	local minecanbeinstalled = true;
+	for i=1,6 do
+		if y/2 == math.ceil(y/2) then
+			if helpers.passCheck(x+directions[1].xc[i],y+directions[1].y[i])
+			and dlandscape_obj[x+directions[1].xc[i] ][y+directions[1].y[i] ]~="fire"
+			and mlandscape_obj[x+directions[1].xc[i] ][y+directions[1].y[i] ]==0 then
+			else
+				minecanbeinstalled = false;
+			end;
+		elseif y/2~=math.ceil(y/2) then
+			if helpers.passCheck(x+directions[1].xn[i],y+directions[1].y[i])
+			and dlandscape_obj[x+directions[1].xn[i] ][y+directions[1].y[i] ] ~= "fire"
+			and mlandscape_obj[x+directions[1].xn[i] ][y+directions[1].y[i] ] == 0 then
+			else
+			 minecanbeinstalled = false;
+			end;
+		end;
+	end;
+	return minecanbeinstalled;
+end;

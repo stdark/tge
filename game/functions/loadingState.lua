@@ -2,6 +2,8 @@
 
 local loader = require 'lib.love-loader'
 require "data.sprites"
+require "data.buildings"
+buildings_data ();
 
 local spiral
 local spiralAngle = 0
@@ -31,7 +33,7 @@ end
 
 -- the state
 
-local loadingState = {}
+local loadingState = {};
 
 function loadingState.start(media, finishCallback)
 	if global.level_to_load and global.level_to_load > 0 then
@@ -71,6 +73,14 @@ function loadingState.start(media, finishCallback)
 		loader.newImage(media.images, "back", images_table[1]);
 		loader.newImage(media.images, "hex", images_table[2]);
 		loader.newImage(media.images, "obj", images_table[3]);
+		
+		if not media.images.buildings then
+			media.images.buildings = {};
+		end;
+		for i=1,#buildings_stats do
+			loader.newImage(media.images.buildings, "building" .. i, buildings_stats[i].img);
+		end;
+		
 		if global.first_load  then
 			loader.newImage(media.images, "hex_ui", "img/hex_ui.dds");
 			loader.newImage(media.images, "hud_bottom_left", "img/hud/hud_bottom_left.dds");
@@ -140,7 +150,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "spells", "img/effects/sprites_spells.dds");
 			loader.newImage(media.images, "waves", "img/effects/sprites_waves.dds");
 			--
-			loader.newImage(media.images, "buildings1", "img/buildings1.dds");
+			--loader.newImage(media.images, "buildings1", "img/buildings1.dds");
 			
 			loader.newImage(media.images, "button1", "img/buttons/button1.dds");
 			loader.newImage(media.images, "button9", "img/buttons/button9.dds");
@@ -346,7 +356,8 @@ function loadingState.start(media, finishCallback)
 			loader.newSource(media.sounds, "mindgame_shame", "sounds/mindgame_shame.ogg");
 			loader.newSource(media.sounds, "mindgame_mindcured", "sounds/mindgame_mindcured.ogg");
 			loader.newSource(media.sounds, "mindgame_mymaster", "sounds/mindgame_mymaster.ogg");
-			
+			loader.newSource(media.sounds, "trap_install", "sounds/trap_install.ogg");
+			loader.newSource(media.sounds, "clats", "sounds/clats.ogg");
 			loader.newSource(media.sounds, "teleport", "sounds/teleport.ogg");
 			loader.newSource(media.sounds, "altar", "sounds/altar.ogg");
 		end;

@@ -270,6 +270,7 @@ chars_stats[2].inventory_list={
 {ttxid=241,q=1,w=0,e=0,r=1,h=0},
 {ttxid=251,q=1,w=0,e=0,r=1,h=0},
 {ttxid=394,q=1,w="fear",e=0,r=1,h=0},
+{ttxid=498,q=5,w="firebomb",e=0,r=1,h=0},
 }
 chars_stats[3].inventory_list={
 {ttxid=1,q=1,w=0,e=0,r=1,h=0},

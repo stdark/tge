@@ -10,7 +10,7 @@ function love.load()
 	
 	img_hud =  love.graphics.newImage("img/hud.png");
 	img_back = love.graphics.newImage("img/back.jpg");
-	img_hex =  love.graphics.newImage("img/hex_landscape.png");
+	img_hex =  love.graphics.newImage("img/hex_ui.dds");
 	img_mindfield = love.graphics.newImage("img/mindgame.dds");
 	img_mindicons = love.graphics.newImage("img/mindgame_icons.dds");
 	editor_status = "normal";

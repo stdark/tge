@@ -1,6 +1,8 @@
 --level_editor
  
 local loader = require 'lib.love-loader';
+require "data.buildings";
+buildings_data ();
 local spiral;
 local spiralAngle = 0;
 
@@ -49,6 +51,12 @@ function loadingState.start(media, finishCallback)
 		loader.newImage(media.images, "hex", images_table[2]);
 		loader.newImage(media.images, "obj", images_table[3]);
 		if global.first_load  then
+			if not media.images.buildings then
+				media.images.buildings = {};
+			end;
+			for i=1,#buildings_stats do
+				loader.newImage(media.images.buildings, "building" .. i, buildings_stats[i].img);
+			end;
 			loader.newImage(media.images, "hex_ui", "img/hex_ui.dds");
 			loader.newImage(media.images, "hud_bottom_left", "img/hud/hud_bottom_left.png");
 			loader.newImage(media.images, "hud_bottom_right", "img/hud/hud_bottom_right.png");
@@ -66,7 +74,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "img_obj", "img/hex_foreground.dds");
 			loader.newImage(media.images, "img_back", "img/background.dds");
 			loader.newImage(media.images, "img_map", "img/map.png");
-			loader.newImage(media.images, "buildings1", "img/buildings1.dds");
+			--loader.newImage(media.images, "buildings1", "img/buildings1.dds");
 			loader.newImage(media.images, "tmpobjs","/img/img_tmpobjs.dds");
 			loader.newImage(media.images, "animatedobjects","/img/animatedobjects.dds");
 		end;

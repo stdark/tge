@@ -2653,7 +2653,9 @@ function draw.objects ()
 						love.graphics.setColor(0, 0, 0);
 					end;
 					if not buildings_stats[index].animation then
-						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+						--love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+						local img = media.images.buildings["building" .. index];
+						love.graphics.draw(img, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					else
 						local animation = loadstring("return " .. buildings_stats[index].animation)();
 						local image = media.images[buildings_stats[index].animation_source];
@@ -2682,7 +2684,7 @@ function draw.objects ()
 					draw.drawHex(corner_hexes_array[3][1],corner_hexes_array[3][2],cursor_danger,media.images.hex_ui);
 					draw.drawHex(corner_hexes_array[4][1],corner_hexes_array[4][2],cursor_danger,media.images.hex_ui);
 					]]
-					local img = buildings_stats[index].img;
+					--local img = buildings_stats[index].img;
 					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
@@ -2709,7 +2711,9 @@ function draw.objects ()
 						love.graphics.setColor(0, 0, 0);
 					end;
 					if not buildings_stats[index].animation then
-						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+						--love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+						local img = media.images.buildings["building" .. index];
+						love.graphics.draw(img, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					else
 						local animation = loadstring("return " .. buildings_stats[index].animation)();
 						local image = media.images[buildings_stats[index].animation_source];

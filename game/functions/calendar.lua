@@ -24,6 +24,7 @@ function calendar.calendar_data ()
 	calendar.delta_thievery = {years=0,months=0,weeks=0,days=0,hours=0,mins=0,secs=30};
 	calendar.delta_picklocking = {years=0,months=0,weeks=0,days=0,hours=0,mins=20,secs=0};
 	calendar.delta_disarming = {years=0,months=0,weeks=0,days=0,hours=0,mins=10,secs=0};
+	calendar.delta_installtrap = {years=0,months=0,weeks=0,days=0,hours=0,mins=5,secs=0};
 	calendar.delta_flay = {years=0,months=0,weeks=0,days=0,hours=0,mins=5,secs=0};
 	calendar.delta_walk_in_peace = {years=0,months=0,weeks=0,days=0,hours=0,mins=1,secs=0};
 	calendar.delta_housewatch = {years=0,months=0,weeks=0,days=0,hours=0,mins=5,secs=0};

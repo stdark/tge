@@ -824,6 +824,7 @@ function playingState.load()
 	drink_smth = 0;
 	oil_smth = 0;
 	bomb_smth = 0;
+	trap_smth = 0;
 	scroll_smth = 0;
 	use_smth =0 ;
 	slot = 0;
@@ -2217,6 +2218,13 @@ function playingState.keyreleased(key, unicode)
 				helpers.resort_inv(current_mob);
 			end;
 
+			if trap_smth > 0 then
+				bag[tmp_bagid][inv_quad_x][inv_quad_y] = trap_smth;
+				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
+				trap_smth = 0;
+				helpers.resort_inv(current_mob);
+			end;
+
 			if scroll_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = scroll_smth;
 				bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
@@ -2252,7 +2260,7 @@ function playingState.keyreleased(key, unicode)
 		if global.status == "peace" then
 			for i=1,chars do
 				if key == tostring(i) and game_status ~= "moving" and chars_mobs_npcs[i].status == 1 then
-					if game_status ~= "chat" then --lalala
+					if game_status ~= "chat" then
 						game_status = "neutral";
 						find_the_path = 0;
 						path_status = 0;
@@ -3967,8 +3975,21 @@ function playingState.mousereleased (x,y,button)
 				missle_type = "bottle";
 				game_status = "sensing";
 			end;
+			
+			if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- mine/trap
+			and inventory_ttx[list[holding_smth].ttxid].class == "trap" then
+				trap_smth = holding_smth;
+				utils.playSfx(media.sounds.trap_install,1);
+				potionname = list[holding_smth].w;
+				missle_subtype = inventory_ttx[list[holding_smth].ttxid].a;
+				trap_power = list[holding_smth].q;
+				holding_smth = 0;
+				missle_type = "trap";
+				game_status = "sensing";
+			end;
+			
 			if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- allieshelp
-			and inventory_ttx[list[holding_smth].ttxid].subclass == " allieshelp" then
+			and inventory_ttx[list[holding_smth].ttxid].subclass == "allieshelp" then
 				use_smth = holding_smth;
 				utils.playSfx(media.sounds.inv_bottle_put,1);
 				potionname = inventory_ttx[list[holding_smth].ttxid].title;
@@ -4786,6 +4807,7 @@ function  playingState.mousepressed(x,y,button)
 			oil_smth = 0;
 			drink_smth = 0;
 			bomb_smth = 0;
+			trap_smth = 0;
 			use_smth = 0;
 			utils.playSfx(media.sounds.invclose,1);
 			game_status="neutral";
@@ -6838,7 +6860,7 @@ function  playingState.mousepressed(x,y,button)
 --//spells
 
 --dragging from
-	if love.mouse.isDown("l") and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking") and holding_smth==0 and oil_smth==0 and drink_smth == 0 and bomb_smth == 0 and use_smth == 0 and scroll_smth == 0 then
+	if love.mouse.isDown("l") and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking") and holding_smth==0 and oil_smth==0 and drink_smth == 0 and bomb_smth == 0 and use_smth == 0 and scroll_smth == 0 and trap_smth == 0 then
 		for i=1,#global.slots do
 			local present = nil;
 
@@ -6895,11 +6917,12 @@ function  playingState.mousepressed(x,y,button)
 	and mX<inv_add_x+11*32
 	and mY>inv_add_y
 	and mY<inv_add_y+15*32
-	and holding_smth==0
-	and oil_smth==0
-	and drink_smth==0
-	and bomb_smth==0
-	and use_smth==0
+	and holding_smth == 0
+	and oil_smth == 0
+	and drink_smth == 0
+	and bomb_smth == 0
+	and trap_smth == 0
+	and use_smth == 0
 	and scroll_smth==0 then
 		local inv_quad_y=math.ceil((mX-inv_add_x)/32);
 		local inv_quad_x=math.ceil((mY-inv_add_y)/32);
@@ -6913,11 +6936,12 @@ function  playingState.mousepressed(x,y,button)
 	and mX<inv_add_x+11*32+inv_part2
 	and mY>inv_add_y
 	and mY<inv_add_y+15*32
-	and holding_smth==0
-	and oil_smth==0
-	and drink_smth==0
-	and bomb_smth==0
-	and use_smth==0
+	and holding_smth == 0
+	and oil_smth == 0
+	and drink_smth == 0
+	and bomb_smth == 0
+	and trap_smth == 0
+	and use_smth == 0
 	and scroll_smth==0 then
 		local inv_quad_y=math.ceil((mX-inv_add_x-inv_part2)/32);
 		local inv_quad_x=math.ceil((mY-inv_add_y)/32);
@@ -7452,6 +7476,38 @@ function  playingState.mousepressed(x,y,button)
 		use_smth = 0;
 		damage.shoot();
 	end;
+	
+	if love.mouse.isDown("l") -- mine/trap
+	and chars_mobs_npcs[current_mob].control=="player"
+	and game_status == "sensing"
+	and trace.arrowStatus(current_mob)
+	and missle_type=="trap"
+	and trap_smth > 0
+	and helpers.passCheck(helpers.hexInFronTOfMob(current_mob))
+	and helpers.ifCursorIsNear()
+	and chars_mobs_npcs[current_mob].rt >= math.max(20,50 - math.ceil(chars_mobs_npcs[current_mob].spd/20))
+	then
+		if helpers.mineCanBeInstalledByCurrentMob (cursor_world_x,cursor_world_y) then
+			helpers.turnMob(current_mob);
+			missle_drive = "alchemy";
+			local trapcode_str = "";
+			for i=1,25 do
+				trapcode_str = trapcode_str .. math.random(1,9);
+			end;
+			table.insert(bags_list,{typ="trap",owner_id=current_mob,x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,mask=chars_mobs_npcs[current_mob].num_traps*chars_mobs_npcs[current_mob].lvl_traps, detected=true, opened=false, locked=true, locktype=0, lockcode=999999999, dir=0, traped = true, inspected = false, trapcode=trapcode_str,trapmodel = potionname, trappower = trap_power,img=trap_img})
+			table.remove(list,trap_smth);
+			helpers.renumber(trap_smth,current_mob);
+			utils.playSfx(media.sounds.clats,1);
+			trap_smth = 0;
+			if global.status == "peace" then
+				calendar.add_time_interval(calendar.delta_installtrap);
+			else
+				chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt -  math.max(20,50 - math.ceil(chars_mobs_npcs[current_mob].spd/20));
+				game_status = "restoring";
+			end;
+			helpers.addToActionLog( lognames.actions.trapinstalled);
+		end;
+	end;
 
 	if love.mouse.isDown("l")
 	and chars_mobs_npcs[current_mob].control=="player"
@@ -7507,29 +7563,11 @@ function  playingState.mousepressed(x,y,button)
 	and not helpers.cursorAtMob (cursor_world_x,cursor_world_y)
 	and missle_type=="firemine"
 	and helpers.cursorIsNear(cursor_world_x,cursor_world_y,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y)
-	and dlandscape_obj[cursor_world_x][cursor_world_y]~="fire"
-	and mlandscape_obj[cursor_world_x][cursor_world_y]==0
-	and heights_table[map[cursor_world_y][cursor_world_x] ]==0
+	and dlandscape_obj[cursor_world_x][cursor_world_y] ~= "fire"
+	and mlandscape_obj[cursor_world_x][cursor_world_y] == 0
+	and helpers.passCheck(helpers.hexInFronTOfMob(current_mob))
 	then
-		minecanbeinstalled=1; --FIXME to function
-		for i=1,6 do
-			if cursor_world_y/2==math.ceil(cursor_world_y/2) then
-				if heights_table[map[cursor_world_y+directions[1].y[i] ][cursor_world_x+directions[1].xc[i] ] ]==0
-				and dlandscape_obj[cursor_world_x+directions[1].xc[i] ][cursor_world_y+directions[1].y[i] ]~="fire"
-				and mlandscape_obj[cursor_world_x+directions[1].xc[i] ][cursor_world_y+directions[1].y[i] ]==0 then
-				else
-					minecanbeinstalled=0;
-				end;
-			elseif cursor_world_y/2~=math.ceil(cursor_world_y/2) then
-				if heights_table[map[cursor_world_y+directions[1].y[i] ][cursor_world_x+directions[1].xn[i] ] ] == 0
-				and dlandscape_obj[cursor_world_x+directions[1].xn[i] ][cursor_world_y+directions[1].y[i] ] ~= "fire"
-				and mlandscape_obj[cursor_world_x+directions[1].xn[i] ][cursor_world_y+directions[1].y[i] ] == 0 then
-				else
-				 minecanbeinstalled=0;
-				end;
-			end;
-		end;
-		if minecanbeinstalled==1 then
+		if helpers.mineCanBeInstalledByCurrentMob (cursor_world_x,cursor_world_y) then
 			helpers.beforeShoot();
 			helpers.turnMob(current_mob);
 			game_status="shot"

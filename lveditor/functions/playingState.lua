@@ -1763,7 +1763,9 @@ function draw_objects ()
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
 					if not buildings_stats[index].animation then
-						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+						--love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+						local img = media.images.buildings["building" .. index];
+						love.graphics.draw(img, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					else
 						local animation = loadstring("return " .. buildings_stats[index].animation)();
 						local image = media.images[buildings_stats[index].animation_source];
@@ -1781,7 +1783,9 @@ function draw_objects ()
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
 					if not buildings_stats[index].animation then
-						love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space)
+						--love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+						local img = media.images.buildings["building" .. index];
+						love.graphics.draw(img, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					else
 						local animation = loadstring("return " .. buildings_stats[index].animation)();
 						local image = media.images[buildings_stats[index].animation_source];
@@ -3447,6 +3451,7 @@ function drawUIButtons()
 	uibuttons[24]:SetText("objects");
 	uibuttons[24].OnClick = function(object)
 		editor_status = "objects";
+		brush = 1;
 		loveframes.util.RemoveAll();
 		drawUIButtons();
 		draw_buttons();
@@ -3459,6 +3464,7 @@ function drawUIButtons()
 	uibuttons[2]:SetText("buildings");
 	uibuttons[2].OnClick = function(object)
 		editor_status="buildings";
+		brush = 1;
 		loveframes.util.RemoveAll();
 		drawUIButtons();
 		--love.mouse.setVisible(true);
@@ -4074,9 +4080,12 @@ function playingState.draw()
 	end;
 	
 	if editor_status == "buildings" then
-		local building_img = buildings_stats[current_building].img;
-		local sprite = buildings_stats[current_building].sprite;
-		love.graphics.draw(building_img, sprite,global.screenWidth-180,500,0,0.25);
+		--local building_img = buildings_stats[current_building].img;
+		--local sprite = buildings_stats[current_building].sprite;
+		--love.graphics.draw(building_img, sprite,global.screenWidth-180,500,0,0.25);
+		local img = media.images.buildings["building" .. current_building];
+		love.graphics.draw(img, global.screenWidth-180,500,0,0.25);
+		
 		love.graphics.print("building:", 90, 10);
 		love.graphics.print(current_building, 150, 10);
 	end;

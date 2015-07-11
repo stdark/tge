@@ -13,8 +13,16 @@ function love.load()
 	bigFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 32);
 	
 	img_hud =  love.graphics.newImage("img/hud.png");
-	img_hex =  love.graphics.newImage("img/hex_landscape.png");
+	img_hex =  love.graphics.newImage("img/hex_ui.dds");
 	media.images.buildings1 = love.graphics.newImage("img/buildings1.dds");
+	
+	--[[if not media.images.buildings then
+		media.images.buildings = {};
+	end;
+	for i=1,#buildings_stats do
+		loader.newImage(media.images.buildings, "building" .. i, buildings_stats[i].img);
+	end;]]
+	
 	img_back = love.graphics.newImage("img/back.jpg");
 	
 	editor_status = "normal";
