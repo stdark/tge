@@ -4628,7 +4628,7 @@ function helpers.ifSpellIsCastable (drive) --FIXME not completed
 	local mindgame_check = false;
 	local mana_check = false;
 	local recovery_check = false;
-	if magic.spell_tips[missle_type][leveltype] or (vlandscape_obj[chars_mobs_npcs[current_mpb].x][chars_mobs_npcs[current_mpb].y] == 1 and magic.spell_tips[missle_type].dungeon) then
+	if magic.spell_tips[missle_type][leveltype] or (vlandscape_obj[chars_mobs_npcs[current_mob].x][chars_mobs_npcs[current_mob].y] == 1 and magic.spell_tips[missle_type]["dungeon"]) then
 		area_check = true;
 	end;
 	if global.status ~= "mindgame" or  (global.status == "mindgame" and magic.spell_tips[missle_type].mindgame) then
@@ -5285,6 +5285,7 @@ function helpers.turnMob (index) --FIXME 2hex
 	end;
 	global.rem_cursor_world_x = cursor_world_x;
 	global.rem_cursor_world_y = cursor_world_y;
+	global.traced_for_boom = nil;
 end;
 
 function helpers.ifUmbrella ()

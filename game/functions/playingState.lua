@@ -177,7 +177,9 @@ function playingState.load()
 	hex_type=" ";
 	cursor_world_x=1;
 	cursor_world_y=1;
-
+	global.rem_cursor_world_x = cursor_world_x;
+	global.rem_cursor_world_y = cursor_world_y;
+	
 	path_status=0;
 
 	hex_to_check_next_wave={};
@@ -1650,23 +1652,23 @@ function array_of_map ()
 	tile_counter = 1;
 	for my=1, map_h do
 		for mx=1, map_w do
-			local visibility = 0;
-			local pass = 0;
+			local _visibility = 0;
+			local _pass = 0;
 			if map[mx][my] <= 1200 then
 				visibility = visibility_table[map[mx][my]];
 				pass = heights_table[map[mx][my]];
 				if dlandscape_obj[mx][my] == "stone" then
-					pass = 2;
-					visibility = 1;
+					_pass = 2;
+					_visibility = 1;
 				end;
 				if dlandscape_obj[mx][my] == "pit" then
-					pass = -1;
+					_pass = -1;
 				end;
 			else
-				visibility = 1;
-				pass = 2;
+				_visibility = 1;
+				_pass = 2;
 			end;
-			all_ground_hexes[tile_counter] = {id=tile_counter+1, type=map[my][mx], x=my,y=mx, pass=pass,visibility=visibility,stepsound=stepsound_table[map[mx][my]]};
+			all_ground_hexes[tile_counter] = {id=tile_counter+1, type=map[my][mx], x=my,y=mx, pass=_pass,visibility=_visibility,stepsound=stepsound_table[map[mx][my]]};
 			--table.insert(all_ground_hexes,{id=tile_counter+1, type=map[my][mx], x=my,y=mx, pass=pass,visibility=visibility,stepsound=stepsound_table[map[mx][my]] });
 			tile_counter = tile_counter+1;
 		end;
@@ -4786,6 +4788,7 @@ function  playingState.mousepressed(x,y,button)
 	if button == "r"  and game_status == "spellbook" then -- watching spell tips in the spellbook
 		local x,y = helpers.centerObject(media.images.sbook);
 		missle_type = helpers.bookCircles(page);
+		global.traced_for_boom = nil;
 		if missle_type then
 			show_spellbook_tips = 1;
 		end;
@@ -4793,6 +4796,7 @@ function  playingState.mousepressed(x,y,button)
 	if button == "r"  and game_status == "warbook" then -- watching trick tips in the warbook
 		local x,y = helpers.centerObject(media.images.wbook);
 		missle_type = helpers.bookCircles(page);
+		global.traced_for_boom = nil;
 		if missle_type then
 			show_warbook_tips = 1;
 		end;
@@ -7945,6 +7949,9 @@ function mobMoving()
 		mob_add_mov_y = 0;
 		path_counter = path_counter-1;
 		--mob ends moving
+		if trapped == 1 then
+			chars_mobs_npcs[current_mob].rt = math.max(0,chars_mobs_npcs[current_mob].rt - 50);
+		end;
 		if path_counter == 0 and trapped ~= 1 then
 			chars_mobs_npcs[current_mob].waterwalking = 0;
 			trace.chars_around();
@@ -8332,6 +8339,7 @@ function restoreRT ()
 	parry = 0;
 	missle_type = "none";
 	missle_drive = "muscles";
+	global.traced_for_boom = nil;
 	trapped = 0;
 	ai_called = 0;
 	mob_is_going_to_hit = 0;
@@ -8789,18 +8797,20 @@ function restoreRT ()
 				end;
 				if mlandscape_duration[a][b] > 0 then
 					mlandscape_duration[a][b] = mlandscape_duration[a][b]-1;
+					if mlandscape_obj[a][b] == "firemine"  and mlandscape_duration[a][b] == 0 then
+						mlandscape_obj[a][b] = 0;
+						boomx = b;
+						boomy = a;
+						trapped = 1;
+						missle_type = "firemine";
+						missle_drive = "trap";
+						game_status = "boom";
+						dmg = mlandscape_power[a][b];
+						mlandscape_power[a][b] = 0;
+						draw.boom();
+					end;
 				end;
-				if (mlandscape_obj[a][b] == "mine"  and mlandscape_duration[a][b] == 0) or (mlandscape_obj[a][b] == "mine" and dlandscape_obj[a][b] == "fire") then
-					mlandscape_obj[a][b] = 0;
-					boomx = b;
-					boomy = a;
-					trapped = 1;
-					missle_type = "fireball";
-					game_status = "boom";
-					dmg=mlandscape_power[a][b];
-					mlandscape_power[a][b] = 0;
-					draw.boom();
-				end;
+
 				if vlandscape_obj[a][b] == 1  and vlandscape_duration[a][b] == 0 then
 					local id = vlandscape_id[a][b];
 					vlandscape_obj[a][b] = 0;

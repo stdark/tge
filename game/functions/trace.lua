@@ -13,21 +13,24 @@ function trace.array_of_darkness ()
 	end;
 end;
 
-function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect) --Bresenham's line algorithm
+function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresenham's line algorithm
 	--utils.printDebug("trace hexed called", index)
-	if chars_mobs_npcs[current_mob].control == "player" then
-		point_x = cursor_world_x;
-		point_y = cursor_world_y;
-	elseif chars_mobs_npcs[current_mob].control == "ai" then
-		if target == false then
-			target = 1;
+	if not x or not y then
+		if chars_mobs_npcs[current_mob].control == "player" then
+			point_x = cursor_world_x;
+			point_y = cursor_world_y;
+		elseif chars_mobs_npcs[current_mob].control == "ai" then
+			if target == false then
+				target = 1;
+			end;
+			point_x = chars_mobs_npcs[target].x;
+			point_y = chars_mobs_npcs[target].y;
 		end;
-		point_x = chars_mobs_npcs[target].x;
-		point_y = chars_mobs_npcs[target].y;
+	else
+		point_x = x;
+		point_y = y;
 	end;
-	while (#shot_line > 0) do
-		table.remove(shot_line,1);
-	end;
+	shot_line = {};
 	local shot_line_one = {};
 	local shot_line_two = {};
 	local shot_line_tri = {};
@@ -169,7 +172,7 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect) --Bresenham'
 						table.insert(shot_line_for,{spoint_x,spoint_y});
 					end;
 				end;
-				if mob_at_los == 1 and game_status == "sensing" and mobsAffect and (missle_type == "shrapmetal" or missle_type == "bolt" or missle_type == "arrow" or missle_type == "throwing" or missle_type == "bullet" or spell_tips[missle_type].form == "arrow" or spell_tips[missle_type].form == "ball") then
+				if mob_at_los == 1 and game_status == "sensing" and mobsAffect and (missle_type == "shrapmetal" or missle_type == "bolt" or missle_type == "arrow" or missle_type == "throwing" or missle_type == "bullet" or magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball") then
 					break;
 				end;
 			end;
@@ -477,159 +480,44 @@ function trace.sightArray (index)
 	return hexes_to_sense;
 end;
 
-function trace.trace_for_boomXXX (hexes_to_sense,mobsAffect)
+function trace.trace_for_boom (hexes_to_sense,passing)
 	local traced_hexes = {};
-	local temp = {};
-	for i=1,#hexes_to_sense do
-		temp = trace.trace_hexes(current_mob,false,hexes_to_sense,mobsAffect);
-		for h=1,#temp do
-			table.insert(traced_hexes,{x=temp[h][1],y=temp[h][2]});
+	if not global.traced_for_boom or global.rem_cursor_world_x ~= cursor_world_x or global.rem_cursor_world_y ~= cursor_world_y or chars_mobs_npcs[current_mob].control == "ai" then
+		local mobsAffect = true;
+		if passing then
+			mobsAffect = false;
 		end;
-	end;
-	return traced_hexes;
-end;
-
-function trace.trace_for_boom (hexes_to_sense,mobsAffect)
-	local archived_hexes = hexes_to_sense;
-	local shot_line_one = {};
-	local shot_line_two = {};
-	local shot_line_tri = {};
-	local shot_line_for = {};
-	local traced_hexes_one = {};
-	local traced_hexes_two = {};
-	local traced_hexes_tri = {};
-	local traced_hexes_for = {};
-	local traced_hexes = {};
-	local coff={1,0.7,0.6,0.5};
-	for k=1,4 do
-		local start_sight_point_x = chars_mobs_npcs[tmp_current_mob].x;
-		local start_sight_point_y = chars_mobs_npcs[tmp_current_mob].y;
-		local trace_to_hex = {};
-		local vpoint_world_x = 0;
-		local vpoint_world_y = 0;
-		local delta_x = 0;
-		local delta_y = 0;
-		local error = 0;
-		local spoint_x = 0;
-		local spoint_y = 0;
-		for i=1,#hexes_to_sense do--LoS
-			vpoint_world_x=all_ground_hexes[hexes_to_sense[i][1] ].x;
-			vpoint_world_y=all_ground_hexes[hexes_to_sense[i][1] ].y;
-			local delta_x = math.abs(vpoint_world_x - chars_mobs_npcs[tmp_current_mob].x);
-			local delta_y = math.abs(vpoint_world_y - chars_mobs_npcs[tmp_current_mob].y)*coff[k];
-			error = delta_x-delta_y;
-			if chars_mobs_npcs[tmp_current_mob].x > vpoint_world_x then
-				sign_x = -1;
-			elseif chars_mobs_npcs[tmp_current_mob].x < vpoint_world_x then
-				sign_x=1;
-			end;
-			if chars_mobs_npcs[tmp_current_mob].y > vpoint_world_y then
-				sign_y=-1;
-			elseif chars_mobs_npcs[tmp_current_mob].y < vpoint_world_y then
-				sign_y=1; 
-			end;
-			if chars_mobs_npcs[tmp_current_mob].x == vpoint_world_x then
-				sign_x=0;
-			end;
-			if chars_mobs_npcs[tmp_current_mob].y == vpoint_world_y then
-				sign_y=0;
-			end;
-			if chars_mobs_npcs[tmp_current_mob].x==vpoint_world_x then
-				sign_x=0;
-			end;
-			if chars_mobs_npcs[tmp_current_mob].y==vpoint_world_y then
-				sign_y=0;
-			end;
-			spoint_x = chars_mobs_npcs[tmp_current_mob].x;
-			spoint_y = chars_mobs_npcs[tmp_current_mob].y;
-			delta = math.ceil(math.sqrt(delta_x^2+delta_y^2));
-			untraceable = 0;
-			while(spoint_x ~= vpoint_world_x or spoint_y ~= vpoint_world_y) and (spoint_x > 1 and spoint_y > 1) and spoint_x<map_w and spoint_y<map_h do
-				error2 = error*2;
-				moved=0;
-				if error2 > -2*delta_y then
-					if  sign_y == 0 then
-						error = error-delta_y;
-						spoint_x = spoint_x+sign_x;
-						moved = 1;
-					elseif spoint_y/2 ~= math.ceil(spoint_y/2) and sign_x > 0 then
-						error = error-delta_y;
-						spoint_x = spoint_x+sign_x;
-						moved = 1;         
-					elseif spoint_y/2 == math.ceil(spoint_y/2) and sign_x < 0 then
-						error = error-delta_y;
-						spoint_x = spoint_x+sign_x;
-						moved = 1;
-					elseif math.abs(spoint_x-vpoint_world_x) == 1 and math.abs(spoint_y-vpoint_world_y) == 0 then
-						error = error-delta_y;
-						spoint_x = spoint_x+sign_x;
-						moved = 1;
-					elseif  spoint_y/2==math.ceil(spoint_y/2) and sign_x>0 and math.abs(spoint_y-vpoint_world_y)==0 then
-						error = error-delta_y;
-						spoint_x = spoint_x+sign_x;
-						moved = 1;
+		local temp = {};
+		for i=1,#hexes_to_sense do
+			temp = trace.trace_hexes(current_mob,false,hexes_to_sense,mobsAffect,all_ground_hexes[hexes_to_sense[i][1] ].x,all_ground_hexes[hexes_to_sense[i][1] ].y);
+			for h=1,#temp do
+				local add = true;
+				for j=1,#traced_hexes do
+					if traced_hexes[j].x == temp[h][1] and traced_hexes[j].y == temp[h][2] then
+						add = false
 					end;
 				end;
-				if error2 < delta_x or moved==0 then
-					error = error + delta_x;
-					spoint_y = spoint_y + sign_y;
-				end; 
-				local id_of_hex = (spoint_x-1)*map_w+spoint_y;
-				if all_ground_hexes[id_of_hex].visibility == 1 then
-					if untraceable == 0 then
-						break; --causes uncompleted shot_line
-					end;
-					untraceable = 1;
-					hexes_to_sense[i][2] = 1;
-				end;
-
-				local mob_at_los=0
-				for k=1,#chars_mobs_npcs do
-					if all_ground_hexes[id_of_hex].x == chars_mobs_npcs[k].x and all_ground_hexes[id_of_hex].y == chars_mobs_npcs[k].y and chars_mobs_npcs[k].status == 1 then 
-						mob_at_los = 1;
-					end;
-				end;
-				local add2table = true;
-				local add2table2 = false;
-				for j=1,#hexes_to_sense do
-					if spoint_x  == all_ground_hexes[hexes_to_sense[j][1]].x and spoint_y  == all_ground_hexes[hexes_to_sense[j][1]].y then
-						add2table2 = true;
-					end;
-				end;
-				local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
-				for j=1,6 do
-					if spoint_x == rings[1][j].x and spoint_y == rings[1][j].y then
-						add2table2 = true;
-					end;
-				end;
-				for i=1,#traced_hexes do
-					if traced_hexes[i].x == spoint_x and traced_hexes[i].y == spoint_y then
-						add2table = false;
-						break;
-					end;
-				end;
-				if add2table and add2table2 then
-					table.insert(traced_hexes,{x=spoint_x,y=spoint_y});
-				end;
-			
-				if mobsAffect and helpers.cursorAtMob (spoint_x,spoint_y) then
-					break;
+				if add then
+					table.insert(traced_hexes,{x=temp[h][1],y=temp[h][2]});
 				end;
 			end;
-		end; -- of LoS
+		end;
+		global.traced_for_boom = traced_hexes;
+	else
+		traced_hexes = global.traced_for_boom;
 	end;
 	return traced_hexes;
 end;
 
 function trace.all_to_darkness()
 	for h=1,100 do
-			for i=1, map_w do
-				for z=1, map_h do
-					if darkness[h][i][z] == 0 then
-						darkness[h][i][z] = 1;
-					end;
+		for i=1, map_w do
+			for z=1, map_h do
+				if darkness[h][i][z] == 0 then
+					darkness[h][i][z] = 1;
 				end;
 			end;
+		end;
 	end;
 end;
 

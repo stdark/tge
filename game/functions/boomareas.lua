@@ -422,7 +422,6 @@ function boomareas.waveArea (x,y,maindirection,power,passing)
 	return boomarea;
 end;
 
-
 function boomareas.sightArea ()
 	local boomarea = {};
 	trace.sightArray (current_mob);

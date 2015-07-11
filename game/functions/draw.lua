@@ -121,7 +121,7 @@ function draw.cursor ()
 					missle_form = tricks.tricks_tips[missle_type].form;
 				end;
 				if helpers.singleShot () and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
-					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,cursor_danger,media.images.hex_ui);
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 				elseif missle_type == "bottle" and helpers.passWalk(cursor_world_x,cursor_world_y) then
 					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() and missle_form == "fan" then
@@ -187,6 +187,10 @@ function draw.cursor ()
 					for i=1,#rings[1] do
 						draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 					end;
+				end;
+				
+				if missle_type == "trap" and not helpers.cursorAtMob (cursor_world_x,cursor_world_y) and helpers.passWalk (cursor_world_x,cursor_world_y) then
+					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 				end;
 	
 				if missle_type=="inferno" or missle_type=="prismaticlight" or missle_type=="eyeofthestorm"  or missle_type=="moonlight" or missle_type=="souldrinker" or missle_type =="masscurse" or missle_type == "massdispell" or missle_type =="misfortune" or missle_type == "despondency" or missle_type == "weakness"  or missle_type == "violation" then
@@ -383,6 +387,13 @@ function draw.cursor ()
 				end;
 				
 				if missle_type == "coldray" then
+					local boomarea = boomareas.rayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
+					for i=1,#boomarea do
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
+					end;
+				end;
+				
+				if missle_type == "firelance" then
 					local boomarea = boomareas.rayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
@@ -1120,8 +1131,8 @@ function draw.boom ()
 	if missle_type == "firelance" then
 		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,0);
 		for i=1,#boomarea do
-			boomareas.fireAir (boomarea[i].x,boomarea[i].y);
-			boomareas.ashGround (boomarea[1][i].x,boomarea[1][i].y);
+			boomareas.flameAir (boomarea[i].x,boomarea[i].y);
+			boomareas.ashGround (boomarea[i].x,boomarea[i].y);
 		end;
 	end;
 				
