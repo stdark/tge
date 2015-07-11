@@ -3541,10 +3541,11 @@ function draw.bag ()
 	local inv_part2 = x+654+3*32;
 	sorttarget="bag";
 	sorttarget=oldsorttarget;
+	local bagid = helpers.whatBag (current_mob);
 	for i=1,11 do
 		for h=1,15 do
 			if bags[bagid][h][i] > 0 and bags[bagid][h][i] < 10000 then
-				tempid=bags[bagid][h][i];
+				local tempid = bags[bagid][h][i];
 				if bags_list[bagid][tempid] then			
 					draw.drawItem(tempid,bags_list[bagid][tempid].ttxid,(i-1)*32+inv_part2,(h-1)*32+inv_add_y,true,bagid);
 				end;
@@ -4554,7 +4555,10 @@ function draw.ui ()
     if chars_mobs_npcs[current_mob].person == "char" then
 		love.graphics.draw(media.images.ui, current_char_img,chars_mobs_npcs[current_mob].id*125-70,screen_mod_y - 20);
     end;
-	if chars_mobs_npcs[current_mob].person=="char" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing" or game_status == "mindgame") then
+	if chars_mobs_npcs[current_mob].person=="char" 
+	and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing" or game_status == "mindgame"
+	or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting"
+	) then
 		love.graphics.draw(media.images.ui, bag_inv,global.screenWidth-210,global.screenHeight-110);
 		love.graphics.draw(media.images.ui,veksel_icon,global.screenWidth-180,global.screenHeight-90);
 		local addx=0;
@@ -5022,7 +5026,10 @@ function draw.inventory_bag ()
 	
 	local bags_at_hex = 0;
 	for j=1, #bags_list do
-		if (chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y) or (bags_list[j].x == mbx and bags_list[j].y == mby and helpers.cursorAtMaterialBag(mbx,mby)) then
+		if (chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y and bags_list[j].typ == "bag") 
+		or (chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y and bags_list[j].typ == "trap") 
+		or (chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y and bags_list[j].typ == "chest" and bags_list[j].dir == chars_mobs_npcs[current_mob].rot)
+		or (bags_list[j].x == mbx and bags_list[j].y == mby and helpers.cursorAtMaterialBag(mbx,mby)) then
 			love.graphics.draw(media.images.tmpobjs, bags_list[j].img,x+740+bags_at_hex*96,y-80+media.images.inv1:getHeight());
 			bags_at_hex = bags_at_hex + 1;
 		end;
@@ -5039,7 +5046,13 @@ function draw.inventory_bag ()
 	local bag_found = false;
 	local _x,_y = helpers.hexInFronTOfMob(current_mob)
 	for j=1, #bags_list do
-		if ((chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y) or (bags_list[j].typ == "door" and bags_list[j].x == _x and bags_list[j].y == _y)) and not bag_found then
+		--if ((chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y) or (bags_list[j].typ == "door" and bags_list[j].x == _x and bags_list[j].y == _y)) and not bag_found then
+		if ((chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y and bags_list[j].typ == "bag") 
+		or (chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y and bags_list[j].typ == "trap") 
+		or (chars_mobs_npcs[current_mob].x == bags_list[j].x and chars_mobs_npcs[current_mob].y == bags_list[j].y and bags_list[j].typ == "chest" and bags_list[j].dir == chars_mobs_npcs[current_mob].rot)
+		or (bags_list[j].typ == "door" and bags_list[j].x == _x and bags_list[j].y == _y))
+		and not bag_found
+		then
 			bagid = j;
 			bag_found = true;
 			if bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and not bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) then

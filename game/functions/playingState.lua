@@ -356,63 +356,63 @@ function playingState.load()
 
 		local totalmobs = #chars_mobs_npcs;
 
-		table.insert(chars_mobs_npcs,{uid=1,person="npc",control="ai",defaultai="cruiser",ai="cruiser",dangerai="away",waypoint={{16,11},{13,11},{8,11},{8,5},{13,4},{17,6}},nextpoint=2,x=16,y=11,rot=5,class="goblin",fraction="vagrants", party=2, name="Nils Larsen", chat=2, face = 8,
+		table.insert(chars_mobs_npcs,{uid=1,person="npc",control="ai",defaultai="cruiser",ai="cruiser",dangerai="away",waypoint={{16,11},{13,11},{8,11},{8,5},{13,4},{17,6}},nextpoint=2,x=16,y=11,rot=5,class="goblin",fraction="vagrants", party=2, name="Nils Larsen", face = 8,
 		personality={
-		current={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		alternative={chat=2,etiquette = "criminal",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="disdain",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		alternative={chat="nilslarsen",etiquette = "criminal",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="disdain",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		table.insert(chars_mobs_npcs,{uid=2,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=20,y=10,rot=2,class="goblin",fraction="vagrants",  party=2, name="Ivan Susanin", face = 8,
 		personality={
-		current={chat=1,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=1,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="ivansusanin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="ivansusanin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		table.insert(chars_mobs_npcs,{uid=3,person="npc",control="ai",defaultai="stay",ai="random",dangerai="away",x=18,y=8,rot=4,class="goblin",fraction="vagrants",  party=2, name="Pavlik Morozoff", face = 7,
 		personality={
-		current={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=2,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		table.insert(chars_mobs_npcs,{uid=4,person="npc",control="ai",defaultai="building",ai="building",dangerai="none",x=1,y=1,rot=6,class="goblin",fraction="merchants",  party=3, name="Schors", face = 7, shop=1,
 		personality={
-		current={chat=3,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=3,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="schors",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="schors",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		chars_mobs_npcs[#chars_mobs_npcs].num_trading=10;
 		chars_mobs_npcs[#chars_mobs_npcs].lvl_trading=3;
 		table.insert(chars_mobs_npcs,{uid=5,person="npc",control="ai",defaultai="building",ai="building",dangerai="none",x=1,y=1,rot=6,class="goblin",fraction="merchants",  party=3, name="Meroving", face = 2,
 		personality={
-		current={chat=4,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=4,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="meroving",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="meroving",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		table.insert(chars_mobs_npcs,{uid=6,person="npc",control="ai",defaultai="building",ai="building",dangerai="none",x=1,y=1,rot=6,class="goblin",fraction="merchants",  party=3, name="Папарабль", face = 2,shop=2,
 		personality={
-		current={chat=5,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=5,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="paparable",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="paparable",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		table.insert(chars_mobs_npcs,{uid=7,person="npc",control="ai",defaultai="building",ai="building",dangerai="none",x=1,y=1,rot=6,class="goblin",fraction="merchants",  party=3, name="Лупитош", face = 3,shop=3,
 		personality={
-		current={chat=6,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=6,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="loopitosh",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="loopitosh",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 		table.insert(chars_mobs_npcs,{uid=8,person="npc",control="ai",defaultai="building",ai="building",dangerai="none",x=1,y=1,rot=6,class="goblin",fraction="merchants",  party=3, name="Пилюлькин", face = 4,shop=3,
 		personality={
-		current={chat=7,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		default={chat=7,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
-		thiefcatcher={chat=8,etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="pilulkin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="pilulkin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
 

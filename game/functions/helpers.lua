@@ -847,7 +847,10 @@ end;
 function helpers.whatBag (index)
 	local bagid = 0;
 	for i=1, #bags_list do
-		if chars_mobs_npcs[index].x == bags_list[i].x and chars_mobs_npcs[index].y == bags_list[i].y then
+		if (chars_mobs_npcs[index].x == bags_list[i].x and chars_mobs_npcs[index].y == bags_list[i].y and bags_list[i].typ == "bag") 
+		or (chars_mobs_npcs[index].x == bags_list[i].x and chars_mobs_npcs[index].y == bags_list[i].y and bags_list[i].typ == "trap") 
+		or (chars_mobs_npcs[index].x == bags_list[i].x and chars_mobs_npcs[index].y == bags_list[i].y and bags_list[i].typ == "chest" and bags_list[i].dir == chars_mobs_npcs[index].rot)
+		then
 			bagid = i;
 			break;
 		end;
