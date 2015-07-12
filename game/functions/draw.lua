@@ -193,7 +193,7 @@ function draw.cursor ()
 					draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 				end;
 	
-				if missle_type=="inferno" or missle_type=="prismaticlight" or missle_type=="eyeofthestorm"  or missle_type=="moonlight" or missle_type=="souldrinker" or missle_type =="masscurse" or missle_type == "massdispell" or missle_type =="misfortune" or missle_type == "despondency" or missle_type == "weakness"  or missle_type == "violation" then
+				if missle_type=="inferno" or missle_type=="prismaticlight"  or missle_type=="moonlight" or missle_type=="souldrinker" or missle_type =="masscurse" or missle_type == "massdispell" or missle_type =="misfortune" or missle_type == "despondency" or missle_type == "weakness"  or missle_type == "violation" then
 					local boomarea = boomareas.sightArea(); 
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);	
@@ -394,7 +394,7 @@ function draw.cursor ()
 				end;
 				
 				if missle_type == "firelance" then
-					local boomarea = boomareas.rayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
+					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
 					end;
@@ -502,6 +502,13 @@ function draw.cursor ()
 					end;
 				end;
 				
+				if missle_type == "tsunami" then
+					local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,10,true);
+					for i=1,#boomarea do
+						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
+					end;
+				end;
+				
 				if missle_type=="genocide" then
 					local boomarea = boomareas.signArea("class",genocidetheme);
 					for i=1,#boomarea do
@@ -538,6 +545,25 @@ function draw.cursor ()
 							end;
 							for i=1,#rings[2] do
 								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
+							end;
+						end;
+					end;
+				end;
+				
+				if missle_type == "eyeofthestorm" then
+					if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
+						local mobID = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
+						local mob = chars_mobs_npcs[mobID];
+						if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
+							local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+							for i=1,#rings[3] do
+								draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
+							end;
+							for i=1,#rings[2] do
+								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
+							end;
+							for i=1,#rings[1] do
+								draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
 							end;
 						end;
 					end;
@@ -889,6 +915,38 @@ function draw.boom ()
 		end;
 	end;
 	
+	if missle_type == "eyeofthestorm" then
+		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+		for i=1,#rings[3] do
+			local rnd = math.random(1,3);
+			if rnd == 1 then
+				boomareas.frostAir (rings[3][i].x,rings[3][i].y);
+			elseif rnd == 2 then
+				boomareas.staticGround (rings[3][i].x,rings[3][i].y);
+			else
+				boomareas.flameAir (rings[3][i].x,rings[3][i].y);
+			end;
+		end;
+		for i=1,#rings[2] do
+			if rnd == 1 then
+				boomareas.frostAir (rings[2][i].x,rings[2][i].y);
+			elseif rnd == 2 then
+				boomareas.staticGround (rings[2][i].x,rings[2][i].y);
+			else
+				boomareas.flameAir (rings[2][i].x,rings[2][i].y);
+			end;
+		end;
+		for i=1,#rings[1] do
+			if rnd == 1 then
+				boomareas.frostAir (rings[1][i].x,rings[1][i].y);
+			elseif rnd == 2 then
+				boomareas.staticGround (rings[1][i].x,rings[1][i].y);
+			else
+				boomareas.flameAir (rings[1][i].x,rings[1][i].y);
+			end;
+		end;
+	end;
+	
 	if missle_type == "firewall" then
 		local boomarea = boomareas.wallArea(cursor_world_x,cursor_world_y,spell_rotation,1);
 		for i=1,#boomarea do
@@ -1143,12 +1201,38 @@ function draw.boom ()
 		end;
 	end;
 	
-	if missle_type == "eyeofthestorm" then
-		snoweffect[1].ps:reset();
-		snoweffect[1].ps:start();
-		local boomarea = boomareas.sightArea(); 
-		for i=1,#boomarea do
-			elandscape[boomarea[i].y][boomarea[i].x] = "snow";	
+	if missle_type == "coldring" then
+		if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
+			local mobID = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
+			local mob = chars_mobs_npcs[mobID];
+			if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
+				local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+				for i=1,#rings[3] do
+					draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
+				end;
+				for i=1,#rings[2] do
+					draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
+				end;
+			end;
+		end;
+	end;
+	
+	if missle_type == "eyeofthestrom" then
+		if helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
+			local mobID = helpers.mobIDUnderCursor (cursor_world_x,cursor_world_y);
+			local mob = chars_mobs_npcs[mobID];
+			if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
+				local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
+				for i=1,#rings[3] do
+					draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
+				end;
+				for i=1,#rings[2] do
+					draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
+				end;
+				for i=1,#rings[1] do
+					draw.drawHex(rings[1][i].x,rings[1][i].y,cursor_danger,media.images.hex_ui);
+				end;
+			end;
 		end;
 	end;
 	

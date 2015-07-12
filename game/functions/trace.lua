@@ -143,13 +143,17 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 			
 	--for shrapmetal and direct --fixme
 				local mob_at_los=0
-				for k=1,#chars_mobs_npcs do
+				for k=1,#chars_mobs_npcs do --performance?
 					if all_ground_hexes[id_of_hex].x == chars_mobs_npcs[k].x and all_ground_hexes[id_of_hex].y == chars_mobs_npcs[k].y and chars_mobs_npcs[k].status == 1 then 
 						mob_at_los = 1;
 						if mobsAffect then
 							break;
 						end;
 					end;
+				end;
+				if missle_type == "shrapmetal" then
+					--add check for height <= 0
+					--break;
 				end;
 	--/for shrapmetal and direct
 				--if all_ground_hexes[id_of_hex].visibility == 0 then
@@ -482,6 +486,7 @@ end;
 
 function trace.trace_for_boom (hexes_to_sense,passing)
 	local traced_hexes = {};
+	print("global.traced_for_boom",global.traced_for_boom);
 	if not global.traced_for_boom or global.rem_cursor_world_x ~= cursor_world_x or global.rem_cursor_world_y ~= cursor_world_y or chars_mobs_npcs[current_mob].control == "ai" then
 		local mobsAffect = true;
 		if passing then
