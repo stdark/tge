@@ -14,7 +14,7 @@ function trace.array_of_darkness ()
 end;
 
 function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresenham's line algorithm
-	--utils.printDebug("trace hexed called", index)
+	utils.printDebug("Bresenham's line algorithm called", index)
 	if not x or not y then
 		if chars_mobs_npcs[current_mob].control == "player" then
 			point_x = cursor_world_x;
@@ -151,9 +151,8 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 						end;
 					end;
 				end;
-				if missle_type == "shrapmetal" then
-					--add check for height <= 0
-					--break;
+				if missle_type == "shrapmetal" and helpers.passLev (all_ground_hexes[id_of_hex].x,all_ground_hexes[id_of_hex].y) then
+					break;
 				end;
 	--/for shrapmetal and direct
 				--if all_ground_hexes[id_of_hex].visibility == 0 then
@@ -176,12 +175,16 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 						table.insert(shot_line_for,{spoint_x,spoint_y});
 					end;
 				end;
-				if mob_at_los == 1 and game_status == "sensing" and mobsAffect and (missle_type == "shrapmetal" or missle_type == "bolt" or missle_type == "arrow" or missle_type == "throwing" or missle_type == "bullet" or magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball") then
+				if mob_at_los == 1 and game_status == "sensing" and mobsAffect 
+				and (missle_type == "shrapmetal" or missle_type == "bolt" or missle_type == "arrow" or missle_type == "throwing" or missle_type == "bullet"
+				or (helpers.missleIsASpell() and ((magic.spell_tips[missle_type].form == "arrow" and missle_type ~= "spiritualarrow") or magic.spell_tips[missle_type].form == "ball"))
+				or (helpers.missleAtWarBook() and (tricks.tricks_tips[missle_type].form == "range" or tricks.tricks_tips[missle_type].form == "ball" or tricks.tricks_tips[missle_type].form == "fan")))
+				then
 					break;
 				end;
 			end;
 		end; -- of LoS
-	end; -- end of duplication
+	end; -- end of multiplication
 	if #shot_line_one > 0 and shot_line_one[#shot_line_one][1] == point_x and shot_line_one[#shot_line_one][2] == point_y then
 		shot_line = shot_line_one;
 	elseif #shot_line_two > 0 and shot_line_two[#shot_line_two][1] == point_x and shot_line_two[#shot_line_two][2] == point_y then
@@ -486,7 +489,6 @@ end;
 
 function trace.trace_for_boom (hexes_to_sense,passing)
 	local traced_hexes = {};
-	print("global.traced_for_boom",global.traced_for_boom);
 	if not global.traced_for_boom or global.rem_cursor_world_x ~= cursor_world_x or global.rem_cursor_world_y ~= cursor_world_y or chars_mobs_npcs[current_mob].control == "ai" then
 		local mobsAffect = true;
 		if passing then
@@ -528,40 +530,48 @@ end;
 
 function trace.arrowStatus(index)
 	local arrow_status = false;
-	local hexes_to_sense = trace.sightArray(index);
-	local point_x = 1;
-	local point_x = 1;
-	if chars_mobs_npcs[current_mob].control == "player" then
-		point_x = cursor_world_x;
-		point_y = cursor_world_y;
-	elseif chars_mobs_npcs[current_mob].control == "ai" then
-		point_x = chars_mobs_npcs[index].x;
-		point_y = chars_mobs_npcs[index].y;
-	end;
-	for i=1,#hexes_to_sense do
-		if all_ground_hexes[hexes_to_sense[i][1]].x == point_x and all_ground_hexes[hexes_to_sense[i][1]].y == point_y and hexes_to_sense[i][2] == 0 then
-			arrow_status = true;
+	if not global.arrow_status_checked or global.rem_cursor_world_x ~= cursor_world_x or global.rem_cursor_world_y ~= cursor_world_y or chars_mobs_npcs[index].control == "ai" then
+		local hexes_to_sense = trace.sightArray(index);
+		local point_x = 1;
+		local point_x = 1;
+		if chars_mobs_npcs[current_mob].control == "player" then
+			point_x = cursor_world_x;
+			point_y = cursor_world_y;
+		elseif chars_mobs_npcs[current_mob].control == "ai" then
+			point_x = chars_mobs_npcs[index].x;
+			point_y = chars_mobs_npcs[index].y;
 		end;
-		if all_ground_hexes[hexes_to_sense[i][1]].x == point_x	and all_ground_hexes[hexes_to_sense[i][1]].y == point_y and hexes_to_sense[i][2] == 1 then
-			arrow_status = false;
-		end;
-	end;
-	local hypo = math.floor(math.sqrt(math.abs(point_x-chars_mobs_npcs[current_mob].x)^2+math.abs(point_y-chars_mobs_npcs[current_mob].y)^2));	
-	if #shot_line > 0 and #shot_line < hypo then
-		arrow_status = false;
-	end;
-	if #shot_line > 0 then
-		if shot_line[#shot_line][1] ~= point_x or shot_line[#shot_line][2] ~= point_y then
-			arrow_status = false;
-		end;
-	end;
-  -- FIX for penetrating spells!!!
-	for k=1,(#shot_line-1) do
-		for l=1,#chars_mobs_npcs do
-			if chars_mobs_npcs[l].x == shot_line[k][1] and chars_mobs_npcs[l].y == shot_line[k][2] and chars_mobs_npcs[l].status == 1 then
+		for i=1,#hexes_to_sense do
+			if all_ground_hexes[hexes_to_sense[i][1]].x == point_x and all_ground_hexes[hexes_to_sense[i][1]].y == point_y and hexes_to_sense[i][2] == 0 then
+				arrow_status = true;
+			end;
+			if all_ground_hexes[hexes_to_sense[i][1]].x == point_x	and all_ground_hexes[hexes_to_sense[i][1]].y == point_y and hexes_to_sense[i][2] == 1 then
 				arrow_status = false;
 			end;
 		end;
+		local hypo = math.floor(math.sqrt(math.abs(point_x-chars_mobs_npcs[current_mob].x)^2+math.abs(point_y-chars_mobs_npcs[current_mob].y)^2));	
+		if #shot_line > 0 and #shot_line < hypo then
+			arrow_status = false;
+		end;
+		if #shot_line > 0 then
+			if shot_line[#shot_line][1] ~= point_x or shot_line[#shot_line][2] ~= point_y then
+				arrow_status = false;
+			end;
+		end;
+	  -- FIX for penetrating spells!!!
+		for k=1,(#shot_line-1) do
+			for l=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[l].x == shot_line[k][1] and chars_mobs_npcs[l].y == shot_line[k][2] and chars_mobs_npcs[l].status == 1 then
+					arrow_status = false;
+				end;
+			end;
+		end;
+		global.arrow_status = arrow_status;
+		global.arrow_status_checked = true;
+		global.rem_cursor_world_x = cursor_world_x;
+		global.rem_cursor_world_y = cursor_world_y;
+	else
+		arrow_status = global.arrow_status;
 	end;
 	return arrow_status;
 end;

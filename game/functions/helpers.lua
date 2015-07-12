@@ -23,7 +23,7 @@ function helpers.passCheck (x,y) --final point
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 1200 then
+	if map[y][x] <= 1200 then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
@@ -52,7 +52,7 @@ function helpers.passLev (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) 
+	if map[y][x] <= 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) 
 	and dlandscape_obj[y][x] ~= "stone"
 	then
 		height_value = heights_table[map[y][x]];
@@ -71,7 +71,7 @@ function helpers.passJump (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 1200 then
+	if map[y][x] <= 1200 then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
@@ -91,7 +91,7 @@ function helpers.passFly (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 1200 then
+	if map[y][x] <= 1200 then
 		height_value = heights_table[map[y][x]];
 	else
 		height_value = 2;
@@ -130,7 +130,7 @@ function helpers.passWalk (x,y)
 		return false;
 	end;
 	local height_value = 0;
-	if map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y)
+	if map[y][x] <= 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtClosedDoor(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
 	then
 		height_value = heights_table[map[y][x]];
@@ -2002,7 +2002,6 @@ function helpers.addMob(index,person)
 	chars_mobs_npcs[index].shieldfromstatic_dur = 0;
 	chars_mobs_npcs[index].shieldfromacid_power = 0;
 	chars_mobs_npcs[index].shieldfromacid_dur = 0;
-
 	chars_mobs_npcs[index].bless_dur = 0;
 	chars_mobs_npcs[index].bless_power = 0;
 	chars_mobs_npcs[index].fate = 0;
@@ -2049,7 +2048,6 @@ function helpers.addMob(index,person)
 	chars_mobs_npcs[index].preservation = 0;
 	chars_mobs_npcs[index].dayofgods_power = 0;
 	chars_mobs_npcs[index].dayofgods_dur = 0;
-	chars_mobs_npcs[index].guardian = 0;
 	chars_mobs_npcs[index].farsight_power = 0;
 	chars_mobs_npcs[index].farsight_dur = 0;
 
@@ -4297,7 +4295,8 @@ function helpers.recalcBattleStats (index)
 	--MELEE
 	for i=1, #chars_mobs_npcs[index].arms do
 		local hand = chars_mobs_npcs[index]["arms"][i];
-		if chars_mobs_npcs[index]["equipment"][hand]~=0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].q > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class ~= "shield" then
+		--print("HAND",hand);
+		if chars_mobs_npcs[index]["equipment"][hand] and chars_mobs_npcs[index]["equipment"][hand] ~= 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].q > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class ~= "shield" then
 			if chars_mobs_npcs[index].lvl_sword>=2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "sword" then
 				add_atkm = chars_mobs_npcs[index].num_sword;
 			end
@@ -5470,6 +5469,17 @@ function helpers.missleAtWarBook()
 	return false;
 end;
 
+function helpers.missleIsASpell()
+	for i=1,#magic.allspells do
+		for h=1,#magic.allspells[i] do
+			if missle_type == magic.allspells[i][h] then
+				return true;
+			end;
+		end;
+	end;
+	return false;
+end;
+
 function helpers.noSkillToUseThisItem()
 	utils.playSfx(media.sounds.cannotputon, 1);
 	helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.noskill2);
@@ -5577,4 +5587,63 @@ function helpers.mineCanBeInstalledByCurrentMob (x,y)
 		end;
 	end;
 	return minecanbeinstalled;
+end;
+--[[
+function helpers.countArms (index)
+	local arms = {};
+	for i=1,#chars_mobs_npcs[index]["hizones"] do
+		if chars_mobs_npcs[index]["hizones"][i] == "rh" or chars_mobs_npcs[index]["hizones"][i] == "lh" 
+		or chars_mobs_npcs[index]["hizones"][i] == "rh1" or chars_mobs_npcs[index]["hizones"][i] == "lh1" 
+		or chars_mobs_npcs[index]["hizones"][i] == "rh2" or chars_mobs_npcs[index]["hizones"][i] == "lh2"
+		then
+			table.insert(arms,chars_mobs_npcs[index]["hizones"][i]);
+		end;
+	end;
+	return arms;
+end;]]
+
+function helpers.switchToNeutral ()
+	find_the_path = 0;
+	path_status = 0;
+	game_status = "neutral";
+	helpers.neutralWatch();
+end;
+
+function helpers.switchToSense ()
+	find_the_path = 0;
+	global.arrow_status_checked = false;
+	global.arrow_status = false;
+	game_status = "sensing";
+	tmp_current_mob = current_mob;
+	trace.all_to_darkness();
+	trace.trace_hexes(current_mob,false,trace.sightArray (current_mob));
+	trace.one_around(current_mob);
+	trace.clear_rounded();
+	if chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
+		missle_drive="muscles";
+		missle_type=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].subclass;
+	end;
+	if chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class == "wand" then
+		if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].q > 0 then
+			missle_drive="wand";
+			missle_type = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].w;
+		else
+			missle_drive="muscles";
+			missle_type="none";
+		end;
+	end;
+end;
+
+function helpers.switchToPathfinding ()
+	find_the_path = 1;
+	game_status = "pathfinding";
+	global.wheeled = 0;
+	global.traced = 0;
+	for i = 1, #chars_mobs_npcs do
+		if chars_mobs_npcs[i].control == "player" then
+			trace.first_watch(i);
+		end;
+	end;
+   trace.chars_around();
+   trace.clear_rounded();
 end;

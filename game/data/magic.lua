@@ -3407,7 +3407,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="area",
+form="ring",
 },
 --/CONFLUX
 --LIFE

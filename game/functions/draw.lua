@@ -150,7 +150,7 @@ function draw.cursor ()
 					elseif missle_form == "skyrock" then
 						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "ring" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
-						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
+						draw.drawHex (cursor_world_x,cursor_world_y,cursor_white,media.images.hex_ui);
 					elseif missle_form == "ball" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) and trace.arrowStatus(current_mob) then
 						draw.drawHex (cursor_world_x,cursor_world_y,cursor_danger,media.images.hex_ui);
 					elseif missle_form == "rico" and helpers.cursorAtMob (cursor_world_x,cursor_world_y) then
@@ -838,7 +838,7 @@ function draw.boom ()
 	end;
 	
 	if missle_type == "fireblast" then
-		local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,4,0);
+		local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,5,0);
 		for i=1,#boomarea do
 			boomareas.flameAir(boomarea[i].x,boomarea[i].y);
 		end;
@@ -3761,6 +3761,9 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 	if chars_mobs_npcs[current_mob].lvl_monsterid >= 3 then
 		love.graphics.draw(media.images.ui, tip,mX+w,mY); 
 	end;
+	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 then
+		love.graphics.draw(media.images.ui, tip,mX+2*w,mY); 
+	end;
 	if chars_mobs_npcs[tmpc].person == "mob" then
 		local tmpclass="mobs_stats." .. chars_mobs_npcs[tmpc].class
 		--tmpclass3=loadstring("return " .. tmpclass)()
@@ -3865,7 +3868,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 		elseif chars_mobs_npcs[tmpc].rt>=50 then
 			love.graphics.setColor(125, 125, 125);
 			love.graphics.print(recoverystatus.quater, mX+100,mY+95);
-		elseif chars_mobs_npcs[tmpc].rt>50 then
+		elseif chars_mobs_npcs[tmpc].rt<50 then
 			love.graphics.setColor(125, 125, 125);
 			love.graphics.print(recoverystatus.abit, mX+100,mY+95);
 		end;
@@ -3980,40 +3983,43 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 		love.graphics.print(str, mX+addx2,mY+350);
 	end;
 
-	local addy3 = 0;
-	for i=1,#skills do
-		local  numskill = "num_" .. skills[i];
-		local  lvlskill = "lvl_" .. skills[i];
-		if chars_mobs_npcs[current_mob].lvl_monsterid >= 3 and chars_mobs_npcs[tmpc][numskill] > 1 then
-			local printskill =  lognames["skills"][skills[i]] .. ":";
-			local printlvl = skilllevelnames[chars_mobs_npcs[tmpc][lvlskill]];
-			love.graphics.print(printskill, mX+addx+w,mY+10 + addy3*15);
-			love.graphics.print(printlvl, mX+addx2+w+50,mY+10 + addy3*15);
-			addy3 = addy3 + 1;
+	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 then
+		local addy3 = 0;
+		for i=1,#skills do
+			local  numskill = "num_" .. skills[i];
+			local  lvlskill = "lvl_" .. skills[i];
+			if chars_mobs_npcs[current_mob].lvl_monsterid >= 3 and chars_mobs_npcs[tmpc][numskill] > 1 then
+				local printskill =  lognames["skills"][skills[i]] .. ":";
+				local printlvl = skilllevelnames[chars_mobs_npcs[tmpc][lvlskill]];
+				love.graphics.print(printskill, mX+addx+2*w,mY+10 + addy3*15);
+				love.graphics.print(printlvl, mX+addx2+2*w+50,mY+10 + addy3*15);
+				addy3 = addy3 + 1;
+			end;
+		end;
+		if chars_mobs_npcs[tmpc].spellnames and #chars_mobs_npcs[tmpc].spellnames > 0 then
+			for i=1, #chars_mobs_npcs[tmpc].spellnames do
+				local spellid = chars_mobs_npcs[tmpc]["spellnames"][i];
+				local spell = magic.spell_tips[spellid].title;
+				love.graphics.print(spell, mX+2*w,mY+150 + i*15);
+			end;
 		end;
 	end;
-	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 and chars_mobs_npcs[tmpc].spellnames and #chars_mobs_npcs[tmpc].spellnames > 0 then
-		for i=1, #chars_mobs_npcs[tmpc].spellnames do
-			local spellid = chars_mobs_npcs[tmpc]["spellnames"][i];
-			local spell = magic.spell_tips[spellid].title;
-			love.graphics.print(spell, mX+w,mY+150 + i*15);
-		end;
-	end;
+	
 	local slots = {"teeth","rh","lh","horns","tail","ranged","ammo","armor"};
 	local addy3 = 0;
-	if chars_mobs_npcs[current_mob].lvl_monsterid >= 5 then
+	if chars_mobs_npcs[current_mob].lvl_monsterid == 5 and chars_mobs_npcs[tmpc].person ~= "char" then
 		for i=1, #slots do
 			local slot = chars_mobs_npcs[tmpc]["equipment"][slots[i]];
 			if slot and slot > 0 then
 				local tmp = chars_mobs_npcs[tmpc]["inventory_list"][slot].ttxid;
 				local title = inventory_ttx[tmp].title;
-				love.graphics.print(title, mX+w,mY+300 + addy3*15);
+				love.graphics.print(title, mX+2*w,mY+300 + addy3*15);
 				addy3 = addy3 + 1;
 			end;
 		end;
 	end;
 	local addy3 = 0;
-	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 then --FIXME add positive powers too for lv 5
+	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 then
 		love.graphics.setColor(255, 0, 0);
 		if chars_mobs_npcs[tmpc].freeze > 0 then
 			local string = tips_conditions.freeze;
@@ -4155,7 +4161,221 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
-
+	end;	
+	if chars_mobs_npcs[current_mob].lvl_monsterid == 5 then
+		local addy3 = 0;
+		love.graphics.setColor(0, 255, 0);
+		if chars_mobs_npcs[tmpc].heroism_dur > 0 then
+			local string = tips_conditions.heroism;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].bless_dur > 0 then
+			local string = tips_conditions.bless;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].fateself > 0 then
+			local string = tips_conditions.fate;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].prayer > 0 then
+			local string = tips_conditions.prayer;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].rage > 0 then
+			local string = tips_conditions.rage;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].thirstofblood > 0 then
+			local string = tips_conditions.thirstofblood;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].haste > 0 then
+			local string = tips_conditions.haste;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].regen_dur > 0 then
+			local string = tips_conditions.regen;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].executor_dur > 0 then
+			local string = tips_conditions.executor;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].mobility_dur > 0 then
+			local string = tips_conditions.mobility;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].hourofpower_dur > 0 then
+			local string = tips_conditions.hourofpower;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].torchlight > 0 then
+			local string = tips_conditions.torchlight;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].shieldoflight > 0 then
+			local string = tips_conditions.shieldoflight;
+			love.graphics.print(string, 600,300 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].wingsoflight > 0 then
+			local string = tips_conditions.wingsoflight;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].myrth_dur > 0 then
+			local string = tips_conditions.myrth;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].invisibility > 0 then
+			local string = tips_conditions.invisibility;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].angel > 0 then
+			local string = tips_conditions.angel;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].preservation > 0 then
+			local string = tips_conditions.preservation;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].shield > 0 then
+			local string = tips_conditions.shield;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].painreflection > 0 then
+			local string = tips_conditions.painreflection;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].waterwalking > 0 then
+			local string = tips_conditions.waterwalking;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].levitation > 0 then
+			local string = tips_conditions.levitation;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].holyblood_dur > 0 then
+			local string = tips_conditions.holyblood;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].might_dur > 0 then
+			local string = tips_conditions.might;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].dash_dur > 0 then
+			local string = tips_conditions.dash;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].precision_dur > 0 then
+			local string = tips_conditions.precision;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].concentration_dur > 0 then
+			local string = tips_conditions.concentration;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].glamour_dur > 0 then
+			local string = tips_conditions.glamour;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+			if chars_mobs_npcs[tmpc].luckyday_dur > 0 then
+			local string = tips_conditions.luckyday;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].dayofgods_dur > 0 then
+			local string = tips_conditions.dayofgods;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].farsight_dur > 0 then
+			local string = tips_conditions.farsight;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		
+		if chars_mobs_npcs[tmpc].protfromfire_dur > 0 then
+			local string = tips_conditions.protfromfire;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protfromstatic_dur > 0 then
+			local string = tips_conditions.protfromstatic;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protfromcold_dur > 0 then
+			local string = tips_conditions.protfromcold;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protfromacid_dur > 0 then
+			local string = tips_conditions.protfromacid;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protfrompoison_dur > 0 then
+			local string = tips_conditions.protfrompoison;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protfromdisease_dur > 0 then
+			local string = tips_conditions.protfromdisease;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protofmind_dur > 0 then
+			local string = tips_conditions.protofmind;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protofspirit_dur > 0 then
+			local string = tips_conditions.protofspirit;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].protection_dur > 0 then
+			local string = tips_conditions.protection;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].stoneskin_dur > 0 then
+			local string = tips_conditions.stoneskin;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
+		if chars_mobs_npcs[tmpc].hammerhands_dur > 0 then
+			local string = tips_conditions.hammerhands;
+			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
+			addy3 = addy3 + 1;
+		end;
 	end;
 	--love.graphics.print(lognames.stats.atkm, mX+addx,mY+335);
 	--love.graphics.print(chars_mobs_npcs[tmpc].atkm, mX+addx2,mY+335);

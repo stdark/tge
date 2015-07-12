@@ -179,7 +179,8 @@ function playingState.load()
 	cursor_world_y=1;
 	global.rem_cursor_world_x = cursor_world_x;
 	global.rem_cursor_world_y = cursor_world_y;
-	
+	global.arrow_status = false;
+	global.arrow_status_checked = false;
 	path_status=0;
 
 	hex_to_check_next_wave={};
@@ -1889,50 +1890,18 @@ function playingState.keyreleased(key, unicode)
 		end;
 
 		if key == "f" and (game_status == "neutral" or game_status == "sensing") then
-			find_the_path=1;
-			game_status = "pathfinding";
-			global.wheeled = 0;
-			global.traced = 0;
-			for i = 1, #chars_mobs_npcs do
-				if chars_mobs_npcs[i].control == "player" then
-					trace.first_watch(i);
-				end;
-			end;
-		   trace.chars_around();
-		   trace.clear_rounded();
+			helpers.switchToPathfinding ();
 		end
 
 		if key == "n" and (game_status == "sensing" or game_status == "pathfinding") then
-		   find_the_path=0;
-		   path_status=0;
-		   game_status="neutral";
-			helpers.neutralWatch();
+		   helpers.switchToNeutral ();
 		end;
 
 		if key == "s"
 		and (game_status == "neutral"
 		or game_status == "pathfinding"
 		or game_status == "sensing") then
-			find_the_path=0;
-			game_status="sensing";
-			tmp_current_mob=current_mob;
-			trace.all_to_darkness();
-			trace.trace_hexes(current_mob,false,trace.sightArray (current_mob));
-			trace.one_around(current_mob);
-			trace.clear_rounded();
-			if chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
-				missle_drive="muscles";
-				missle_type=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].subclass;
-			end;
-			if chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class == "wand" then
-				if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].q > 0 then
-					missle_drive="wand";
-					missle_type = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].w;
-				else
-					missle_drive="muscles";
-					missle_type="none";
-				end;
-			end;
+			helpers.switchToSense ();
 		end;
 
 		if love.keyboard.isDown("lctrl") and key == "1" and global.status == "battle" then
@@ -2199,6 +2168,8 @@ function playingState.keyreleased(key, unicode)
 			show_inventory_tips = 0;
 			show_monsterid_tip = 0;
 			show_spellbook_tips = 0;
+			global.arrow_status_checked = false;
+			global.arrow_status = false;
 			loveframes.util.RemoveAll();
 			if oil_smth > 0 then
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = oil_smth;
@@ -2250,12 +2221,7 @@ function playingState.keyreleased(key, unicode)
 			elseif game_status == "map" then
 				utils.playSfx(media.sounds.paper,1);
 			end;
-			game_status="neutral"
-			for i = 1, chars do
-				trace.first_watch(i);
-			end;
-			trace.chars_around();
-			trace.clear_rounded();
+			helpers.switchToNeutral ();
 			global.hang = false;
 		end;
 
@@ -2309,7 +2275,17 @@ function playingState.mousereleased (x,y,button)
 		show_warbook_tips = 0;
 		loveframes.util.RemoveAll();
 	end;
-
+	
+	if chars_mobs_npcs[current_mob].control == "player" and button == "m"  then --medial button
+		if game_status == "neutral" then
+			helpers.switchToPathfinding ();
+		elseif game_status == "sensing" then
+			helpers.switchToNeutral ()
+		elseif game_status == "pathfinding" then
+			helpers.switchToSense ();
+		end;
+	end;
+	
 	if button == "l" and game_status == "mindgame" then
 		draw.mindgameLog ();
 	end;
@@ -4163,7 +4139,6 @@ function playingState.mousereleased (x,y,button)
 end;
 
 function  playingState.mousepressed(x,y,button)
-
 	if (button == "l" or button == "r") and (game_status == "inventory" or game_status == "alchemy"  or game_status == "picklocking" or game_status == "crafting") then
 		x,y = helpers.centerObject(media.images.inv1);
 		inv_add_x = x+12;
@@ -6184,24 +6159,13 @@ function  playingState.mousepressed(x,y,button)
 		end;
 		--status buttons
 		if button == "l"  and mX > 530 and mX < 580 and mY > global.screenHeight-133 and mY < global.screenHeight-10 and (game_status == "neutral" or game_status == "sensing") then
-			game_status = "pathfinding";
-			global.wheeled = 0;
-			global.traced = 0;
-			for i = 1, #chars_mobs_npcs do
-				if chars_mobs_npcs[i].control == "player" then
-					trace.first_watch(i);
-				end;
-			end;
-			trace.chars_around();
-			trace.clear_rounded();
+			helpers.switchToPathfinding ();
 		elseif  button == "l"  and mX > 580 and mX < 620 and mY > global.screenHeight-93 and mY < global.screenHeight-10 and (game_status == "neutral" or game_status == "pathfinding") then
-			game_status = "sensing";
+			helpers.switchToSense ();
 		elseif  button == "l"  and mX > 530 and mX < 560 and mY > global.screenHeight-160 and mY < global.screenHeight-40 and game_status == "pathfinding" then
-			game_status = "neutral";
-			helpers.neutralWatch ();
+			helpers.switchToNeutral ();
 		elseif  button == "l"  and mX > 530 and mX < 580 and mY > global.screenHeight-160 and mY < global.screenHeight-130 and game_status == "sensing" then
-			game_status = "neutral";
-			helpers.neutralWatch ();
+			helpers.switchToNeutral ();
 		end;
 
 		if button == "l"  and mX > global.screenWidth-180 and mX < global.screenWidth-80 and mY > global.screenHeight-160 and mY < global.screenHeight-110 and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
@@ -8348,6 +8312,8 @@ function restoreRT ()
 	calendar.add_time_interval(calendar.delta_restore_in_battle);
 	path_failed = 0;
 	path_status = 0;
+	global.arrow_status = false;
+	global.arrow_status_checked = false;
 	--clear_elandscape();
 	if global.timer200 >= 20 then
 		for i=1,#chars_mobs_npcs do

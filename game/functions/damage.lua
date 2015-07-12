@@ -1993,7 +1993,7 @@ function damage.multidamage () --FIXME two hexes
 	end;
 	
 	if missle_type == "fireblast" then
-		local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,4,0);
+		local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,5,0);
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
@@ -2175,11 +2175,11 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
-	if missle_type == "coldring" then -- add dmg
+	if missle_type == "coldring" then
 		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 		for i=1,#rings[3] do
 			for j=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[j].x == rings[2][i].x and chars_mobs_npcs[j].y == rings[2][i].y then
+				if chars_mobs_npcs[j].x == rings[3][i].x and chars_mobs_npcs[j].y == rings[3][i].y then
 					local damageHP = damage.magicalRes (j,6 + num[1] + lvl[1],"cold");
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
@@ -2236,11 +2236,11 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
-	if missle_type == "eyeofthestorm" then -- add dmg
+	if missle_type == "eyeofthestorm" then
 		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 		for i=1,#rings[3] do
 			for j=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[j].x == rings[2][i].x and chars_mobs_npcs[j].y == rings[2][i].y then
+				if chars_mobs_npcs[j].x == rings[3][i].x and chars_mobs_npcs[j].y == rings[3][i].y then
 					local damageHPcold = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[1],"cold");
 					local damageHPfire = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[2],"fire");
 					local damageHPstatic = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[3],"static");
@@ -2255,36 +2255,32 @@ function damage.multidamage () --FIXME two hexes
 			end;
 		end;
 		for i=1,#rings[2] do
-			if lvl[1] == 5 then
-				for j=1,#chars_mobs_npcs do
-					if chars_mobs_npcs[j].x == rings[2][i].x and chars_mobs_npcs[j].y == rings[2][i].y then
-						local damageHPcold = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[1],"cold");
-						local damageHPfire = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[2],"fire");
-						local damageHPstatic = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[3],"static");
-						local damageHPphysical = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[3]);
-						local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
-						damage.HPminus(j,damageHP,true);
-						table.insert(damaged_mobs,j);
-						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
-					end;
+			for j=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[j].x == rings[2][i].x and chars_mobs_npcs[j].y == rings[2][i].y then
+					local damageHPcold = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[1],"cold");
+					local damageHPfire = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[2],"fire");
+					local damageHPstatic = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[3],"static");
+					local damageHPphysical = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[4]);
+					local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
 				end;
 			end;
 		end;
 		for i=1,#rings[1] do
-			if lvl[1] == 5 then
-				for j=1,#chars_mobs_npcs do
-					if chars_mobs_npcs[j].x == rings[1][i].x and chars_mobs_npcs[j].y == rings[1][i].y then
-						local damageHPcold = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[1],"cold");
-						local damageHPfire = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[2],"fire");
-						local damageHPstatic = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[3],"static");
-						local damageHPphysical = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[4]);
-						local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
-						damage.HPminus(j,damageHP,true);
-						table.insert(damaged_mobs,j);
-						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
-					end;
+			for j=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[j].x == rings[1][i].x and chars_mobs_npcs[j].y == rings[1][i].y then
+					local damageHPcold = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[1],"cold");
+					local damageHPfire = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[2],"fire");
+					local damageHPstatic = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[3],"static");
+					local damageHPphysical = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[4]);
+					local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
 				end;
 			end;
 		end;
