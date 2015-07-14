@@ -14,7 +14,30 @@ function love.load()
 	
 	img_hud =  love.graphics.newImage("img/hud.png");
 	img_hex =  love.graphics.newImage("img/hex_ui.dds");
-	media.images.buildings1 = love.graphics.newImage("img/buildings1.dds");
+	
+	buildings_array={
+	
+	"img/buildings/building1.dds",
+	"img/buildings/building2.dds",
+	"img/buildings/building3.dds",
+	"img/buildings/building4.dds",
+	"img/buildings/building5.dds",
+	"img/buildings/building6.dds",
+	"img/buildings/building7.dds",
+	"img/buildings/building8.dds",
+	"img/buildings/building9.dds",
+	"img/buildings/building10.dds",
+	"img/buildings/building11.dds",
+	"img/buildings/building12.dds",
+	"img/buildings/building13.dds",
+	"img/buildings/building14.dds",
+	"img/buildings/fountain_1.dds",
+	}
+	
+	building_index = 1;
+	
+	media.images.buildings1 = love.graphics.newImage(buildings_array[building_index]);
+	
 	
 	--[[if not media.images.buildings then
 		media.images.buildings = {};
@@ -226,44 +249,28 @@ end;
 ----
 
 function love.mousepressed(x, y, button)
+	if button == "wd" then
+		media.images.buildings1 = nil;
+		if building_index > 1 then
+			building_index = building_index - 1;
+		else
+			building_index = #buildings_array;
+		end;
+		media.images.buildings1 = love.graphics.newImage(buildings_array[building_index]);
+	end;
+	
+	if button == "wu" then
+		media.images.buildings1 = nil;
+		if building_index < #buildings_array then
+			building_index = building_index + 1;
+		else
+			building_index = 1;
+		end;
+		media.images.buildings1 = love.graphics.newImage(buildings_array[building_index]);
+	end;
+	
 	loveframes.mousepressed(x, y, button);
 end
-
-function love.mousereleased(x, y, button)
-	if not love.keyboard.isDown("lctrl") and not love.keyboard.isDown("lshift") and not love.keyboard.isDown("rctrl") then
-		if hex_table[cursor_world_x][cursor_world_y] == 0 then
-			hex_table[cursor_world_x][cursor_world_y] = 1;
-		else
-			hex_table[cursor_world_x][cursor_world_y] = 0;
-		end;
-	elseif not love.keyboard.isDown("lshift") and not love.keyboard.isDown("rctrl") then
-		central_hex_x = cursor_world_x;
-		central_hex_y = cursor_world_y;
-		for my=1, 30 do
-			for mx=1, 20 do	
-				if hex_table[mx][my] == 2 then
-					hex_table[mx][my] = 0;
-				end;
-			end;
-		end;
-	elseif not love.keyboard.isDown("rctrl") then
-		if door_hex_x ~= cursor_world_x or door_hex_y ~= cursor_world_y then
-			door_hex_x = cursor_world_x;
-			door_hex_y = cursor_world_y;
-		else
-			door_hex_x = nil;
-			door_hex_y = nil;
-		end;
-		for my=1, 30 do
-			for mx=1, 20 do	
-				if hex_table[mx][my] == 3 then
-					hex_table[mx][my] = 0;
-				end;
-			end;
-		end;
-	end;
-    loveframes.mousereleased(x, y, button);
-end;
 
 function love.mousereleased(x, y, button)
 	if not love.keyboard.isDown("lctrl") and not love.keyboard.isDown("lshift") and not love.keyboard.isDown("rctrl") then
@@ -333,7 +340,7 @@ end;
 function save(create_new_file,x,y,w,h,addx,addy,doorev_x,doorev_y,doorne_x,doorne_y,hexesev,hexesne)
 	local addx_hex = math.ceil(addx/32);
 	local addy_hex = math.ceil(addy/16);
-	local data = "\r\n" .. "{img=media.images.buildings1,sprite=love.graphics.newQuad(" .. x .. "," .. y .. "," .. w .. "," .. h .. ", media.images.buildings1:getWidth(), media.images.buildings1:getHeight()),addx=" .. addx_hex .. ",addy=" .. addy_hex .. ","
+	local data = "\r\n" .. "{img=media.images.buildings1,addx=" .. addx_hex .. ",addy=" .. addy_hex .. ","
   .. "\r\n" .. "door_ev={" .. doorev_x .. "," .. doorev_y .. "},door_ne={" .. doorne_x .. "," .. doorne_y .. "},"
   .. "\r\n" .. "hexes_ne=" .. Tserial.pack(hexesev, true, false) .. ",hexes_ev=" .. Tserial.pack(hexesne, true, false) .. "},";
 	if create_new_file then

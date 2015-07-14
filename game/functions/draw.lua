@@ -916,6 +916,7 @@ function draw.boom ()
 	end;
 	
 	if missle_type == "eyeofthestorm" then
+		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 200, 200, 255, 128),typ="boom"});
 		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 		for i=1,#rings[3] do
 			local rnd = math.random(1,3);
@@ -1630,8 +1631,8 @@ function draw.stats(index)
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
 	end;
-	if chars_mobs_npcs[current_mob].angel > 0 then
-		local str = tips_conditions.angel;
+	if chars_mobs_npcs[current_mob].guardian > 0 then
+		local str = tips_conditions.guardian;
 		love.graphics.print(str, x+794,y+260 + addy3*15);
 		addy3 = addy3 + 1;
 	end;
@@ -4245,8 +4246,8 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
-		if chars_mobs_npcs[tmpc].angel > 0 then
-			local string = tips_conditions.angel;
+		if chars_mobs_npcs[tmpc].guardian > 0 then
+			local string = tips_conditions.guardian;
 			love.graphics.print(string, mX+w+addx2,mY+5 + addy3*15);
 			addy3 = addy3 + 1;
 		end;

@@ -2837,6 +2837,12 @@ function playingState.keyreleased(key)
     if key == "lctrl" then
 		global.ctrl = -1;
 	end;
+	if key == " " then
+		package.loaded[ 'data.buildings' ] = nil;
+		require 'data.buildings';
+		buildings_data ();
+	end;
+	
     -- your code
     loveframes.keyreleased(key)
 end;
@@ -3451,7 +3457,7 @@ function drawUIButtons()
 	uibuttons[24]:SetText("objects");
 	uibuttons[24].OnClick = function(object)
 		editor_status = "objects";
-		brush = 1;
+		brush = 0;
 		loveframes.util.RemoveAll();
 		drawUIButtons();
 		draw_buttons();
@@ -3464,7 +3470,7 @@ function drawUIButtons()
 	uibuttons[2]:SetText("buildings");
 	uibuttons[2].OnClick = function(object)
 		editor_status="buildings";
-		brush = 1;
+		brush = 0;
 		loveframes.util.RemoveAll();
 		drawUIButtons();
 		--love.mouse.setVisible(true);

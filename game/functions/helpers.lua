@@ -1986,7 +1986,7 @@ function helpers.addMob(index,person)
 	chars_mobs_npcs[index].protofmind_dur = 0;
 	chars_mobs_npcs[index].protection_dur = 0;
 	chars_mobs_npcs[index].protection_power = 0;
-	chars_mobs_npcs[index].angel = 0;
+	chars_mobs_npcs[index].guardian = 0;
 	chars_mobs_npcs[index].shield = 0;
 	chars_mobs_npcs[index].stoneskin_power = 0;
 	chars_mobs_npcs[index].stoneskin_dur = 0;

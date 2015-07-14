@@ -3465,10 +3465,10 @@ function damage.ifBattleEnds()
 			if chars_mobs_npcs[j].person == "mob" and chars_mobs_npcs[j].status == 1 and fraccond < 0 then
 				endbattle = false;
 			end;
-			if chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[j].status == 1 and (fraccond<0 or chars_mobs_npcs[j].enslave>0 or chars_mobs_npcs[j].berserk>0 or chars_mobs_npcs[j].charm>0) then
+			if chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[j].status == 1 and (fraccond < 0 or chars_mobs_npcs[j].enslave>0 or chars_mobs_npcs[j].berserk>0 or chars_mobs_npcs[j].charm>0) then
 				endbattle = false;
 			end;
-			helpers.countMoral(j);
+			--[[helpers.countMoral(j);
 			if chars_mobs_npcs[j].moral > chars_mobs_npcs[j].base_moral*2 and chars_mobs_npcs[j].base_moral ~= 0 then
 			local roll = math.random(1,2);
 			if roll == 1 then
@@ -3485,7 +3485,7 @@ function damage.ifBattleEnds()
 					helpers.addToActionLog( helpers.mobName(j) .. " " .. lognames.actions.haslowmoral[chars_mobs_npcs[j].gender]);
 					chars_mobs_npcs[j].rt = math.max(0,chars_mobs_npcs[j].rt - 20);
 				end;
-			end;
+			end;]]
 		end;
 	end;
 	if endbattle then -- end of the battle, counting of exp
@@ -4545,7 +4545,7 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "guardian" then
 		buff = lvl[1]*num[2];
 		if chars_mobs_npcs[victim].nature ~= "undead" then
-			chars_mobs_npcs[victim].angel = buff;
+			chars_mobs_npcs[victim].guardian = buff;
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.gotarchangel[chars_mobs_npcs[victim].gender]);
 		else
 		local damageHP = damage.magicalRes (victim,buff,"light");
