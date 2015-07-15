@@ -809,9 +809,9 @@ end;
 
 function helpers.bestAttackDirection (agressor,x,y)
 	if chars_mobs_npcs[agressor].y == y and chars_mobs_npcs[agressor].x > x then
-		atk_direction = 5;
-	elseif chars_mobs_npcs[agressor].y == y and chars_mobs_npcs[agressor].x < x then
 		atk_direction = 2;
+	elseif chars_mobs_npcs[agressor].y == y and chars_mobs_npcs[agressor].x < x then
+		atk_direction = 5;
 	elseif chars_mobs_npcs[agressor].y < y and chars_mobs_npcs[agressor].x >= x and helpers.mobevenornot (agressor) then
 		atk_direction = 1;
 	elseif chars_mobs_npcs[agressor].y < y and chars_mobs_npcs[agressor].x < x and helpers.mobevenornot (agressor) then

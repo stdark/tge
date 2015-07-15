@@ -4399,6 +4399,25 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].holyblood_dur,dur);
 		end;
 	end;
+	
+	if chars_mobs_npcs[victim].firebelt_dur > 0 then
+		local power,dur = damage.applyConditionTwoFactors (index,chars_mobs_npcs[victim].firebelt_power,chars_mobs_npcs[victim].firebelt_dur,"flame","fire",false,false,1,true);	
+		if power > 0 and dur > 0 then
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].flame_power,power);
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].flame_dur,dur);
+			helpers.addToActionLog( lognames.actions.flamed[chars_mobs_npcs[current_mob].gender]);
+		end;
+	end;
+	
+	if chars_mobs_npcs[victim].acidblood then
+		local power,dur = damage.applyConditionTwoFactors (index,chars_mobs_npcs[victim].firebelt_power,chars_mobs_npcs[victim].firebelt_dur,"acid","acid",false,false,1,true);	
+		if power > 0 and dur > 0 then
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].acid_power,power);
+			chars_mobs_npcs[current_mob].holyblood_power = math.max(chars_mobs_npcs[current_mob].acid_dur,dur);
+			helpers.addToActionLog( lognames.actions.acided[chars_mobs_npcs[current_mob].gender]);
+		end;
+	end;
+	
 	local damaged_mobs = {};
 	table.insert(damaged_mobs,victim);
 	chars_mobs_npcs[current_mob].rage = 0;

@@ -31,6 +31,10 @@ function sprites.load()
 		end;
 	end;
 	
+	special_objects_animations = {
+		competition = "animation_competition";
+		};
+	
 	gold_icons={}
 	gold_icons[1] = love.graphics.newQuad(305, 0, 128,64, media.images.ui:getWidth(), media.images.ui:getHeight());
 	gold_icons[2] = love.graphics.newQuad(305, 64, 96,32, media.images.ui:getWidth(), media.images.ui:getHeight());
@@ -223,6 +227,8 @@ function sprites.load()
 	fountain_img = love.graphics.newQuad(6*32, 21*32, 128,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	fake_img  = love.graphics.newQuad(31*32, 31*32, 32,32, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	
+	competition =  anim8.newGrid(50, 150, media.images.animatedobjects_hex:getWidth(), media.images.animatedobjects_hex:getHeight(),0,0,0);
+	animation_competition = anim8.newAnimation(competition("1-6",1), 0.05);
 	
 	lock_2_base = love.graphics.newQuad(600, 0, 200, 88, media.images.ui:getWidth(), media.images.ui:getHeight())
 	lock_2_closed_elements = {};

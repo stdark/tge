@@ -1319,6 +1319,7 @@ function playingState.update(dt)
 			animation_deadlywave:update(dt);
 		end;
 		animation_fountain:update(dt);
+		animation_competition:update(dt);
 		if game_status == "damage" or game_status == "multidamage" or game_status == "attack" then
 			for i=1,6 do
 				animation_dmg[i]:update(dt);
@@ -8905,6 +8906,7 @@ function mob_plus()
 	clear_elandscape ();
 	game_status = "neutral";
 	missle_type = "none";
+	missle_drive = "muscles";
 	if chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
 		missle_type = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].subclass;
 	end;

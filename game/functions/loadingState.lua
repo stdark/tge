@@ -119,6 +119,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "msg", "img/message.dds");
 			
 			loader.newImage(media.images, "animatedobjects","/img/animatedobjects.dds");
+			loader.newImage(media.images, "animatedobjects_hex","/img/animatedobjects_hex.dds");
 			
 			loader.newImage(media.images, "page_1", "img/spellbook/spellbook_fire.dds");
 			loader.newImage(media.images, "page_2", "img/spellbook/spellbook_air.dds");

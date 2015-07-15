@@ -114,9 +114,9 @@ function draw.cursor ()
 			cursor_px_x = moveto_hex_x-tile_w;
 			cursor_px_y = moveto_hex_y;
 			if game_status == "sensing" then
-				local lvl,num = helpers.countBoomNumbers ();
-				if missle_drive == "alchemy" or missle_drive == "book" or missle_drive == "scroll" or missle_drive == "wand" then
-					local lvl,num = helpers.countBoomNumbers (missle_drive);
+				--local lvl,num = helpers.countBoomNumbers ();
+				if missle_drive == "alchemy" or missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand" then
+					--local lvl,num = helpers.countBoomNumbers (missle_drive);
 				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() then
 					missle_form = tricks.tricks_tips[missle_type].form;
 				end;
@@ -2874,8 +2874,10 @@ function draw.objects ()
 					addx = 32;
 					addy = 32;
 				elseif objects_list[j].typ == "competition" then
-					addx = 32;
-					addy = 68;
+					addx = -12;
+					addy = -124;
+					--addx = 32;
+					--addy = 68;
 				elseif objects_list[j].typ == "portal" then
 					addx = 32;
 					addy = 0;
@@ -2888,13 +2890,29 @@ function draw.objects ()
 					addx = 16;
 					addy = 32;
 				end;
-				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and  objects_list[j].typ ~= "fountain" then
+				local _animation = false;
+				for key,value in pairs (special_objects_animations) do
+					if key == objects_list[j].typ then
+						_animation = value;
+					end;
+				end;
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and objects_list[j].typ ~= "fountain" and not _animation then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
 						love.graphics.draw(media.images.tmpobjs,objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
 					end;
 				end;
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and _animation then
+					local animation = loadstring("return " .. _animation)();
+					local image =  media.images.animatedobjects_hex;
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						animation:draw(image, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					else  
+						animation:draw(image, ((mx-1)*tile_w+left_space)-tile_w/2+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					end;
+				end;
+				
 			end;
 			if darkness[1][my+map_y][mx+map_x] == 0 then
 				if dlandscape_obj[my+map_y][mx+map_x] == "stone" then 

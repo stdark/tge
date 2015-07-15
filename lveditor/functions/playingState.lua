@@ -45,6 +45,8 @@ function playingState.load()
 	
 	fountain = anim8.newGrid(250, 224, media.images.animatedobjects:getWidth(), media.images.animatedobjects:getHeight(),0,0,0);
 	animation_fountain = anim8.newAnimation(fountain("1-5",1), 0.05);
+	competition =  anim8.newGrid(50, 150, media.images.animatedobjects_hex:getWidth(), media.images.animatedobjects_hex:getHeight(),0,0,0);
+	animation_competition = anim8.newAnimation(competition("1-6",1), 0.05);
 	
 	barrel_img = {};
 	for i=1,13 do
@@ -206,6 +208,10 @@ function playingState.load()
 		"bg","ch","cr","th","sp",
 		"wb","sk","sc","ug","cf",
 		"dr","fn","bx","bl","cd",
+		};
+		
+	special_objects_animations = {
+		competition = "animation_competition";
 		};
 	
 	pedestal_buffs={
@@ -439,6 +445,7 @@ function playingState.update(dt)
 	cursor_world_y = math.max(1,cursor_world_y);
 	loveframes.update(dt);
 	animation_fountain:update(dt);
+	animation_competition:update(dt);
 end;
 
 function newLevel()	
@@ -1846,8 +1853,10 @@ function draw_objects ()
 					addx = 32;
 					addy = 32;
 				elseif objects_list[j].typ == "competition" then
-					addx = 32;
-					addy = 68;
+					--addx = 32;
+					--addy = 68;
+					addx = -12;
+					addy = -124;
 				elseif objects_list[j].typ == "portal" then
 					addx = 32;
 					addy = 0;
@@ -1860,11 +1869,26 @@ function draw_objects ()
 					addx = 16;
 					addy = -4;
 				end;
-				if objects_list[j].xi == mx_ and objects_list[j].yi == my_ then
+				local _animation = false;
+				for key,value in pairs (special_objects_animations) do
+					if key == objects_list[j].typ then
+						_animation = value;
+					end;
+				end;
+				if objects_list[j].xi == mx_ and objects_list[j].yi == my_ and not _animation then
 					if (my_)/2 == math.ceil((my_)/2) then
 						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
 						love.graphics.draw(media.images.tmpobjs,objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
+					end;
+				end;
+				if objects_list[j].xi == mx_ and objects_list[j].yi == my_ and _animation then
+					local animation = loadstring("return " .. _animation)();
+					local image =  media.images.animatedobjects_hex;
+					if (my_)/2 == math.ceil((my_)/2) then
+						animation:draw(image, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
+					else  
+						animation:draw(image, ((mx-1)*tile_w+left_space)-tile_w/2+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					end;
 				end;
 			end;
