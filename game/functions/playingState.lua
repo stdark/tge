@@ -1727,7 +1727,7 @@ end;
 
 function playingState.keypressed(key, unicode)
 	if chars_mobs_npcs[current_mob].control == "player" or game_status == "menu" then
-		if game_status ~= "moving" then
+		if game_status ~= "moving" and game_status ~= "sensing" then
 			if key == "up" then
 				if map_y > 0 then
 					map_y = map_y-1;
@@ -9236,7 +9236,7 @@ function playingState.draw()
 	loveframes.draw();
 
 	local x,y = helpers.centerObject(media.images.inv1);
-	
+	--draw.black();
 	   -- draw Canvas --REF
    --love.graphics.setCanvas()
    --love.graphics.draw(myCanvas)

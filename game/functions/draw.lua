@@ -48,6 +48,18 @@ function draw.map()
 	love.graphics.setColor(255, 255, 255);
  end;
 
+function draw.black()
+	if game_status == "sensing" then
+		for my=1, math.min(map_display_h, map_h-map_y) do
+			for mx=1, math.min(map_display_w, map_w-map_x) do
+				if darkness[1][my+map_y][mx+map_x] > 0 and not helpers.ifCursorIsNear () then
+					draw.drawHex(mx+map_x,my+map_y,tile_black,media.images.hex_ui);
+				end;	        	
+			end;
+		end;
+	end;
+ end;
+
 function draw.submap()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do

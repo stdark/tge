@@ -5610,6 +5610,7 @@ function helpers.switchToNeutral ()
 end;
 
 function helpers.switchToSense ()
+	helpers.cam_to_mob ();
 	find_the_path = 0;
 	global.arrow_status_checked = false;
 	global.arrow_status = false;
