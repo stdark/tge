@@ -2289,7 +2289,7 @@ function damage.multidamage () --FIXME two hexes
 	if missle_type == "firewall" then
 		local boomarea = boomareas.wallArea(cursor_world_x,cursor_world_y,spell_rotation,1);
 		for i=1,#boomarea do
-			boomareas.fireGround(boomarea[i].y,boomarea[i].x,1,lvl[1],num[1]);
+			boomareas.fireGround(boomarea[i].x,boomarea[i].y,1,lvl[1],num[1]);
 		end;
 		array_of_map ();
 	end;
@@ -3601,7 +3601,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	helpers.recalcBattleStats (current_mob);
 	local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 	for i=1,6 do
-		if chars_mobs_npcs[victim].x == rings[1][i].x and chars_mobs_npcs[victim].y == rings[1][i].y then
+		if rings[1][i] and chars_mobs_npcs[victim].x == rings[1][i].x and chars_mobs_npcs[victim].y == rings[1][i].y then
 			atk_anim = i;
 		end;
 	end;
@@ -5461,12 +5461,12 @@ function damage.instantCast () --FIXME use lvl, num
 		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 		local id = math.random(1,100000);
 		vlandscape_obj[cursor_world_y][cursor_world_x] = 1;
-		vlandscape_duration[cursor_world_y][cursor_world_x] = num[1];
+		vlandscape_duration[cursor_world_y][cursor_world_x] = lvl[1]*num[1]*10;
 		vlandscape_id[cursor_world_y][cursor_world_x] = id;
 		for h=1,3 do
 			for i=1,#rings[h] do
-				if helpers.insideMap(rings[h][i].y,rings[h][i].x) then
-					vlandscape_id[rings[h][i].y][rings[1][h].x] = id;
+				if helpers.insideMap(rings[h][i].x,rings[h][i].y) then
+					vlandscape_id[rings[h][i].y][rings[h][i].x] = id;
 				end;
 			end;
 		end;

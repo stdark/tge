@@ -28,7 +28,7 @@ function helpers.passCheck (x,y) --final point
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value <= 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) 
+	if helpers.insideMap(x,y) and height_value <= 0
 	and map[y][x] < 1200 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) 
 	and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y)
 	and dlandscape_obj[y][x] ~= "stone" and dlandscape_obj[y][x] ~= "pit"
@@ -76,7 +76,7 @@ function helpers.passJump (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value < 2 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) 
+	if helpers.insideMap(x,y) and height_value < 2 
 	and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) 
 	and dlandscape_obj[y][x] ~= "stone"
 	then
@@ -96,7 +96,7 @@ function helpers.passFly (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value <= 2 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y)
+	if helpers.insideMap(x,y) and height_value <= 2
 	and not helpers.cursorAtClosedDoor(x,y) and not not helpers.cursorAtMaterialBag(x,y)
 	and dlandscape_obj[y][x] ~= "stone"
 	then
@@ -140,7 +140,7 @@ function helpers.passWalk (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value == 0 and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) then
+	if helpers.insideMap(x,y) and height_value == 0 and map[y][x] < 300 and not helpers.cursorAtObject(x,y) and not helpers.cursorAtChest(x,y) and not helpers.cursorAtClosedDoor(x,y) and not helpers.cursorAtMaterialBag(x,y) then
 		return true
 	else
 		return false
@@ -3195,13 +3195,6 @@ function helpers.findNPCindex(index)
 	return nil;
 end;
 
-function helpers.voidIsNotaProblem(xa,ya,xb,yb)
-	if helpers.insideMap(xa,ya) and helpers.insideMap(xb,yb) and vlandscape_id[xa][ya] ~= vlandscape_id[xb][yb] then
-		return false;
-	end;
-	return true;
-end;
-
 function helpers.attackDirection(attacker,hisvictim)
 	local attacked_from = nil;
 	if chars_mobs_npcs[attacker].rot == chars_mobs_npcs[hisvictim].rot then
@@ -4627,8 +4620,12 @@ function helpers.ifSpellIsCastable (drive) --FIXME not completed
 	local mindgame_check = false;
 	local mana_check = false;
 	local recovery_check = false;
+	local void check = false;
 	if magic.spell_tips[missle_type][leveltype] or (vlandscape_obj[chars_mobs_npcs[current_mob].x][chars_mobs_npcs[current_mob].y] == 1 and magic.spell_tips[missle_type]["dungeon"]) then
 		area_check = true;
+	end;
+	if vlandscape_id[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] == 0 then
+		void_check = true;
 	end;
 	if global.status ~= "mindgame" or  (global.status == "mindgame" and magic.spell_tips[missle_type].mindgame) then
 		mindgame_check = true;
@@ -4639,7 +4636,7 @@ function helpers.ifSpellIsCastable (drive) --FIXME not completed
 	if chars_mobs_npcs[current_mob].rt >= magic.spell_tips[missle_type].recovery then
 		recovery_check = true;
 	end;
-	if area_check and time_check and mindgame_check and mana_check and recovery_check then
+	if area_check and time_check and mindgame_check and mana_check and recovery_check and void_check then
 		helpers.castReady (drive);
 		return true;
 	end;

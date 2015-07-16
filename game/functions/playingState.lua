@@ -7771,7 +7771,7 @@ function mobMoving()
 		local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 		for i=1,6 do
 			for j=1, #chars_mobs_npcs do
-				if chars_mobs_npcs[j].x == rings[1][i].x and chars_mobs_npcs[j].y == rings[1][i].y and chars_mobs_npcs[j].invisibility > 0 then
+				if rings[1][i] and chars_mobs_npcs[j].x == rings[1][i].x and chars_mobs_npcs[j].y == rings[1][i].y and chars_mobs_npcs[j].invisibility > 0 then
 					chars_mobs_npcs[j].invisibility = 0;
 				end;
 			end;
@@ -8740,9 +8740,7 @@ function restoreRT ()
 				if dlandscape_duration[a][b] > 0 then
 					dlandscape_duration[a][b] = dlandscape_duration[a][b]-1; --FIX stonewall and pit
 				end;
-				if vlandscape_duration[a][b] > 0 then
-					vlandscape_duration[a][b] = vlandscape_duration[a][b]-1;
-				end;
+
 				if alandscape_duration[a][b] > 0 then
 					alandscape_duration[a][b] = alandscape_duration[a][b]-1;
 				end;
@@ -8778,6 +8776,9 @@ function restoreRT ()
 					end;
 				end;
 
+				if vlandscape_duration[a][b] > 0 then
+					vlandscape_duration[a][b] = vlandscape_duration[a][b]-1;
+				end;
 				if vlandscape_obj[a][b] == 1  and vlandscape_duration[a][b] == 0 then
 					local id = vlandscape_id[a][b];
 					vlandscape_obj[a][b] = 0;

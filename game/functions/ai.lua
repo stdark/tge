@@ -39,6 +39,12 @@ function ai.behavior()
 	end;
 	helpers.clearAiArrays();
 	trace.first_watch (current_mob);
+--VOID	
+	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "battlemage" and vlandscape_id[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] > 0 then
+		chars_mobs_npcs[current_mob].ai == "away"; --FIXME bad zone away
+		chars_mobs_npcs[current_mob].battleai == "melee";
+	end;
+	
 --CALLED	
 	if chars_mobs_npcs[current_mob].ai == "called" then
 		if ai.mobWatchesTheMob (current_mob,true) then

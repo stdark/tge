@@ -42,8 +42,6 @@ function boomareas.ringArea(x,y)
 	for k=1,6 do
 		if ((x+xdirections[1][k]) <= map_w or (x+xdirections[1][k]) > 0)
 		and ((y+ydirections[1][k]) <= map_h or (y+ydirections[1][k]) > 0)
-		and helpers.voidIsNotaProblem(x,y,x+xdirections[1][k],y+ydirections[1][k])
-		--and map[][] check pass
 		then
 			table.insert(rings[1],{x=x+xdirections[1][k],y=y+ydirections[1][k]});
 		end;
@@ -51,8 +49,6 @@ function boomareas.ringArea(x,y)
 	for k=1,12 do
 		if ((x+xdirections[2][k]) <= map_w or (x+xdirections[2][k]) > 0)
 		and ((y+ydirections[2][k]) <= map_h or (y+ydirections[2][k]) > 0)
-		and helpers.voidIsNotaProblem(x,y,x+xdirections[2][k],y+ydirections[2][k])
-		--and map[][] check pass
 		then
 			table.insert(rings[2],{x=x+xdirections[2][k],y=y+ydirections[2][k]});
 		end;
@@ -60,8 +56,6 @@ function boomareas.ringArea(x,y)
 	for k=1,18 do
 		if ((x+xdirections[3][k]) <= map_w or (x+xdirections[3][k]) > 0)
 		and ((y+ydirections[3][k]) <= map_h or (y+ydirections[3][k]) > 0)
-		and helpers.voidIsNotaProblem(x,y,x+xdirections[3][k],y+ydirections[3][k])
-		--and map[][] check pass
 		then
 			table.insert(rings[3],{x=x+xdirections[3][k],y=y+ydirections[3][k]});
 		end;
@@ -74,7 +68,7 @@ function boomareas.showerArea(x,y, clearance,power) -- clearance 12/18, power 1-
 	for i=1,8 do -- 7 stars,stones to [8] + circle around of each
 		boomarea[i] = {};
 	end;
-	if helpers.passCheck(x,y) and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x,y) then
+	if helpers.passCheck(x,y) then
 		table.insert(boomarea[1],{x=x,y=y});
 		table.insert(boomarea[1],{x=x,y=y});
 	end;
@@ -87,7 +81,7 @@ function boomareas.showerArea(x,y, clearance,power) -- clearance 12/18, power 1-
 		elseif y/2~=math.ceil(y/2) then
 			xdirection = directions[clearance/6].xn;
 		end;
-		if helpers.passCheck(x+xdirection[i],y+ydirection[i])  and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,x+xdirection[i],y+ydirection[i])then
+		if helpers.passCheck(x+xdirection[i],y+ydirection[i]) then
 			table.insert(boomarea[1],{x=x+xdirection[i],y=y+ydirection[i]});
 		end;
 	end;
@@ -185,7 +179,7 @@ function boomareas.rayArea(x,y,direction,power,passing) -- x,y -- current_mob,di
 		newx = newx + addx;
 		newy = newy + addy;
 	end;
-		if helpers.insideMap(newx,newy) and helpers.passCheck(newx,newy) and helpers.voidIsNotaProblem(x,y,newx,newy) then
+		if helpers.insideMap(newx,newy) and helpers.passCheck(newx,newy) then
 			table.insert(boomarea,{x=newx,y=newy});
 		elseif (not helpers.insideMap(newx,newy) or not helpers.passLev(newx,newy)) and passing == 0 then
 			break;
@@ -234,7 +228,7 @@ function boomareas.vrayArea(x,y,direction,passing) -- x,y -- current_mob,directi
 	elseif direction == 2 or direction == 5 then
 		newx = newx + addx;
 	end;
-		if helpers.insideMap(newx,newy) and helpers.passCheck(newx,newy) and helpers.voidIsNotaProblem(x,y,newx,newy) then
+		if helpers.insideMap(newx,newy) and helpers.passCheck(newx,newy) then
 			addToTable = true;
 			for j=1,#boomarea do
 				if newx == boomarea[j].x and newy == boomarea[j].y then
@@ -251,9 +245,12 @@ function boomareas.vrayArea(x,y,direction,passing) -- x,y -- current_mob,directi
 				for h=1,6 do
 					addToTable = true;
 					for j=1,#boomarea do
-						if rings[1][h].x == boomarea[j].x and rings[1][h].y == boomarea[j].y then
+						if rings[1][h] and rings[1][h].x == boomarea[j].x and rings[1][h].y == boomarea[j].y then
 							addToTable = false;
 						end;
+					end;
+					if not rings[1][h] then
+						addToTable = false;	
 					end;
 					if addToTable == true then
 						table.insert(boomarea,{x=rings[1][h].x,y=rings[1][h].y});
@@ -264,9 +261,12 @@ function boomareas.vrayArea(x,y,direction,passing) -- x,y -- current_mob,directi
 				for h=1,12 do
 					addToTable = true;
 					for j=1,#boomarea do
-						if rings[2][h].x == boomarea[j].x and rings[2][h].y == boomarea[j].y then
+						if rings[2][h] and rings[2][h].x == boomarea[j].x and rings[2][h].y == boomarea[j].y then
 							addToTable = false;
 						end;
+					end;
+					if not rings[2][h] then
+						addToTable = false;	
 					end;
 					if addToTable == true then
 						table.insert(boomarea,{x=rings[2][h].x,y=rings[2][h].y});
@@ -278,9 +278,12 @@ function boomareas.vrayArea(x,y,direction,passing) -- x,y -- current_mob,directi
 				for h=1,18 do
 					addToTable = true;
 					for j=1,#boomarea do
-						if rings[3][h].x == boomarea[j].x and rings[3][h].y == boomarea[j].y then
+						if rings[3][h] and rings[3][h].x == boomarea[j].x and rings[3][h].y == boomarea[j].y then
 							addToTable = false;
 						end;
+					end;
+					if not rings[3][h] then
+						addToTable = false;	
 					end;
 					if addToTable == true then
 						table.insert(boomarea,{x=rings[3][h].x,y=rings[3][h].y});
@@ -338,7 +341,7 @@ function boomareas.tridentArea (x,y,maindirection,power,passing)
 				newx = newx + addx;
 			end;
 			
-			if helpers.insideMap(newx,newy) and helpers.passCheck(newx,newy) and helpers.voidIsNotaProblem(x,y,newx,newy) then
+			if helpers.insideMap(newx,newy) and helpers.passCheck(newx,newy) then
 				table.insert(boomarea,{x=newx,y=newy});
 			else
 				break;
@@ -406,7 +409,7 @@ function boomareas.waveArea (x,y,maindirection,power,passing)
 				elseif direction == 2 or direction == 5 then
 					newx = newx + addx;
 				end;
-				if helpers.insideMap(newx,newy) and helpers.passJump(newx,newy) and helpers.voidIsNotaProblem(x,y,newx,newy) then
+				if helpers.insideMap(newx,newy) and helpers.passJump(newx,newy) then
 					table.insert(farhexes,{x=newx,y=newy});
 				elseif not helpers.insideMap(newx,newy) then
 				end;
@@ -428,7 +431,7 @@ function boomareas.sightArea ()
 	darkness_temp = darkness[chars_mobs_npcs[current_mob].party];
 	for i=1,map_w do
 		for h=1,map_h do
-			if darkness_temp[i][h] == 0 and helpers.passLev(h,i) and not (chars_mobs_npcs[current_mob].x == h and chars_mobs_npcs[current_mob].y == i ) and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,h,i) then
+			if darkness_temp[i][h] == 0 and helpers.passLev(h,i) and not (chars_mobs_npcs[current_mob].x == h and chars_mobs_npcs[current_mob].y == i ) then
 				table.insert(boomarea,{x=h,y=i});
 			end;
 		end;
@@ -440,9 +443,7 @@ function boomareas.levelArea ()
 	local boomarea = {};
 	for i=1,map_w do
 		for h=1,map_h do
-			if helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,h,i) then
-				table.insert(boomarea,{x=h,y=i});
-			end;
+			table.insert(boomarea,{x=h,y=i});
 		end;
 	end;
 	return boomarea;	
@@ -525,7 +526,7 @@ end;
 function boomareas.signArea (sign,value)
 	local boomarea = {};
 	for j=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[j][sign] == value and helpers.voidIsNotaProblem(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[j].x,chars_mobs_npcs[j].y) then
+		if chars_mobs_npcs[j][sign] == value then
 			table.insert(boomarea, {x = chars_mobs_npcs[j].x, y = chars_mobs_npcs[j].y});	
 		end;
 	end;

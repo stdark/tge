@@ -126,9 +126,9 @@ function draw.cursor ()
 			cursor_px_x = moveto_hex_x-tile_w;
 			cursor_px_y = moveto_hex_y;
 			if game_status == "sensing" then
-				--local lvl,num = helpers.countBoomNumbers ();
+				local lvl,num = 3,10;
 				if missle_drive == "alchemy" or missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand" then
-					--local lvl,num = helpers.countBoomNumbers (missle_drive);
+					lvl,num = helpers.countBoomNumbers (missle_drive);
 				elseif missle_drive == "muscles" and  helpers.missleAtWarBook() then
 					missle_form = tricks.tricks_tips[missle_type].form;
 				end;
@@ -3026,11 +3026,16 @@ function draw.objects ()
 						animation_acidbomb:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-106);
 					end;
 				end;
-				if vlandscape_duration[my+map_y][mx+map_x] > 0 then --void
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+				if vlandscape_id[my+map_y][mx+map_x] ~= 0 then --void
+					--[[if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						animation_light:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-106);
 					else
 						animation_light:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-106);
+					end;]]
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.boom, ice, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-85);
+					else
+						love.graphics.draw(media.images.boom, ice, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-85);
 					end;
 				end;
 				if elandscape[my+map_y][mx+map_x] == "snow" then

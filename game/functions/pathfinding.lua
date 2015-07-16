@@ -152,6 +152,8 @@ function path_finding (mode,ignore_mobs)
 				global.traced = true;
 			end;
 		end;
+		--FIXME nil
+		print(current_mob,point_to_go_x,point_to_go_y,atk_direction)
 		point_to_go_x = rings[1][atk_direction].x;
 		point_to_go_y = rings[1][atk_direction].y;
 		--atk_dir_to_hex ();
