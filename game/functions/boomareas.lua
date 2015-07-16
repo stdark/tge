@@ -1466,7 +1466,7 @@ function boomareas.flameAir (x,y)
 	if helpers.passLev(x,y) then
 		elandscape[y][x] = "flame";
 		--helpers.clearHlandscape(x,y);
-		boomareas.ashGround (x,y);
+		boomareas.ashGround (x,y); --Need or not?
 		--local xx,yy = helpers.hexToPixels (x,y);
 		--table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 64),typ="boom"});
 		--lights[#lights]["light"].setGlowStrength(0.3);

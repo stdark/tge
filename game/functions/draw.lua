@@ -535,12 +535,12 @@ function draw.cursor ()
 						if helpers.mobIsAlive(mob) and helpers.ifMobIsCastable(mob) then
 							local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 							if lvl[1] == 5 then
-								for i=1,#rings[3] do
-									draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
+								for i=1,#rings[2] do
+									draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
 								end;
 							end;
-							for i=1,#rings[2] do
-								draw.drawHex(rings[2][i].x,rings[2][i].y,cursor_danger,media.images.hex_ui);
+							for i=1,#rings[3] do
+								draw.drawHex(rings[3][i].x,rings[3][i].y,cursor_danger,media.images.hex_ui);
 							end;
 						end;
 					end;
@@ -907,12 +907,12 @@ function draw.boom ()
 	
 	if missle_type == "firering" then
 		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
-		for i=1,#rings[3] do
+		for i=1,#rings[2] do
 			if lvl[1] == 5 then
-				boomareas.flameAir (rings[3][i].x,rings[3][i].y);
+				boomareas.flameAir (rings[2][i].x,rings[2][i].y);
 			end;
 		end;
-		for i=1,#rings[2] do
+		for i=1,#rings[3] do
 			boomareas.flameAir (rings[3][i].x,rings[3][i].y);
 		end;
 	end;
@@ -3036,6 +3036,13 @@ function draw.objects ()
 						love.graphics.draw(media.images.boom, ice, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-85);
 					else
 						love.graphics.draw(media.images.boom, ice, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-85);
+					end;
+				end;
+				if vlandscape_obj[my+map_y][mx+map_x] ~= 0 then --void
+					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+						love.graphics.draw(media.images.boom, void_semisphere, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-85);
+					else
+						love.graphics.draw(media.images.boom, void_semisphere, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-85);
 					end;
 				end;
 				if elandscape[my+map_y][mx+map_x] == "snow" then

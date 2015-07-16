@@ -471,6 +471,7 @@
 	earthteeths_ = love.graphics.newQuad(128*3, 15*128, 128,128, media.images.boom:getWidth(), media.images.boom:getHeight());
 	ice = love.graphics.newQuad(128*5, 15*128, 128,128, media.images.boom:getWidth(), media.images.boom:getHeight());
 	mud = love.graphics.newQuad(128*4, 15*128, 128,128, media.images.boom:getWidth(), media.images.boom:getHeight());
+	void_semisphere = anim8.newGrid(128, 128, 9*128,128*4, media.images.boom:getWidth(), media.images.boom:getHeight());
 	
 	--buildings
 	fountain = anim8.newGrid(250, 224, media.images.animatedobjects:getWidth(), media.images.animatedobjects:getHeight(),0,0,0);
