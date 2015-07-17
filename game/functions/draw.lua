@@ -3318,338 +3318,8 @@ function draw.objects ()
 					end;
 				end;
 			end;
-			for i=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[i].y/2 == math.ceil(chars_mobs_npcs[i].y/2) then
-					mob_x_add=-0.75*tile_w;
-				else
-					mob_x_add=-0.25*tile_w;
-				end;
-				if i~= current_mob then
-					mobto_hex_y=math.ceil((chars_mobs_npcs[i].y-map_y)*tile_h*0.75+top_space-mob_h-hero_height/3);
-					mobto_hex_x=math.ceil((chars_mobs_npcs[i].x-map_x)*tile_w+left_space+mob_x_add-hero_width/2);
-				elseif i==current_mob then
-					mobto_hex_y=math.ceil((chars_mobs_npcs[i].y-map_y)*tile_h*0.75+top_space-mob_h+mob_add_mov_y-hero_height/3);
-					mobto_hex_x=math.ceil((chars_mobs_npcs[i].x-map_x)*tile_w+left_space+mob_x_add+mob_add_mov_x-hero_width/2);
-				end;
-				damaged = 0;
-				if game_status == "multidamage" then
-					for d=1,#damaged_mobs do
-						if damaged_mobs[d] == i then
-							damaged=1;
-						end;
-					end;
-				end;
-				--draw.irradiation (mx,my);
-				if my== chars_mobs_npcs[i].y-map_y and mx== chars_mobs_npcs[i].x-map_x then
-					
-					if chars_mobs_npcs[i].stone > 0  then
-						love.graphics.setColor(125, 125, 125);
-					elseif chars_mobs_npcs[i].freeze > 0 then
-						love.graphics.setColor(150, 150, 255);
-					end;
-					
-					if game_status =="neutral"
-					or game_status == "premoving" --ai only
-					or (game_status == "moving" and i ~= current_mob)
-					or game_status =="sensing"
-					or game_status =="pathfinding"
-					or game_status == "missle"
-					or game_status == "boom"
-					or game_status == "pause"
-					or game_status == "restoring"
-					or game_status == "spellbook"
-					or game_status == "warbook"
-					or game_status == "questbook"
-					or game_status == "inventory"
-					or game_status == "alchemy"
-					or game_status == "picklocking"
-					or game_status == "crafting"
-					or game_status == "stats"
-					or game_status == "skills"
-					or game_status == "literature"
-					or game_status == "map"
-					or game_status == "chat"
-					or game_status == "mindgame"
-					or game_status == "housewatch"
-					or game_status == "buying"
-					or game_status == "selling"
-					or game_status == "npcrepair"
-					or game_status == "npcidentify"
-					or game_status == "ai"
-					or game_status == "switchlevel"
-					or game_status == "calendar"
-					or game_status == "obelisk"
-					or game_status == "well"
-					or game_status == "log"
-					or (game_status == "shot" and i ~= current_mob)
-					or (game_status == "damage" and i ~= victim)
-					or (game_status == "multidamage" and damaged==0)
-					or (i ~= current_mob and i ~= victim and damaged==0) then
-						if i == selected_mob and darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0  then
-							love.graphics.draw(media.images.hex, cursor_white,mobto_hex_x-tile_w,mobto_hex_y+86); -- selection from portraits marked
-						end
-						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
-							if chars_mobs_npcs[i].control=="player" and i == current_mob then --mark player character whoose turn is now
-								love.graphics.draw(media.images.hex_ui, cursor_yellow,mobto_hex_x-tile_w,mobto_hex_y+86); --current char marked
-							end;
-							if chars_mobs_npcs[i].invisibility > 0 then
-								love.graphics.setColor(255, 255, 255, 150);
-							elseif chars_mobs_npcs[i].stealth > 0 then
-								love.graphics.setColor(125, 125, 125, 150);
-							end;
-							if chars_mobs_npcs[i].status==1 then
-								local tmp = chars_mobs_npcs[i].sprite .. "_stay";
-								local mob_stay = loadstring("return " .. tmp)();
-								local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-								local img_mob_base = loadstring("return " .. tmpi)();
-								love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
-							else
-								local tmp = chars_mobs_npcs[i].sprite .. "_dead";
-								local mob_dead=loadstring("return " .. tmp)();
-								local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-								local img_mob_base=loadstring("return " .. tmpi)();
-								love.graphics.draw(img_mob_base,mob_dead[chars_mobs_npcs[i].rot ], mobto_hex_x-tile_w-tile_w/2,mobto_hex_y);
-							end;
-							love.graphics.setColor(255, 255, 255,255);
-						end;
-					elseif game_status == "moving" and i == current_mob then
-							if chars_mobs_npcs[i].invisibility > 0 then
-								love.graphics.setColor(255, 255, 255, 150);
-							elseif chars_mobs_npcs[i].stealth > 0 then
-								love.graphics.setColor(125, 125, 125, 150);
-							end;
-						if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
-							local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-							local img_mob_base=loadstring("return " .. tmpi)();
-							if global.use_walk_animation then
-								animation_walk:draw(img_mob_base, mobto_hex_x-tile_w-tile_w/2,mobto_hex_y);
-							else
-								local tmp = chars_mobs_npcs[i].sprite .. "_stay";
-								local mob_stay = loadstring("return " .. tmp)();
-								local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-								local img_mob_base = loadstring("return " .. tmpi)();
-								love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
-							end;
-						end;
-						love.graphics.setColor(255, 255, 255,255);
-					elseif game_status == "attack" then
-						if i == current_mob and i~=victim then
-							local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_war";
-							local img_mob_war=loadstring("return " .. tmpi)();
-							animation_atk1:draw(img_mob_war, mobto_hex_x-tile_w-32,mobto_hex_y); --low quality (
-						end
-						--if  i == victim and chars_mobs_npcs[victim].status == 1 then
-						if  i == victim then
-							if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and block == 0 and parry == 0 then
-								local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-								local img_mob_base=loadstring("return " .. tmpi)();
-								animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);		
-							elseif chars_mobs_npcs[i].freeze~=0 or chars_mobs_npcs[i].stone~=0 then
-								local tmp= chars_mobs_npcs[i].sprite .. "_stay";
-								local mob_stay=loadstring("return " .. tmp)();
-								local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-								local img_mob_base=loadstring("return " .. tmpi)();
-								love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
-							elseif dodge == 1 then
-								--local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
-								--local img_mob_def=loadstring("return " .. tmpi)();
-								--animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-							elseif hands == 1 then
-								--local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
-								--local img_mob_def=loadstring("return " .. tmpi)();
-								--animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-							elseif block==1 then
-								local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
-								local img_mob_def=loadstring("return " .. tmpi)();
-								animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-							elseif parry==1 then
-								--local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
-								--local img_mob_def=loadstring("return " .. tmpi)();
-								--animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-							end;
-						end;
-					elseif game_status == "shot" and i == current_mob then
-						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_rng";
-						local img_mob_rng=loadstring("return " .. tmpi)();
-						if missle_type == "bolt" or missle_type == "arrow" 
-						or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
-						then
-							animation_sht1:draw(img_mob_rng, mobto_hex_x-tile_w*1.5,mobto_hex_y);
-						elseif missle_type == "bottle" then
-							animation_sht1:draw(media.images.rogue_rng2, mobto_hex_x-tile_w*1.5,mobto_hex_y);
-						elseif missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand" then
-							animation_sht1:draw(img_mob_rng, mobto_hex_x-tile_w*1.5,mobto_hex_y);
-						end;
-					elseif game_status == "missle" then
-					elseif game_status == "multidamage" then
-						if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
-							if chars_mobs_npcs[victim].freeze==0 and chars_mobs_npcs[victim].stone==0 then
-								local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-								local img_mob_base = loadstring("return " .. tmpi)();
-								animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-							elseif chars_mobs_npcs[victim].freeze ~= 0 and chars_mobs_npcs[victim].stone ~= 0 then
-								local tmp = chars_mobs_npcs[i].sprite .. "_stay";
-								local mob_stay = loadstring("return " .. tmp)();
-								local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-								local img_mob_base = loadstring("return " .. tmpi)();
-								love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
-							end;
-						end;
-					elseif game_status =="damage" and i == victim then
-						if chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 and (missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand") and magic.spell_tips[missle_type].form == "ally" then
-							local tmp = chars_mobs_npcs[i].sprite .. "_stay";
-							local mob_stay = loadstring("return " .. tmp)();
-							local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-							local img_mob_base = loadstring("return " .. tmpi)();
-							love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
-						elseif chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 then
-							local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-							local img_mob_base = loadstring("return " .. tmpi)();
-							animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-						elseif chars_mobs_npcs[victim].freeze ~= 0 or chars_mobs_npcs[victim].stone ~= 0 then
-							local tmp = chars_mobs_npcs[i].sprite .. "_stay";
-							local mob_stay=loadstring("return " .. tmp)();
-							local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
-							local img_mob_base = loadstring("return " .. tmpi)();
-							love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
-						end;
-					end;
-					love.graphics.setColor(255, 255, 255);
-					if  chars_mobs_npcs[i].stone>0 then
-					elseif chars_mobs_npcs[i].freeze>0 then
-						love.graphics.draw(media.images.boom, freeze,mobto_hex_x-tile_w*1.5,mobto_hex_y);
-					end;
-					if  chars_mobs_npcs[i].control == "player" and chars_mobs_npcs[i].protectionmode ~= "none" then
-						if chars_mobs_npcs[i].protectionmode == "dodge" then
-							love.graphics.draw(media.images.ui, dodge_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
-						elseif chars_mobs_npcs[i].protectionmode == "hands" then
-							love.graphics.draw(media.images.ui, hadblock_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
-						elseif chars_mobs_npcs[i].protectionmode == "block" then
-							love.graphics.draw(media.images.ui, block_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
-						elseif chars_mobs_npcs[i].protectionmode == "parry" then
-							love.graphics.draw(media.images.ui, parry_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
-						end;
-					end;
-					if game_status == "boom" then
-						misto_hex_y = (boomy-map_y)*tile_h*0.75+top_space;
-						if boomy/2 == math.ceil(boomy/2) then
-							misto_hex_x = (boomx-map_x)*tile_w+left_space-96;
-						else
-							misto_hex_x = (boomx-map_x)*tile_w+left_space-64;
-						end;
-						love.graphics.setColor(255, 255, 255);
-						if missle_type=='fireball' then
-							animation_firexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-96);
-						elseif missle_type=='toxiccloud' then
-							animation_toxicexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-96);
-						elseif missle_type=='iceball' then
-							animation_icexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='comete' then
-							animation_icexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='flamearrow' then
-							animation_flame:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='coldbeam' then
-							animation_snow:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128); 
-						elseif missle_type=='staticharge' then
-							animation_staticexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='poisonedspit' then
-							animation_poisoned:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='acidburst' then
-							animation_acidexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='sphericallightning' then
-							animation_staticexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='heal' then
-							animation_healbuff:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='charge' then
-							animation_chargebuff:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='regeneration' then
-							animation_regeneration:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='encourage' then
-							animation_chargebuff:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='windfist' then
-							animation_windexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='rockblast' then
-							animation_dustexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='incineration' then
-							animation_incexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='implosion' then
-							animation_implosion:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='dehydratation' then
-							animation_dehydratation:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='massdistortion' then
-							animation_massdistortion:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='sunray' then
-							animation_sunray:draw(media.images.boom, misto_hex_x-64,misto_hex_y-246);
-						elseif missle_type=='monlight' then
-							animation_monlight:draw(media.images.boom, misto_hex_x-64,misto_hex_y-256);
-						elseif missle_type=='lightning' then
-							animation_lightning:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protfromfire' then
-							animation_protfromfire:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protfromcold' then
-							animation_protfromcold:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protfromstatic' then
-							animation_protfromstatic:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protfromacid' then
-							animation_protfromacid:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protfrompoison' then
-							animation_protfrompoison:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protfromdisease' then
-							animation_protfromdisease:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protofmind' then
-							animation_protofmind:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='protofspirit' then
-							animation_protofspirit:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='shield' then
-							animation_shield:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='stoneskin' then
-							animation_stoneskin:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='charm' then
-							animation_charm:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='berserk' then
-							animation_berserk:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='enslave' then
-							animation_berserk:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='controlundead' then
-							animation_berserk:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='fear' then
-							animation_fear:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='resurrect' then
-							animation_resurrect:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='haste' then
-							animation_haste:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='speed' then
-							animation_speed:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='strenght' then
-							animation_strenght:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='dash' then
-							animation_dash:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=='mobility' then
-							animation_mobility:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
-						elseif missle_type=="chainlightning" then
-							local linetable={};
-							while (#linetable>0) do
-								table.remove(linetable,1);
-							end;
-							for i=1,#mobsmarked do
-								moveto_hex_y=math.ceil(chars_mobs_npcs[mobsmarked[i]].y-1)*tile_h*0.75+top_space;
-								if chars_mobs_npcs[mobsmarked[i]].y/2 == math.ceil(chars_mobs_npcs[mobsmarked[i]].y/2 ) then
-									moveto_hex_x=math.ceil(chars_mobs_npcs[mobsmarked[i]].x-1)*tile_w+left_space;
-								else
-									moveto_hex_x=math.ceil(chars_mobs_npcs[mobsmarked[i]].x-1)*tile_w+left_space+tile_w/2;
-								end;
-								local tmprnd=anim_rnd[i]*3;
-								table.insert(linetable,moveto_hex_x-tile_w/2);
-								table.insert(linetable,moveto_hex_y-tile_h/4+tmprnd+math.random(5));
-							end;
-							love.graphics.setColor(225, 225, 255);
-							love.graphics.setLineStyle("rough");
-							love.graphics.line(linetable);
-							love.graphics.setColor(255, 255, 255);
-						 end;
-					end; 
-				end;
-			end;
+			
+			draw.mobs(mx,my,false,nil);
 			
 			if elandscape[my+map_y][mx+map_x] == "moonlight" then  
 				if (my+map_y)/2 == math.ceil((my+map_y)/2) then
@@ -3674,6 +3344,350 @@ function draw.objects ()
 			end;
 		end;
 	end;
+end;
+
+function draw.mobs (mx,my,highlight,index)
+	for i=1,#chars_mobs_npcs do
+		if chars_mobs_npcs[i].y/2 == math.ceil(chars_mobs_npcs[i].y/2) then
+			mob_x_add=-0.75*tile_w;
+		else
+			mob_x_add=-0.25*tile_w;
+		end;
+		if i~= current_mob then
+			mobto_hex_y=math.ceil((chars_mobs_npcs[i].y-map_y)*tile_h*0.75+top_space-mob_h-hero_height/3);
+			mobto_hex_x=math.ceil((chars_mobs_npcs[i].x-map_x)*tile_w+left_space+mob_x_add-hero_width/2);
+		elseif i==current_mob then
+			mobto_hex_y=math.ceil((chars_mobs_npcs[i].y-map_y)*tile_h*0.75+top_space-mob_h+mob_add_mov_y-hero_height/3);
+			mobto_hex_x=math.ceil((chars_mobs_npcs[i].x-map_x)*tile_w+left_space+mob_x_add+mob_add_mov_x-hero_width/2);
+		end;
+		damaged = 0;
+		if game_status == "multidamage" then
+			for d=1,#damaged_mobs do
+				if damaged_mobs[d] == i then
+					damaged=1;
+				end;
+			end;
+		end;
+		--draw.irradiation (mx,my);
+		if (highlight and i == index) or (not highlight and my == chars_mobs_npcs[i].y-map_y and mx== chars_mobs_npcs[i].x-map_x) then
+			
+			if chars_mobs_npcs[i].stone > 0  then
+				love.graphics.setColor(125, 125, 125);
+			elseif chars_mobs_npcs[i].freeze > 0 then
+				love.graphics.setColor(150, 150, 255);
+			end;
+			
+			--if highlight then
+				--love.graphics.setColor(125, 125, 0,255);
+			--end;
+			
+			if game_status =="neutral"
+			or game_status == "premoving" --ai only
+			or (game_status == "moving" and i ~= current_mob)
+			or game_status =="sensing"
+			or game_status =="pathfinding"
+			or game_status == "missle"
+			or game_status == "boom"
+			or game_status == "pause"
+			or game_status == "restoring"
+			or game_status == "spellbook"
+			or game_status == "warbook"
+			or game_status == "questbook"
+			or game_status == "inventory"
+			or game_status == "alchemy"
+			or game_status == "picklocking"
+			or game_status == "crafting"
+			or game_status == "stats"
+			or game_status == "skills"
+			or game_status == "literature"
+			or game_status == "map"
+			or game_status == "chat"
+			or game_status == "mindgame"
+			or game_status == "housewatch"
+			or game_status == "buying"
+			or game_status == "selling"
+			or game_status == "npcrepair"
+			or game_status == "npcidentify"
+			or game_status == "ai"
+			or game_status == "switchlevel"
+			or game_status == "calendar"
+			or game_status == "obelisk"
+			or game_status == "well"
+			or game_status == "log"
+			or (game_status == "shot" and i ~= current_mob)
+			or (game_status == "damage" and i ~= victim)
+			or (game_status == "multidamage" and damaged==0)
+			or (i ~= current_mob and i ~= victim and damaged==0) then
+				if i == selected_mob and darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0  then
+					love.graphics.draw(media.images.hex, cursor_white,mobto_hex_x-tile_w,mobto_hex_y+86); -- selection from portraits marked
+				end
+				if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
+					if chars_mobs_npcs[i].control=="player" and i == current_mob then --mark player character whoose turn is now
+						love.graphics.draw(media.images.hex_ui, cursor_yellow,mobto_hex_x-tile_w,mobto_hex_y+86); --current char marked
+					end;
+					if chars_mobs_npcs[i].invisibility > 0 then
+						love.graphics.setColor(255, 255, 255, 150);
+					elseif chars_mobs_npcs[i].stealth > 0 then
+						love.graphics.setColor(125, 125, 125, 150);
+					end;
+					if chars_mobs_npcs[i].status==1 then
+						local tmp = chars_mobs_npcs[i].sprite .. "_stay";
+						local mob_stay = loadstring("return " .. tmp)();
+						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base = loadstring("return " .. tmpi)();
+						love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
+					else
+						local tmp = chars_mobs_npcs[i].sprite .. "_dead";
+						local mob_dead=loadstring("return " .. tmp)();
+						local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base=loadstring("return " .. tmpi)();
+						love.graphics.draw(img_mob_base,mob_dead[chars_mobs_npcs[i].rot ], mobto_hex_x-tile_w-tile_w/2,mobto_hex_y);
+					end;
+					love.graphics.setColor(255, 255, 255,255);
+				end;
+			elseif game_status == "moving" and i == current_mob then
+					if chars_mobs_npcs[i].invisibility > 0 then
+						love.graphics.setColor(255, 255, 255, 150);
+					elseif chars_mobs_npcs[i].stealth > 0 then
+						love.graphics.setColor(125, 125, 125, 150);
+					end;
+				if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
+					local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+					local img_mob_base=loadstring("return " .. tmpi)();
+					if global.use_walk_animation then
+						animation_walk:draw(img_mob_base, mobto_hex_x-tile_w-tile_w/2,mobto_hex_y);
+					else
+						local tmp = chars_mobs_npcs[i].sprite .. "_stay";
+						local mob_stay = loadstring("return " .. tmp)();
+						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base = loadstring("return " .. tmpi)();
+						love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
+					end;
+				end;
+				love.graphics.setColor(255, 255, 255,255);
+			elseif game_status == "attack" then
+				if i == current_mob and i~=victim then
+					local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_war";
+					local img_mob_war=loadstring("return " .. tmpi)();
+					animation_atk1:draw(img_mob_war, mobto_hex_x-tile_w-32,mobto_hex_y); --low quality (
+				end
+				--if  i == victim and chars_mobs_npcs[victim].status == 1 then
+				if  i == victim then
+					if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and block == 0 and parry == 0 then
+						local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base=loadstring("return " .. tmpi)();
+						animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);		
+					elseif chars_mobs_npcs[i].freeze~=0 or chars_mobs_npcs[i].stone~=0 then
+						local tmp= chars_mobs_npcs[i].sprite .. "_stay";
+						local mob_stay=loadstring("return " .. tmp)();
+						local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base=loadstring("return " .. tmpi)();
+						love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
+					elseif dodge == 1 then
+						--local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
+						--local img_mob_def=loadstring("return " .. tmpi)();
+						--animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
+					elseif hands == 1 then
+						--local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
+						--local img_mob_def=loadstring("return " .. tmpi)();
+						--animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
+					elseif block==1 then
+						local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
+						local img_mob_def=loadstring("return " .. tmpi)();
+						animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
+					elseif parry==1 then
+						--local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_def";
+						--local img_mob_def=loadstring("return " .. tmpi)();
+						--animation_block[chars_mobs_npcs[i].rot ]:draw(img_mob_def, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
+					end;
+				end;
+			elseif game_status == "shot" and i == current_mob then
+				local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_rng";
+				local img_mob_rng=loadstring("return " .. tmpi)();
+				if missle_type == "bolt" or missle_type == "arrow" 
+				or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
+				then
+					animation_sht1:draw(img_mob_rng, mobto_hex_x-tile_w*1.5,mobto_hex_y);
+				elseif missle_type == "bottle" then
+					animation_sht1:draw(media.images.rogue_rng2, mobto_hex_x-tile_w*1.5,mobto_hex_y);
+				elseif missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand" then
+					animation_sht1:draw(img_mob_rng, mobto_hex_x-tile_w*1.5,mobto_hex_y);
+				end;
+			elseif game_status == "missle" then
+			elseif game_status == "multidamage" then
+				if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
+					if chars_mobs_npcs[victim].freeze==0 and chars_mobs_npcs[victim].stone==0 then
+						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base = loadstring("return " .. tmpi)();
+						animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
+					elseif chars_mobs_npcs[victim].freeze ~= 0 and chars_mobs_npcs[victim].stone ~= 0 then
+						local tmp = chars_mobs_npcs[i].sprite .. "_stay";
+						local mob_stay = loadstring("return " .. tmp)();
+						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base = loadstring("return " .. tmpi)();
+						love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
+					end;
+				end;
+			elseif game_status =="damage" and i == victim then
+				if chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 and (missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand") and magic.spell_tips[missle_type].form == "ally" then
+					local tmp = chars_mobs_npcs[i].sprite .. "_stay";
+					local mob_stay = loadstring("return " .. tmp)();
+					local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+					local img_mob_base = loadstring("return " .. tmpi)();
+					love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
+				elseif chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 then
+					local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+					local img_mob_base = loadstring("return " .. tmpi)();
+					animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
+				elseif chars_mobs_npcs[victim].freeze ~= 0 or chars_mobs_npcs[victim].stone ~= 0 then
+					local tmp = chars_mobs_npcs[i].sprite .. "_stay";
+					local mob_stay=loadstring("return " .. tmp)();
+					local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+					local img_mob_base = loadstring("return " .. tmpi)();
+					love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
+				end;
+			end;
+			love.graphics.setColor(255, 255, 255);
+			
+			if  chars_mobs_npcs[i].stone > 0 then
+			elseif chars_mobs_npcs[i].freeze > 0 then
+				love.graphics.draw(media.images.boom, freeze,mobto_hex_x-tile_w*1.5,mobto_hex_y);
+			end;
+			if  chars_mobs_npcs[i].control == "player" and chars_mobs_npcs[i].protectionmode ~= "none" then
+				if chars_mobs_npcs[i].protectionmode == "dodge" then
+					love.graphics.draw(media.images.ui, dodge_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
+				elseif chars_mobs_npcs[i].protectionmode == "hands" then
+					love.graphics.draw(media.images.ui, hadblock_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
+				elseif chars_mobs_npcs[i].protectionmode == "block" then
+					love.graphics.draw(media.images.ui, block_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
+				elseif chars_mobs_npcs[i].protectionmode == "parry" then
+					love.graphics.draw(media.images.ui, parry_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
+				end;
+			end;
+			if game_status == "boom" then
+				misto_hex_y = (boomy-map_y)*tile_h*0.75+top_space;
+				if boomy/2 == math.ceil(boomy/2) then
+					misto_hex_x = (boomx-map_x)*tile_w+left_space-96;
+				else
+					misto_hex_x = (boomx-map_x)*tile_w+left_space-64;
+				end;
+				love.graphics.setColor(255, 255, 255);
+				if missle_type=='fireball' then
+					animation_firexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-96);
+				elseif missle_type=='toxiccloud' then
+					animation_toxicexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-96);
+				elseif missle_type=='iceball' then
+					animation_icexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='comete' then
+					animation_icexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='flamearrow' then
+					animation_flame:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='coldbeam' then
+					animation_snow:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128); 
+				elseif missle_type=='staticharge' then
+					animation_staticexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='poisonedspit' then
+					animation_poisoned:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='acidburst' then
+					animation_acidexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='sphericallightning' then
+					animation_staticexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='heal' then
+					animation_healbuff:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='charge' then
+					animation_chargebuff:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='regeneration' then
+					animation_regeneration:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='encourage' then
+					animation_chargebuff:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='windfist' then
+					animation_windexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='rockblast' then
+					animation_dustexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='incineration' then
+					animation_incexplo:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='implosion' then
+					animation_implosion:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='dehydratation' then
+					animation_dehydratation:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='massdistortion' then
+					animation_massdistortion:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='sunray' then
+					animation_sunray:draw(media.images.boom, misto_hex_x-64,misto_hex_y-246);
+				elseif missle_type=='monlight' then
+					animation_monlight:draw(media.images.boom, misto_hex_x-64,misto_hex_y-256);
+				elseif missle_type=='lightning' then
+					animation_lightning:draw(media.images.boom, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protfromfire' then
+					animation_protfromfire:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protfromcold' then
+					animation_protfromcold:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protfromstatic' then
+					animation_protfromstatic:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protfromacid' then
+					animation_protfromacid:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protfrompoison' then
+					animation_protfrompoison:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protfromdisease' then
+					animation_protfromdisease:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protofmind' then
+					animation_protofmind:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='protofspirit' then
+					animation_protofspirit:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='shield' then
+					animation_shield:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='stoneskin' then
+					animation_stoneskin:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='charm' then
+					animation_charm:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='berserk' then
+					animation_berserk:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='enslave' then
+					animation_berserk:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='controlundead' then
+					animation_berserk:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='fear' then
+					animation_fear:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='resurrect' then
+					animation_resurrect:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='haste' then
+					animation_haste:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='speed' then
+					animation_speed:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='strenght' then
+					animation_strenght:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='dash' then
+					animation_dash:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=='mobility' then
+					animation_mobility:draw(media.images.buff, misto_hex_x-64,misto_hex_y-128);
+				elseif missle_type=="chainlightning" then
+					local linetable={};
+					while (#linetable>0) do
+						table.remove(linetable,1);
+					end;
+					for i=1,#mobsmarked do
+						moveto_hex_y=math.ceil(chars_mobs_npcs[mobsmarked[i]].y-1)*tile_h*0.75+top_space;
+						if chars_mobs_npcs[mobsmarked[i]].y/2 == math.ceil(chars_mobs_npcs[mobsmarked[i]].y/2 ) then
+							moveto_hex_x=math.ceil(chars_mobs_npcs[mobsmarked[i]].x-1)*tile_w+left_space;
+						else
+							moveto_hex_x=math.ceil(chars_mobs_npcs[mobsmarked[i]].x-1)*tile_w+left_space+tile_w/2;
+						end;
+						local tmprnd=anim_rnd[i]*3;
+						table.insert(linetable,moveto_hex_x-tile_w/2);
+						table.insert(linetable,moveto_hex_y-tile_h/4+tmprnd+math.random(5));
+					end;
+					love.graphics.setColor(225, 225, 255);
+					love.graphics.setLineStyle("rough");
+					love.graphics.line(linetable);
+					love.graphics.setColor(255, 255, 255);
+				 end;
+			end; 
+		end;
+	end;
+end;
+
+function draw.highlight_mob (index)
+	draw.mobs(nil,nil,true,index);
 end;
 
 function draw.bag ()
@@ -4846,9 +4860,19 @@ function draw.ui ()
 			end;
 		end;
 		
-		delta_sp2spend = math.min(delta_sp2spend,chars_mobs_npcs[i].sp_max);
-		delta_st2spend = math.min(delta_st2spend,chars_mobs_npcs[i].st_max);
-		delta_rt2spend = math.min(delta_rt2spend,200);
+		delta_sp2spend = math.min(delta_sp2spend,1);
+		delta_st2spend = math.min(delta_st2spend,1);
+		delta_rt2spend = math.min(delta_rt2spend,1);
+		
+		if game_status == "pathfinding" and helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y) and not helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y) then
+			delta_sp2spend = 0;
+			delta_st2spend = 0;
+			delta_rt2spend = 0;
+		end;
+		
+		dsp2s = screen_mod_y-100*(delta_sp2spend-1);
+		dst2s = screen_mod_y-100*(delta_st2spend-1);
+		drt2s = screen_mod_y-100*(delta_rt2spend-1);
 		
 		love.graphics.draw(media.images.ui, bl_indic, i*125-addx, screen_mod_y,0, 1, 1);
 		love.graphics.draw(media.images.ui, bl_indic, i*125+10-addx, screen_mod_y,0, 1, 1);

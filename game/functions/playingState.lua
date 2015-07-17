@@ -53,14 +53,9 @@ function playingState.load()
 	require "data.sfx"
 	require "data.triggers"
 	--love.audio.stop(media.sounds.mainmenu, 0);
-	
-	--currentState = loadingState;
-	--currentState.start(media, loadingFinished);
-	--blurv = love.graphics.newShader(love.filesystem.read("shader/blurv.glsl"),1)
-	--blurh = love.graphics.newShader(love.filesystem.read("shader/blurh.glsl"),1)
-	--color2bw = love.graphics.newShader("shader/color2bw.glsl")
 
 	lightWorld = love.light.newWorld();
+	lightWorld.setBlur(32)
 	mainFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 10);
 	statFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
 	tipFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 12);
@@ -81,6 +76,8 @@ function playingState.load()
 
 	global.use_walk_animation = false;
 	global.walk_animation_speed = 0.1;
+	
+	global.highlight_party = 0;
 
 	map_w = #map;
 	map_h = #map[1];
@@ -909,7 +906,7 @@ function playingState.load()
 	end;
 	global.first_load = false;
 	
-	--[[
+	
 	
 	lightMouse = lightWorld.newLight(100, 100, 1, 1, 1,10)
     lightMouse.setGlowStrength(0.3) -- optional
@@ -922,20 +919,17 @@ function playingState.load()
 	imgNormal = love.graphics.newImage("img/lightsvsshadows/refraction_normal.png")
 	imgHeightMap = love.graphics.newImage("img/lightsvsshadows/refraction_height.png")
 	
-	print("IMG",imgNormal,imgHeightMap)
-	
-	lightWorld.setRefractionStrength(16.0)
+	--lightWorld.setRefractionStrength(16.0)
    -- set the global reflection strength to 32 (default: 16)
-   lightWorld.setReflectionStrength(32)
+  -- lightWorld.setReflectionStrength(32)
    -- set the global reflection visibility to 0.5 (default: 1.0)
-   lightWorld.setReflectionVisibility(0.5)
+  -- lightWorld.setReflectionVisibility(0.5)
    -- create a refraction from a normal map
-   refraction = lightWorld.newRefraction(imgNormal, x, y)
+	--refraction = lightWorld.newRefraction(imgNormal, x, y)
    -- create a refraction from a height map and choose the strength (default: 1.0)
-   refraction = lightWorld.newRefractionHeightMap(imgHeightMap, x, y)
-   print("REF",refraction)
+	--refraction = lightWorld.newRefractionHeightMap(imgHeightMap, x, y)
    -- move the normal map texture within the boundary
-   refraction.setNormalTileOffset(x, y)]]
+  -- refraction.setNormalTileOffset(x, y)
 	
 end;
 
@@ -956,10 +950,14 @@ function playingState.update(dt)
 		if lights[i].typ == "ground" then
 			xx,yy = helpers.hexToPixels (lights[i].x+1,lights[i].y+1);
 			if lights[i].y/2 == math.ceil(lights[i].y/2) then
-				xx,ww = helpers.hexToPixels (lights[i].x,lights[i].y+1);
+				xx,ww = helpers.hexToPixels (lights[i].x,lights[i].y+1); --ww is correct!
 			end;
+			xx = xx + math.random(1,8)-4;
+			yy = yy -64 + math.random(1,8)-4;
 		elseif lights[i].typ == "mob" then
 			xx,yy = helpers.hexToPixels (lights[i].x,lights[i].y);
+			xx = xx - 16 + math.random(1,8)-4;
+			yy = yy - 32 + math.random(1,8)-4;
 		end;
 		if lights[i].typ ~= "default" and lights[i].typ ~= "missle" and lights[i].typ ~= "boom" then
 			lights[i]["light"].setPosition(xx,yy);
@@ -1245,10 +1243,10 @@ function playingState.update(dt)
 		if game_status ~= "inventory" and game_status ~= "alchemy" and game_status ~= "picklocking" and gamePstatus ~= "crafting" and game_status ~= "buying" and game_status ~= "showinventory" then
 			show_inventory_tips = 0;
 		end;
-		if game_status == "pathfinding" and global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false then
+		if game_status == "pathfinding" and global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y)) then
 			path_finding(0,0);
 		end;
-		if game_status == "pathfinding" and global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false then
+		if game_status == "pathfinding" and global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y)) then
 			if love.keyboard.isDown("lctrl") then
 				global.steal = true;
 			else
@@ -1790,6 +1788,16 @@ function playingState.keyreleased(key, unicode)
 
 	if key == "5" then
 		game_status = "obelisk"; --FIXME from diary
+	end;
+	
+	if key == "6" then
+		if global.highlight_party == 0 then
+			global.highlight_party = 1;
+		elseif global.highlight_party == 1 then
+			global.highlight_party = 2;
+		elseif global.highlight_party == 2 then
+			global.highlight_party = 0;
+		end;
 	end;
 	
 	if key == "u" and (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting") then
@@ -9145,7 +9153,7 @@ function playingState.draw()
 	lightWorld.update();
 	
 	   -- set your canvas
-  -- love.graphics.setCanvas(myCanvas) --REF
+	--love.graphics.setCanvas(myCanvas) --REF
 	
 	love.graphics.setFont(mainFont);
 	draw.background();
@@ -9173,7 +9181,7 @@ function playingState.draw()
    --lightWorld.drawReflection()
 
    -- draw the refraction
-   --lightWorld.drawRefraction()
+ --  lightWorld.drawRefraction()
 
 	
 	
@@ -9239,9 +9247,26 @@ function playingState.draw()
 	local x,y = helpers.centerObject(media.images.inv1);
 	--draw.black();
 	   -- draw Canvas --REF
-   --love.graphics.setCanvas()
-   --love.graphics.draw(myCanvas)
-
+  -- love.graphics.setCanvas()
+  -- love.graphics.draw(myCanvas)
+	if (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding") and chars_mobs_npcs[current_mob].control == "player" then
+		if global.highlight_party == 1  then
+			draw.highlight_mob (current_mob);
+		elseif global.highlight_party == 2 then
+			for i=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[i].control == "player" then
+					draw.highlight_mob (i);
+				end;
+			end;
+		end;
+		if global.highlight_party ~= 0  then
+			draw.cursor();
+			draw.line();
+			if (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and game_status == "pathfinding" and path_status==1 then
+				draw.way();
+			end;
+		end;
+	end;
  end;
 
 return playingState

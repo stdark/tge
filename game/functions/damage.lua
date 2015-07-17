@@ -295,11 +295,12 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			delta_spd = 100;
 		end;
 		chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd + chars_mobs_npcs[current_mob].bless_power;
+		--FIXME sniper chance_to_hit + lv
 		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) 
 		and missle_type ~= "parabolicshot"
 		then
 			helpers.addToActionLog( lognames.actions.targetpartlyhided);
-			chance_to_hit = math.ceil(chance_to_hit/2);
+			chance_to_hit = math.ceil(chance_to_hit/2); --sniper*0.75
 		end;
 		--tricks
 		if missle_type == "carefulaimnig" then
@@ -619,7 +620,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				DR = 0;
 				helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.armorpenetrated[chars_mobs_npcs[current_mob].gender]);
 			end;
-			if AC > 0 then
+			if AC > 0 then --FIXME sniper 1/2 AC
 				for i=#array_of_chances+1,AC do
 					if missle_type ~= "shieldpenetration" or missle_type ~= "hiddenstrike" then
 						array_of_chances[i] = "ac";
@@ -703,10 +704,10 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				utils.randommore ();
 				random_chance = math.random(1,100);
 				if chance_to_crit >= random_chance then
-					crit = 2;
+					crit = 2; --FIXME sniper crit 2.5
 					--utils.playSfx(media.sounds.sword_crit,1);
 				elseif chance_to_crit < random_chance then
-					crit = 1;
+					crit = 1; --FiXME sniper crit 1.25
 					--utils.playSfx(media.sounds.sword_impact,1);
 				end;
 				--/CRIT
@@ -4655,6 +4656,8 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[victim].torchlight = 10 + num[1];
 		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
 		table.insert(lights,{x=chars_mobs_npcs[victim].x,y=chars_mobs_npcs[victim].y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 128),typ="mob",index = victim});
+		--lights[#lights]["light"]:setDirection(0.1);
+		lights[#lights]["light"].setRange(512);
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 	end;
 

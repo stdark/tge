@@ -470,6 +470,13 @@ function helpers.cursorAtPartyMember (x,y)
 	return false;
 end;
 
+function helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y)
+	if helpers.cursorAtPartyMember (x,y) and chars_mobs_npcs[helpers.cursorAtMobID (x,y)].control == "ai" then
+		return true;
+	end;
+	return false;
+end;
+
 function helpers.cursorAtDeadPartyMember (x,y)
 	for i=1,chars do
 		if chars_mobs_npcs[i].x == x and chars_mobs_npcs[i].y == y and chars_mobs_npcs[i].status < 0 then
@@ -2285,7 +2292,7 @@ function helpers.castShadows ()
 	shadows = {};
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
-			if map[my+map_y][mx+map_x]>120 and map[my+map_y][mx+map_x] <= 220 and visibility_table[map[my+map_y][mx+map_x]] == 1 then --check in future
+			if ((map[my+map_y][mx+map_x] <= 1200 and visibility_table[map[my+map_y][mx+map_x]] == 1) or (map[my+map_y][mx+map_x] >= 1500)) then --check in future
 				local xx,yy =  helpers.hexToPixels(mx,my);
 				table.insert(shadows,{x=mx,y=my,shadow = lightWorld.newCircle(xx, yy, 20),typ="obj"});
 			end;

@@ -118,6 +118,8 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "wbook", "img/warbook.dds");
 			loader.newImage(media.images, "msg", "img/message.dds");
 			
+			--loader.newImage(media.images, "light", "img/light.dds");
+			
 			loader.newImage(media.images, "animatedobjects","/img/animatedobjects.dds");
 			loader.newImage(media.images, "animatedobjects_hex","/img/animatedobjects_hex.dds");
 			

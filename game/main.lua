@@ -79,7 +79,7 @@ function love.update(dt)
 		randomX = randomXX;
 		utils.initRandomize(randomX);
 	end;
-	utils.randommore(); 	-- init lua lua random generator
+	utils.randommore(); 	-- init lua random generator
 	utils.themeMusicVolumeDynamic ()
 	currentState.update(dt);
 	loveframes.update(dt);
