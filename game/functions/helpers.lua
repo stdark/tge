@@ -4396,8 +4396,8 @@ function helpers.recalcBattleStats (index)
 	--end;
 	-- belts,cloaks
 
-	chars_mobs_npcs[index].rng = 5+math.ceil((chars_mobs_npcs[index].spd+chars_mobs_npcs[index].dex)/10);
-	chars_mobs_npcs[index].sense =10+math.ceil(chars_mobs_npcs[index].sns/5);
+	chars_mobs_npcs[index].rng = 5 + math.ceil((chars_mobs_npcs[index].spd+chars_mobs_npcs[index].dex)/10);
+	chars_mobs_npcs[index].sense =10 + math.ceil(chars_mobs_npcs[index].sns/5);
 	helpers.recalcResistances(index);
 end;
 
@@ -4955,13 +4955,19 @@ function helpers.countCurrentHexPrice (index_hex,index_mob)
 		local hex_price = costs_table[map[way_of_the_mob[index_hex][2]][way_of_the_mob[index_hex][1]]];
 		local mobility_bonus = chars_mobs_npcs[index_mob].mobility_power;
 		local dex_bonus = math.ceil(chars_mobs_npcs[current_mob].dex/20);
-		local spd_bonus = math.ceil(chars_mobs_npcs[current_mob].spd/20);
+		local spd_bonus = math.ceil(chars_mobs_npcs[current_mob].spd/20); --FIXME: spd bonus: rt only?
+		local spell_penalty = 0;
+		if dlandscape_duration[chars_mobs_npcs[index].x][chars_mobs_npcs[index].y] == "ice" or dlandscape_duration[chars_mobs_npcs[index].x][chars_mobs_npcs[index].y] == "mud"
+		and chars_mobs_npcs[index_mob].mobility_dur == 0
+		then
+			spell_penalty = 10;
+		end; 
 		if not helpers.mobDependsGround(index_mob) then
 			hex_price = 5;
 			mobility_bonus = 0;
 			dex_bonus = 0;
 		end;
-		local price = math.max(5,20 + hex_price-mobility_bonus-dex_bonus-spd_bonus);
+		local price = math.max(5,20 + hex_price-mobility_bonus-dex_bonus-spd_bonus + spell_penalty);
 		return price
 	else
 		return 0

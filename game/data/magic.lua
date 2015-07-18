@@ -2655,7 +2655,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="sight",
+form="vray",
 },
 
 lightoftruth = {

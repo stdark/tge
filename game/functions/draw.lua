@@ -412,7 +412,7 @@ function draw.cursor ()
 					end;
 				end;
 				
-				if missle_type == "lightray" then
+				if missle_type == "streamoflight" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,11,0);
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
@@ -478,7 +478,7 @@ function draw.cursor ()
 					end;
 				end;
 				
-				if missle_type == "lightray" then
+				if missle_type == "streamoflight" then
 					local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,0);
 					for i=1,#boomarea do
 						draw.drawHex(boomarea[i].x,boomarea[i].y,cursor_danger,media.images.hex_ui);
@@ -1207,7 +1207,7 @@ function draw.boom ()
 		end;
 	end;
 				
-	if missle_type == "lightray" then
+	if missle_type == "streamoflight" then
 		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,0);
 		for i=1,#boomarea do
 			boomareas.lightAir (boomarea[i].x,boomarea[i].y);

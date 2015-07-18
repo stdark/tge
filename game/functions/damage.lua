@@ -2039,6 +2039,27 @@ function damage.multidamage () --FIXME two hexes
 		end;
 	end;
 	
+	if missle_type == "streamoflight" then
+		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,1);
+		for i=1,#boomarea do
+			for j=1,#chars_mobs_npcs do
+				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
+					local damageHP = damage.magicalRes (j,4+damage.damageRandomizator(current_mob,1,4)*num[1] + lvl[1],"light",false);
+					damage.HPminus(j,damageHP,true);
+					table.insert(damaged_mobs,j);
+					damage.mobDamaged(j,current_mob,damageHP);
+					exp_for_what(damageHP,current_mob)
+					local debuff,debuff2 = damage.applyConditionTwoFactors (j,lvl[1],num[1],"blind","light",false,false,0.5,true);
+					if debuff > 0 and debuff2 > 0 then
+						chars_mobs_npcs[j].flame_power = debuff;
+						chars_mobs_npcs[j].flame_dur = debuff2;
+						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.blinded[chars_mobs_npcs[j].gender]);
+					end;
+				end;
+			end;
+		end;
+	end;
+	
 	if missle_type == "bell" then
 		local boomarea = boomareas.waveArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,7,0);
 		for i=1,#boomarea do
