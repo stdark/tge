@@ -6283,6 +6283,7 @@ damage.weaponPassivesArray = {
 	mace={"crush"},
 	hammer={"crush","destroy"},
 	flail={"crush","destroy","lash","deblock"},
+	thmace={"hit","crush","destroy"},
   
 	battlestaff={"hit"},
 	magicalstaff={"hit"},

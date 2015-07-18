@@ -153,7 +153,7 @@ function path_finding (mode,ignore_mobs)
 			end;
 		end;
 		--FIXME nil
-		print(current_mob,point_to_go_x,point_to_go_y,atk_direction)
+		--print(current_mob,point_to_go_x,point_to_go_y,atk_direction)
 		point_to_go_x = rings[1][atk_direction].x;
 		point_to_go_y = rings[1][atk_direction].y;
 		--atk_dir_to_hex ();
@@ -172,7 +172,7 @@ function path_finding (mode,ignore_mobs)
 				atk_direction = 1;
 			end;
 			if not helpers.isAimOnMob (rings[1][counter].x,rings[1][counter].y) and helpers.passWalk(rings[1][counter].x,rings[1][counter].y) then
-				point_go_x = rings[1][atk_direction].x;
+				point_to_go_x = rings[1][atk_direction].x;
 				point_to_go_y = rings[1][atk_direction].y;
 				path_can_be_found = 1;
 				break;
@@ -369,7 +369,7 @@ function path_finding (mode,ignore_mobs)
 			end;
 			local hex_around = boomareas.smallRingArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y); -- rotation for 1st hex
 			for i=1,6 do
-				if hex_around[i].x == way_of_the_mob[#way_of_the_mob][1] and hex_around[i].y == way_of_the_mob[#way_of_the_mob][2] then
+			if hex_around[i].x == way_of_the_mob[#way_of_the_mob][1] and hex_around[i].y == way_of_the_mob[#way_of_the_mob][2] then
 					way_of_the_mob[#way_of_the_mob][6] = i;
 				end;
 			end;
@@ -393,7 +393,7 @@ function path_finding (mode,ignore_mobs)
 					end;
 				elseif way_of_the_mob[1][2]/2 ~= math.ceil(way_of_the_mob[1][2]/2) then
 					if way_of_the_mob[1][1]== chars_mobs_npcs[current_mob].x and way_of_the_mob[1][2]<chars_mobs_npcs[current_mob].y then
-						mob_rot=6;
+						mob_rot=1;
 					elseif way_of_the_mob[1][1]>chars_mobs_npcs[current_mob].x and way_of_the_mob[1][2]== chars_mobs_npcs[current_mob].y then
 						mob_rot=2;
 					elseif way_of_the_mob[1][1]== chars_mobs_npcs[current_mob].x and way_of_the_mob[1][2]>chars_mobs_npcs[current_mob].y then

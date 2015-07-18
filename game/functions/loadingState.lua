@@ -302,6 +302,7 @@ function loadingState.start(media, finishCallback)
 			loader.newSource(media.sounds, "drink", "sounds/drink.ogg");
 			loader.newSource(media.sounds, "chpok", "sounds/chpok.ogg");
 			loader.newSource(media.sounds, "grease", "sounds/grease.ogg");
+			loader.newSource(media.sounds, "pen", "sounds/pen.ogg");
 			
 			loader.newSource(media.sounds, "inv_sword_take", "sounds/inv_sword_take.ogg");
 			loader.newSource(media.sounds, "inv_axe_take", "sounds/inv_axe_take.ogg");

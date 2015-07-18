@@ -364,6 +364,14 @@ function playingState.load()
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
+		table.insert(chars_mobs_npcs,{uid=9,person="npc",control="ai",defaultai="cruiser",ai="stay",dangerai="away",x=38,y=38,rot=3,class="goblin",fraction="vagrants", party=2, name="Che Guevara", face = 8,
+		personality={
+		current={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		default={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		alternative={chat="cheguevara_quest_in_progress",etiquette = "criminal",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="disdain",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
+		}
+		});
 		table.insert(chars_mobs_npcs,{uid=2,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=20,y=10,rot=2,class="goblin",fraction="vagrants",  party=2, name="Ivan Susanin", face = 8,
 		personality={
 		current={chat="ivansusanin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
@@ -1243,16 +1251,25 @@ function playingState.update(dt)
 		if game_status ~= "inventory" and game_status ~= "alchemy" and game_status ~= "picklocking" and gamePstatus ~= "crafting" and game_status ~= "buying" and game_status ~= "showinventory" then
 			show_inventory_tips = 0;
 		end;
-		if game_status == "pathfinding" and global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y)) then
-			path_finding(0,0);
-		end;
-		if game_status == "pathfinding" and global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y)) then
-			if love.keyboard.isDown("lctrl") then
-				global.steal = true;
-			else
-				global.steal = false;
+		if path_status == 0 then
+			if game_status == "pathfinding" and global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" 
+			and (cursor_world_x ~= chars_mobs_npcs[current_mob].x or cursor_world_y ~= chars_mobs_npcs[current_mob].y)
+			and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y)) 
+			and (not helpers.cursorAtMob(cursor_world_x,cursor_world_y) or not helpers.cursorIsNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_world_x,cursor_world_y) or global.wheeled ~= 0)
+			then
+				path_finding(0,0);
 			end;
-			path_finding(1,0);
+			if game_status == "pathfinding" and global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false
+			and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y))
+			and (not helpers.cursorAtMob(cursor_world_x,cursor_world_y) or not helpers.cursorIsNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_world_x,cursor_world_y) or global.wheeled ~= 0)
+			then
+				if love.keyboard.isDown("lctrl") then
+					global.steal = true;
+				else
+					global.steal = false;
+				end;
+				path_finding(1,0);
+			end;		
 		end;
 		animation_fireburn:update(dt);
 		animation_flame:update(dt);
@@ -2638,7 +2655,13 @@ function playingState.mousereleased (x,y,button)
 					loveframes.util.RemoveAll();
 					chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"]["default"];
 					game_status = "neutral";
+					if global.switch_personality then
+						chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"][global.switch_personality];
+					end;
 					helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.suspicionsdiminished[chars_mobs_npcs[current_mob].gender]);
+				elseif chats.rules[index][current_questions[linenumber]].answer >= 8001 then
+					helpers.prepareForAdding(chats.rules[index][current_questions[linenumber]].answer - 8000);
+					helpers.addToActionLog(lognames.actions.party_got_a_quest);
 				end;
 			else
 				global_answer = "";
@@ -2750,6 +2773,7 @@ function playingState.mousereleased (x,y,button)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "thsword" or chars_mobs_npcs[current_mob]["equipment"].lh==0)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "poleaxe"  or chars_mobs_npcs[current_mob]["equipment"].lh==0)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "staff"  or chars_mobs_npcs[current_mob]["equipment"].lh==0)
+		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "thmace"  or chars_mobs_npcs[current_mob]["equipment"].lh==0)
 		and (inventory_ttx[list[holding_smth].ttxid].subclass ~= "flagpole" or chars_stats[current_mob].lvl_flagpoles>=3)
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "cantbeequiped"
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "none"
@@ -2912,6 +2936,8 @@ function playingState.mousereleased (x,y,button)
 		if helpers.inSlot("lh") and chars_mobs_npcs[current_mob]["equipment"].lh == 0
 		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "thsword")
 		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "poleaxe")
+		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "thmace")
+		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "thmace")
 		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "staff")
 		and (chars_mobs_npcs[current_mob]["equipment"].rh==0 or (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].subclass ~= "flagpole" or chars_stats[current_mob].lvl_flagpoles >= 3) )
 		and inventory_ttx[list[holding_smth].ttxid].skill ~= "cantbeequiped"
@@ -5499,7 +5525,7 @@ function  playingState.mousepressed(x,y,button)
 		if mX>x and mX<=x+460 and mY>y+20 and mY<y+680 and global.questbook_page > 1 then
 			utils.playSfx(media.sounds.bookpage, 1);
 			global.questbook_page = global.questbook_page - 1;
-		elseif  mX >= 460 and mX < x+960 and mY > y+20 and mY < y+680 and global.questbook_page < #party.quests then
+		elseif  mX >= x+460 and mX < x+960 and mY > y+20 and mY < y+680 and global.questbook_page < #party.quests then
 			utils.playSfx(media.sounds.bookpage, 1);
 			global.questbook_page = global.questbook_page + 1;
 		end;
@@ -6301,10 +6327,13 @@ function  playingState.mousepressed(x,y,button)
 		end;
 	----//////
 
-		if love.mouse.isDown("m") and game_status == "pathfinding" then
-			global.wheeled=0;
-		end;
+		--if love.mouse.isDown("m") and game_status == "pathfinding" then
+			--global.wheeled=0;
+		--end;
 		--close combat
+		--if love.mouse.isDown("l") then
+			--print("#way_of_the_mob",#way_of_the_mob);
+		--end;
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
 		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "pathfinding" and #way_of_the_mob == 0 ))
 		and not love.keyboard.isDown("lctrl") then
@@ -6492,8 +6521,10 @@ function  playingState.mousepressed(x,y,button)
 			helpers.globalRandom();
 		end;
 
-		if love.mouse.isDown("l") and mY < global.screenHeight-160 and chars_mobs_npcs[current_mob].control=="player" and path_status==1 and game_status == "pathfinding" and aim_on_mob==0  then --GO!
-			tmp= chars_mobs_npcs[current_mob].sprite .. "_walk"
+		if love.mouse.isDown("l") and mY < global.screenHeight-160 and chars_mobs_npcs[current_mob].control=="player" and path_status==1 and game_status == "pathfinding"
+		 --and not helpers.cursorAtMob (cursor_world_x,cursor_world_y)  
+		 then --GO!
+			tmp = chars_mobs_npcs[current_mob].sprite .. "_walk"
 			mob_walk=loadstring("return " .. tmp)()
 			animation_walk = anim8.newAnimation(mob_walk[way_of_the_mob[#way_of_the_mob][6] ]("5-8",1), 0.075, "pauseAtEnd")
 			if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and chars_mobs_npcs[previctim].status==1 then
@@ -8027,6 +8058,7 @@ function chat (index)
 	victim = index;
 	chats.load ();
 	chat_log = {};
+	global.switch_personalty = false;
 	global_answer = chats.answers[chars_mobs_npcs[victim]["personality"]["current"].chat][1];
 	local a2log = chars_mobs_npcs[victim].name .. ": " .. global_answer; --FIXME for buildings
 	table.insert(chat_log,a2log);
@@ -8421,7 +8453,7 @@ function restoreRT ()
 				end
 				if chars_mobs_npcs[i].bleeding > 0 then
 					local victim_name = helpers.mobName(i);
-					helpers.addToActionLog( victim_name .. lognames.actions.gotdmg[chars_mobs_npcs[i].gender]  .. bleeding .. lognames.actions.metr  .. lognames.actions.ofhp .. types_of_damage.poison .. types_of_damage.dot);
+					helpers.addToActionLog( victim_name .. lognames.actions.gotdmg[chars_mobs_npcs[i].gender]  .. lognames.actions.bleeding .. lognames.actions.metr  .. lognames.actions.ofhp .. types_of_damage.poison .. types_of_damage.dot);
 					damage.HPminus(i,bleeding);
 					chars_mobs_npcs[i].bleeding = chars_mobs_npcs[i].bleeding-1;
 					boomareas.bloodGround (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);

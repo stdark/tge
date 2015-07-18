@@ -250,7 +250,7 @@ end;
 function helpers.cursorIsNear(x1,y1,x2,y2)
 	local ring = boomareas.smallRingArea(x1,y1);
 	for i=1,#ring do
-		if ring.x == x1 and ring.y == y2 then
+		if ring[i].x == x2 and ring[i].y == y2 then
 			return true;
 		end;
 	end;
@@ -838,6 +838,32 @@ function helpers.bestAttackDirection (agressor,x,y)
 	end;
 	return atk_direction;
 end;
+
+function helpers.bestAttackDirection (agressor,x,y)
+	if chars_mobs_npcs[agressor].y == y and chars_mobs_npcs[agressor].x > x then
+		atk_direction = 2;
+	elseif chars_mobs_npcs[agressor].y == y and chars_mobs_npcs[agressor].x < x then
+		atk_direction = 5;
+	elseif chars_mobs_npcs[agressor].y < y and chars_mobs_npcs[agressor].x >= x and helpers.mobevenornot (agressor) then
+		atk_direction = 1;
+	elseif chars_mobs_npcs[agressor].y < y and chars_mobs_npcs[agressor].x < x and helpers.mobevenornot (agressor) then
+		atk_direction = 6;
+	elseif chars_mobs_npcs[agressor].y < y and chars_mobs_npcs[agressor].x > x and not helpers.mobevenornot (agressor) then
+		atk_direction = 1;
+	elseif chars_mobs_npcs[agressor].y < y and chars_mobs_npcs[agressor].x <= x and not helpers.mobevenornot (agressor) then
+		atk_direction = 6;
+	elseif chars_mobs_npcs[agressor].y > y and chars_mobs_npcs[agressor].x >= x and helpers.mobevenornot (agressor) then
+		atk_direction = 3;
+	elseif chars_mobs_npcs[agressor].y > y and chars_mobs_npcs[agressor].x < x and helpers.mobevenornot (agressor) then
+		atk_direction = 4;
+	elseif chars_mobs_npcs[agressor].y > y and chars_mobs_npcs[agressor].x > x and not helpers.mobevenornot (agressor) then
+		atk_direction = 3;
+	elseif chars_mobs_npcs[agressor].y > y and chars_mobs_npcs[agressor].x <= x and not helpers.mobevenornot (agressor) then
+		atk_direction = 4;
+	end;
+	return atk_direction;
+end;
+
 
 function helpers.mobName(index)
 	if chars_mobs_npcs[index].person == "char" or chars_mobs_npcs[index].person == "npc" then
@@ -4957,7 +4983,7 @@ function helpers.countCurrentHexPrice (index_hex,index_mob)
 		local dex_bonus = math.ceil(chars_mobs_npcs[current_mob].dex/20);
 		local spd_bonus = math.ceil(chars_mobs_npcs[current_mob].spd/20); --FIXME: spd bonus: rt only?
 		local spell_penalty = 0;
-		if dlandscape_duration[chars_mobs_npcs[index].x][chars_mobs_npcs[index].y] == "ice" or dlandscape_duration[chars_mobs_npcs[index].x][chars_mobs_npcs[index].y] == "mud"
+		if dlandscape_duration[chars_mobs_npcs[index_mob].x][chars_mobs_npcs[index_mob].y] == "ice" or dlandscape_duration[chars_mobs_npcs[index_mob].x][chars_mobs_npcs[index_mob].y] == "mud"
 		and chars_mobs_npcs[index_mob].mobility_dur == 0
 		then
 			spell_penalty = 10;
@@ -5657,4 +5683,23 @@ function helpers.switchToPathfinding ()
 	end;
    trace.chars_around();
    trace.clear_rounded();
+end;
+
+function helpers.prepareForAdding(from_chat_id)
+	local current_stages = quests.data[from_chat_id].stages;
+	local q_id = 1;
+	for i=1,#quests.data do
+		if quests.data[i].qid == from_chat_id then
+			q_id = quests.data[i].qid;
+			break;
+		end;
+	end;
+	helpers.addToJournal(q_id,current_stages);
+	global.switch_personality = quests.data[from_chat_id].personality;
+	print("global.switch_personality",global.switch_personality);
+end;
+
+function helpers.addToJournal(q_id,current_stages)
+	table.insert(party.quests,{id=q_id,stages=current_stages});
+	utils.playSfx(media.sounds.pen,1);
 end;

@@ -4932,7 +4932,8 @@ function draw.ui ()
 	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing")  and global.status ~= "mindgame" then
 		love.graphics.draw(media.images.ui, bin_icon, global.screenWidth-180, global.screenHeight-160,0);
 	end;	
-	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and game_status ~= "chat" and chars_stats[current_mob].spellbook == 1 and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing" or game_status == "mindgame") then
+	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and chars_stats[current_mob].spellbook == 1 
+	and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing" or game_status == "mindgame") then
 		love.graphics.draw(media.images.ui, spellbook_icon, global.screenWidth-280,global.screenHeight-160); -- draw spellbook icon at HUD
 	end;	
 	if chars_mobs_npcs[current_mob].person == "char" and chars_mobs_npcs[current_mob].control == "player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing")  and global.status ~= "mindgame" then
