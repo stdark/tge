@@ -2041,6 +2041,10 @@ function playingState.keypressed(key, unicode)
 		end;
 	end;
 	
+	if love.keyboard.isDown("lctrl") and key == 'w' then
+		reloadBuildingsData ();
+	end;
+	
 	if love.keyboard.isDown("lctrl") and key == 'k'  then
 		add_bg_x=0;
 		add_bg_y=0;
@@ -2069,12 +2073,6 @@ function playingState.keypressed(key, unicode)
 		boxes();
 	end;
 	
-	if love.keyboard.isDown("lctrl") and key == 't' and editor_status == "background" then
-		flood_back();
-	end;
-	if love.keyboard.isDown("lctrl") and key == 'y' and editor_status == "background" then
-		flood_back_alt();
-	end;
 	if love.keyboard.isDown("lctrl") and key == 's' then
 		save();
 	end;  
@@ -2233,8 +2231,13 @@ function playingState.keypressed(key, unicode)
 			flood_map();
 		elseif editor_status == "subhexes" then
 			flood_submap();
+		elseif editor_status == "background" then
+			flood_back();
+		elseif editor_status == "background" and love.keyboard.isDown("lalt") then
+			flood_back_alt();
 		end;
 	end;
+	
 	if love.keyboard.isDown("lctrl") and key == 'u' then
 		loveframes.util.RemoveAll();
 		editor_status = "subhexes";
@@ -2242,9 +2245,7 @@ function playingState.keypressed(key, unicode)
 		draw_buttons ();
 	end;
 	
-	if love.keyboard.isDown("lctrl") and key == 'd' and editor_status == "background" then
-		flood_back();
-	end;
+
 	if love.keyboard.isDown("lctrl") and key == 'm' then
 		editor_status = "minimap";
 	end;
@@ -3839,7 +3840,7 @@ function draw_papermap ()
 					love.graphics.setColor(255, 255, 255,255);
 					love.graphics.draw(media.images.hex_ui, minimap_hexes[minimap_table[map[my][mx]]],((mx  -1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 				else
-					love.graphics.draw(media.imageshex_ui, minimap_hexes[13],((mx  -1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
+					love.graphics.draw(media.images.hex_ui, minimap_hexes[13],((mx  -1)*tile_w_paper)+x-80, (my-1)*tile_h_paper*0.75+y-15,0,0.15);
 				end;
 			else
 				if map[my][mx] <= 1200 then
@@ -4041,8 +4042,8 @@ function playingState.draw()
 		love.graphics.print("[LCTRL]+[Q]/[LCTRL]+[A] - change row of hexes in 'edit hexes mode' (сменить ряд гексов в режиме редактирования оных)", 40,50);
 		love.graphics.print("[LCTRL]+[0]-[LCTRL]+[9] - change hex/tile brush (сменить кисть тайла/гекса)", 40,70);
 		love.graphics.print("[LCTRL]+[F] - flood hexagonal grid with current hex(залить гексагональную сетку выбранным гексом)", 40,90);
-		love.graphics.print("[LCTRL]+[T] - flood background with current tile(залить подложку выбранным тайлом)", 40,110);
-		love.graphics.print("[LCTRL]+[Y] - flood background with current tile (alt) (залить подложку выбранным тайлом (доп.))", 40,130);
+		love.graphics.print("[LCTRL]+[F] - flood background with current tile(залить подложку выбранным тайлом)", 40,110);
+		love.graphics.print("[LCTRL]+[LALT]+[F] - flood background with current tile (alt) (залить подложку выбранным тайлом (доп.))", 40,130);
 		love.graphics.print("[LCTRL]+[J]/[ESC] - hex editor mode (режим редактирования гексагональной сетки)", 40,150);
 		love.graphics.print("[LCTRL]+[K] - background tile editor mode (режим редактирования подложки)", 40,170);
 		love.graphics.print("[LCTRL]+[B] - buildings mode (режим расстановки зданий)", 40,190);
@@ -4067,7 +4068,8 @@ function playingState.draw()
 		love.graphics.print("[LCTRL]+[U] - sub-hexmode (режим правки подкарты)", 40,570);
 		love.graphics.print("[LCTRL]+[T] - special objects (специальные объекты) --under construction (в разработке)", 40,590);
 		love.graphics.print("[LCTRL]+[D] - decals (декали) --under construction (в разработке)", 40,610);
-		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,630);
+		love.graphics.print("[LCTRL]+[W] - update buildings data (обновить данные зданий)", 40,630);
+		love.graphics.print("[ESC] - hex mode (режим правки гексов)", 40,770);
 	end;
 	if editor_status == "background" then
 		love.graphics.print("tile type selected:", 100, 10);
@@ -4337,6 +4339,14 @@ function checkHerbs()
 			end;
 		end;
 	end;
+end;
+
+function reloadBuildingsData ()
+	print("BData reloaded");
+	package.loaded[ 'data.buildings' ] = nil;
+	require 'data.buildings';
+	buildings_stats = nil;
+	buildings_data ();
 end;
 
 return playingState
