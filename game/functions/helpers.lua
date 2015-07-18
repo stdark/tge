@@ -2318,7 +2318,7 @@ function helpers.castShadows ()
 	shadows = {};
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
-			if ((map[my+map_y][mx+map_x] <= 1200 and visibility_table[map[my+map_y][mx+map_x]] == 1) or (map[my+map_y][mx+map_x] >= 1500)) then --check in future
+			if map[my+map_y][mx+map_x] == 10 or ((map[my+map_y][mx+map_x] <= 1200 and visibility_table[map[my+map_y][mx+map_x]] == 1) or (map[my+map_y][mx+map_x] >= 1500)) then --check in future
 				local xx,yy =  helpers.hexToPixels(mx,my);
 				table.insert(shadows,{x=mx,y=my,shadow = lightWorld.newCircle(xx, yy, 20),typ="obj"});
 			end;
@@ -5702,4 +5702,13 @@ end;
 function helpers.addToJournal(q_id,current_stages)
 	table.insert(party.quests,{id=q_id,stages=current_stages});
 	utils.playSfx(media.sounds.pen,1);
+end;
+
+function helpers.questUpdated()
+end;
+
+function helpers.checkInventoryForAQuestItem(itemid) --calls from put to inventory, need check for 1st time
+	for i=1,chars_mobs_npcs[current_mob].inventory_list_do do
+		--if then end
+	end;
 end;

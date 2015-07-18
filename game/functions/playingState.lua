@@ -176,13 +176,15 @@ function playingState.load()
 	cursor_world_y=1;
 	global.rem_cursor_world_x = cursor_world_x;
 	global.rem_cursor_world_y = cursor_world_y;
+	global.mov_cursor_world_x = cursor_world_x;
+	global.mov_cursor_world_y = cursor_world_y;	
 	global.arrow_status = false;
 	global.arrow_status_checked = false;
-	path_status=0;
+	path_status = 0;
 
 	hex_to_check_next_wave={};
 	find_the_path=0;
-	way_of_the_mob={};
+	way_of_the_mob = {};
 
 	mob_add_mov_x=0;
 	mob_add_mov_y=0;
@@ -983,9 +985,6 @@ function playingState.update(dt)
 		end
 --coordinates of cursor
 		local mob_range = chars_mobs_npcs[current_mob].rng-walked_before;
-		if math.sqrt(math.abs(chars_mobs_npcs[current_mob].x-cursor_world_x)^2 + math.abs(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<mob_range then
-			path_status = 0;
-		end;
 		mX, mY = love.mouse.getPosition();
 		cursor_world_x,cursor_world_y = helpers.cursorWorldCoordinates ();
 		if game_status == "mindgame" then
@@ -1251,15 +1250,15 @@ function playingState.update(dt)
 		if game_status ~= "inventory" and game_status ~= "alchemy" and game_status ~= "picklocking" and gamePstatus ~= "crafting" and game_status ~= "buying" and game_status ~= "showinventory" then
 			show_inventory_tips = 0;
 		end;
-		if path_status == 0 then
-			if game_status == "pathfinding" and global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" 
+		if game_status == "pathfinding" and ((global.mov_cursor_world_x ~= cursor_world_x or global.mov_cursor_world_y ~= cursor_world_y) or path_status == 0) then
+			if global.status == "battle" and chars_mobs_npcs[current_mob].control=="player" 
 			and (cursor_world_x ~= chars_mobs_npcs[current_mob].x or cursor_world_y ~= chars_mobs_npcs[current_mob].y)
 			and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y)) 
 			and (not helpers.cursorAtMob(cursor_world_x,cursor_world_y) or not helpers.cursorIsNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_world_x,cursor_world_y) or global.wheeled ~= 0)
 			then
 				path_finding(0,0);
 			end;
-			if game_status == "pathfinding" and global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false
+			if global.status == "peace" and chars_mobs_npcs[current_mob].control=="player" and (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false
 			and (not helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y)  or helpers.cursorAtNonControlledPartyMember(cursor_world_x,cursor_world_y))
 			and (not helpers.cursorAtMob(cursor_world_x,cursor_world_y) or not helpers.cursorIsNear(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_world_x,cursor_world_y) or global.wheeled ~= 0)
 			then
@@ -1269,8 +1268,11 @@ function playingState.update(dt)
 					global.steal = false;
 				end;
 				path_finding(1,0);
-			end;		
+			end;	
 		end;
+		global.mov_cursor_world_x = cursor_world_x;
+		global.mov_cursor_world_y = cursor_world_y;	
+
 		animation_fireburn:update(dt);
 		animation_flame:update(dt);
 		animation_poisoned:update(dt);
@@ -1596,7 +1598,15 @@ function playingState.update(dt)
 			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball"
 			or missle_type=="icefield" then
 				missle_fly();
-			elseif magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy" then
+			elseif magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy" then --FIXME check!
+				boomy= chars_mobs_npcs[victim].y;
+				boomx= chars_mobs_npcs[victim].x;
+				draw.boom();
+			elseif magic.spell_tips[missle_type].form == "deadally" and helpers.cursorAtDeadPartyMember (x,y) then
+				boomy= chars_mobs_npcs[victim].y;
+				boomx= chars_mobs_npcs[victim].x;
+				draw.boom();
+			elseif magic.spell_tips[missle_type].form == "ally" and helpers.cursorAtPartyMember (cursor_world_x,cursor_world_y) then
 				boomy= chars_mobs_npcs[victim].y;
 				boomx= chars_mobs_npcs[victim].x;
 				draw.boom();
@@ -8045,9 +8055,7 @@ function mobMoving()
 				path_status = 0;
 				global.hang = false;
 			end;
-			for f=1,#way_of_the_mob do
-				table.remove(way_of_the_mob,1);
-			end;
+			way_of_the_mob = {};
 		end;
 		global.timers.n_timer=0;
 	end;
@@ -9200,12 +9208,14 @@ function playingState.draw()
 	draw.fogOfWar();
 	draw.cursor();
 	draw.line();
-	draw.objects();
-	--for i=1,#shadows do
-		--local x,y =  helpers.hexToPixels(shadows[i].x,shadows[i].y);
-		--love.graphics.circle("fill", x, y, 20);
+	--if shadows_back then
+		--shadows = shadows_back;
 	--end;
+	--lightWorld.drawShadow();
+	draw.objects();
 
+	--shadows_back = shadows;
+	--shadows = {};
 	lightWorld.drawShadow();
 	lightWorld.drawGlow();
 	 --REF

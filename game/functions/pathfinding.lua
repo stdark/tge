@@ -324,9 +324,7 @@ function path_finding (mode,ignore_mobs)
 			wave = wave+1;
 		end;
 --drawing found path
-		for f=1,#way_of_the_mob do
-			table.remove(way_of_the_mob,1);
-		end;
+		way_of_the_mob = {};
 		if path_status == 1  then
 			current_point_x=dest_point_x;
 			current_point_y=dest_point_y;
