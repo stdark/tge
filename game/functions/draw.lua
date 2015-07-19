@@ -13,10 +13,21 @@ function draw.background ()
 	love.graphics.setColor(255, 255, 255);
 end
 
+function draw.fogOfWar(x,y)
+	if darkness[1][y][x] == 0 then
+		love.graphics.setColor(255, 255, 255);	
+	elseif darkness[1][y][x] == 1 then
+		love.graphics.setColor(125, 125, 125);	
+	elseif darkness[1][y][x] == 2 then
+		love.graphics.setColor(0, 0, 0);	
+	end;
+end;
+
 function draw.map()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
 			--draw.irradiation(mx,my);
+			draw.fogOfWar(mx+map_x,my+map_y)
 			if map[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] < 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
@@ -48,21 +59,10 @@ function draw.map()
 	love.graphics.setColor(255, 255, 255);
  end;
 
-function draw.black()
-	if game_status == "sensing" then
-		for my=1, math.min(map_display_h, map_h-map_y) do
-			for mx=1, math.min(map_display_w, map_w-map_x) do
-				if darkness[1][my+map_y][mx+map_x] > 0 and not helpers.ifCursorIsNear () then
-					draw.drawHex(mx+map_x,my+map_y,tile_black,media.images.hex_ui);
-				end;	        	
-			end;
-		end;
-	end;
- end;
-
 function draw.submap()
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
+			draw.fogOfWar(mx+map_x,my+map_y);
 			if submap[my+map_y][mx+map_x] > 20 and submap[my+map_y][mx+map_x] <= 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
@@ -2830,6 +2830,7 @@ function draw.objects ()
 					love.graphics.setColor(255, 255, 255);	
 				end;  
 			end;
+			draw.fogOfWar(mx+map_x,my+map_y);
 			for j=1,#bags_list do
 				if bags_list[j].typ == "bag" then
 					addx = 16;
@@ -2862,7 +2863,8 @@ function draw.objects ()
 					addx = 64;
 					addy = 96;
 				end;
-				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				--if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and helpers.bagIsVisible(j) then
+				if bags_list[j].xi == mx+map_x and bags_list[j].yi == my+map_y and helpers.bagIsVisible(j) then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, bags_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
@@ -2908,14 +2910,16 @@ function draw.objects ()
 						_animation = value;
 					end;
 				end;
-				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and objects_list[j].typ ~= "fountain" and not _animation then
+				--if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and objects_list[j].typ ~= "fountain" and not _animation then
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and objects_list[j].typ ~= "fountain" and not _animation then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.tmpobjs, objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w-addx, (my-1)*tile_h*0.75+top_space-addy);
 					else  
 						love.graphics.draw(media.images.tmpobjs,objects_list[j].img,((mx-1)*tile_w+left_space+tile_hw)-tile_w/2-addx, (my-1)*tile_h*0.75+top_space-addy);
 					end;
 				end;
-				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and _animation then
+				--if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and darkness[1][my+map_y][mx+map_x] == 0 and _animation then
+				if objects_list[j].xi == mx+map_x and objects_list[j].yi == my+map_y and _animation then
 					local animation = loadstring("return " .. _animation)();
 					local image =  media.images.animatedobjects_hex;
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
@@ -2926,21 +2930,22 @@ function draw.objects ()
 				end;
 				
 			end;
+			if dlandscape_obj[my+map_y][mx+map_x] == "stone" then 
+				if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+					love.graphics.draw(media.images.boom, stonewall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-95);
+				else
+					love.graphics.draw(media.images.boom, stonewall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-95);
+				end;
+			end;
+			if dlandscape_obj[my+map_y][mx+map_x] == "pit" then
+				if (my+map_y)/2 == math.ceil((my+map_y)/2) then
+					love.graphics.draw(media.images.boom, pitfall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-85);
+				else
+					love.graphics.draw(media.images.boom, pitfall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-85);
+				end;
+			end;
+			love.graphics.setColor(255, 255, 255);	
 			if darkness[1][my+map_y][mx+map_x] == 0 then
-				if dlandscape_obj[my+map_y][mx+map_x] == "stone" then 
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.boom, stonewall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-95);
-					else
-						love.graphics.draw(media.images.boom, stonewall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-95);
-					end;
-				end;
-				if dlandscape_obj[my+map_y][mx+map_x] == "pit" then
-					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
-						love.graphics.draw(media.images.boom, pitfall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-85);
-					else
-						love.graphics.draw(media.images.boom, pitfall_, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w/2, (my-1)*tile_h*0.75+top_space-85);
-					end;
-				end;
 				if dlandscape_obj[my+map_y][mx+map_x] == "ice" then
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						love.graphics.draw(media.images.boom, ice, ((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-85);
@@ -3380,7 +3385,7 @@ function draw.mobs (mx,my,highlight,index)
 			--if highlight then
 				--love.graphics.setColor(125, 125, 0,255);
 			--end;
-			
+			draw.fogOfWar(mx+map_x,my+map_y);
 			if game_status =="neutral"
 			or game_status == "premoving" --ai only
 			or (game_status == "moving" and i ~= current_mob)
@@ -3418,10 +3423,10 @@ function draw.mobs (mx,my,highlight,index)
 			or (game_status == "damage" and i ~= victim)
 			or (game_status == "multidamage" and damaged==0)
 			or (i ~= current_mob and i ~= victim and damaged==0) then
-				if i == selected_mob and darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0  then
+				if i == selected_mob and darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] < 2 then
 					love.graphics.draw(media.images.hex, cursor_white,mobto_hex_x-tile_w,mobto_hex_y+86); -- selection from portraits marked
 				end
-				if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ]==0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
+				if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ] < 2 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
 					if chars_mobs_npcs[i].control=="player" and i == current_mob then --mark player character whoose turn is now
 						love.graphics.draw(media.images.hex_ui, cursor_yellow,mobto_hex_x-tile_w,mobto_hex_y+86); --current char marked
 					end;
@@ -3451,7 +3456,7 @@ function draw.mobs (mx,my,highlight,index)
 					elseif chars_mobs_npcs[i].stealth > 0 then
 						love.graphics.setColor(125, 125, 125, 150);
 					end;
-				if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
+				if chars_mobs_npcs[i].control=="player" or (darkness[1][chars_mobs_npcs[i].y ][chars_mobs_npcs[i].x ] < 2 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
 					local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 					local img_mob_base=loadstring("return " .. tmpi)();
 					if global.use_walk_animation then
@@ -3515,7 +3520,7 @@ function draw.mobs (mx,my,highlight,index)
 				end;
 			elseif game_status == "missle" then
 			elseif game_status == "multidamage" then
-				if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
+				if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] < 2 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
 					if chars_mobs_npcs[victim].freeze==0 and chars_mobs_npcs[victim].stone==0 then
 						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 						local img_mob_base = loadstring("return " .. tmpi)();
@@ -4910,7 +4915,7 @@ function draw.ui ()
 	   love.graphics.setColor(255, 255, 255);
 	end;]]
 	draw.miniLog ();
-	if chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" and game_status ~= "chat" and game_status ~= "mindgame" and global.status ~= "mindgame" then
+	if chars_mobs_npcs[current_mob].person=="char" and chars_mobs_npcs[current_mob].control=="player" and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing") then
 		love.graphics.draw(media.images.ui, warbook_icon, global.screenWidth-200,global.screenHeight-200); -- draw warbook icon at HUD
 		love.graphics.draw(media.images.ui, questbook_icon, global.screenWidth-330,global.screenHeight-185); -- draw questbook icon at HUD
 		if game_status == "neutral" then
@@ -5818,7 +5823,7 @@ function draw.mindway ()
 	end;
 end;
 
-function draw.fogOfWar()
+function draw.fogOfWar_() --hexes, not uising
 	if game_status ~= "sensing" then
 		trace.wizardEye ();
 	end;

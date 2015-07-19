@@ -115,13 +115,15 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 				if math.sqrt((all_ground_hexes[id_of_hex].x-chars_mobs_npcs[index].x)^2+(all_ground_hexes[id_of_hex].y-chars_mobs_npcs[index].y)^2) > chars_mobs_npcs[index].sense then
 					break;
 				end;
-				local at_door,trash,trash = helpers.cursorAtClosedDoor(spoint_x,spoint_y);
+				local at_door,trash,trash = helpers.cursorAtClosedDoor(all_ground_hexes[id_of_hex].x,all_ground_hexes[id_of_hex].y);
 				if at_door then
 					if chars_mobs_npcs[index].control == "player" then
 						darkness[chars_mobs_npcs[index].party][all_ground_hexes[id_of_hex].y ][all_ground_hexes[id_of_hex].x ] = 0;
 					elseif chars_mobs_npcs[index].control == "ai" then
 						darkness[chars_mobs_npcs[index].party][all_ground_hexes[id_of_hex].y ][all_ground_hexes[id_of_hex].x ] = 0;
 					end;
+					untraceable = 1;
+					hexes_to_sense[i][2] = 1;
 					break;
 				end;
 				if all_ground_hexes[id_of_hex].visibility == 1 then

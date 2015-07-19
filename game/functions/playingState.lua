@@ -1682,8 +1682,8 @@ function array_of_map ()
 			local _visibility = 0;
 			local _pass = 0;
 			if map[mx][my] <= 1200 then
-				visibility = visibility_table[map[mx][my]];
-				pass = heights_table[map[mx][my]];
+				_visibility = visibility_table[map[mx][my]];
+				_pass = heights_table[map[mx][my]];
 				if dlandscape_obj[mx][my] == "stone" then
 					_pass = 2;
 					_visibility = 1;
@@ -2661,7 +2661,7 @@ function playingState.mousereleased (x,y,button)
 					--global.status = "battle"; --time to charm stun sleep paralyse
 					--call guards
 					--may be per party?
-				elseif chats.rules[index][current_questions[linenumber]].answer == 7777 then
+				elseif chats.rules[index][current_questions[linenumber]].answer == 7777 then --after thievery save thrown
 					loveframes.util.RemoveAll();
 					chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"]["default"];
 					game_status = "neutral";
@@ -2669,6 +2669,14 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"][global.switch_personality];
 					end;
 					helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.suspicionsdiminished[chars_mobs_npcs[current_mob].gender]);
+				elseif chats.rules[index][current_questions[linenumber]].answer == 7778 then -- stopping the chat
+					loveframes.util.RemoveAll();
+					chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"]["default"];
+					game_status = "neutral";
+					if global.switch_personality then
+						chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"][global.switch_personality];
+					end;
+					helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.stoppedthechat[chars_mobs_npcs[current_mob].gender]);
 				elseif chats.rules[index][current_questions[linenumber]].answer >= 8001 then
 					helpers.prepareForAdding(chats.rules[index][current_questions[linenumber]].answer - 8000);
 					helpers.addToActionLog(lognames.actions.party_got_a_quest);
@@ -7826,6 +7834,7 @@ function mobMoving()
 			end;
 		end;
 		walked_before = walked_before + 1;
+		--trace.all_to_darkness(); --need or not?
 		if global.status == "peace" then
 			calendar.add_time_interval(calendar.delta_walk_in_peace);
 		end;
@@ -7968,10 +7977,14 @@ function mobMoving()
 		end;
 		if path_counter == 0 and trapped ~= 1 then
 			chars_mobs_npcs[current_mob].waterwalking = 0;
-			trace.chars_around();
-			trace.first_watch(current_mob);
-			trace.clear_rounded();
+			trace.all_to_darkness();
+			--trace.chars_around();
+			if chars_mobs_npcs[current_mob].control ~= "player" then
+				trace.first_watch(current_mob);
+				trace.clear_rounded();
+			end;
 			if chars_mobs_npcs[current_mob].control == "player" then
+				helpers.neutralWatch ();
 				helpers.cam_to_mob (current_mob);
 			end;
 			helpers.findShadows();
@@ -9205,7 +9218,7 @@ function playingState.draw()
 			draw.way();
 		end;
 	end;
-	draw.fogOfWar();
+	--draw.fogOfWar();
 	draw.cursor();
 	draw.line();
 	--if shadows_back then
@@ -9287,7 +9300,7 @@ function playingState.draw()
 	loveframes.draw();
 
 	local x,y = helpers.centerObject(media.images.inv1);
-	--draw.black();
+
 	   -- draw Canvas --REF
   -- love.graphics.setCanvas()
   -- love.graphics.draw(myCanvas)
