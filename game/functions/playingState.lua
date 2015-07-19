@@ -1783,19 +1783,6 @@ end;
 
 function playingState.keyreleased(key, unicode)
 	
-	if key == "x" and find_the_path == 0 and (game_status ~= "neutral" and game_status ~= "sensing")then
-		for j=1,#chars_mobs_npcs do
-			if chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[j].control == "player" then
-			elseif chars_mobs_npcs[j].person == "mob" then
-				chars_mobs_npcs[j].hp = 0;
-				damage.deadNow (j);
-			end;
-		end;
-		current_mob = 4;
-		game_status = "neutral";
-	end;
-	
-	
 	if key == " " and chars_mobs_npcs[current_mob].control == "player" and game_status == "moving" then -- FIXME debug, for interrupt turn funtions
 		helper.interrupt();
 	end;
@@ -1804,7 +1791,7 @@ function playingState.keyreleased(key, unicode)
 		mindgame.passTurn()
 	end;
 
-	if key == "o" then
+	if key == "l" then
 		if game_status ~= "pause" then
 			tmp_game_status = game_status;
 			game_status = "pause";
@@ -1852,8 +1839,9 @@ function playingState.keyreleased(key, unicode)
 		if key=="r" then
 			love.audio.resume(media.sounds.battle, 0);
 		end;
-		if key=="l" then
-			--utils.playSfx(media.sounds.battle, 1);
+		if key=="o" then
+			draw.options_buttons();
+			game_status = "options";
 		end;
 		if key=="h" and chars_mobs_npcs[current_mob].person == "char" and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "skills" or game_status == "stats") then
 			helpers.harvestOne (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
@@ -2195,6 +2183,7 @@ function playingState.keyreleased(key, unicode)
 		or game_status == "calendar"
 		or game_status == "obelisk"
 		or game_status == "well"
+		or game_status == "options"
 		)
 		and   chars_mobs_npcs[current_mob].control=="player"
 		and holding_smth==0
@@ -6550,18 +6539,18 @@ function  playingState.mousepressed(x,y,button)
 			elseif not helpers.cursorAtMob (cursor_world_x,cursor_world_y) or chars_mobs_npcs[previctim].status<1 then
 				going_to_hit=0
 			end;
-		   if chars_mobs_npcs[current_mob].wingsoflight == 0 then
+			if chars_mobs_npcs[current_mob].wingsoflight == 0 then
 			   game_status="moving";
 			   find_the_path=0;
 			   global.timers.m_timer=0;
-		   elseif going_to_hit == 0  then
+			elseif going_to_hit == 0  then
 				--some sound
 				chars_mobs_npcs[current_mob].wingsoflight = 0;
 				chars_mobs_npcs[current_mob].x = cursor_world_x;
 				chars_mobs_npcs[current_mob].y = cursor_world_y;
 				helpers.cam_to_mob (current_mob);
 				helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.teleported[chars_mobs_npcs[current_mob].gender]);
-		   end;
+			end;
 		end;
 --tricks
 

@@ -14,9 +14,10 @@ function draw.background ()
 end
 
 function draw.fogOfWar(x,y)
+	love.graphics.setColor(255, 255, 255);
 	if darkness[1][y][x] == 0 then
 		love.graphics.setColor(255, 255, 255);	
-	elseif darkness[1][y][x] == 1 then
+	elseif darkness[1][y][x] == 1 and global.status == "battle" then
 		love.graphics.setColor(125, 125, 125);	
 	elseif darkness[1][y][x] == 2 then
 		love.graphics.setColor(0, 0, 0);	
@@ -2139,6 +2140,67 @@ function draw.chat()
 	end;
 end;
 
+function draw.options()
+	local x,y = helpers.centerObject(media.images.map);
+	love.graphics.draw(media.images.map, x,y-50);
+end;
+
+function draw.options_buttons()
+	local x,y = helpers.centerObject(media.images.map);
+	--love.graphics.draw(media.images.map, x,y-50);
+	loveframes.util.RemoveAll();
+	local background_image = media.images.button10;     
+	 -- lower sfx
+	global.buttons.start_button = loveframes.Create("imagebutton");
+	global.buttons.start_button:SetImage(background_image);
+	global.buttons.start_button:SetPos(x+50, y+50);
+	global.buttons.start_button:SizeToImage()
+	global.buttons.start_button:SetText("lower sfx");
+	global.buttons.start_button.OnClick = function(object)
+		global.theme_sfx_volume = math.max(0,global.theme_sfx_volume-0.1);
+	end;
+	-- higher sfx
+	global.buttons.create_button = loveframes.Create("imagebutton");
+	global.buttons.create_button:SetImage(background_image);
+	global.buttons.create_button:SetPos(x+250,y+50);
+	global.buttons.create_button:SizeToImage()
+	global.buttons.create_button:SetText("raise sfx");
+	global.buttons.create_button.OnClick = function(object)
+		global.theme_sfx_volume = math.min(1,global.theme_sfx_volume+0.1);
+	end;
+	
+	 -- lower music
+	global.buttons.start_button = loveframes.Create("imagebutton");
+	global.buttons.start_button:SetImage(background_image);
+	global.buttons.start_button:SetPos(x+50, y+150);
+	global.buttons.start_button:SizeToImage()
+	global.buttons.start_button:SetText("lower music");
+	global.buttons.start_button.OnClick = function(object)	
+		global.theme_music_volume = math.max(0.01,global.theme_music_volume - 0.05);
+		for i=1,#global.theme_music_array do
+			local volume = math.ceil(100*global.theme_music_array[i].track:getVolume())/100;
+			if global.theme_music_array[i].type == global.music_switch_to then
+				global.theme_music_array[i]["track"]:setVolume(math.max(0,volume - 0.05));
+			end;
+		end;
+	end;
+	-- higher music
+	global.buttons.create_button = loveframes.Create("imagebutton");
+	global.buttons.create_button:SetImage(background_image);
+	global.buttons.create_button:SetPos(x+250,y+150);
+	global.buttons.create_button:SizeToImage()
+	global.buttons.create_button:SetText("raise music");
+	global.buttons.create_button.OnClick = function(object)
+		global.theme_music_volume = math.min(1,global.theme_music_volume + 0.05);
+		for i=1,#global.theme_music_array do
+			local volume = math.ceil(100*global.theme_music_array[i].track:getVolume())/100;
+			if global.theme_music_array[i].type == global.music_switch_to then
+				global.theme_music_array[i]["track"]:setVolume(math.min(1,volume + 0.05));
+			end;
+		end;
+	end;
+end;
+
 function draw.mindgame()
 	local x,y = helpers.centerObject(media.images.map);
 	love.graphics.draw(media.images.map, x,y-50);
@@ -2705,30 +2767,18 @@ function draw.objects ()
 			end;
 			if  (hlandscape[my+map_y][mx+map_x] > 0 and hlandscape[my+map_y][mx+map_x] <= 25 and darkness[1][my+map_y][mx+map_x] == 0)
 			or	hlandscape[my+map_y][mx+map_x] > 25 then --harvest
-				if  darkness[1][my+map_y][mx+map_x] == 0 then
-				elseif darkness[1][my+map_y][mx+map_x] == 1 then
-					love.graphics.setColor(125, 125,125);
-				elseif darkness[1][my+map_y][mx+map_x] == 2 then
-					love.graphics.setColor(0, 0,0);
-				end;
+				draw.fogOfWar(mx+map_x,my+map_y);
 				draw.drawHarvest (mx+map_x,my+map_y,hlandscape[my+map_y][mx+map_x]);
 			end;
 			if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 				if map[my+map_y][mx+map_x] > 500 and  map[my+map_y][mx+map_x] <= 1200 then
-					if  darkness[1][my+map_y][mx+map_x] == 0 then
-					elseif darkness[1][my+map_y][mx+map_x] == 1 then
-						love.graphics.setColor(125,125,125);
-					elseif darkness[1][my+map_y][mx+map_x] == 2 then
-						love.graphics.setColor(0,0,0);				
-					end;
+					draw.fogOfWar(mx+map_x,my+map_y);
 					love.graphics.draw(media.images.obj, objects[map[my+map_y][mx+map_x]-500], ((mx-1)*tile_w+left_space)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-500][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-500][6]);
 					love.graphics.setColor(255, 255, 255);
 				elseif map[my+map_y][mx+map_x] > 1500 then
 					local index = map[my+map_y][mx+map_x] - 1500;
 					local corner_hexes_array = helpers.cornersOfBuilding(index,mx+map_x,my+map_y);
-					--local img = media.images[buildings_stats[index].img];
 					local img = buildings_stats[index].img;
-					local sprite = buildings_stats[index].sprite;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
 					
@@ -2745,14 +2795,14 @@ function draw.objects ()
 					then
 						love.graphics.setColor(255, 255, 255);
 						for i=1,#buildings_stats[index].hexes_ev do
-							--if helpers.insideMap(mx-map_x+buildings_stats[index].hexes_ev[i][1],my+map_y-buildings_stats[index].hexes_ev[i][2]) then
-								darkness[1][my+map_y-buildings_stats[index].hexes_ev[i][1]][mx+map_x-buildings_stats[index].hexes_ev[i][2]] = 0;
-							--end;
+							darkness[1][my+map_y-buildings_stats[index].hexes_ev[i][1]][mx+map_x-buildings_stats[index].hexes_ev[i][2]] = 0;
 						end;
 					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 1
 					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 1
 					and darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 1
-					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 1 then
+					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 1 
+					and global.status == "battle"
+					then
 						love.graphics.setColor(125, 125,125);
 					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 2
 					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 2
@@ -2761,7 +2811,6 @@ function draw.objects ()
 						love.graphics.setColor(0, 0, 0);
 					end;
 					if not buildings_stats[index].animation then
-						--love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 						local img = media.images.buildings["building" .. index];
 						love.graphics.draw(img, ((mx-1)*tile_w+left_space)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					else
@@ -2773,29 +2822,21 @@ function draw.objects ()
 				end;      
 			else
 				if map[my+map_y][mx+map_x] > 500 and  map[my+map_y][mx+map_x] <= 1200 then
-					if  darkness[1][my+map_y][mx+map_x] == 0 then
-					elseif darkness[1][my+map_y][mx+map_x] == 1 then
-						love.graphics.setColor(125,125,125);
-					elseif darkness[1][my+map_y][mx+map_x] == 2 then
-						love.graphics.setColor(0,0,0);						
-					end;
+					draw.fogOfWar(mx+map_x,my+map_y);
 					love.graphics.draw(media.images.obj, objects[map[my+map_y][mx+map_x]-500], ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+objects_table[map[my+map_y][mx+map_x]-500][5], (my-1)*tile_h*0.75+top_space-objects_table[map[my+map_y][mx+map_x]-500][6]);
 					love.graphics.setColor(255, 255, 255);
 				elseif map[my+map_y][mx+map_x] > 1500 then
 					local index = map[my+map_y][mx+map_x] - 1500;
 					local corner_hexes_array = helpers.cornersOfBuilding(index,mx+map_x,my+map_y);
-					--local img = media.images[buildings_stats[index].img];
-					
+					local img = buildings_stats[index].img;
+					local addx = buildings_stats[index].addx;
+					local addy = buildings_stats[index].addy;
 					--[[
 					draw.drawHex(corner_hexes_array[1][1],corner_hexes_array[1][2],cursor_danger,media.images.hex_ui);
 					draw.drawHex(corner_hexes_array[2][1],corner_hexes_array[2][2],cursor_danger,media.images.hex_ui);
 					draw.drawHex(corner_hexes_array[3][1],corner_hexes_array[3][2],cursor_danger,media.images.hex_ui);
 					draw.drawHex(corner_hexes_array[4][1],corner_hexes_array[4][2],cursor_danger,media.images.hex_ui);
 					]]
-					--local img = buildings_stats[index].img;
-					local sprite = buildings_stats[index].sprite;
-					local addx = buildings_stats[index].addx;
-					local addy = buildings_stats[index].addy;
 					if darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 0
 					or darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 0
 					or darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 0
@@ -2803,14 +2844,14 @@ function draw.objects ()
 					then
 						love.graphics.setColor(255, 255, 255);
 						for i=1,#buildings_stats[index].hexes_ne do
-							--if helpers.insideMap(mx+map_x-buildings_stats[index].hexes_ne[i][1],my+map_y-buildings_stats[index].hexes_ne[i][2]) then
-								darkness[1][my+map_y-buildings_stats[index].hexes_ne[i][1]][mx+map_x-buildings_stats[index].hexes_ne[i][2]] = 0;
-							--end;
+							darkness[1][my+map_y-buildings_stats[index].hexes_ne[i][1]][mx+map_x-buildings_stats[index].hexes_ne[i][2]] = 0;
 						end;
 					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 1
 					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 1
 					and darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 1
-					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 1 then
+					and darkness[1][corner_hexes_array[4][2]][corner_hexes_array[4][1]] == 1 
+					and global.status == "battle"
+					then
 						love.graphics.setColor(125, 125,125);
 					elseif darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 2
 					and darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 2
@@ -2819,7 +2860,6 @@ function draw.objects ()
 						love.graphics.setColor(0, 0, 0);
 					end;
 					if not buildings_stats[index].animation then
-						--love.graphics.draw(img, sprite, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 						local img = media.images.buildings["building" .. index];
 						love.graphics.draw(img, ((mx-1)*tile_w+left_space+tile_hw)-tile_w+top_space+addx, (my-1)*tile_h*0.75+addy+top_space);
 					else
@@ -5041,6 +5081,9 @@ function draw.ui ()
 	if game_status == "well" then
 		draw.well ();
 	end;
+	if game_status == "options" then
+		draw.options();
+	end;
 	if (game_status == "inventory" or game_status == "alchemy" or game_status == "picklocking" or game_status == "crafting" or game_status == "showinventory") then
 		draw.inventory_bag();
 		if game_status == "inventory" then
@@ -5822,7 +5865,7 @@ function draw.mindway ()
 		end;
 	end;
 end;
-
+--[[
 function draw.fogOfWar_() --hexes, not uising
 	if game_status ~= "sensing" then
 		trace.wizardEye ();
@@ -5837,7 +5880,7 @@ function draw.fogOfWar_() --hexes, not uising
 			end;
 		end;
 	end;
- end;
+ end;]]
 
 function draw.housewatch (current_house)
 	loveframes.util.RemoveAll();

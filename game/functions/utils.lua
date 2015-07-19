@@ -226,6 +226,7 @@ function utils.themeMusicVolumeDynamic ()
 				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
 			end;
 			if volume <= 0 then
+				global.theme_music_array[i]["track"]:setVolume(0);
 				love.audio.stop(global.theme_music_array[i].track);
 			end;
 		end;
@@ -240,6 +241,7 @@ function utils.themeMusicVolumeDynamic ()
 				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
 			end;
 			if volume <= 0 then
+				global.theme_music_array[i]["track"]:setVolume(0);
 				love.audio.stop(global.theme_music_array[i].track);
 			end;
 		end;
@@ -254,6 +256,7 @@ function utils.themeMusicVolumeDynamic ()
 				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
 			end;
 			if volume <= 0 then
+				global.theme_music_array[i]["track"]:setVolume(0);
 				love.audio.stop(global.theme_music_array[i].track);
 			end;
 		end;

@@ -1459,7 +1459,7 @@ function draw_buttons ()
 				togglebuttons[#togglebuttons]:SetWidth(20);
 				togglebuttons[#togglebuttons]:SetText(10*(i-1)+h);
 				togglebuttons[#togglebuttons].OnClick = function(object)
-					row_status=(i-1)*5+h-1;
+					row_status=(i-1)*10+h-1;
 					boxes();
 					draw_hexbuttons ();
 				end;
