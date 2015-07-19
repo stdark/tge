@@ -214,50 +214,6 @@ function trace.clear_rounded ()
 	for a=1,map_w do
 		for b=1,map_h do
 			if darkness_temp[b][a] == 2 and a > 1 and a < (map_w-1) and b > 1 and b < (map_h-1) then
-				notinshadow = 6;
-				for j=1,6 do
-					if b/2 == math.ceil(b/2) then
-						if darkness_temp[b+directions[1].xc[j]][a+directions[1].y[j]] == 2 then
-							notinshadow = notinshadow-1;
-						end;
-					else
-						if darkness_temp[b+directions[1].xn[j]][a+directions[1].y[j]] == 2 then
-							notinshadow = notinshadow-1;
-						end;
-					end;
-				end;
-				if notinshadow >= 2 then
-					darkness_temp[b][a] = 0;
-				end;
-			end;
-			if darkness_temp[b][a] == 1 and a > 1 and a < (map_w-1) and b > 1 and b < (map_h-1) then
-				notinshadow = 1;
-				for j=1,6 do
-					if b/2 == math.ceil(b/2) then
-						if darkness_temp[b+directions[1].xc[j]][a+directions[1].y[j]] ~= 0 then
-							notinshadow = 0;
-						end;
-					else
-						if darkness_temp[b+directions[1].xn[j]][a+directions[1].y[j]] ~= 0 then
-							notinshadow = 0;
-							end;
-					end;
-				end;
-				if notinshadow == 1 and heights_table[map[b][a]] ~= 0 then
-					darkness_temp[b][a] = 0;
-				end;
-			end;
-		end;
-	end;
-end;
-
-function trace.clear_rounded_ ()
-	local darkness_temp ={};
-	darkness_temp = darkness[chars_mobs_npcs[current_mob].party];
-	local notinshadow = 0;
-	for a=1,map_w do
-		for b=1,map_h do
-			if darkness_temp[b][a] == 2 and a > 1 and a < (map_w-1) and b > 1 and b < (map_h-1) then
 				notinshadow = 1;
 				for j=1,6 do
 					if b/2 == math.ceil(b/2) then

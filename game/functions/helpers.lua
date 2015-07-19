@@ -1780,7 +1780,11 @@ function helpers.addMob(index,person)
 	if person ~= "char" and tmpclass2.warbook == 1 then
 		helpers.createWarbook(i);
 	end;
-
+	
+	if tmpclass2.shader then
+		chars_mobs_npcs[current_mob].shader = tmpclass2.shader;
+	end;
+	
 	chars_mobs_npcs[index].multiattack = tmpclass2.multiattack;
 	chars_mobs_npcs[index].status = 1;
 	chars_mobs_npcs[index].id = index;
@@ -2338,6 +2342,16 @@ end;
 function helpers.clearBoomLight ()
 	for h=#lights,1,-1 do
 		if lights[h].typ == "boom" then
+			lights[h]["light"].clear();
+			table.remove(lights,i);
+		end;
+	end;
+end;
+
+
+function helpers.clearCastLight ()
+	for h=#lights,1,-1 do
+		if lights[h].typ == "cast" then
 			lights[h]["light"].clear();
 			table.remove(lights,i);
 		end;
@@ -4361,7 +4375,7 @@ function helpers.recalcBattleStats (index)
 			if chars_mobs_npcs[index].lvl_unarmed >= 2 then
 				chars_mobs_npcs[index]["melee_stats"][hand].cmel = chars_mobs_npcs[index].cmel+chars_mobs_npcs[index].num_unarmed;
 			end;
-		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "shield" then
+		elseif chars_mobs_npcs[index]["equipment"][hand] ~= 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "shield" then
 			chars_mobs_npcs[index]["melee_stats"][hand].atkm = 0;
 			chars_mobs_npcs[index]["melee_stats"][hand].amel = 0;
 			chars_mobs_npcs[index]["melee_stats"][hand].bmel = 0;

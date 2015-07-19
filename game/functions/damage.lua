@@ -4454,6 +4454,17 @@ function damage.shoot()
 	else
 		letaBattleBegin ();
 	end;]]
+	
+	
+	if (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
+	and chars_mobs_npcs[current_mob].shader then
+		local r,g,b,n = chars_mobs_npcs[current_mob].shader[1],chars_mobs_npcs[current_mob].shader[2],chars_mobs_npcs[current_mob].shader[3],chars_mobs_npcs[current_mob].shader[4];
+		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+		table.insert(lights,{x=chars_mobs_npcs[current_mob].y,y=chars_mobs_npcs[current_mob].x,light=lightWorld.newLight(xx, yy, r, g, b, n),typ="cast"});
+		lights[#lights]["light"].setGlowStrength(0.3);
+	end;
+	
+	
 	dodge = 0;
 	block = 0;
 	parry = 0;
@@ -4541,6 +4552,7 @@ function damage.instantCast () --FIXME use lvl, num
 	utils.printDebug("instant cast called");
 	sfx.castSound ();
 	helpers.clearBoomLight ();
+	helpers.clearCastLight ();
 	draw.shaderIrradiation ();
 	clear_elandscape();
 	local dmg = 0;

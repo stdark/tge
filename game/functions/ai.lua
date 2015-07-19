@@ -91,7 +91,7 @@ function ai.behavior()
 		else
 			mob_is_going_to_hit = 0;
 			local roll_point = 1;
-			local point_to_go_x = chars_mobs_npcs[current_mob].waypoint[chars_mobs_npcs[current_mob].nextpoint][1];
+			local point_to_go_x = chars_mobs_npcs[current_mob].waypoint[chars_mobs_npcs[current_mob].nextpoint][1]; --nil
 			local point_to_go_y = chars_mobs_npcs[current_mob].waypoint[chars_mobs_npcs[current_mob].nextpoint][2];
 			local free_hexes = helpers.findFreeHexes (current_mob);
 			local rollmd = math.random(1,2);
@@ -115,6 +115,10 @@ function ai.behavior()
 				mob_can_move = 1;
 				path_finding (0,0);
 				helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.atwaypoint);
+				chars_mobs_npcs[current_mob].nextpoint = chars_mobs_npcs[current_mob].nextpoint + 1;
+				if chars_mobs_npcs[current_mob].nextpoint > #chars_mobs_npcs[current_mob].waypoint then
+					chars_mobs_npcs[current_mob].nextpoint = 1;
+				end;
 			elseif #free_hexes == 0 then
 				chars_mobs_npcs[current_mob].ai = "stay";
 				helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.stoped[chars_mobs_npcs[current_mob].gender]);

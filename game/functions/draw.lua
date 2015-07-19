@@ -1367,6 +1367,15 @@ function draw.boom ()
 		end;
 	end;
 	
+	if (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
+	and (magic.spell_tips[missle_type].form == "direct" or magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or or magic.spell_tips[missle_type].form == "deadenemy")
+	and magic.spell_tips[missle_type].shader then
+		local r,g,b,n = magic.spell_tips[missle_type].shader[1],magic.spell_tips[missle_type].shader[2],magic.spell_tips[missle_type].shader[3],magic.spell_tips[missle_type].shader[4];
+		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+		table.insert(lights,{x=chars_mobs_npcs[victim].y,y=chars_mobs_npcs[victim].x,light=lightWorld.newLight(xx, yy, r, g, b, n),typ="boom"});
+		lights[#lights]["light"].setGlowStrength(0.3);
+	end;
+	
 	helpers.findShadows();
 end;
 

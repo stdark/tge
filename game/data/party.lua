@@ -4,7 +4,7 @@ chars=4
 chars_stats={};
                    
 chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name="John Doo", face=1, age=25, lv=1, xp=0, nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
-            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="none",
+            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="none", shader={225, 230, 0, 125},
             mgt=5,enu=24,dex=15,spd=25,acu=15,sns=15,int=50,spr=50,chr=5,luk=50, --stats
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
@@ -23,7 +23,7 @@ chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 5, lvl_leadership = 5,lvl_regeneration = 0,--skills other lvl
                    }
 chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name="Johnny Bravo", face=2,  age=25, lv=1, xp=0, nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
-            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="criminal",
+            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="criminal", shader={200, 255, 200, 125},
             mgt=26,enu=19,dex=10,spd=15,acu=25,sns=15,int=15,spr=5,chr=5,luk=5, --stats
 			hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
@@ -42,7 +42,7 @@ chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=3, lvl_spothidden=3, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
                    }
 chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name="John Rambo", face=3,  age=25, lv=1, xp=0,  nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
-            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="warrior",
+            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="warrior", shader={200, 200, 255, 125},
             mgt=5,enu=17,dex=5,spd=10,acu=5,sns=15,int=25,spr=15,chr=5,luk=5, --stats
 			hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
@@ -61,7 +61,7 @@ chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
                    }
 chars_stats[4]={class="rogue", subclass=1, race="woodelf", sprite = "rogue", name="John Galt", face=7,  age=25,  lv=1, xp=0,  nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
-            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="noble",
+            hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="noble", shader={255, 125, 255, 125},
             mgt=5,enu=18,dex=5,spd=5,acu=5,sns=15,int=5,spr=15,chr=5,luk=5, --stats
 			hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,

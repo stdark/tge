@@ -969,7 +969,7 @@ function playingState.update(dt)
 			xx = xx - 16 + math.random(1,8)-4;
 			yy = yy - 32 + math.random(1,8)-4;
 		end;
-		if lights[i].typ ~= "default" and lights[i].typ ~= "missle" and lights[i].typ ~= "boom" then
+		if lights[i].typ ~= "default" and lights[i].typ ~= "missle" and lights[i].typ ~= "boom" and  lights[i].typ ~= "cast" then
 			lights[i]["light"].setPosition(xx,yy);
 		end;
 	end;
@@ -1534,6 +1534,7 @@ function playingState.update(dt)
 			or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
 			or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing")
 			then
+				helpers.clearCastLight ();
 				game_status="missle";
 				in_fly=0;
 			elseif magic.spell_tips[missle_type].form == "arrow" or magic.spell_tips[missle_type].form == "ball"
@@ -1541,6 +1542,7 @@ function playingState.update(dt)
 			or magic.spell_tips[missle_type].form == "ally" or magic.spell_tips[missle_type].form == "deadally" or magic.spell_tips[missle_type].form == "enemy" or magic.spell_tips[missle_type].form == "deadenemy"
 			or magic.spell_tips[missle_type].form == "area"
 			or missle_type == "armageddon" then
+				helpers.clearCastLight ();
 				game_status="missle";
 				in_fly=0;
 				draw.shaderIrradiation ();
