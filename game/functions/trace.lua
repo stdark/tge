@@ -141,9 +141,8 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 					untraceable = 1;
 					hexes_to_sense[i][2] = 1;
 				end;
-				if (chars_mobs_npcs[index].fov == 180 and (chars_mobs_npcs[index].view == 1 or chars_mobs_npcs[index].view == 8))
-				or (chars_mobs_npcs[index].fov == 90 and chars_mobs_npcs[index].view == 6)
-				--or (chars_mobs_npcs[index].fov == 90 and (chars_mobs_npcs[index].view == 6 or chars_mobs_npcs[index].view == 7))
+				if (chars_mobs_npcs[index].fov == 180 and (chars_mobs_npcs[index].view == 1 or chars_mobs_npcs[index].view == 8 or chars_mobs_npcs[index].view == 5))
+				or (chars_mobs_npcs[index].fov == 90 and (chars_mobs_npcs[index].view == 6 or chars_mobs_npcs[index].view == 8))
 				then --dirty hack
 					local in_fov = false;
 					for i=1,#hexes_to_sense do
@@ -341,7 +340,7 @@ function trace.sightArray (index)
 	local hexes_to_sense = {};
 	local hexes_in_fov = {};
 	local hexes_by_trauma = {};
-	--chars_mobs_npcs[index].fov = 90
+	chars_mobs_npcs[index].fov = 90
 	--chars_mobs_npcs[index].reye = 0
 	for l=1,#all_ground_hexes do
 		if math.sqrt((all_ground_hexes[l].x-chars_mobs_npcs[index].x)^2+(all_ground_hexes[l].y-chars_mobs_npcs[index].y)^2) <= chars_mobs_npcs[index].sense then
