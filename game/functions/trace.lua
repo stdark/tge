@@ -141,8 +141,8 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 					untraceable = 1;
 					hexes_to_sense[i][2] = 1;
 				end;
-				if (chars_mobs_npcs[index].fov == 180 and (chars_mobs_npcs[index].view == 1 or chars_mobs_npcs[index].view == 8 or chars_mobs_npcs[index].view == 5))
-				or (chars_mobs_npcs[index].fov == 90 and (chars_mobs_npcs[index].view == 6 or chars_mobs_npcs[index].view == 8))
+				if (chars_mobs_npcs[index].fov == 180 and (chars_mobs_npcs[index].view == 1 or chars_mobs_npcs[index].view == 8 or chars_mobs_npcs[index].view == 5  or chars_mobs_npcs[index].view == 6 ))
+				or (chars_mobs_npcs[index].fov == 90 and (chars_mobs_npcs[index].view == 6 or chars_mobs_npcs[index].view == 8 or chars_mobs_npcs[index].view == 5))
 				then --dirty hack
 					local in_fov = false;
 					for i=1,#hexes_to_sense do
@@ -340,8 +340,8 @@ function trace.sightArray (index)
 	local hexes_to_sense = {};
 	local hexes_in_fov = {};
 	local hexes_by_trauma = {};
-	chars_mobs_npcs[index].fov = 90
-	--chars_mobs_npcs[index].reye = 0
+	--chars_mobs_npcs[index].fov = 90
+	--chars_mobs_npcs[index].leye = 0
 	for l=1,#all_ground_hexes do
 		if math.sqrt((all_ground_hexes[l].x-chars_mobs_npcs[index].x)^2+(all_ground_hexes[l].y-chars_mobs_npcs[index].y)^2) <= chars_mobs_npcs[index].sense then
 			if chars_mobs_npcs[index].fov == 180 then
@@ -410,23 +410,24 @@ function trace.sightArray (index)
 				elseif point_to_go_x ~= chars_mobs_npcs[index].x then
 					chars_mobs_npcs[index].view = chars_mobs_npcs[index].rot; --standart
 				end;
-				if chars_mobs_npcs[index].view == 2 and all_ground_hexes[l].x >= chars_mobs_npcs[index].x and all_ground_hexes[l].y-chars_mobs_npcs[index].y >= 0 then
+				if chars_mobs_npcs[index].view == 2 and all_ground_hexes[l].x >= chars_mobs_npcs[index].x and all_ground_hexes[l].y >= chars_mobs_npcs[index].y then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 5 and all_ground_hexes[l].x <= chars_mobs_npcs[index].x and all_ground_hexes[l].y-chars_mobs_npcs[index].y >= 0 then
+				elseif chars_mobs_npcs[index].view == 5 and all_ground_hexes[l].x <= chars_mobs_npcs[index].x and all_ground_hexes[l].y <= chars_mobs_npcs[index].y then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 3 and (all_ground_hexes[l].x+all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x+all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y <= 0 then
+				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x+all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x <= chars_mobs_npcs[index].x then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 4 and (all_ground_hexes[l].x-all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and -1*all_ground_hexes[l].x+chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+all_ground_hexes[l].y-chars_mobs_npcs[index].y >= 0 then
+				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and all_ground_hexes[l].x >= chars_mobs_npcs[index].x then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 7 and all_ground_hexes[l].y >= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 8 and all_ground_hexes[l].y <= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				end;
+				
 			end;
 			
 			if chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 0 then -- right eye blinded
@@ -443,11 +444,12 @@ function trace.sightArray (index)
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 3 and (all_ground_hexes[l].x+all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x+all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y >= 0 then
+				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x+all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].y <= chars_mobs_npcs[index].y then
+				
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 4 and (all_ground_hexes[l].x-all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and -1*all_ground_hexes[l].x+chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+all_ground_hexes[l].y-chars_mobs_npcs[index].y <= 0 then
+				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and all_ground_hexes[l].y <= chars_mobs_npcs[index].y then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 7 and all_ground_hexes[l].y >= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
