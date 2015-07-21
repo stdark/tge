@@ -141,7 +141,7 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 					untraceable = 1;
 					hexes_to_sense[i][2] = 1;
 				end;
-				if (chars_mobs_npcs[index].fov == 180 and (chars_mobs_npcs[index].view == 1 or chars_mobs_npcs[index].view == 8 or chars_mobs_npcs[index].view == 5  or chars_mobs_npcs[index].view == 6 ))
+				if (chars_mobs_npcs[index].fov == 180 and (chars_mobs_npcs[index].view == 1 or chars_mobs_npcs[index].view == 8 or (chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 0 and chars_mobs_npcs[index].view == 5) or chars_mobs_npcs[index].view == 6 ))
 				or (chars_mobs_npcs[index].fov == 90 and (chars_mobs_npcs[index].view == 6 or chars_mobs_npcs[index].view == 8 or chars_mobs_npcs[index].view == 5))
 				then --dirty hack
 					local in_fov = false;
@@ -340,8 +340,7 @@ function trace.sightArray (index)
 	local hexes_to_sense = {};
 	local hexes_in_fov = {};
 	local hexes_by_trauma = {};
-	--chars_mobs_npcs[index].fov = 90
-	--chars_mobs_npcs[index].leye = 0
+	--NORMAL
 	for l=1,#all_ground_hexes do
 		if math.sqrt((all_ground_hexes[l].x-chars_mobs_npcs[index].x)^2+(all_ground_hexes[l].y-chars_mobs_npcs[index].y)^2) <= chars_mobs_npcs[index].sense then
 			if chars_mobs_npcs[index].fov == 180 then
@@ -399,9 +398,9 @@ function trace.sightArray (index)
 			end;
 		end;
 	end;
-	for l=1,#all_ground_hexes do --FIXME this works only vs. creatures with 1/2 eyes, remember of hydras, chimeras, adau, ooz, medusas (snakes)
+	--TRAUMAS
+	for l=1,#all_ground_hexes do --FIXME this works only vs. creatures with 1/2 eyes, remember of hydras, chimeras, adau, ooz, medusas (snakes), evileyes
 		if math.sqrt((all_ground_hexes[l].x-chars_mobs_npcs[index].x)^2+(all_ground_hexes[l].y-chars_mobs_npcs[index].y)^2) <= chars_mobs_npcs[index].sense then	
-			
 			if chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 0 then -- left eye blinded
 				if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
 					chars_mobs_npcs[index].view = 8; --look straight up
@@ -416,15 +415,15 @@ function trace.sightArray (index)
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 3 and (all_ground_hexes[l].x+all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x+all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x <= chars_mobs_npcs[index].x then
+				elseif chars_mobs_npcs[index].view == 6 and all_ground_hexes[l].x > all_ground_hexes[l].y and chars_mobs_npcs[index].y > all_ground_hexes[l].y then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 4 and (all_ground_hexes[l].x-all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and -1*all_ground_hexes[l].x+chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and all_ground_hexes[l].x >= chars_mobs_npcs[index].x then
+				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x+all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 7 and all_ground_hexes[l].y >= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 8 and all_ground_hexes[l].y <= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x <= 0 then
+				elseif chars_mobs_npcs[index].view == 8 and all_ground_hexes[l].y <= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				end;
 				
@@ -440,58 +439,29 @@ function trace.sightArray (index)
 				end;
 				if chars_mobs_npcs[index].view == 2 and all_ground_hexes[l].x >= chars_mobs_npcs[index].x and all_ground_hexes[l].y-chars_mobs_npcs[index].y <= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 5 and all_ground_hexes[l].x <= chars_mobs_npcs[index].x and all_ground_hexes[l].y-chars_mobs_npcs[index].y <= 0 then
+				elseif chars_mobs_npcs[index].view == 5 and all_ground_hexes[l].x <= chars_mobs_npcs[index].x and all_ground_hexes[l].y-chars_mobs_npcs[index].y >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 3 and (all_ground_hexes[l].x+all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].x-chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x+all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and all_ground_hexes[l].y <= chars_mobs_npcs[index].y then
-				
+				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and all_ground_hexes[l].y <= chars_mobs_npcs[index].y then			
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 4 and (all_ground_hexes[l].x-all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and -1*all_ground_hexes[l].x+chars_mobs_npcs[index].x+-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and all_ground_hexes[l].y <= chars_mobs_npcs[index].y then
+				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x+all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 7 and all_ground_hexes[l].y >= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				elseif chars_mobs_npcs[index].view == 8 and all_ground_hexes[l].y <= chars_mobs_npcs[index].y and all_ground_hexes[l].x-chars_mobs_npcs[index].x >= 0 then
 					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
 				end;
-			end;
-			
-			if chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 0 then -- central eye blinded
-				if point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y < chars_mobs_npcs[index].y then
-					chars_mobs_npcs[index].view = 8; --look straight up
-				elseif point_to_go_x == chars_mobs_npcs[index].x and point_to_go_y > chars_mobs_npcs[index].y then
-					chars_mobs_npcs[index].view = 7; --look straight down
-				elseif point_to_go_x ~= chars_mobs_npcs[index].x then
-					chars_mobs_npcs[index].view = chars_mobs_npcs[index].rot; --standart
-				end;
-				if chars_mobs_npcs[index].view == 2 and all_ground_hexes[l].x >= chars_mobs_npcs[index].x and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) >= 0 and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) >= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 5 and all_ground_hexes[l].x <= chars_mobs_npcs[index].x  and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) >= 0 and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) >= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 3 and (all_ground_hexes[l].x+all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x+chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) >= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) >= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 6 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) <= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) <= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 4 and (all_ground_hexes[l].x-all_ground_hexes[l].y) <= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) <= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) >= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 1 and (all_ground_hexes[l].x-all_ground_hexes[l].y) >= (chars_mobs_npcs[index].x-chars_mobs_npcs[index].y) and (all_ground_hexes[l].x - chars_mobs_npcs[index].x) >= 0 and (all_ground_hexes[l].y - chars_mobs_npcs[index].y) <= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 7 and all_ground_hexes[l].y >= chars_mobs_npcs[index].y and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) <= 0 and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(all_ground_hexes[l].y-chars_mobs_npcs[index].y) <= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				elseif chars_mobs_npcs[index].view == 8 and all_ground_hexes[l].y <= chars_mobs_npcs[index].y and (all_ground_hexes[l].x-chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) <= 0 and (-1*all_ground_hexes[l].x+chars_mobs_npcs[index].x)-(-1*all_ground_hexes[l].y+chars_mobs_npcs[index].y) <= 0 then
-					table.insert(hexes_by_trauma, {all_ground_hexes[l].id,all_ground_hexes[l].visibility});
-				end;
-			end;
-			
+			end;	
 		end;
 	end;
 	if (chars_mobs_npcs[index].reye and chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 1 and chars_mobs_npcs[index].reye == 1) or (chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 1) or chars_mobs_npcs[index].fov == 360 then
 		for i=1,#hexes_in_fov do
 			hexes_to_sense[i] = hexes_in_fov[i];
 		end;
-	elseif (chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 0) or (chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 0) or (chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 0) then
+	elseif (chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 0) or (chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 0) then
 		local j = 1;
 		for i=1,#hexes_in_fov do
 			for h=1,#hexes_by_trauma do
@@ -501,6 +471,8 @@ function trace.sightArray (index)
 				end;
 			end;
 		end;
+	elseif chars_mobs_npcs[index].fov == 90 and chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 0 then
+	 --cyclop: no eye, no fov
 	end;
 	return hexes_to_sense;
 end;

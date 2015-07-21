@@ -127,7 +127,7 @@ function ai.behavior()
 	end;
 --AGR Shooter
 	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "shooter" then
-		if chars_mobs_npcs[current_mob]["equipment"].ammo and chars_mobs_npcs[current_mob].inventory_list[chars_mobs_npcs[current_mob]["equipment"].ammo].q > 0 and chars_mobs_npcs[current_mob].darkgasp == 0 then
+		if chars_mobs_npcs[current_mob]["equipment"].ammo and chars_mobs_npcs[current_mob].inventory_list[chars_mobs_npcs[current_mob]["equipment"].ammo].q > 0 then
 			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 			for j=1,#chars_mobs_npcs do
 				for h=1,3 do
@@ -228,7 +228,7 @@ function ai.behavior()
 				end;
 			end;
 		end;
-		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then		
+		if chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then		
 			for j=1,#chars_mobs_npcs do
 				trace.trace_hexes (current_mob,j,trace.sightArray (current_mob),true);
 				if not ai.friendOrFoe (current_mob,j)
@@ -326,7 +326,7 @@ function ai.behavior()
 				end;
 			end;
 		end;
-		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
+		if chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
 			local array_to_resurrect = {};
 			local array_to_heal = {};
 			local array_to_regenerate = {};
@@ -429,7 +429,7 @@ function ai.behavior()
 				end;
 			end;
 		end;
-		if chars_mobs_npcs[current_mob].darkgasp == 0 and chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
+		if chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then
 			local array_to_buff = {};
 			for j=1,#chars_mobs_npcs do
 				if chars_mobs_npcs[j].party == chars_mobs_npcs[current_mob].party and chars_mobs_npcs[j].stone == 0 and chars_mobs_npcs[j].freeze == 0 and chars_mobs_npcs[j].filth == 0 then
