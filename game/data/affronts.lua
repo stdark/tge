@@ -16,7 +16,7 @@ phrase="Обезьяна зеленомордая!"
 },
 
 {id=2,
-races={"halfelf","halforc"},
+races={"halfelf","halforc","halfgeany"},
 classes={"none"},
 fractions={"none"},
 guilds={"none"},

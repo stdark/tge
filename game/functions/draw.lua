@@ -3520,7 +3520,7 @@ function draw.mobs (mx,my,highlight,index)
 				end;
 				love.graphics.setColor(255, 255, 255,255);
 			elseif game_status == "attack" then
-				if i == current_mob and i~=victim then
+				if i == current_mob and i ~= victim then
 					local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_war";
 					local img_mob_war=loadstring("return " .. tmpi)();
 					animation_atk1:draw(img_mob_war, mobto_hex_x-tile_w-32,mobto_hex_y); --low quality (
@@ -3531,7 +3531,11 @@ function draw.mobs (mx,my,highlight,index)
 						local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 						local img_mob_base=loadstring("return " .. tmpi)();
 						animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);		
-					elseif chars_mobs_npcs[i].freeze~=0 or chars_mobs_npcs[i].stone~=0 then
+					elseif chars_mobs_npcs[i].status < 1 then	
+						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
+						local img_mob_base = loadstring("return " .. tmpi)();
+						animation_death[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
+					elseif chars_mobs_npcs[i].freeze ~= 0 or chars_mobs_npcs[i].stone ~= 0 then
 						local tmp= chars_mobs_npcs[i].sprite .. "_stay";
 						local mob_stay=loadstring("return " .. tmp)();
 						local tmpi="media.images." .. chars_mobs_npcs[i].sprite .. "_base";
@@ -3570,11 +3574,11 @@ function draw.mobs (mx,my,highlight,index)
 			elseif game_status == "missle" then
 			elseif game_status == "multidamage" then
 				if damaged == 1 and (darkness[1][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] < 2 and chars_mobs_npcs[i].invisibility == 0 and chars_mobs_npcs[i].stealth == 0) then
-					if chars_mobs_npcs[victim].freeze==0 and chars_mobs_npcs[victim].stone==0 then
+					if chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 then
 						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 						local img_mob_base = loadstring("return " .. tmpi)();
 						animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-					elseif chars_mobs_npcs[victim].freeze ~= 0 and chars_mobs_npcs[victim].stone ~= 0 then
+					elseif chars_mobs_npcs[i].freeze ~= 0 and chars_mobs_npcs[i].stone ~= 0 then
 						local tmp = chars_mobs_npcs[i].sprite .. "_stay";
 						local mob_stay = loadstring("return " .. tmp)();
 						local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
@@ -3582,18 +3586,18 @@ function draw.mobs (mx,my,highlight,index)
 						love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
 					end;
 				end;
-			elseif game_status =="damage" and i == victim then
-				if chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 and (missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand") and magic.spell_tips[missle_type].form == "ally" then
+			elseif (game_status =="damage" or game_status =="attack") and i == victim then
+				if chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and (missle_drive == "spellbook" or  missle_drive == "scroll" or missle_drive == "wand") and magic.spell_tips[missle_type].form == "ally" then
 					local tmp = chars_mobs_npcs[i].sprite .. "_stay";
 					local mob_stay = loadstring("return " .. tmp)();
 					local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 					local img_mob_base = loadstring("return " .. tmpi)();
 					love.graphics.draw(img_mob_base, mob_stay[chars_mobs_npcs[i].rot ],mobto_hex_x-tile_w,mobto_hex_y);
-				elseif chars_mobs_npcs[victim].freeze == 0 and chars_mobs_npcs[victim].stone == 0 then
+				elseif chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 then
 					local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
 					local img_mob_base = loadstring("return " .. tmpi)();
 					animation_dmg[chars_mobs_npcs[i].rot ]:draw(img_mob_base, mobto_hex_x-tile_w*1.5,mobto_hex_y-8);
-				elseif chars_mobs_npcs[victim].freeze ~= 0 or chars_mobs_npcs[victim].stone ~= 0 then
+				elseif chars_mobs_npcs[i].freeze ~= 0 or chars_mobs_npcs[i].stone ~= 0 then
 					local tmp = chars_mobs_npcs[i].sprite .. "_stay";
 					local mob_stay=loadstring("return " .. tmp)();
 					local tmpi = "media.images." .. chars_mobs_npcs[i].sprite .. "_base";
@@ -5156,6 +5160,8 @@ function draw.ui ()
 		love.graphics.print(_txt,250,10);
 	end;
 	love.graphics.print(game_status,450,10);
+	fps = "fps=" .. love.timer.getFPS( )
+	love.graphics.print(fps,650,10);
 	--love.graphics.print(missle_type,650,10);
 	--love.graphics.print(missle_type,100,10);
 	--love.graphics.print(missle_drive,150,10);

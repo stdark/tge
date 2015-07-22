@@ -1782,7 +1782,7 @@ function helpers.addMob(index,person)
 	end;
 	
 	if tmpclass2.shader then
-		chars_mobs_npcs[current_mob].shader = tmpclass2.shader;
+		chars_mobs_npcs[index].shader = tmpclass2.shader;
 	end;
 	
 	chars_mobs_npcs[index].multiattack = tmpclass2.multiattack;
@@ -2742,7 +2742,7 @@ function helpers.countRangeRecoveryChar (index)
 		end;
 		recovery = recovery+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].rt;
 	end
-
+	print("REC",index,recovery)
 	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
 
 	return recovery;

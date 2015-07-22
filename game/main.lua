@@ -34,7 +34,7 @@ function loadingFinished()
 end;
 
 function love.load()
-	debug = false;
+	debug = true;
 	global = {};
 	global.level_to_load = 0;
 	global.screenWidth = love.graphics.getWidth();

@@ -91,8 +91,8 @@ function ai.behavior()
 		else
 			mob_is_going_to_hit = 0;
 			local roll_point = 1;
-			local point_to_go_x = chars_mobs_npcs[current_mob].waypoint[chars_mobs_npcs[current_mob].nextpoint][1]; --nil
-			local point_to_go_y = chars_mobs_npcs[current_mob].waypoint[chars_mobs_npcs[current_mob].nextpoint][2];
+			local point_to_go_x = chars_mobs_npcs[current_mob]["waypoint"][chars_mobs_npcs[current_mob].nextpoint][1]; --nil
+			local point_to_go_y = chars_mobs_npcs[current_mob]["waypoint"][chars_mobs_npcs[current_mob].nextpoint][2];
 			local free_hexes = helpers.findFreeHexes (current_mob);
 			local rollmd = math.random(1,2);
 			if rollmd == 1 then

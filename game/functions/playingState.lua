@@ -123,7 +123,7 @@ function playingState.load()
 	holding_smth=0;
 
 	sprites.load();
-	mobs_sprites ();
+	mobs_sprites.sprites_data ();
 	mobs_data();
 	effects_data ();
 	logstrings_load ();
@@ -188,7 +188,7 @@ function playingState.load()
 
 	mob_add_mov_x=0;
 	mob_add_mov_y=0;
-	current_mob=1;
+	--current_mob=1;
 	modepf=1;
 
 	
@@ -336,7 +336,7 @@ function playingState.load()
 		end;
 	end;
 	current_mob = 1;
-
+	mobs_sprites.animation_rows();
 	global_irr=2;
 	irradiation=irradiations[global_irr];
 --NEW LEVEL
@@ -366,7 +366,7 @@ function playingState.load()
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
-		table.insert(chars_mobs_npcs,{uid=9,person="npc",control="ai",defaultai="cruiser",ai="stay",dangerai="away",x=38,y=38,rot=3,class="goblin",fraction="vagrants", party=2, name="Che Guevara", face = 8,
+		table.insert(chars_mobs_npcs,{uid=9,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=38,y=38,rot=3,class="goblin",fraction="vagrants", party=2, name="Che Guevara", face = 8,
 		personality={
 		current={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		default={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
@@ -744,55 +744,6 @@ function playingState.load()
 
 	trace.chars_around();
 	--helpers.battleorder();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
-	mob_walk = loadstring("return " .. tmp)();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_dmg";
-	mob_dmg = loadstring("return " .. tmp)();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_death";
-	mob_death = loadstring("return " .. tmp)();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_atk1";
-	mob_atk1 = loadstring("return " .. tmp)();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_sht1";
-	mob_sht1 = loadstring("return " .. tmp)();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_cast1";
-	mob_cast1 = loadstring("return " .. tmp)();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_block";
-	mob_block = loadstring("return " .. tmp)();
-
-	local tmp = chars_mobs_npcs[current_mob].sprite .. "_launch";
-	mob_launch = loadstring("return " .. tmp)();
-
-	local _walk_anim_time =  0.075*global.walk_animation_speed;
-	animation_atk1 = anim8.newAnimation(mob_atk1[chars_mobs_npcs[current_mob].rot]("1-8",1), 0.075,"pauseAtEnd");
-	animation_walk = anim8.newAnimation(mob_walk[chars_mobs_npcs[current_mob].rot]("1-8",1), _walk_anim_time,"pauseAtEnd");
-	animation_death = anim8.newAnimation(mob_dmg[1]("1-8",1), 0.075,"pauseAtEnd");
-	animation_sht1 = anim8.newAnimation(mob_sht1[1]("1-9",1), 0.075,"pauseAtEnd");
-	animation_launch = anim8.newAnimation(mob_launch[1]("1-9",1), 0.075,"pauseAtEnd");
-	animation_cast1 = anim8.newAnimation(mob_cast1[1]("1-9",1), 0.075,"pauseAtEnd");
-	--animation_block = anim8.newAnimation(mob_block[1]("1-8",1), 0.075,"pauseAtEnd");
-
-	animation_dmg = {};
-	animation_block = {};
-
-	for i=1,6 do
-		local tmp = chars_mobs_npcs[current_mob].sprite .. "_dmg";
-		mob_dmg = loadstring("return " .. tmp)();
-		animation_dmg[i] = anim8.newAnimation(mob_dmg[i]("9-16",1), 0.075,"pauseAtEnd");
-	end;
-
-	for i=1,6 do
-		local tmp = chars_mobs_npcs[current_mob].sprite .. "_block";
-		mob_dmg = loadstring("return " .. tmp)();
-		animation_block[i] = anim8.newAnimation(mob_block[i]("1-8",1), 0.075, "pauseAtEnd");
-	end;
-
 	for h = 1,#bags_list do
 		bags[h] = {};
 		for i = 1,15 do
@@ -1340,8 +1291,8 @@ function playingState.update(dt)
 		if game_status == "damage" or game_status == "multidamage" or game_status == "attack" then
 			for i=1,6 do
 				animation_dmg[i]:update(dt);
+				animation_death[i]:update(dt);
 			end;
-			animation_death:update(dt);
 		end;
 		if game_status == "moving" then
 			animation_walk:update(dt);
@@ -7968,7 +7919,9 @@ function mobMoving()
 		end;
 		if path_counter == 0 and trapped ~= 1 then
 			chars_mobs_npcs[current_mob].waterwalking = 0;
-			trace.all_to_darkness();
+			if chars_mobs_npcs[current_mob].control == "player" then
+				trace.all_to_darkness();
+			end;
 			--trace.chars_around();
 			if chars_mobs_npcs[current_mob].control ~= "player" then
 				trace.first_watch(current_mob);

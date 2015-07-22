@@ -284,6 +284,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	local selfrem_sp = 0;
 	local selfrem_st = 0;
 	local selfrem_rt = 0;
+	local range_penalty = 0;
 	helpers.recalcBattleStats (current_mob);
 	if helpers.missleIsAweapon () and missle_type ~= "bottle" then
 		utils.playSfx(media.sounds.arrow_impact,1); -- FIXME: different sounds for different missles
@@ -294,7 +295,10 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		else
 			delta_spd = 100;
 		end;
-		chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd + chars_mobs_npcs[current_mob].bless_power;
+		if #shot_line > 10 then
+			range_penalty = math.min(0.01,(#shot_line - 10)*0.05);
+		end;
+		chance_to_hit = math.ceil((50*helpers.sizeModifer(victim)+chars_mobs_npcs[current_mob].atkr+chars_mobs_npcs[current_mob].acu + delta_spd)*(1-range_penalty) + chars_mobs_npcs[current_mob].bless_power);
 		--FIXME sniper chance_to_hit + lv
 		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) 
 		and missle_type ~= "parabolicshot"
@@ -711,7 +715,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					--utils.playSfx(media.sounds.sword_impact,1);
 				end;
 				--/CRIT
-				incoming_physical_dmg = incoming_physical_dmg*crit;
+				incoming_physical_dmg = incoming_physical_dmg*crit*(1-range_penalty);
 				incoming_physical_dmg = math.ceil(math.max(0,incoming_physical_dmg - chars_mobs_npcs[victim].ironshirt_power)*(100-chars_mobs_npcs[victim].stoneskin_power)/100);
 				local mob_genocide = 1;
 	
@@ -940,7 +944,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 				damage.operateAnEye(victim,"reye",false);
 				damage.operateAnEye(victim,"leye",false);
 				damage.operateAnEye(victim,"ceye",false);
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			elseif missle_type == "nailing" then
 				chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_crossbow;
 			elseif missle_type == "shockingsparkle" then
@@ -1372,7 +1376,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	if missle_type == "hiddenstrike" and damage.falseDamager(chars_mobs.npcs[victim].x,chars_mobs.npcs[victim].y,3) then
 		_damager = damage.falseDamager();
 	end;
-	
+
 	damage.HPplus(current_mob,selfadd_hp,false);
 	damage.SPplus(current_mob,selfadd_sp,false);
 	damage.STplus(current_mob,selfadd_st,false);
@@ -2697,7 +2701,7 @@ function damage.multidamage () --FIXME two hexes
 					if debuff_power > 0 and debuff_dur > 0 then
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,math.ceil(debuff_power/4));
-						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.desponded[chars_mobs_npcs[j].gender]);
+						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.weaked[chars_mobs_npcs[j].gender]);
 						exp_for_what(math.ceil(debuff_power/3),current_mob)
 					end;
 				end;
@@ -6378,7 +6382,7 @@ function damage.PoisonPlus(index,poisonPlus)
 end;
 
 function damage.SPminus(index,damageSP,flag)
-	local realdamage = math.max(chars_mobs_npcs[index].sp,chars_mobs_npcs[index].sp - damageSP);
+	local realdamage = math.min(chars_mobs_npcs[index].sp,damageSP);
 	chars_mobs_npcs[index].sp = chars_mobs_npcs[index].sp - realdamage;
 	if flag then
 		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.lost[chars_mobs_npcs[index].gender] .. realdamage .. lognames.actions.metr .. lognames.actions.ofsp);
@@ -6386,19 +6390,19 @@ function damage.SPminus(index,damageSP,flag)
 end;
 
 function damage.STminus(index,damageST,flag)
-	local realdamage = math.max(chars_mobs_npcs[index].st,chars_mobs_npcs[index].st - damageST);
+	local realdamage = math.min(chars_mobs_npcs[index].st,damageST);
 	chars_mobs_npcs[index].st = chars_mobs_npcs[index].st - realdamage;
 	if flag then
 		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.lost[chars_mobs_npcs[index].gender] .. realdamage .. lognames.actions.metr .. lognames.actions.ofst);
 	end;
 	if chars_mobs_npcs[index].st == 0 and chars_mobs_npcs[index].status == 1 and helpers.aliveNature(index) then
 		chars_mobs_npcs[index].weakness = damageST - realdamage;
-		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.desponded[chars_mobs_npcs[index].gender]);
+		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.weaked[chars_mobs_npcs[index].gender]);
 	end;
 end;
 
 function damage.RTminus(index,damageRT,flag)
-	local realdamage = math.max(chars_mobs_npcs[index].rt,chars_mobs_npcs[index].rt - damageRT);
+	local realdamage = math.min(chars_mobs_npcs[index].rt,damageRT);
 	chars_mobs_npcs[index].rt = chars_mobs_npcs[index].rt - realdamage;
 	if flag then
 		helpers.addToActionLog( helpers.mobName(index) .. lognames.actions.lost[chars_mobs_npcs[index].gender] .. realdamage .. lognames.actions.metr .. lognames.actions.ofrt);
@@ -6808,7 +6812,6 @@ end;
 
 function damage.weaponpEffect(index,hitzone,wpEffect)
 	local victim_name = helpers.mobName(victim);
-	print(">>>",index,victim_nam);
 	if wpEffect == "hit" then
 		if hitzone == "head" then
 			local effect  = math.random(1,5);
@@ -6883,13 +6886,13 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 			local chance = math.random(1,3);
 			if chance == 1 then
 			chars_mobs_npcs[index][hitzone] = 0;
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			end;
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
 			local chance = math.random(1,3);
 			if chance == 1 then
 			chars_mobs_npcs[index][hitzone] = 0;
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			end;
 		end;
 	end;
@@ -6908,10 +6911,10 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 			helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[index].gender]);
 		elseif hitzone == "rh" or hitzone == "lh" or hitzone == "rh1" or hitzone == "lh1" or hitzone == "rh2" or hitzone == "lh2" then
 			chars_mobs_npcs[index][hitzone] = 0;
-			helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
 			chars_mobs_npcs[index][hitzone] = 0;
-			helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+			helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 		end;
 	end;
 	if wpEffect == "cut" then
@@ -6925,13 +6928,13 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 			local chance = math.random(1,2);
 			if chance == 1 then
 				chars_mobs_npcs[index][hitzone] = 0;
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			end;
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
 			local chance = math.random(1,2);
 			if chance == 1 then
 				chars_mobs_npcs[index][hitzone] = 0;
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			end;
 		end;
 	end;
@@ -6951,14 +6954,14 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 				if chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 1 then
 					chars_mobs_npcs[index].ceye = 0;
 				end;
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			end;
 		elseif hitzone == "body" then
 			if helpers.traumaNature(victim) then
 				local effect  = math.random(1,2);
 				if effect == 1 then
 					chars_mobs_npcs[index].pneumothorax = 1;
-					helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+					helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 				elseif effect == 2 then
 					chars_mobs_npcs[index].bleeding = 	chars_mobs_npcs[index].bleeding + math.random(1,5);
 					helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[index].gender]);	
@@ -6968,13 +6971,13 @@ function damage.weaponpEffect(index,hitzone,wpEffect)
 			local chance = math.random(1,4);
 			if chance == 1 then
 				chars_mobs_npcs[index][hitzone] = 0;
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			end;	
 		elseif hitzone == "rf" or hitzone == "lf" or hitzone == "rf1" or hitzone == "lf1" or hitzone == "rf2" or hitzone == "lf2" or hitzone == "rf3" or hitzone == "lf3" then	
 			local chance = math.random(1,4);
 			if chance == 1 then
 				chars_mobs_npcs[index][hitzone] = 0;
-				helpers.addToActionLog( victim_name .. lognames.actions.gottrauma[chars_mobs_npcs[index].gender]);
+				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
 			end;
 		end;
 	end;

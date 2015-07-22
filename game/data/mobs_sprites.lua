@@ -1,8 +1,8 @@
-function mobs_sprites ()
+mobs_sprites = {};
+
+function mobs_sprites.sprites_data ()
 
 row=1
-
---rogue (char, mob)
 
 img_width=2200
 img_height=1800
@@ -290,3 +290,61 @@ fireelemental_atk1[4] = anim8.newGrid(192, 128, media.images.fireelemental_war:g
 fireelemental_atk1[5] = anim8.newGrid(192, 128, media.images.fireelemental_war:getWidth(), media.images.fireelemental_war:getHeight(),32,608,0)
 fireelemental_atk1[6] = anim8.newGrid(192, 128, media.images.fireelemental_war:getWidth(), media.images.fireelemental_war:getHeight(),32,752,0)
 end
+
+function mobs_sprites.animation_rows ()
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_walk";
+	mob_walk = loadstring("return " .. tmp)();
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_dmg";
+	mob_dmg = loadstring("return " .. tmp)();
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_death";
+	mob_death = loadstring("return " .. tmp)();
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_atk1";
+	mob_atk1 = loadstring("return " .. tmp)();
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_sht1";
+	mob_sht1 = loadstring("return " .. tmp)();
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_cast1";
+	mob_cast1 = loadstring("return " .. tmp)();
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_block";
+	mob_block = loadstring("return " .. tmp)();
+
+	local tmp = chars_mobs_npcs[current_mob].sprite .. "_launch";
+	mob_launch = loadstring("return " .. tmp)();
+
+	local _walk_anim_time =  0.075*global.walk_animation_speed;
+	animation_atk1 = anim8.newAnimation(mob_atk1[chars_mobs_npcs[current_mob].rot]("1-8",1), 0.075,"pauseAtEnd");
+	animation_walk = anim8.newAnimation(mob_walk[chars_mobs_npcs[current_mob].rot]("1-8",1), _walk_anim_time,"pauseAtEnd");
+	animation_death = anim8.newAnimation(mob_dmg[chars_mobs_npcs[current_mob].rot]("1-8",1), 0.075,"pauseAtEnd");
+	animation_sht1 = anim8.newAnimation(mob_sht1[chars_mobs_npcs[current_mob].rot]("1-9",1), 0.075,"pauseAtEnd");
+	animation_launch = anim8.newAnimation(mob_launch[chars_mobs_npcs[current_mob].rot]("1-9",1), 0.075,"pauseAtEnd");
+	animation_cast1 = anim8.newAnimation(mob_cast1[chars_mobs_npcs[current_mob].rot]("1-9",1), 0.075,"pauseAtEnd");
+	--animation_block = anim8.newAnimation(mob_block[chars_mobs_npcs[current_mob].rot]("1-8",1), 0.075,"pauseAtEnd");
+
+	animation_dmg = {};
+	animation_death = {};
+	animation_block = {};
+
+	for i=1,6 do
+		local tmp = chars_mobs_npcs[current_mob].sprite .. "_dmg";
+		mob_dmg = loadstring("return " .. tmp)();
+		animation_dmg[i] = anim8.newAnimation(mob_dmg[i]("9-16",1), 0.075,"pauseAtEnd");
+	end;
+
+	for i=1,6 do
+		local tmp = chars_mobs_npcs[current_mob].sprite .. "_death";
+		mob_death = loadstring("return " .. tmp)();
+		animation_death[i] = anim8.newAnimation(mob_dmg[i]("9-16",1), 0.075,"pauseAtEnd");
+	end;
+
+	for i=1,6 do
+		local tmp = chars_mobs_npcs[current_mob].sprite .. "_block";
+		mob_dmg = loadstring("return " .. tmp)();
+		animation_block[i] = anim8.newAnimation(mob_block[i]("1-8",1), 0.075, "pauseAtEnd");
+	end;
+end;
