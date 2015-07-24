@@ -190,3 +190,29 @@ function chats.ifCondition(typ,subtyp,var,limit,comp,ifsuccess,ifnot)
 	end;
 	return ifnot;
 end;
+
+function chats.rudeRatmanGoAway(index)
+	local phrase = "Проваливай!";
+	if chars_mobs_npcs[index].race == "ratman" then
+		phrase = "Вали отсюда, крыса! Я таким как я не доверяю!"
+	elseif chars_mobs_npcs[index].race == "kobold" or chars_mobs_npcs[index].race == "lizardman" then
+		phrase = "Кыш, ящерка!"
+	elseif chars_mobs_npcs[index].race == "gnoll" then
+		phrase = "Фу! Пёсье племя…"
+	elseif chars_mobs_npcs[index].race == "goblin" or chars_mobs_npcs[index].race == "hobgoblin" or chars_mobs_npcs[index].race == "orc" or chars_mobs_npcs[index].race == "ogre" or chars_mobs_npcs[index].race == "troll" then
+		phrase = "Зелёным тут не место!"
+	elseif chars_mobs_npcs[index].race == "woodelf" or chars_mobs_npcs[index].race == "snowelf" or chars_mobs_npcs[index].race == "darkelf" then
+		phrase = "Лес в другой стороне, ушастик!"
+	elseif chars_mobs_npcs[index].race == "dwarf" or chars_mobs_npcs[index].race == "darkdwarf" then
+		phrase = "Подземелье занято, коротышка!"
+	elseif chars_mobs_npcs[index].race == "demon" or chars_mobs_npcs[index].race == "kreegan" then
+		phrase = "Не до тебя, краснорожий!"
+	elseif chars_mobs_npcs[index].race == "lich" then
+		phrase = "Чего надо, костяшка?"
+	elseif chars_mobs_npcs[index].race == "halfgeany" then
+		phrase = "Синемордых не принимаем!"
+	elseif chars_mobs_npcs[index].race == "halfling" then	
+		phrase = "Вали отсюда, недомерок!"
+	end;
+	return phrase;
+end;

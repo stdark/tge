@@ -5726,3 +5726,14 @@ function helpers.checkInventoryForAQuestItem(itemid) --calls from put to invento
 		--if then end
 	end;
 end;
+
+function unloadLiterature ()
+	
+end;
+
+function helpers.loadComic(comic)
+	for i=1,#comics_ttx[comic] do
+		local str = "img/comic/comic" .. comic .. "/" .. comics_ttx[comic][i].pic .. ".dds"
+		media.images[comics_ttx[comic][i].pic] = love.graphics.newImage(str);
+	end;
+end;

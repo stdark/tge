@@ -260,6 +260,23 @@ function utils.themeMusicVolumeDynamic ()
 				love.audio.stop(global.theme_music_array[i].track);
 			end;
 		end;
+		--?
+		if global.music_switch_to == "comic" and global.theme_music_array[i].type == global.music_switch_to then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume < global.theme_music_volume then
+				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+			end;
+		elseif global.theme_music_array[i].type == "comic" then
+			local volume = global.theme_music_array[i].track:getVolume()
+			if volume > 0 then
+				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+			end;
+			if volume <= 0 then
+				global.theme_music_array[i]["track"]:setVolume(0);
+				love.audio.stop(global.theme_music_array[i].track);
+			end;
+		end;
+		--?/
 	end;
 end;
 

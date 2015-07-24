@@ -183,7 +183,7 @@ function loadingState.start(media, finishCallback)
 			
 			loader.newImage(media.images, "comic_bubble", "img/comic_bubble.dds");
 			
-			loader.newImage(media.images, "comic1_frame1","img/comic/comic1/comic1_frame1.dds");
+			--[[loader.newImage(media.images, "comic1_frame1","img/comic/comic1/comic1_frame1.dds");
 			loader.newImage(media.images, "comic1_frame2","img/comic/comic1/comic1_frame2.dds");
 			loader.newImage(media.images, "comic1_frame3","img/comic/comic1/comic1_frame3.dds");
 			loader.newImage(media.images, "comic1_frame4","img/comic/comic1/comic1_frame4.dds");
@@ -194,9 +194,9 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "comic1_frame9","img/comic/comic1/comic1_frame9.dds");
 			loader.newImage(media.images, "comic1_frame10","img/comic/comic1/comic1_frame10.dds");
 			
-			loader.newImage(media.images, "comic2_frame1","img/comic/comic2/comic2_frame1.dds");
+			loader.newImage(media.images, "comic2_frame1","img/comic/comic2/comic2_frame1.dds");]]
 			
-			loader.newImage(media.images, "book3_pic1","img/books/book3/book3_pic1.dds");
+			--[[loader.newImage(media.images, "book3_pic1","img/books/book3/book3_pic1.dds");
 			loader.newImage(media.images, "book3_pic2","img/books/book3/book3_pic2.dds");
 			loader.newImage(media.images, "book3_pic3","img/books/book3/book3_pic3.dds");
 			loader.newImage(media.images, "book3_pic4","img/books/book3/book3_pic4.dds");
@@ -225,7 +225,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "book15_pic8","img/books/book15/book15_pic8.dds");
 			loader.newImage(media.images, "book15_pic9","img/books/book15/book15_pic9.dds");
 			loader.newImage(media.images, "book15_pic10","img/books/book15/book15_pic10.dds");
-
+]]
 			loader.newImage(media.images, "well_clean","img/wells/well_clean.dds");
 			loader.newImage(media.images, "well_magical","img/wells/well_magical.dds");
 			loader.newImage(media.images, "well_bad","img/wells/well_bad.dds");
@@ -233,9 +233,9 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "well_dry","img/wells/well_dry.dds");
 			loader.newImage(media.images, "well_dungeon","img/wells/well_dungeon.dds");
 			
-			loader.newImage(media.images, "map1","img/map1.dds");
+			--loader.newImage(media.images, "map1","img/papermaps/map1.dds");
 			
-			loader.newImage(media.images, "gobelen1","img/gobelen1.dds");
+			--loader.newImage(media.images, "gobelen1","img/gobelen1.dds");
 			
 			loader.newSource(media.sounds, "battle", "music/battle.ogg");
 			

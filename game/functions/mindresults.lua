@@ -4,6 +4,7 @@ function mindresults.results (index)
 	if index == 1 then
 		page = 1;
 		current_comic = 2;
+		helpers.loadComic(current_comic);
 		game_status = "comic";
 	elseif index == 2 then
 		chars_mobs_npcs[victim].dangerai = "agr";

@@ -3,7 +3,11 @@
 local playingState = {}
 
 function playingState.start(media)
+	require "functions.helpers"
+	require "data.comics"
+	comics_load();
 	if not game_status then
+		helpers.loadComic(1);
 		game_status = "comic"; --FIXME debug
 	end;
 	utils.printDebug("START!");
@@ -23,7 +27,7 @@ function playingState.load()
 	require "data.chats"
 	require "data.magic"
 	require "data.tricks"
-	require "data.comics"
+	--require "data.comics"
 	require "data.books"
 	require "data.messages"
 	require "data.maps"
@@ -37,7 +41,7 @@ function playingState.load()
 	require "functions.damage"
 	require "functions.boomareas"
 	require "functions.draw"
-	require "functions.helpers"
+	--require "functions.helpers"
 	require "functions.trace"
 	require "functions.pathfinding"
 	require "functions.mindgame"
@@ -128,7 +132,7 @@ function playingState.load()
 	effects_data ();
 	logstrings_load ();
 	magic_tips_load ();
-	comics_load();
+	--comics_load();
 	books_load ();
 	maps_load ();
 	gobelens_load ();
@@ -4025,15 +4029,30 @@ function playingState.mousereleased (x,y,button)
 			then
 				if inventory_ttx[list[holding_smth].ttxid].class == "book" then
 					pagebook=1;
-					littype="book";
-					game_status="literature";
-					tmp_book=holding_smth;
+					tmp_book = holding_smth;
+					for i=1,books_ttx[list[tmp_book].q].pages do
+						local picl = "picl" .. i;
+						local picr = "picr" .. i;
+						if books_ttx[list[tmp_book].q][picl] ~= "" then
+							local path_to_pic = books_ttx[list[tmp_book].q][picl];
+							local str = "img/books/book" .. books_ttx[list[tmp_book].q].id .. "/" .. path_to_pic .. ".dds";
+							media.images[path_to_pic] = love.graphics.newImage(str);
+						end;
+						if books_ttx[list[tmp_book].q][picr] ~= "" then
+							local path_to_pic = books_ttx[list[tmp_book].q][picr]
+							local str = "img/books/book" .. books_ttx[list[tmp_book].q].id .. "/" .. path_to_pic .. ".dds";
+							media.images[path_to_pic] = love.graphics.newImage(str);
+						end;
+					end;
+					
 					holding_smth=0;
 					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					bag[tmp_bagid][inv_quad_x][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y+1]=inv_quad_y*10000+inv_quad_x;
 					utils.playSfx(media.sounds.bookopen, 1);
+					littype="book";
+					game_status="literature";
 				elseif inventory_ttx[list[holding_smth].ttxid].class == "message" then
 					littype="message";
 					game_status="literature";
@@ -4051,21 +4070,27 @@ function playingState.mousereleased (x,y,button)
 					holding_smth=0;
 					utils.playSfx(media.sounds.paper, 1);
 				elseif inventory_ttx[list[holding_smth].ttxid].class == "map" then
-					littype="map";
-					game_status="literature";
 					tmp_book=holding_smth;
+					local path_to_pic = maps_ttx[list[tmp_book].q]["pic"];
+					local str = "img/papermaps/" .. path_to_pic .. ".dds";
+					media.images[path_to_pic] = love.graphics.newImage(str);
 					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					holding_smth=0;
 					utils.playSfx(media.sounds.paper, 1);
-				elseif inventory_ttx[list[holding_smth].ttxid].class == "gobelen" then
-					littype="gobelen";
+					littype="map";
 					game_status="literature";
+				elseif inventory_ttx[list[holding_smth].ttxid].class == "gobelen" then
 					tmp_book=holding_smth;
+					local path_to_pic = gobelens_ttx[list[tmp_book].q]["pic"];
+					local str = "img/gobelens/" .. path_to_pic .. ".dds";
+					media.images[path_to_pic] = love.graphics.newImage(str);
 					bag[tmp_bagid][inv_quad_x][inv_quad_y]=tmp_book;
 					bag[tmp_bagid][inv_quad_x+1][inv_quad_y]=inv_quad_y*10000+inv_quad_x;
 					holding_smth=0;
 					utils.playSfx(media.sounds.inv_cloth_take, 1);
+					littype="gobelen";
+					game_status="literature";
 				end;
 			end;
 			if holding_smth > 0 and selected_portrait > 0 and selected_portrait == current_mob --read a scroll
@@ -5473,10 +5498,12 @@ function  playingState.mousepressed(x,y,button)
 		local x,y = helpers.centerObject(media.images.book);
 		if mX>x and mX <= x+460 and mY>y+20 and mY < y+680 and pagebook > 1 then
 			utils.playSfx(media.sounds.bookpage, 1);
+			print("minus")
 			pagebook = pagebook-1;
-		elseif  mX >= 460 and mX < x+960 and mY > y+20 and mY < y+680 and pagebook<books_ttx[list[tmp_book].q].pages then
+		elseif  mX >= x+460 and mX < x+960 and mY > y+20 and mY < y+680 and pagebook<books_ttx[list[tmp_book].q].pages then
 			utils.playSfx(media.sounds.bookpage, 1);
 			pagebook = pagebook + 1;
+				print("plus")
 		end;
 	end;
 	
@@ -8742,7 +8769,7 @@ function restoreRT ()
 		missle_type="areadots";
 		for a=1,map_w do
 			for b=1, map_h do
-				if dlandscape_duration[a][b] > 0 then
+				if dlandscape_duration[a][b] > 0 and dlandscape_duration[a][b] < 1000 then
 					dlandscape_duration[a][b] = dlandscape_duration[a][b]-1; --FIX stonewall and pit
 				end;
 

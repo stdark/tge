@@ -35,8 +35,9 @@ function trace.trace_hexes (index,target,hexes_to_sense,mobsAffect,x,y) --Bresen
 	local shot_line_two = {};
 	local shot_line_tri = {};
 	local shot_line_for = {};
-	local coff={1,0.7,0.6,0.5};
-	for k=1,4 do
+	--local coff={1,0.7,0.6,0.5};
+	local coff={1,0.5};
+	for k=1,2 do
 		local sense = chars_mobs_npcs[index].sense;
 		local start_sight_point_x = chars_mobs_npcs[index].x;
 		local start_sight_point_y = chars_mobs_npcs[index].y;

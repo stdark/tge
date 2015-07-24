@@ -2368,8 +2368,8 @@ function draw.mindgameCycle(before)
 end;
 
 function draw.comic()
-	local x,y = helpers.centerObject(comics_ttx[current_comic][page].pic);
-	love.graphics.draw(comics_ttx[current_comic][page].pic, x,y-50);
+	local x,y = helpers.centerObject(media.images[comics_ttx[current_comic][page].pic]);
+	love.graphics.draw(media.images[comics_ttx[current_comic][page].pic], x,y-50);
 	local font = comicFont;
 	local text = comics_ttx[current_comic][page].text;
 	if text ~= "" then
