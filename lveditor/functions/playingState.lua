@@ -3,7 +3,7 @@
 local playingState = {}
 
 function playingState.start(media)
-	playingState.load();
+	playingState.load()
 end;
 
 function playingState.load()

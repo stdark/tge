@@ -389,9 +389,12 @@ function playingState.load()
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
-		table.insert(chars_mobs_npcs,{uid=2,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=20,y=10,rot=2,class="goblin",fraction="vagrants",  party=2, name="Ivan Susanin", face = 8,
+		table.insert(chars_mobs_npcs,{uid=2,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=20,y=10,rot=2,class="goblin",fraction="vagrants", party=2, name="Ivan Susanin", face = 8,
 		personality={
-		current={chat="ivansusanin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="rattusparchedtail",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil},
+		guards_x=20,guards_y=10,
+		guards={{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4},{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4},{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4}}
+		},
 		default={chat="ivansusanin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
@@ -1755,7 +1758,7 @@ end;
 function playingState.keyreleased(key, unicode)
 	
 	if key == " " and chars_mobs_npcs[current_mob].control == "player" and game_status == "moving" then -- FIXME debug, for interrupt turn funtions
-		helper.interrupt();
+		helpers.interrupt ();
 	end;
 
 	if key == " " and game_status == "mindgame" then
@@ -2629,6 +2632,10 @@ function playingState.mousereleased (x,y,button)
 						chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"][global.switch_personality];
 					end;
 					helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.stoppedthechat[chars_mobs_npcs[current_mob].gender]);
+				elseif chats.rules[index][current_questions[linenumber]].answer == 7779 then -- spawining guards
+					loveframes.util.RemoveAll();
+					helpers.spawnGuards (victim,true,-50);
+					game_status = "neutral";
 				elseif chats.rules[index][current_questions[linenumber]].answer >= 8001 then
 					helpers.prepareForAdding(chats.rules[index][current_questions[linenumber]].answer - 8000);
 					helpers.addToActionLog(lognames.actions.party_got_a_quest);
@@ -4628,6 +4635,11 @@ function  playingState.mousepressed(x,y,button)
 										_power = _power + 1;
 									end;
 								end;
+								for i=1,#affronts_ttx[global.affront_index].regions do
+									if affronts_ttx[global.affront_index]["regions"][i] == chars_mobs_npcs[victim].region or affronts_ttx[global.affront_index]["regions"][i] == "any" then
+										_power = _power + 1;
+									end;
+								end;
 								for i=1,#affronts_ttx[global.affront_index].tags do
 									for h=1,#chars_mobs_npcs[victim]["personality"]["current"]["affronts"]["additional_tags"] do
 										if affronts_ttx[global.affront_index]["races"][i] == chars_mobs_npcs[victim]["personality"]["current"]["affronts"]["additional_tags"][h] then
@@ -4635,6 +4647,7 @@ function  playingState.mousepressed(x,y,button)
 										end;
 									end;
 								end;
+								
 								--profession
 								--guild
 								--religion

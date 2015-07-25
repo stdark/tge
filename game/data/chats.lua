@@ -12,6 +12,18 @@ function chats.load ()
 	catchedthief={{question=1,answer=2,nextquestion={3,4,chats.ifCondition("skill","diplomacy",3,10,2,2,0)},remquestion={0},default=true},{question=2,answer=5001,nextquestion={0},remquestion={0},default=false},{question=3,answer=chats.ifCondition("stat","luk",0,0,4,7777,3),nextquestion={0},remquestion={0},default=false},{question=4,answer=chats.ifCondition("stat","chr",0,0,4,7777,4),nextquestion={0},remquestion={0},default=false},{question=4,answer=chats.ifCondition("stat","int",0,0,4,7777,5),nextquestion={0},remquestion={0},default=false},{question=4,answer=chats.ifCondition("stat","spr",0,0,4,7777,6),nextquestion={0},remquestion={0},default=false},{question=5,answer=7001,nextquestion={0},remquestion={0},default=true}},
 	cheguevara={{question=1,answer=2,nextquestion={2},remquestion={0},default=true},{question=2,answer=3,nextquestion={3,4},remquestion={1},default=false},{question=3,answer=8003,nextquestion={5},remquestion={2,4},default=false},{question=4,answer=7778,nextquestion={0},remquestion={2,3},default=false},{question=5,answer=7778,nextquestion={0},remquestion={0},default=false}},
 	cheguevara_quest_in_progress={{question=1,answer=7778,nextquestion={0},remquestion={0},default=true},{question=2,answer=7778,nextquestion={0},remquestion={0},default=true}},
+	
+	rattusparchedtail={
+	{question=1,answer=2,nextquestion={8},remquestion={1},default=true},
+	{question=2,answer=3,nextquestion={8},remquestion={2},default=true},
+	{question=3,answer=chats.ifCondition("partycharisma",nil,0,25,2,5,4),nextquestion={chats.ifCondition("partycharisma",nil,0,25,2,4,0),chats.ifCondition("partycharisma",nil,0,25,2,5,0)},remquestion={1,2},default=true},
+	{question=4,answer=7,nextquestion={6},remquestion={3},default=false},
+	{question=5,answer=8,nextquestion={7},remquestion={3},default=false},
+	{question=6,answer=8004,nextquestion={0},remquestion={0},default=false},
+	{question=7,answer=8005,nextquestion={0},remquestion={0},default=false},
+	{question=8,answer=7779,nextquestion={0},remquestion={0},default=false},
+	},
+	
 	};
 	chats.questions = {
 	ivansusanin={chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), "Кто мы?", "А звать-то как?", "Как мы сюда попали?","Знать бы...","И на кого же ты тут охотишься?"},
@@ -24,6 +36,18 @@ function chats.load ()
 	cheguevara={chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"А мы можем поискать?","Берёмся!","Нафиг!","Как найдём — занесём!"},
 	cheguevara_quest_in_progress={"Нет.","Да, вот он!"},
 	catchedthief={chats.questionPerEtiquette("whathappened",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("icanprooveit",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("thiefranaway",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), chats.questionPerEtiquette("iamnotathief",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), chats.questionPerEtiquette("leavemealone",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("notthiefbutsmart",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("notthiefbutspritual",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette)}, --thiefcatched
+	
+	rattusparchedtail={
+	chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
+	chats.questionPerEtiquette("whatrudoinghere",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
+	"Кто мы?",
+	"Рассказывай, что с зелёными не поделил.",
+	"Давай про блохастых трави.",
+	"Вернём мы тебе братца, готовь золотишко!",
+	"Нашинкуем пёсиков, хабар притащим!",
+	"Может тебя, грубияна, на твоём хвосте удавить?"
+	},
+	
 	};
 	chats.answers = {
 	ivansusanin={"Ты глянь...","Я-то? Охотник, бродяга... Так ли это важно?", "Западный Крюлод, вернее то, что от него осталось после Расплаты.","Четыре подозрительных типа. Перепили или со скалами удачно пободались?","Имя — тлен!", "Вероятно, вас выбросило на берег волнами.", "Амнезия, стало быть. У всех четверых разом, да?", "На кроликов.", "На наивных дурачков вроде вас. Шутка."};
@@ -35,7 +59,20 @@ function chats.load ()
 	cheguevara={"Хмм?","Ищущий!","А то! Найдёте — вознагражу!","Отлично!","Как знаете.","Буду ждать!"},
 	cheguevara_quest_in_progress={"Принесли?!","Эх...","О!"},
 	pilulkin={"В здоровом теле — здоровый дух!","К целителю!","Исцеляем тело, душу и разум!","Отлично!"},
-	{chats.questionPerEtiquette("gotyouthief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("youarethief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("iliketales",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("lookinglikeathief",chars_mobs_npcs[victim]["personality"]["current"].etiquette)}, --thiefcatched
+	
+	rattusparchedtail={
+	"Носит тут всяких...",
+	chats.rudeRatmanGoAway(current_mob),
+	"Тя колышит? Канай отсюда!",
+	"Четыре подозрительных типа. Перепили или со скалами удачно пободались?",
+	"Те, кто может сделать для меня кой какую работку! Кого резать умеете лучше: зелёных иль блохастых?",
+	"Нападение!",
+	"Гоблины, что стоят лагерем на юге, схватили моего брата и требуют выкуп, зеленухи! Обойдутся, понятное дело. Но братца надо б вытащить, пока он им лишнего не разболтал. Берётесь?",
+	"Таталийские отродья подкараулили нас при разгрузке и увели ценный груз. Хорошо б его вернуть. Берётесь?",
+	},
+	
+	catchedthief={chats.questionPerEtiquette("gotyouthief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("youarethief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("iliketales",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("lookinglikeathief",chars_mobs_npcs[victim]["personality"]["current"].etiquette)}, --thiefcatched
+		
 	};
 	chats.tags={
 	{},
@@ -182,6 +219,42 @@ function chats.ifCondition(typ,subtyp,var,limit,comp,ifsuccess,ifnot)
 		elseif comp == 4 and stat >= roll then
 			return ifsuccess;
 		end;
+	elseif typ == "partycharisma" then
+		local partycharisma = 0;
+		for i=1,chars do
+			if chars_mobs_npcs[i].control == "player" and chars_mobs_npcs[i].status ==1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].sleep and chars_mobs_npcs[i].freeze == 0
+			and chars_mobs_npcs[i].stealth == 0 and chars_mobs_npcs[i].invisibility == 0 
+			and helpers.ifMobIsNotFar(victim,current_mob) then
+				partycharisma = partycharisma + chars_mobs_npcs[i].chr;
+			end;
+			local tmp = partycharisma;
+			if comp == 1 and tmp == limit then
+				return ifsuccess;
+			elseif  comp == 2 and tmp >= limit then
+				return ifsuccess;
+			elseif comp == 3 and tmp <= limit then
+				return ifsuccess;
+			end;
+		end;
+	elseif typ == "medcharisma" then
+		local partycharisma = 0;
+		local chars = 0;
+		for i=1,chars do
+			if chars_mobs_npcs[i].control == "player" and chars_mobs_npcs[i].status ==1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].sleep and chars_mobs_npcs[i].freeze == 0
+			and chars_mobs_npcs[i].stealth == 0 and chars_mobs_npcs[i].invisibility == 0 
+			and helpers.ifMobIsNotFar(victim,current_mob) then
+				partycharisma = partycharisma + chars_mobs_npcs[i].chr;
+				chars = chars + 1;
+			end;
+			local tmp = math.ceil(partycharisma/math.max(1,chars));
+			if comp == 1 and tmp == limit then
+				return ifsuccess;
+			elseif  comp == 2 and tmp >= limit then
+				return ifsuccess;
+			elseif comp == 3 and tmp <= limit then
+				return ifsuccess;
+			end;
+		end;
 	elseif typ == "reputation" then
 	elseif typ == "questgot" then
 	elseif typ == "questdone" then
@@ -196,23 +269,31 @@ function chats.rudeRatmanGoAway(index)
 	if chars_mobs_npcs[index].race == "ratman" then
 		phrase = "Вали отсюда, крыса! Я таким как я не доверяю!"
 	elseif chars_mobs_npcs[index].race == "kobold" or chars_mobs_npcs[index].race == "lizardman" then
-		phrase = "Кыш, ящерка!"
+		phrase = "Ползи отседова, пресмыкающееся!"
+		helpers.addAffront(8);
 	elseif chars_mobs_npcs[index].race == "gnoll" then
-		phrase = "Фу! Пёсье племя…"
+		phrase = "Вали отсюда, псина, и блох своих прихвати!"
+		helpers.addAffront(9);
 	elseif chars_mobs_npcs[index].race == "goblin" or chars_mobs_npcs[index].race == "hobgoblin" or chars_mobs_npcs[index].race == "orc" or chars_mobs_npcs[index].race == "ogre" or chars_mobs_npcs[index].race == "troll" then
-		phrase = "Зелёным тут не место!"
+		phrase = "Вали, обеззьяна зеленомордая!"
+		helpers.addAffront(1);
 	elseif chars_mobs_npcs[index].race == "woodelf" or chars_mobs_npcs[index].race == "snowelf" or chars_mobs_npcs[index].race == "darkelf" then
 		phrase = "Лес в другой стороне, ушастик!"
+		helpers.addAffront(10);
 	elseif chars_mobs_npcs[index].race == "dwarf" or chars_mobs_npcs[index].race == "darkdwarf" then
 		phrase = "Подземелье занято, коротышка!"
+		helpers.addAffront(6);
 	elseif chars_mobs_npcs[index].race == "demon" or chars_mobs_npcs[index].race == "kreegan" then
-		phrase = "Не до тебя, краснорожий!"
+		phrase = "Не до тебя, чорт краснорожий!"
 	elseif chars_mobs_npcs[index].race == "lich" then
 		phrase = "Чего надо, костяшка?"
+		helpers.addAffront(11);
 	elseif chars_mobs_npcs[index].race == "halfgeany" then
 		phrase = "Синемордых не принимаем!"
+		helpers.addAffront(5);
 	elseif chars_mobs_npcs[index].race == "halfling" then	
 		phrase = "Вали отсюда, недомерок!"
+		helpers.addAffront(7);
 	end;
 	return phrase;
 end;

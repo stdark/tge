@@ -50,12 +50,48 @@ promotion_level = 0;
 done = false,
 },
 
+{id=4,
+font = messFont,
+title="Сторож брату моему.",
+stages = {
+{story = "Крысолюд Раттус Палохвост рассказал, что гоблины из лагеря на юге пленили его братца. Он попросил нас вызволить того, пока он не выдал все секреты под пытками."},
+{story = "Брат Раттуса спасён. Надо зайти за наградой."},
+{story = "К сожалению, спасательная операция не увенчалась успехом: брат Раттуса погиб. Надо сообщить крысолюду об этом печальном событии."},
+{story = "Раттус не особенно растроился, и даже выплатил нам обещанное вознаграждение."},
+{story = "Братцы крысолюды снова вместе. А мы при золоте. Хорошо, когда всё хоршо заканчивается."},
+},
+gold = 1000,
+item = false,
+experience = 1000,
+promotion_class = 0,
+promotion_level = 0;
+done = false,
+},
+
+{id=5,
+font = messFont,
+title="Угнанный хабар.",
+stages = {
+{story = "Крысолюд Раттус Палохвост рассказал, что гноллы из лагеря на севере захватили ценный груз, принадлежащий его команде. Он попросил нас вернуть груз."},
+{story = "Груз добыт, осталось вернуть его более-менее законным хозяевам."},
+{story = "Выполнено. РаттусПалохвост был весьма рад и выплатил нам вознаграждение."},
+},
+gold = 1000,
+item = false,
+experience = 1000,
+promotion_class = 0,
+promotion_level = 0;
+done = false,
+},
+
 };
 
 quests.data={
 {id=1,qid=1,personality="alternative",stages={true,false,false}},
 {id=2,qid=2,personality="alternative",stages={false,false,false}},
 {id=3,qid=3,personality="alternative",stages={true,false,false}},
+{id=4,qid=4,personality="alternative",stages={true,false,false,false,false}},
+{id=5,qid=5,personality="alternative",stages={true,false,false}},
 };
 
 end;

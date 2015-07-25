@@ -213,6 +213,18 @@ function helpers.ifMobIsNear (watcher,index)
 	return false;
 end;
 
+function helpers.ifMobIsNotFar (watcher,index)
+	local rings = boomareas.ringArea(chars_mobs_npcs[index].x,chars_mobs_npcs[index].y);
+	for h=1,3 do
+		for i=1,#rings[h] do
+			if chars_mobs_npcs[watcher].x == rings[h][i].x and chars_mobs_npcs[watcher].y == rings[h][i].y then
+				return true;
+			end;
+		end;
+	end;
+	return false;
+end;
+
 function helpers.hexToPixels (x,y)
 	moveto_hex_y = math.ceil((y-1-map_y)*tile_h*0.75+top_space);
 	if y/2 == math.ceil(y/2) then
@@ -1785,6 +1797,8 @@ function helpers.addMob(index,person)
 		chars_mobs_npcs[index].shader = tmpclass2.shader;
 	end;
 	
+	chars_mobs_npcs[index].region = "none"; --FIXME depends on region
+	
 	chars_mobs_npcs[index].multiattack = tmpclass2.multiattack;
 	chars_mobs_npcs[index].status = 1;
 	chars_mobs_npcs[index].id = index;
@@ -2256,8 +2270,8 @@ function helpers.applySkills (index)
 end;
 
 function helpers.interrupt ()
-	print("INTERRUPT")
-	walked_before = 100:
+	utils.printDebug("INTERRUPT")
+	walked_before = 100;
 	path_counter = 0;
 	game_status = "neutral";
 	helpers.neutralWatch ();
@@ -5713,7 +5727,7 @@ function helpers.prepareForAdding(from_chat_id)
 	end;
 	helpers.addToJournal(q_id,current_stages);
 	global.switch_personality = quests.data[from_chat_id].personality;
-	print("global.switch_personality",global.switch_personality);
+	--print("global.switch_personality",global.switch_personality);
 end;
 
 function helpers.addToJournal(q_id,current_stages)
@@ -5759,4 +5773,60 @@ function helpers.passTurn()
 		game_status="restoring";
 		ignore_kb=1;
 	end;
+end;
+
+function helpers.addAffront(id)
+	for i=1,#party.affronts do
+		if party.affronts[i] == id then
+			return;
+		end;
+	end;
+	helpers.addToActionLog(lognames.actions.party_got_an_affront);
+	table.insert(party.affronts,id);
+	utils.playSfx(media.sounds.pen,1);
+end;
+
+function helpers.spawnGuards (index,nullafterspawn,fracchange)
+	if chars_mobs_npcs[index]["personality"]["current"].guards then
+		local free_hexes = {};
+		local rings = boomareas.ringArea(chars_mobs_npcs[index]["personality"]["current"].guards_x,chars_mobs_npcs[index]["personality"]["current"].guards_y);
+		for h = 1,3 do
+			for i = 1,#rings[h] do
+				if helpers.passCheck(rings[h][i].x,rings[h][i].y) and not helpers.aliveAtHex(rings[h][i].x,rings[h][i].y) then
+					table.insert(free_hexes,{x=rings[h][i].x,y=rings[h][i].y});
+				end;
+			end;
+		end;
+		for i=1,#chars_mobs_npcs[index]["personality"]["current"].guards do
+			if #free_hexes > 0 then
+				local roll = math.random(1,#free_hexes);
+				table.insert(chars_mobs_npcs,chars_mobs_npcs[index]["personality"]["current"]["guards"][i]);
+				chars_mobs_npcs[#chars_mobs_npcs].x = free_hexes[roll].x;
+				chars_mobs_npcs[#chars_mobs_npcs].y = free_hexes[roll].y;
+				table.remove(free_hexes,roll);
+				helpers.addMob(#chars_mobs_npcs,"mob");
+			end;
+		end;
+		if nullafterspawn then
+			chars_mobs_npcs[index]["personality"]["current"].guards = nil;
+		end;
+		helpers.addToActionLog(helpers.mobName(index) .. lognames.actions.calledguards[chars_mobs_npcs[index].gender]);
+	end;
+	if fracchange then
+		helpers.fracchange(current_mob,index,fracchange)
+	end;
+	if ai.enemyWatchesYou () then
+		letaBattleBegin ();
+	end;
+end;
+
+function helpers.fracchange(index1,index2,fracchange)
+	local value = 0;
+	if fracchange > 0 then
+		value = fracchange;
+	else
+		value = math.ceil(math.min(-1,chars_mobs_npcs[index1].chr/100*fracchange));
+	end;
+	fractions[chars_mobs_npcs[index1].fraction][chars_mobs_npcs[index2].fraction] = fractions[chars_mobs_npcs[index1].fraction][chars_mobs_npcs[index2].fraction] + value;
+	fractions[chars_mobs_npcs[index2].fraction][chars_mobs_npcs[index1].fraction] = fractions[chars_mobs_npcs[index1].fraction][chars_mobs_npcs[index2].fraction] + value;
 end;

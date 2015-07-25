@@ -5,7 +5,7 @@ chars_stats={};
                    
 chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name="John Doo", face=1, age=25, lv=1, xp=0, nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="none", shader={225, 230, 0, 125},
-            mgt=5,enu=24,dex=15,spd=25,acu=15,sns=15,int=50,spr=50,chr=5,luk=50, --stats
+            mgt=5,enu=24,dex=15,spd=25,acu=15,sns=15,int=50,spr=50,chr=25,luk=50, --stats
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
             rezfire=0, rezcold=0, rezstatic=0, rezpoison=0, rezacid=0, rezmind=0, rezspirit=0, rezdisease=0, rezlight=0, rezdarkness=0,--resistances
@@ -343,7 +343,7 @@ party.jokes = {1,2,3};
 
 party.nlps={1,2,3};
 
-party.affronts={1,2};
+party.affronts={1};
 
 party.connections = {1,2};
 
