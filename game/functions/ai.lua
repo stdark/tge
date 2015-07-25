@@ -5,6 +5,7 @@ function ai.behavior()
 	mob_can_move = 0;
 	game_status="ai";
 	tmp_current_mob = current_mob;
+	mob_detects_enemies = {};
 	--BUILDING	
 	if chars_mobs_npcs[current_mob].ai == "building" then
 		damage.RTminus(current_mob,200,false);
@@ -38,7 +39,14 @@ function ai.behavior()
 		helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.runaway);
 	end;
 	helpers.clearAiArrays();
-	trace.first_watch (current_mob);
+	--trace.first_watch (current_mob);
+	
+	if chars_mobs_npcs[current_mob].control == "ai" and chars_mobs_npcs[current_mob].fraction == "party" --FIXME me: add ID of mob-mindcontroller
+	and helpers.mobCanSee(current_mob)
+	then
+		trace.first_watch (current_mob);
+	end;
+	
 --VOID	
 	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "battlemage" and vlandscape_id[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] > 0 then
 		chars_mobs_npcs[current_mob].ai = "away"; --FIXME bad zone away
@@ -470,15 +478,16 @@ function ai.behavior()
 --	debuffer (like battle mage but conditions checks before)
 --	controller (like battle mage but conditions checks before)
 --AGR melee	
+	mob_detects_enemies = {};
 	if (chars_mobs_npcs[current_mob].ai == "agr" or chars_mobs_npcs[current_mob].ai == "berserk") and chars_mobs_npcs[current_mob].battleai == "melee" then
 		for l=1, #chars_mobs_npcs do		
-			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
-			for i=1,6 do
+			local rings = boomareas.smallRingArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+			for i=1,#rings do
 				if not ai.friendOrFoe (current_mob,l)
-				and chars_mobs_npcs[l].x == rings[1][i].x
-				and chars_mobs_npcs[l].y == rings[1][i].y
+				and chars_mobs_npcs[l].x == rings[i].x
+				and chars_mobs_npcs[l].y == rings[i].y
 				and chars_mobs_npcs[l].status == 1
-				and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[l].x][chars_mobs_npcs[l].y] == 0
+				and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[l].y][chars_mobs_npcs[l].x] == 0
 				and chars_mobs_npcs[l].invisibility == 0 and chars_mobs_npcs[l].stealth == 0
 				then
 					table.insert(mob_detects_enemies, l)
@@ -487,7 +496,7 @@ function ai.behavior()
 		end;
 		if #mob_detects_enemies == 0 and chars_mobs_npcs[current_mob].immobilize == 0 then
 			for l=1, #chars_mobs_npcs do
-				if darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[l].x][chars_mobs_npcs[l].y] == 0 and not ai.friendOrFoe (current_mob,l)
+				if darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[l].y][chars_mobs_npcs[l].x] == 0 and not ai.friendOrFoe (current_mob,l)
 				and l ~= current_mob
 				and chars_mobs_npcs[l].status == 1
 				and math.ceil(math.sqrt((chars_mobs_npcs[l].x-chars_mobs_npcs[current_mob].x)^2+(chars_mobs_npcs[l].y-chars_mobs_npcs[current_mob].y)^2)) <= mob_range
@@ -570,7 +579,7 @@ function ai.behavior()
 				end;
 				ai_world_x = free_hexes[roll_point].x;
 				ai_world_y = free_hexes[roll_point].y;
-				--print("TOENEMY",current_mob,#free_hexes,roll_point,free_hexes[roll_point],ai_world_x,ai_world_y);
+				--print("TOENEMY",current_mob,#free_hexes,roll_point,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,ai_world_x,ai_world_y);
 				mob_can_move = 1;
 				if chars_mobs_npcs[current_mob].person == "char" then
 					helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.toenemy);
@@ -718,14 +727,14 @@ function ai.behavior()
 end;
 
 function ai.fractionRelations (watcher,index)
-	local tmpfrac= chars_mobs_npcs[watcher].fraction;
-	local tmpfrac2= chars_mobs_npcs[index].fraction;
+	local tmpfrac = chars_mobs_npcs[watcher].fraction;
+	local tmpfrac2 = chars_mobs_npcs[index].fraction;
 	local fraccond=loadstring("return " .. "fractions." .. tmpfrac2 .. "." .. tmpfrac)();
 	return fraccond;
 end;
 
 function ai.friendOrFoe (watcher,index)
-	if ai.fractionRelations (watcher,index) < 0 or chars_mobs_npcs[index].control ~= chars_mobs_npcs[watcher].control or chars_mobs_npcs[index].berserk > 0 then
+	if ai.fractionRelations (watcher,index) < 0 or chars_mobs_npcs[index].control ~= chars_mobs_npcs[watcher].control or chars_mobs_npcs[index].berserk > 0 or chars_mobs_npcs[index].enslave > 0 then
 		return false;
 	end;
 	return true;
@@ -749,8 +758,10 @@ function ai.mobWatchesTheMobNum (index,enemyonly) --for stealth
 	local value = 0;
 	for i = 1, #chars_mobs_npcs do
 		if chars_mobs_npcs[i].ai ~= "building" and chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].dangerai == "agr" 
-		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 
-		and chars_mobs_npcs[i].blind_dur == 0 and chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 and (chars_mobs_npcs[i].reye == 1 or chars_mobs_npcs[i].leye == 1) then
+		and (chars_mobs_npcs[i].party ~= chars_mobs_npcs[index].party or chars_mobs_npcs[i].control ~= chars_mobs_npcs[index].control)
+		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0
+		and helpers.mobCanSee (i)
+		then
 			if not enemyonly or (enemyonly and ai.fractionRelations (i,index) < 0) then
 				local value = 2 + chars_mobs_npcs[i].num_spothidden*chars_mobs_npcs[i].lvl_spothidden;
 				if helpers.blindedWithLight (current_mob,chars_mobs_npcs[i].x,chars_mobs_npcs[i].y) then
@@ -765,8 +776,10 @@ end;
 
 function ai.mobWatchesTheMob (index,enemyonly)
 	for i = 1, #chars_mobs_npcs do
-		if darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[i].y][chars_mobs_npcs[i].x] == 0 and chars_mobs_npcs[i].status > 0
-		and chars_mobs_npcs[i].blind_dur == 0 and chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 then
+		if chars_mobs_npcs[i].ai ~= "building" and (chars_mobs_npcs[i].party ~= chars_mobs_npcs[index].party or chars_mobs_npcs[i].control ~= chars_mobs_npcs[index].control)
+		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 and chars_mobs_npcs[i].status == 1
+		and helpers.mobCanSee (i)
+		then
 			if not enemyonly or (enemyonly and ai.fractionRelations (i,index) < 0) then
 				return true;
 			end;
@@ -799,7 +812,7 @@ function ai.agro_array_full () -- check trace and visibility
 	for i=1, map_w do
 		for z=1, map_h do
 			for m=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[m].y == i and chars_mobs_npcs[m].x == z and chars_mobs_npcs[m].invisibility == 0 then
+				if chars_mobs_npcs[m].y == i and chars_mobs_npcs[m].x == z and chars_mobs_npcs[m].invisibility == 0 and chars_mobs_npcs[m].stealth == 0 then
 					local tmpfrac = chars_mobs_npcs[m].fraction;
 					local tmpfrac2 = chars_mobs_npcs[current_mob].fraction;
 					local fraccond = loadstring("return " .. "fractions." .. tmpfrac2 .. "." .. tmpfrac)();

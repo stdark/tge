@@ -346,15 +346,26 @@ function playingState.load()
 --NEW LEVEL
 	if global.level_to_load == 1 then
 	--mobs
-		--table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=15,y=15,rot=5,class="goblin",fraction="greens",party=4});
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=13,y=16,rot=5,class="goblin",fraction="greens",party=4});
+		
+		--[[table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=13,y=16,rot=5,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=6,rot=6,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=9,y=6,rot=4,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=11,y=5,rot=2,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=43,y=27,rot=3,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=16,y=5,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=14,y=7,rot=1,class="naga",fraction="bandidos",party=4});
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});]]
+		
+		
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=36,y=60,rot=6,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=40,y=55,rot=4,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=37,y=62,rot=2,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=36,y=70,rot=3,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=34,y=60,rot=4,class="rogue",fraction="bandidos",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=32,y=63,rot=1,class="naga",fraction="bandidos",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=30,y=70,rot=4,class="mage",fraction="bandidos",party=4});
+		
 
 		for i=(chars+1),#chars_mobs_npcs do
 			helpers.addMob(i,"mob");
@@ -370,7 +381,7 @@ function playingState.load()
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
-		table.insert(chars_mobs_npcs,{uid=9,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=38,y=38,rot=3,class="goblin",fraction="vagrants", party=2, name="Che Guevara", face = 8,
+		table.insert(chars_mobs_npcs,{uid=9,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=3,y=24,rot=1,class="goblin",fraction="vagrants", party=2, name="Che Guevara", face = 8,
 		personality={
 		current={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		default={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
@@ -762,12 +773,6 @@ function playingState.load()
 		helpers.recalcBattleStats (i);
 	end;
 
-	for i = 1, #chars_mobs_npcs do -- OR CHARS?
-		trace.first_watch(i);
-	end;
-		trace.chars_around();
-		trace.clear_rounded();
-
 	sorttarget = "char";
 	dragfrom = "char";
 
@@ -863,9 +868,18 @@ function playingState.load()
 	end;
 
 	current_mob = 1;
+	for i=1,#chars_mobs_npcs do
+		if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].ai ~= "building" then
+			trace.first_watch (i);
+		end;
+	end;
+	
 	if ai.enemyWatchesYou () then
 		letaBattleBegin ();
 	end;
+	trace.chars_around();
+	trace.clear_rounded();
+		
 	if global.status == "peace" then
 		utils.playThemeMusic (media.sounds.peace,0,"peace");
 	end;
@@ -1464,7 +1478,7 @@ function playingState.update(dt)
 		if game_status == "restoring" then
 			if global.lookaround then
 				for i = 1, chars do
-					trace.first_watch(i);
+					--trace.first_watch(i); --FIXME need or not?
 				end;
 				global.lookaround = false;
 			end;
@@ -1831,15 +1845,7 @@ function playingState.keyreleased(key, unicode)
 
 		if key==" " and (game_status == "neutral" or game_status == "pathfinding" or game_status == "sensing") and chars_mobs_npcs[current_mob].control == "player" and ignore_kb==0 then  --spacebar
 			utils.printDebug("spacebar");
-			local switch_level = helpers.ifSwitchLevel();
-			if switch_level then
-				game_status="asktoswitchlevel";
-				helpers.switchLevelAsk(switch_level);
-			else
-				chars_mobs_npcs[current_mob].rt=math.max(chars_mobs_npcs[current_mob].rt-standart_rtadd,0); -- pass turn
-				game_status="restoring";
-				ignore_kb=1;
-			end;
+			helpers.passTurn();
 		end;
 
 		if key==" " and game_status == "comic" then
@@ -6160,15 +6166,7 @@ function  playingState.mousepressed(x,y,button)
 		and chars_mobs_npcs[current_mob].person=="char"
 		and chars_mobs_npcs[current_mob].control=="player"
 		then
-			local switch_level = helpers.ifSwitchLevel();
-			if switch_level then
-				game_status="asktoswitchlevel";
-				helpers.switchLevelAsk(switch_level);
-			else
-				chars_mobs_npcs[current_mob].rt=math.max(chars_mobs_npcs[current_mob].rt-standart_rtadd,0);
-				game_status="restoring";
-				ignore_kb=1;
-			end;
+			helpers.passTurn();
 		end;
 
 		if button == "l"
@@ -7399,7 +7397,7 @@ function  playingState.mousepressed(x,y,button)
 			sfx.soundsOfInv("take",dragfrom);
 		end;
 	end;
-
+		
 	if love.mouse.isDown("l")
 	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
@@ -7408,7 +7406,7 @@ function  playingState.mousepressed(x,y,button)
 	and chars_mobs_npcs[previctim].status==1
 	and chars_mobs_npcs[previctim].freeze==0
 	and chars_mobs_npcs[previctim].stone==0
-	and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+	--and math.sqrt((chars_mobs_npcs[current_mob].x-chars_mobs_npcs[previctim].x)^2+(chars_mobs_npcs[current_mob].y-chars_mobs_npcs[previctim].y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
 	then
 		point_to_go_x=cursor_world_x
 		point_to_go_y=cursor_world_y
@@ -7507,7 +7505,7 @@ function  playingState.mousepressed(x,y,button)
 	if love.mouse.isDown("l")
 	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
-	and math.sqrt((chars_mobs_npcs[current_mob].x-cursor_world_x)^2+(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<=5+chars_mobs_npcs[current_mob].lvl_air --not too far!
+	--and math.sqrt((chars_mobs_npcs[current_mob].x-cursor_world_x)^2+(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<=5+chars_mobs_npcs[current_mob].lvl_air --not too far!
 	and missle_type=="jump"
 	then
 		boomx= chars_mobs_npcs[current_mob].x;
@@ -7523,7 +7521,7 @@ function  playingState.mousepressed(x,y,button)
 	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
 	and not helpers.cursorAtMob (cursor_world_x,cursor_world_y)
-	and math.sqrt((chars_mobs_npcs[current_mob].x-cursor_world_x)^2+(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+	--and math.sqrt((chars_mobs_npcs[current_mob].x-cursor_world_x)^2+(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
 	and (missle_drive == "spellbook" or missle_drive == "scroll" or missle_drive == "wand")
 	and  (magic.spell_tips[missle_type].form == "wall" or magic.spell_tips[missle_type].form == "summon")
 	and heights_table[map[cursor_world_y][cursor_world_x] ]==0
@@ -7539,7 +7537,7 @@ function  playingState.mousepressed(x,y,button)
 	if love.mouse.isDown("l")
 	and chars_mobs_npcs[current_mob].control=="player"
 	and game_status == "sensing"
-	and math.sqrt((chars_mobs_npcs[current_mob].x-cursor_world_x)^2+(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
+	--and math.sqrt((chars_mobs_npcs[current_mob].x-cursor_world_x)^2+(chars_mobs_npcs[current_mob].y-cursor_world_y)^2)<= chars_mobs_npcs[current_mob].rng --not too far!
 	and (missle_type=="twister")
 	and heights_table[map[cursor_world_y][cursor_world_x] ] == 0
 	--and mlandscape_obj[map[cursor_world_y][cursor_world_x] ]==0
@@ -7958,6 +7956,9 @@ function mobMoving()
 				helpers.neutralWatch ();
 				helpers.cam_to_mob (current_mob);
 			end;
+			if chars_mobs_npcs[current_mob].control == "ai" and darkness[1][chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] then
+				helpers.cam_to_mob (current_mob);
+			end;
 			helpers.findShadows();
 			if chars_mobs_npcs[current_mob].control == "player" and going_to_hit == 0 and mob_is_going_to_picklock == 0 and mob_is_going_to_knock == 0 and mob_is_going_to_useobject == 0 then
 				game_status = "neutral";
@@ -8041,6 +8042,14 @@ function mobMoving()
 			end;
 			way_of_the_mob = {};
 		end;
+		
+		if path_counter == 0 then
+			if global.status == "peace" and ai.enemyWatchesYou () then --FIXME SLOWWWW
+				helpers.interrupt();
+				letaBattleBegin ();
+			end;
+		end;
+		
 		global.timers.n_timer=0;
 	end;
 end;
@@ -8764,6 +8773,7 @@ function restoreRT ()
 					end;
 				end;
 			end;
+			helpers.recalcBattleStats (i);
 		end;
 		helpers.addToActionLog( " dot ");
 		missle_type="areadots";
@@ -8924,7 +8934,25 @@ function restoreRT ()
 					end;
 				end;
 			end;
-			helpers.recalcBattleStats (i);
+			if chars_mobs_npcs[i].control == "ai" and chars_mobs_npcs[i].person ~= "char" 
+			and chars_mobs_npcs[i].berserk == 0 and chars_mobs_npcs[i].charm == 0 and chars_mobs_npcs[i].enslave == 0
+			and chars_mobs_npcs[i].controlundead == 0 and chars_mobs_npcs[i].fear == 0
+			then
+				if global.status == "battle" then
+					chars_mobs_npcs[i].ai = chars_mobs_npcs[i].dangerai;
+				else
+					chars_mobs_npcs[i].ai = chars_mobs_npcs[i].defaultai;
+				end;
+			end;
+			if chars_mobs_npcs[i].control == "ai" and chars_mobs_npcs[i].fraction ~= "party"
+			and chars_mobs_npcs[i].ai ~= "building" and helpers.mobCanSee(i)
+			then
+				for k=1,#chars_mobs_npcs do
+					if chars_mobs_npcs[k].control == "ai" and chars_mobs_npcs[k].party == chars_mobs_npcs[i].party then
+						trace.first_watch (k);
+					end;
+				end;
+			end;
 			helpers.battleorder();
 			global.lookaround = true;
 			global.rem_cursor_world_x = chars_mobs_npcs[i].x;
@@ -9293,6 +9321,7 @@ function playingState.draw()
 			end;
 		end;
 	end;
+	--draw.enemyFov(4)
  end;
 
 return playingState

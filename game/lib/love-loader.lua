@@ -124,7 +124,7 @@ else
         resource = kind.postProcess and kind.postProcess(data, resourceBeingLoaded) or data
         resourceBeingLoaded.holder[resourceBeingLoaded.key] = resource
         loader.loadedCount = loader.loadedCount + 1
-        callbacks.oneLoaded(resourceBeingLoaded.kind, resourceBeingLoaded.holder, resourceBeingLoaded.key)
+        --callbacks.oneLoaded(resourceBeingLoaded.kind, resourceBeingLoaded.holder, resourceBeingLoaded.key) --THIS PRINTS TO TERMINAL!!!
         resourceBeingLoaded = nil
       end
     end

@@ -2256,6 +2256,8 @@ function helpers.applySkills (index)
 end;
 
 function helpers.interrupt ()
+	print("INTERRUPT")
+	walked_before = 100:
 	path_counter = 0;
 	game_status = "neutral";
 	helpers.neutralWatch ();
@@ -2802,7 +2804,7 @@ function helpers.findFreeHexes (index)
 		for my = math.max(1,chars_mobs_npcs[current_mob].y-mob_range),math.min(chars_mobs_npcs[current_mob].y+mob_range,map_h) do
 			if helpers.passCheck(mx,my) and not helpers.aliveAtHex(mx,my)
 			and math.ceil(math.sqrt((mx-chars_mobs_npcs[current_mob].x)^2+(my-chars_mobs_npcs[current_mob].y)^2)) <= mob_range
-			and helpers.passMove (mx,my,current_mob)
+			--and helpers.passMove (mx,my,current_mob)
 			then
 				ai_world_x = mx;
 				ai_world_y = my;
@@ -4969,6 +4971,7 @@ function helpers.battleorder ()
 	if global.status == "battle" then
 		draw.lineOfOrder();
 	end;
+	helpers.cam_to_mob ();
 	trace.lookaround(current_mob);
 	helpers.findShadows();
 end;
@@ -5735,5 +5738,25 @@ function helpers.loadComic(comic)
 	for i=1,#comics_ttx[comic] do
 		local str = "img/comic/comic" .. comic .. "/" .. comics_ttx[comic][i].pic .. ".dds"
 		media.images[comics_ttx[comic][i].pic] = love.graphics.newImage(str);
+	end;
+end;
+
+function helpers.mobCanSee (index)
+	if chars_mobs_npcs[index].sleep == 0 and chars_mobs_npcs[index].stone == 0 and chars_mobs_npcs[index].freeze == 0
+	and ((chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 1) or (chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 1) or (chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 1)) then
+		return true;
+	end;
+	return false;
+end;
+
+function helpers.passTurn()
+	local switch_level = helpers.ifSwitchLevel();
+	if switch_level then
+		game_status="asktoswitchlevel";
+		helpers.switchLevelAsk(switch_level);
+	else
+		chars_mobs_npcs[current_mob].rt=math.max(chars_mobs_npcs[current_mob].rt-standart_rtadd,0);
+		game_status="restoring";
+		ignore_kb=1;
 	end;
 end;

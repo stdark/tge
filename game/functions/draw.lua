@@ -72,12 +72,21 @@ function draw.submap()
 	love.graphics.setColor(255, 255, 255);
  end; 
  
-function draw.numbers()
+function draw.numbers()--DEBUG
 	for my=1, math.min(map_display_h, map_h-map_y) do
 		for mx=1, math.min(map_display_w, map_w-map_x) do
 			draw.drawNumberHex (mx+map_x,my+map_y,16,mx);
 			draw.drawNumberHex (mx+map_x,my+map_y,32,"x");
 			draw.drawNumberHex (mx+map_x,my+map_y,48,my);
+		end;
+	end;
+	love.graphics.setColor(255, 255, 255);
+ end;
+
+function draw.enemyFov(index) --DEBUG
+	for my=1, math.min(map_display_h, map_h-map_y) do
+		for mx=1, math.min(map_display_w, map_w-map_x) do
+			draw.drawNumberHex (mx+map_x,my+map_y,16,darkness[index][my+map_y][mx+map_x]);
 		end;
 	end;
 	love.graphics.setColor(255, 255, 255);

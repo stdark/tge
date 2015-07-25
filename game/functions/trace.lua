@@ -296,7 +296,8 @@ function trace.first_watch (index)
 			local temp_array = trace.trace_hexes(index,false,trace.sightArray (index),false);
 		end;
 		if chars_mobs_npcs[index].control == "ai" and  chars_mobs_npcs[index].ai ~= "building" then
-			trace.trace_hexes(index,false,trace.sightArray (index));
+			--trace.trace_hexes(index,false,trace.sightArray (index));
+			trace.trace_hexes(index,false,trace.sightArray (index),false);
 		end;
 	end;
 end;
@@ -509,10 +510,12 @@ end;
 
 function trace.all_to_darkness()
 	for h=1,100 do --100 parties
-		for i=1, map_w do
-			for z=1, map_h do
-				if darkness[h][i][z] == 0 then
-					darkness[h][i][z] = 1;
+		if h == chars_mobs_npcs[current_mob].party then
+			for i=1, map_w do
+				for z=1, map_h do
+					if darkness[h][i][z] == 0 then
+						darkness[h][i][z] = 1;
+					end;
 				end;
 			end;
 		end;

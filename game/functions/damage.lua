@@ -3481,37 +3481,24 @@ function damage.multidamage () --FIXME two hexes
 	return damaged_mobs;
 end;
 
-function damage.ifBattleEnds()
+function damage.ifBattleEnds() --FIXME even mobs ll be able to start and end battle (in future)
 	local endbattle = true;
-	for j=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[j].ai ~= "building" then
-			local tmpfrac = chars_mobs_npcs[j].fraction;
-			local tmpfrac2 = "party";
-			local fraccond = loadstring("return " .. "fractions." .. tmpfrac2 .. "." .. tmpfrac)();
-			if chars_mobs_npcs[j].person == "mob" and chars_mobs_npcs[j].status == 1 and fraccond < 0 then
-				endbattle = false;
-			end;
-			if chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[j].status == 1 and (fraccond < 0 or chars_mobs_npcs[j].enslave>0 or chars_mobs_npcs[j].berserk>0 or chars_mobs_npcs[j].charm>0) then
-				endbattle = false;
-			end;
-			--[[helpers.countMoral(j);
-			if chars_mobs_npcs[j].moral > chars_mobs_npcs[j].base_moral*2 and chars_mobs_npcs[j].base_moral ~= 0 then
-			local roll = math.random(1,2);
-			if roll == 1 then
-			else
-				utils.playSfx(media.sounds.highmoral, 1);
-				helpers.addToActionLog( helpers.mobName(j) .. " " .. lognames.actions.hashighmoral[chars_mobs_npcs[j].gender]);
-				chars_mobs_npcs[j].rt = math.min(200,chars_mobs_npcs[j].rt + 20);
-			end;
-			elseif chars_mobs_npcs[j].moral < -1*chars_mobs_npcs[j].base_moral and chars_mobs_npcs[j].base_moral ~= 0 then
-				local roll = math.random(1,2);
-				if roll == 1 then
-				else
-					utils.playSfx(media.sounds.lowmoral, 1);
-					helpers.addToActionLog( helpers.mobName(j) .. " " .. lognames.actions.haslowmoral[chars_mobs_npcs[j].gender]);
-					chars_mobs_npcs[j].rt = math.max(0,chars_mobs_npcs[j].rt - 20);
+	if ai.enemyWatchesYou () then
+		endbattle = false;
+	end;
+	if endbattle then
+		for j=1,#chars_mobs_npcs do
+			if chars_mobs_npcs[j].ai ~= "building" and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].y][chars_mobs_npcs[j].x] == 0 then
+				local tmpfrac = chars_mobs_npcs[j].fraction;
+				local tmpfrac2 = "party";
+				local fraccond = loadstring("return " .. "fractions." .. tmpfrac2 .. "." .. tmpfrac)();
+				if chars_mobs_npcs[j].person == "mob" and chars_mobs_npcs[j].status == 1 and fraccond < 0 then
+					endbattle = false;
 				end;
-			end;]]
+				if chars_mobs_npcs[j].person == "char" and chars_mobs_npcs[j].status == 1 and (fraccond < 0 or chars_mobs_npcs[j].enslave>0 or chars_mobs_npcs[j].berserk>0 or chars_mobs_npcs[j].charm>0) then
+					endbattle = false;
+				end;
+			end;
 		end;
 	end;
 	if endbattle then -- end of the battle, counting of exp
