@@ -307,7 +307,7 @@ function ai.behavior()
 			chars_mobs_npcs[current_mob].battleai = "melee";
 		end;
 	end;
---AGR healer
+--AGR healer --ADD cure poison,disease,traumas,curses,mind ADD DI users
 	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "healer" then
 		for j=1,#chars_mobs_npcs do
 			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);

@@ -52,8 +52,8 @@ function chats.phrasesPerRandom(phrase)
 	local phrases = {
 		whoru_im_rude={"Дед Пыхто!","Конь в пальто!","Хрен в манто!"},	
 	};
-	local rnd = math.random(1,#phrases[phrase]);
-	return phrases[phrase].rnd;
+	local rnd = tonumber(math.random(1,#phrases[phrase]));
+	return phrases[phrase][rnd];
 end;
 
 function chats.questionPerEtiquette(question,etiquette)
@@ -83,7 +83,7 @@ function chats.questionPerEtiquette(question,etiquette)
 	illinjuyou={none="Калекам нынче живётся не очень...",peasant="Изувечу я тебя сейчас!",criminal="Ну чо у тя там лишнего в организме?",noble="Придётся вас немного покалечить!",warrior="Ну что, калека¸приступим?",lightpriest="У светлых храмов калекам неплохо подают...",darkpriest="Кажется, мне понадобятся кое-какие органы для моих зомби...",savage="Моя твоя кромсать!",scientist="Мне пригодятся кое-какие ваши органы для опытов..."},
 	illkillyou={none="Сейчас ты умрёшь.",peasant="От сейчас тебя и упокоим!",criminal="Ну чо, жмур, продолжим разговор?",noble="Какой вид казни предпочитаете?",warrior="Зарубить тебя иль повесить?",lightpriest="Да примет тебя Свет!",darkpriest="Готовься к нежизни!",savage="Моя твоя убивать!",scientist="Похоже, ваша жизнь подошла к концу..."},
 	suicide={none="Прощай, унылый мир!",peasant="Сдохну, так сдохну. Жизнь моя бесплатная!",criminal="Отбегался таки...",noble="Моё время давно пришло...",warrior="#@X!",lightpriest="Свет примет меня!",darkpriest="Тьма примет меня!",savage="Духи предков ждать меня!",scientist="Вот, собственно, и всё."},
-	cry={none="Хнык!",peasant="Эх, долюшка землепашеская...",criminal="Не плачь, не бойся, не проси...",noble="Это печально...",warrior="Эх, жизнь моя портянка!",lightpriest="Свет воздаст за мои слёзы!",darkpriest="Тьма воздаст за мои слёзы!",savage="Моя плакать!",scientist="Уныние и безнадёжность..."},
+	cry={none="Хнык!",peasant="Эх, долюшка моя тяжёлая...",criminal="Не плачь, не бойся, не проси...",noble="Это печально...",warrior="Эх, жизнь моя портянка!",lightpriest="Свет воздаст за мои слёзы!",darkpriest="Тьма воздаст за мои слёзы!",savage="Моя плакать!",scientist="Уныние и безнадёжность..."},
 	
 	hit={none="Н-на-нах!",peasant="Хэк!",criminal="Оба!",noble="Ха!",warrior="Ух!",lightpriest="Ха!",darkpriest="Ха!",savage="Ых!",scientist="На!"},
 	ear={none="Н-на-нах!",peasant="Хэк!",criminal="Оба!",noble="Ха!",warrior="Ух!",lightpriest="Ха!",darkpriest="Ха!",savage="Ых!",scientist="На!"},
