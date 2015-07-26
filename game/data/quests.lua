@@ -90,8 +90,8 @@ quests.data={
 {id=1,qid=1,personality="alternative",stages={true,false,false}},
 {id=2,qid=2,personality="alternative",stages={false,false,false}},
 {id=3,qid=3,personality="alternative",stages={true,false,false}},
-{id=4,qid=4,personality="alternative",stages={true,false,false,false,false}},
-{id=5,qid=5,personality="alternative",stages={true,false,false}},
+{id=4,qid=4,stages={true,false,false,false,false}},
+{id=5,qid=5,stages={true,false,false}},
 };
 
 end;

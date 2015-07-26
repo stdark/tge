@@ -345,13 +345,13 @@ party.nlps={1,2,3};
 
 party.affronts={1};
 
-party.connections = {1,2};
+party.connections = {"nilslarsen"};
 
 party.gold = 9800000;
 
 party.quests = {
-{id=1,stages={true,true,true,false,false}},
-{id=2,stages={true,true,true,true,false}},
+{id=1,stages={true,true,true,false,false},done=false},
+{id=2,stages={true,true,true,true,false},done=false},
 }
 
 party.known_fountains = {};

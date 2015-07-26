@@ -6,7 +6,7 @@ mindgame.dest_coords = {{7,1,"loyality"},{8,3,"disdain"},{9,5,"boring"},{8,7,"fe
 
 mindgame.map = {};
 
-mindgame.counter={loyality,fear,ignorance,disdain,agression,distrust,cry,surprise,respect,gladness, shame};
+mindgame.counter={loyality,fear,ignorance,disdain,agression,distrust,cry,surprise,respect,gladness, pity, shame};
 mindgame.snd_array = {"loyality","fear","boring","disdain","agression","distrust","cry","surprized","respect","lol","pity","shame","indifferent"};
 
 function mindgame.updateFlags()
@@ -26,7 +26,7 @@ function mindgame.updateFlags()
 	rich           = {{{0,-1,-1,0,1,0,0,0,0,0,0,0},false,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-1,0,3,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("goldnotenough",etiquette)},{{0,-1,0,1,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("goldnotenough",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},true,"boring",chats.questionPerEtiquette("boring",etiquette)},{{1,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{2,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{0,1,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,3,-1,0,0,0,1000000,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)}};
 	superrich      = {{{0,-1,-1,0,3,0,0,0,0,0,0,0},false,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-1,-1,0,1,0,0,0,0,0,0,0},false,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-1,0,3,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("goldnotenough",etiquette)},{{0,-1,0,1,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("goldnotenough",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{1,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{2,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{0,1,-1,0,0,0,10000000,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)}},
 	fantasticrich  = {{{0,-1,-1,0,5,0,0,0,0,0,0,0},false,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-1,-1,0,3,0,0,0,0,0,0,0},false,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-1,-1,0,1,0,0,0,0,0,0,0},false,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-1,0,3,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("goldnotenough",etiquette)},{{0,-1,0,1,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("goldnotenough",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},true,"boring",chats.questionPerEtiquette("boring",etiquette)},{{1,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{0,1,-1,0,0,0,100000000,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)}},
-	greedy         = {{{1,-1,-1,0,0,0,0,0,0,1,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{2,-1,-1,0,0,0,0,0,0,2},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{3,-1,-1,0,0,0,0,0,0,3},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{4,-1,-1,0,0,0,0,0,0,4},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{5,-1,-1,0,0,0,0,0,0,5},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{10,-1,0,0,0,0,0,0,0,10},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{25,-1,0,0,0,0,0,0,0,25},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{50,50,-1,0,0,0,0,0,0,0,50},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)}},
+	greedy         = {{{1,-1,-1,0,0,0,0,0,1,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{2,-1,-1,0,0,0,0,0,0,2},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{3,-1,-1,0,0,0,0,0,0,3},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{4,-1,-1,0,0,0,0,0,0,4},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{5,-1,-1,0,0,0,0,0,0,5},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{10,-1,0,0,0,0,0,0,0,10},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{25,-1,0,0,0,0,0,0,0,25},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{50,50,-1,0,0,0,0,0,0,0,50},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)}},
 	donationstaker = {{{0,-1,0,0,0,1,0,0,0,0,0,0},true,"donation",chats.questionPerEtiquette("donation",etiquette)},{{0,-1,0,0,0,1,0,0,0,0,0,0},true,"donation",chats.questionPerEtiquette("donation",etiquette)},{{0,-1,0,0,0,1,0,0,0,0,0,0},true,"donation",chats.questionPerEtiquette("donation",etiquette)},{{0,-1,0,0,0,1,0,0,0,0,0,0},true,"donation",chats.questionPerEtiquette("donation",etiquette)},{{0,-1,0,0,0,0,0,0,0,0,0,0},true,"donation",chats.questionPerEtiquette("donation",etiquette)},{{0,-1,0,0,0,1,0,0,0,0,0,0},true,"donation",chats.questionPerEtiquette("donation",etiquette)},{{0,-1,0,0,0,1,0,0,0,0,0,0},true,"donation"},{{0,5,-1,0,0,0,1000000,0,0,0,0,0,0},true,"donation",chats.questionPerEtiquette("donation",etiquette)}},
 	incorruptable  = {{{0,-1,1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,0,1,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("goldincor",etiquette)},{{0,-1,0,0,0,1,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("iwilltraityou",etiquette)},{{0,-1,0,0,0,2,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("iwilltraityou",etiquette)},{{0,-1,0,0,0,3,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("iwilltraityou",etiquette)},{{0,-1,0,0,0,4,0,0,0,0,0,0},false,"distrust"},{{0,-1,0,0,0,5,0,0,0,0,0,0},false,"distrust"},{{0,5,-1,0,0,0,1000000,0,0,0,0,0,0},true,"distrust",chats.questionPerEtiquette("iwilltraityou",etiquette)}},
 	disinterested  = {{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,0,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,1,0,0,0,0,1000000,0,0,0,0,0,0},true,"boring",chats.questionPerEtiquette("boring",etiquette)}},
@@ -35,7 +35,7 @@ function mindgame.updateFlags()
 	--FIXME
 	mindgame.flags_threat = {
 	fatalist       = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("busido",etiquette)},
-	masohist       = {{1,0,-1,0,0,0,0,0,0,1,0},false,"lol",chats.questionPerEtiquette("masohist",etiquette)},
+	masohist       = {{1,0,-1,0,0,0,0,0,1,0,0},false,"lol",chats.questionPerEtiquette("masohist",etiquette)},
 	normal         = {{0,1,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("wtfurdoing",etiquette)},
 	coward         = {{0,2,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("dontpainme",etiquette)},
 	scaremonger    = {{0,3,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("panic",etiquette)},
@@ -80,8 +80,8 @@ function mindgame.updateFlags()
 	mindgame.flags_drinks = {
 	
 	drinker     = {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("uknowwhattopresent",etiquette)},
-	boozer      = {{0,0,0,0,0,0,0,0,0,1,0,0},false,"respect",chats.questionPerEtiquette("reallygoodone",etiquette)},
-	drunkard 	= {{0,0,0,0,0,0,0,0,0,0,1,0},false,"lol",chats.questionPerEtiquette("iwanttodrink",etiquette)},
+	boozer      = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"respect",chats.questionPerEtiquette("reallygoodone",etiquette)},
+	drunkard 	= {{0,0,0,0,0,0,0,0,0,1,0,0},false,"lol",chats.questionPerEtiquette("iwanttodrink",etiquette)},
 	teetotaller = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("donotdrink",etiquette)},
 	abstainer   = {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("bueh",etiquette)},
 	agressive   = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"agression",chats.questionPerEtiquette("hatealcohol",etiquette)},
@@ -89,7 +89,22 @@ function mindgame.updateFlags()
 	anonymous	= {{0,0,0,0,0,0,0,0,0,0,0,1},false,"shame",chats.questionPerEtiquette("andimalcholoic",etiquette)},
 	taster		= {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("winenotbad",etiquette)},
 	taster2		= {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("disgustingwine",etiquette)},
-	poisoner	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("poisoner",etiquette)},
+	winepoisoned	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("winepoisoned",etiquette)},
+	};
+	
+	mindgame.flags_food = { --FIXME need phrases for food
+	
+	hungry      = {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("foodisgood",etiquette)},
+	starving    = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"respect",chats.questionPerEtiquette("iamstarving",etiquette)},
+	glutton 	= {{0,0,0,0,0,0,0,0,0,1,0,0},false,"lol",chats.questionPerEtiquette("iamglutton",etiquette)},
+	full        = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("fulloffood",etiquette)},
+	overfed     = {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("overfed",etiquette)},
+	agressive   = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"agression",chats.questionPerEtiquette("donotneedeat",etiquette)},
+	diabetic    = {{0,0,0,0,0,1,0,0,0,0,0,0},false,"cry",chats.questionPerEtiquette("diet",etiquette)},
+	fat	        = {{0,0,0,0,0,0,0,0,0,0,0,1},false,"shame",chats.questionPerEtiquette("iamfat",etiquette)},
+	taster3		= {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("delicios",etiquette)},
+	taster4		= {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("disgustingfood",etiquette)},
+	foodpoisoned	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("foodpoisoned",etiquette)},
 	};
 	
 	mindgame.flags_informed = {
@@ -255,7 +270,11 @@ function mindgame.passCheck(x,y)
 			end;
 		end;
 		local drinkmode =  chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinks"];
-		if mindgame.map[x][y] and mindgame.map[x][y] >= 1000 and (drinkmode == "drinker" or drinkmode == "boozer" or drinkmode == "drunkard") then
+		if mindgame.map[x][y] and mindgame.map[x][y] > 1000 and (drinkmode == "drinker" or drinkmode == "boozer" or drinkmode == "drunkard" or drinkmode == "taster") then
+			return false;
+		end;
+		local foodmode =  chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["food"];
+		if mindgame.map[x][y] and mindgame.map[x][y] > 2000 and (foodmode == "hungry" or foodmode == "starving" or foodmode == "glutton" or foodmode == "taster3") then
 			return false;
 		end;
 		if mindgame.map[x][y] and mindgame.map[x][y] > 7 and mindgame.map[x][y] <= 100 then

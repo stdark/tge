@@ -300,6 +300,7 @@ function loadingState.start(media, finishCallback)
 			loader.newSource(media.sounds, "footstep_short_6", "sounds/footstep_6_1.ogg");
 			
 			loader.newSource(media.sounds, "drink", "sounds/drink.ogg");
+			loader.newSource(media.sounds, "omnomnom", "sounds/omnomnom.ogg");
 			loader.newSource(media.sounds, "chpok", "sounds/chpok.ogg");
 			loader.newSource(media.sounds, "grease", "sounds/grease.ogg");
 			loader.newSource(media.sounds, "pen", "sounds/pen.ogg");
@@ -329,6 +330,7 @@ function loadingState.start(media, finishCallback)
 			loader.newSource(media.sounds, "inv_helmet_put", "sounds/inv_helmet_put.ogg");
 			loader.newSource(media.sounds, "inv_ring_put", "sounds/inv_ring_put.ogg");
 			loader.newSource(media.sounds, "gold_dzen", "sounds/gold_dzen.ogg");
+			loader.newSource(media.sounds, "inv_ingred_put", "sounds/inv_ingred_put.ogg");
 			loader.newSource(media.sounds, "alch_guggle", "sounds/alch_guggle.ogg");
 			loader.newSource(media.sounds, "mill", "sounds/mill.ogg");
 			loader.newSource(media.sounds, "glass_broken", "sounds/glass_broken.ogg");

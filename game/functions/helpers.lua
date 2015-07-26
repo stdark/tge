@@ -5726,7 +5726,9 @@ function helpers.prepareForAdding(from_chat_id)
 		end;
 	end;
 	helpers.addToJournal(q_id,current_stages);
-	global.switch_personality = quests.data[from_chat_id].personality;
+	if quests.data[from_chat_id].personality then
+		global.switch_personality = quests.data[from_chat_id].personality;
+	end;
 	--print("global.switch_personality",global.switch_personality);
 end;
 
@@ -5829,4 +5831,26 @@ function helpers.fracchange(index1,index2,fracchange)
 	end;
 	fractions[chars_mobs_npcs[index1].fraction][chars_mobs_npcs[index2].fraction] = fractions[chars_mobs_npcs[index1].fraction][chars_mobs_npcs[index2].fraction] + value;
 	fractions[chars_mobs_npcs[index2].fraction][chars_mobs_npcs[index1].fraction] = fractions[chars_mobs_npcs[index1].fraction][chars_mobs_npcs[index2].fraction] + value;
+end;
+
+
+function helpers.recreateDrinkAndFoodArray()
+	global.minddrink_array = {};
+	for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+		if chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid == raws.buz then
+			table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="alco",price=1});
+		end;
+	end;
+	
+	for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+		if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].class == " alcohol" then
+			table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="alco",price=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].price});
+		end;
+	end;
+	
+	for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+		if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].class == "food" then
+			table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="food",price=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].price});
+		end;
+	end;
 end;

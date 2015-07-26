@@ -14,14 +14,20 @@ function chats.load ()
 	cheguevara_quest_in_progress={{question=1,answer=7778,nextquestion={0},remquestion={0},default=true},{question=2,answer=7778,nextquestion={0},remquestion={0},default=true}},
 	
 	rattusparchedtail={
-	{question=1,answer=2,nextquestion={8},remquestion={1},default=true},
-	{question=2,answer=3,nextquestion={8},remquestion={2},default=true},
-	{question=3,answer=chats.ifCondition("partycharisma",nil,0,25,2,5,4),nextquestion={chats.ifCondition("partycharisma",nil,0,25,2,4,0),chats.ifCondition("partycharisma",nil,0,25,2,5,0)},remquestion={1,2},default=true},
-	{question=4,answer=7,nextquestion={6},remquestion={3},default=false},
-	{question=5,answer=8,nextquestion={7},remquestion={3},default=false},
-	{question=6,answer=8004,nextquestion={0},remquestion={0},default=false},
-	{question=7,answer=8005,nextquestion={0},remquestion={0},default=false},
+	{question=1,answer=chats.ifCondition("questgot",nil,{4,5},0,0,11,2),nextquestion={8},remquestion={1},default=true},
+	{question=2,answer=chats.ifCondition("questgot",nil,{4,5},0,0,11,3),nextquestion={8},remquestion={2},default=true},
+	{question=3,answer=chats.ifCondition("questgot",nil,{4,5},0,0,11,chats.ifCondition("partycharisma",nil,0,25,2,5,4)),nextquestion={chats.ifCondition("questgot",nil,{5},0,0,0,chats.ifCondition("partycharisma",nil,0,25,2,4,0)),chats.ifCondition("questgot",nil,{4},0,0,0,chats.ifCondition("partycharisma",nil,0,25,2,5,0))},remquestion={1,2},default=true},
+	{question=4,answer=7,nextquestion={6,9},remquestion={3},default=false},
+	{question=5,answer=8,nextquestion={7,9},remquestion={3},default=false},
+	{question=6,answer=8004,nextquestion={10},remquestion={0},default=false},
+	{question=7,answer=8005,nextquestion={11},remquestion={0},default=false},
 	{question=8,answer=7779,nextquestion={0},remquestion={0},default=false},
+	{question=9,answer=7778,nextquestion={0},remquestion={0},default=true},
+	--{question=10,answer=9,nextquestion={12},remquestion={0},default=false},
+	--{question=11,answer=9,nextquestion={12},remquestion={0},default=false},
+	{question=chats.ifCondition("questinprogress",nil,{4},0,0,10,0),answer=9,nextquestion={12},remquestion={0},default=true},
+	{question=chats.ifCondition("questinprogress",nil,{5},0,0,11,0),answer=9,nextquestion={12},remquestion={0},default=true},
+	{question=12,answer=10,nextquestion={10,11},remquestion={0},default=false},
 	},
 	
 	};
@@ -40,12 +46,19 @@ function chats.load ()
 	rattusparchedtail={
 	chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
 	chats.questionPerEtiquette("whatrudoinghere",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
-	"Кто мы?",
+	chats.questionPerEtiquette("whoweare",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
 	"Рассказывай, что с зелёными не поделил.",
 	"Давай про блохастых трави.",
 	"Вернём мы тебе братца, готовь золотишко!",
 	"Нашинкуем пёсиков, хабар притащим!",
-	"Может тебя, грубияна, на твоём хвосте удавить?"
+	"Может тебя, грубияна, на твоём хвосте удавить?",
+	chats.questionPerEtiquette("goodbye",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
+	"По поводу твоего брата...",
+	"Что касается груза...",
+	"Да так, ничего.",
+	"У меня плохие новости: твой брат погиб...",
+	"Я вызволил твоего брата!",
+	"Вот твой груз.",
 	},
 	
 	};
@@ -69,6 +82,12 @@ function chats.load ()
 	"Нападение!",
 	"Гоблины, что стоят лагерем на юге, схватили моего брата и требуют выкуп, зеленухи! Обойдутся, понятное дело. Но братца надо б вытащить, пока он им лишнего не разболтал. Берётесь?",
 	"Таталийские отродья подкараулили нас при разгрузке и увели ценный груз. Хорошо б его вернуть. Берётесь?",
+	"Новости?",
+	"Поторапливайтесь!",
+	"Я вас нанял не для того, чтоб вы глупыми вопросами меня изводили!", 
+	"Это печальная весть. Что ж, надесюсь, он не болтал лишнего. Вот золото.", --add fraction relations
+	"Вот это спасибо, мой братец — ценный помощник! Ваше золото!", --add fraction relations
+	"Мои замечтальные коробочки! Держите награду!"--add fraction relations
 	},
 	
 	catchedthief={chats.questionPerEtiquette("gotyouthief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("youarethief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("iliketales",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("lookinglikeathief",chars_mobs_npcs[victim]["personality"]["current"].etiquette)}, --thiefcatched
@@ -98,6 +117,8 @@ function chats.questionPerEtiquette(question,etiquette)
 	whoru={none="Кто ты?",peasant="Ты кто?",criminal="Ты чо за фраер?",noble="С кем имею честь беседовать?",warrior="Имя, звание, кто командующий?",lightpriest="Назови имя своё, чадо!",darkpriest="Что написать на твоём надгробии, жертва?",savage="Твоя есть кто?",scientist="Могу я узнать ваше имя?"},
 	whatrudoinghere={none="Что ты здесь делаешь?",peasant="Что за дела у вас туточки?",criminal="Ты чо тут творишь?",noble="Соблаговолите назвать цель вашего здесь пребывания!",warrior="Доложить оперативную задачу!",lightpriest="Что за дела привели тебя сюда, чадо?",darkpriest="Что привело тебя сюда в этот недобрый час, жертва?",savage="Твоя тут чего делать?",scientist="Могу я узнать, что вы в настоящий момент делаете?"},
 	whattheplace={none="Куда это я зашёл?",peasant="Где это я?",criminal="Чо за место? Вроде не каторга?",noble="Не подскажете ли, что это за место?",warrior="Доложить дислокацию!",lightpriest="В каком месте этого пресветлого мира я нахожусь?",darkpriest="Куда это демоны меня занесли?",savage="Моя не знать где есть...",scientist="Не просветите ли меня по поводу моего нынешнего местонахождения?"},
+	whoweare={none="Вы случайно не в курсе, кто мы?",peasant="Эта, хто мы такие, а?",criminal="Слышь, а ты наши хари нигде в ориентировках не видал?",noble="Не встречался ли вам мой где-либо мой портрет или, быть может, профиль на монете?",warrior="Доложить кто пред тобой!",lightpriest="Не просветите ли меня по поводу мой личности и личностей моей паствы?",darkpriest="А нет ли в в аших краях тёмного властелина, похожего лицом на меня? И с прихвостнями, похожими вон на них?",savage="Моя не знать кто он есть...",scientist="Извинините, не подскажете кто я? У меня провалы в памяти, похоже…"},
+	goodbye={none="До свидания!",peasant="Бавай, чтоли...",criminal="Не кашляй!",noble="До встречи.",warrior="До свидания!",lightpriest="Свет с тобой чадо! Дела ждут меня.",darkpriest="Встретимся в посмертии!",savage="Моя прощаться...",scientist="До встречи."},
 	--gold
 	goldok={none="Хм, золото...",peasant="Монетки!",criminal="Эге, рыжьё!",noble="Эта скромная сумма будет весьма кстати.",warrior="О, золотишко!",lightpriest="Дела твои угодны Свету!",darkpriest="Даже Тьма не против блеска золота!",savage="Моя радоваться!",scientist="Замечательно, обожаю этот благородный металл!"},
 	goldnotenough={none="Что это, и почему так мало?!",peasant="Маловато будет!",criminal="Э, шо за? Чо так мало?!",noble="Раздайте эту мелочь нищим!",warrior="Маловато будет!",lightpriest="Жадность есть грех, чадо!",darkpriest="Больше давай, Тьма тебя возьми!",savage="Золота давай-давай!",scientist="Сумма явно недостаточна!"},
@@ -163,17 +184,31 @@ function chats.questionPerEtiquette(question,etiquette)
 	doyouknowhim={none="Знакомое имя?",peasant="Знакомы, не?",criminal="Как те такая погремуха?",noble="Имеете ли честь знать?",warrior="Были ли представлены?",lightpriest="Имя в миру.",darkpriest="Вот такое вот знакомство.",savage="Моя знать.",scientist="Вот такое вот знакомство."},
 	
 	wannadrink={none="Употребляете?",peasant="Это, за ворот, ага?",criminal="Бухать буишь?",noble="Не желаете ли употребить?",warrior="Накатим перед боем?",lightpriest="Причастись святости Света, чадо!",darkpriest="Как на счёт проспиртоваться?",savage="Твоя хотеть бухать?",scientist="Как вы относитесь к алкоголю?"},
-	uknowwhattopresent={none="Это дело!",peasant="Это дело я люблю!",criminal="О, ща вмажу!",noble="Чтож, иногда и благородному нез азорно слегка расслабиться...",warrior="Самое оно перед боем-то!",lightpriest="Кровь сего мира! Нектар!",darkpriest="Самое время употребить...",savage="Моя любить огненный вода!",scientist="Настойка на основе спиритуса? Весьма к месту."},
+	uknowwhattopresent={none="Это дело!",peasant="Это дело я люблю!",criminal="О, ща вмажу!",noble="Чтож, иногда и благородному не зазорно слегка расслабиться...",warrior="Самое оно перед боем-то!",lightpriest="Кровь сего мира! Нектар!",darkpriest="Самое время употребить...",savage="Моя любить огненный вода!",scientist="Настойка на основе спиритуса? Весьма к месту."},
 	reallygoodone={none="Молодца!",peasant="Запой так запой!",criminal="О, гуляем!",noble="Свои в доску, сразу видно!",warrior="Это верная тактика!",lightpriest="Верно ведёшь себя, чадо.",darkpriest="Верное решение.",savage="Моя бухать! Твоя как?",scientist="Употребление алкоголя в умеренных дозах полезно в любом количестве!"},
 	iwanttodrink={none="Д-давай сюда!",peasant="Ух, давай-давай!",criminal="Пл-лесни, хваталки др-рожат!",noble="Извините, употрбелю прямо сейчас: очень надо!",warrior="Боеприпасы подвезли! Ик!",lightpriest="Радость посетила моё сердце, чадо.",darkpriest="Давай сюда, мне материал заспиртовать надо!",savage="Моя бухать!",scientist="То, что нужно, то, что нужно... Строго для опытов!"},
 	donotdrink={none="Не пью.",peasant="Непьюшшие мы.",criminal="Не, не употребляю.",noble="Не подвержен этому постыдному пороку.",warrior="Меньше выпьешь — дольше проживёшь!",lightpriest="Грешно твоё предложение, чадо.",darkpriest="Живые... ...собрание нелепых пороков.",savage="Моя не пить.",scientist="Вам стоит ознакомиться с научными трудами о вреде алкоголя."},
-	bueh={none="Буэээ...",peasant="Ох-хо-хо, кишки мои, да потроха...",criminal="Ой, убери...",noble="Не вздумайте прелагать мне это!",warrior="В голове барабаны, в желудке — кавалерия!",lightpriest="Тяжко мне от вида твоего подношения, чадо.",darkpriest="Выглядит хуже, чем опыты иных моих коллег..",savage="Моя это не пить!",scientist="От вида вашего сомнительного подарка моё состояние заметно ухудщилось."},
+	bueh={none="Буэээ...",peasant="Ох-хо-хо, кишки мои, да потроха...",criminal="Ой, убери...",noble="Не вздумайте прелагать мне это!",warrior="В голове барабаны, в желудке — кавалерия!",lightpriest="Тяжко мне от вида твоего подношения, чадо.",darkpriest="Выглядит хуже, чем опыты иных моих коллег..",savage="Моя это не пить!",scientist="От вида вашего сомнительного подарка моё состояние заметно ухудшилось."},
 	hatealcohol={none="Подите прочь!",peasant="Граблями зашибу!",criminal="Канай отседова!",noble="Можете выплеснуть это в окно!",warrior="Будь моя воля — дюжину нарядов вне очереди влепил бы!",lightpriest="Не вынуждай меня гневаться, чадо!",darkpriest="Меня злят твои жалкие подачки!",savage="Моя бить этим твой голова!",scientist="Мне не нужна эта гадость!"},
 	cruelbastard={none="Как бывают некоторые злы...",peasant="Да нельзя мне...",criminal="Подловить хочешь?",noble="К сожалению, лекари запретили мне употребление... ..этого.",warrior="На посту нельзя!",lightpriest="Я отвратил от себя этот порок, чадо.",darkpriest="Былые радости мне недоступны.",savage="Моя не мочь...",scientist="С сожалением констатирую, что состояние моего здоровье вынуждает воздержаться От потребления."},
 	andimalcholoic={none="Откуда узнали?",peasant="Есть грех...",criminal="Как прознали?",noble="Увы, и я подвержен этому пороку.",warrior="Давай, чего уж там... ...пока никто не видит.",lightpriest="Свет простит мне мою слабость...",darkpriest="Никому не говори. Услышу от кого — убью!",savage="Твоя не рассказывать!",scientist="Что ж тут поделаешь, такой теперь обмен веществ..."},
 	winenotbad = {none="Весьма неплохо.",peasant="Забористая штука!",criminal="Отличное бухло!",noble="Весьма достойный экземпляр.",warrior="Знатный трофей!",lightpriest="Словно лучится светом...",darkpriest="Удивительно, что иной сосуд может в себе скрывать!",savage="Моя ценить!",scientist="Надо же, не думал, что после Расплаты возможно найти такое чудо!"},
 	disgustingwine = {none="Гадость какая.",peasant="Таким и поле удобрить грешно!",criminal="Что за отрава?",noble="Какая наглость — предложить мне эту.. ...субстанцию!",warrior="В армии всякое доводилось пробовать, но это...",lightpriest="Да проклянёт тебя Свет, неразумный!",darkpriest="И как, трудно было осмелиться предложить эту гадость мне?",savage="Моя такое не пить!",scientist="Технологический процесс при изготовлении был грубейшим образом нарушен..."},
-	poisoner = {none="Я с кем попало не пью!",peasant="Не-не, мне ишшо пожить охота!",criminal="Чо вы мне подсовываете, мокрушники?",noble="Вы думаете, я рискну это попробовать?",warrior="Ага-ага, вот я так часовых снимал!",lightpriest="Большой грех ты замыслило, чадо!!",darkpriest="Думаешь, на меня подействует то, что ты понамешал?",savage="Моя такое не пить!",scientist="Интересно, если мы проведём полное алхимическое иследование этого образца: что покажут тесты?"},
+	winepoisoned = {none="Я с кем попало не пью!",peasant="Не-не, мне ишшо пожить охота!",criminal="Чо вы мне подсовываете, мокрушники?",noble="Вы думаете, я рискну это попробовать?",warrior="Ага-ага, вот я так часовых и снимал!",lightpriest="Большой грех ты замыслило, чадо!!",darkpriest="Думаешь, на меня подействует то, что ты понамешал?",savage="Моя такое не пить!",scientist="Интересно, если мы проведём полное алхимическое иследование этого образца: что покажут тесты?"},
+	
+	wannaeat={none="Есть хотите?",peasant="Это, пожрать, ага?",criminal="Хавать буишь?",noble="Не желаете ли утолить голод?",warrior="К приёму пищи приступить!",lightpriest="Восполни силы, чадо!",darkpriest="Подкормить вас перед жертвоприношением?",savage="Твоя хотеть есть?",scientist="Вам стоит восполнить силы."},
+	foodisgood={none="Это дело!",peasant="Это дело я люблю!",criminal="О, ща похаваю!",noble="Будь ты трижды благородным, а с желудком надо считаться...",warrior="Война войной, а обед по расписанию!",lightpriest="Свет велик! Особенно на сытый желудок.",darkpriest="Хорошо быть живым.",savage="Моя любить есть!",scientist="Регулярное и сбалансированное питание — залог здоровья."},
+	iamstarving={none="Спаситель!",peasant="Отож, чуть кони с голодухи не двинул!",criminal="О, чутка деревянный макинтош с голодухи не примерил!",noble="Вы спасли меня от голодной смертию Это, без сомнения, благородный поступок!",warrior="Блокада прорвана, осада снята!",lightpriest="Светлы дела твои, чадо!",darkpriest="Плоть слаба! Но всё ещё живет с вашей помощью...",savage="Еда! Моя не сдохнуть!",scientist="О, вы успели как раз вовремя: мне грозила смерть от истощения!"},
+	iamglutton={none="Еда!",peasant="Люблю повеселиться, особенно пожрать!",criminal="От пожрать я люблю, особенно как с каторги откинулся!",noble="Благородные не чужды удовольствий!",warrior="Кто в осаде посидел, тот от еды никогда не откажется!",lightpriest="Этот праздник чревоугодия Свет мне простит!",darkpriest="Надо успеть вдоволь наестся, пока живой!",savage="Моя любить пожрать!",scientist="От еды мозг разумных вырабатывает особые вещества, приносящие нам удовольствие!"},
+	fulloffood={none="Не хочу!",peasant="Не, не голоден я...",criminal="Неохота чо-та...",noble="Благодаряю, я не голоден...",warrior="Не, я режим блюду!",lightpriest="Увы, чадо, у меня пост.",darkpriest="Вставшего на путь Тьмы и Смерти не заинтересовать едой...",savage="Моя не хотеть!",scientist="Переедание вредит здоровью."},
+	overfed={none="Уберите это!",peasant="Ох, что-то тошно...",criminal="Ща сблюю...",noble="Уберите, мне от одного вида дурно!",warrior="Выглядит, как паёк — мерзко и несъедобно!",lightpriest="Идущий путём Света выше отвратительных удовольствий чрева!",darkpriest="Идущий путём Тьмы выше отвратительных удовольствий чрева!",savage="Моя тошнить...",scientist="От вида этого продукта я чувствую тошноту..."},
+	donotneedeat={none="Подите прочь!",peasant="Граблями зашибу!",criminal="Канай отседова!",noble="Я благородный, а не попрошайка!",warrior="Мне, воину, ткак собаке кость кидать?!",lightpriest="Не вынуждай меня гневаться, чадо!",darkpriest="Меня злят твои жалкие подачки!",savage="Моя бить этим твой голова!",scientist="Мне не нужна эта гадость!"},
+	diet={none="Мне нельзя.",peasant="Да нельзя мне...",criminal="Не, не могу.",noble="К сожалению, лекари запретили мне употребление... ..этого.",warrior="У меня с такого кишки крутит!",lightpriest="Я отвратил от себя этот порок, чадо.",darkpriest="Былые радости мне недоступны.",savage="Моя не мочь...",scientist="Извините, я на диете."},
+	iamfat={none="Нет, не буду.",peasant="Поголодал я в детстве немало... Теперь и отказаться не могу...",criminal="По приютам я с детства скитался... Не доедал, не досыпал...",noble="Увы, и я подвержен этому пороку.",warrior="И так уже портупея не застёгивается...",lightpriest="Свет простит мне мою слабость...",darkpriest="Никому не говори. Услышу от кого — убью!",savage="Твоя не рассказывать!",scientist="Что ж тут поделаешь, такой обмен веществ..."},
+	delicios = {none="Весьма неплохо.",peasant="Нажористая штука!",criminal="Отличная жратва!",noble="Как в лучших ресторанах.",warrior="Знатный трофей!",lightpriest="Словно Свет согревает изнутри...",darkpriest="Да, стоило подольше оставаться живым, чтоб это попробовать!",savage="Вкусно! Давай ещё!",scientist="Надо же, не думал, что после Расплаты возможно найти такое чудо!"},
+	disgustingfood = {none="Гадость какая.",peasant="Таким и поле удобрить грешно!",criminal="Что за отрава?",noble="Какая наглость — предложить мне эту.. ...субстанцию!",warrior="В армии всякое доводилось жрать, но это...",lightpriest="Да проклянёт тебя Свет, неразумный!",darkpriest="И как, трудно было осмелиться предложить эту гадость мне?",savage="Моя такое не есть!",scientist="Технологический процесс при изготовлении был грубейшим образом нарушен..."},
+	foodpoisoned = {none="Я с кем попало не ем!",peasant="Не-не, мне ишшо пожить охота!",criminal="Чо вы мне подсовываете, мокрушники?",noble="Вы думаете, я рискну это попробовать?",warrior="Ага-ага, вот я так часовых и снимал!",lightpriest="Большой грех ты замыслило, чадо!!",darkpriest="Думаешь, на меня подействует то, что ты понамешал?",savage="Моя такое не есть!",scientist="Интересно, если мы проведём полное алхимическое иследование этого образца: что покажут тесты?"},
+	
 	};
 	local what2say = questions[question][etiquette];
 	return what2say;
@@ -256,10 +291,42 @@ function chats.ifCondition(typ,subtyp,var,limit,comp,ifsuccess,ifnot)
 			end;
 		end;
 	elseif typ == "reputation" then
+
 	elseif typ == "questgot" then
+		for i=1, #party.quests do
+			for h=1,#var do
+				if party.quests[i].id == var[h] then
+					return ifsuccess;
+				end;
+			end;
+		end;
+	elseif typ == "questpart" then
+		for i=1, #party.quests do
+			for h=1,limit do
+				if party.quests[i].id == var and party.quests[limit[h]][stages] then
+					return ifsuccess;
+				end;
+			end;
+		end
 	elseif typ == "questdone" then
+		for i=1, #party.quests do
+			for h=1,#var do
+				if party.quests[i].id == var[h] and party.quests[i].done then
+					return ifsuccess;
+				end;
+			end;
+		end;
+	elseif typ == "questinprogress" then
+		for i=1, #party.quests do
+			for h=1,#var do
+				if party.quests[i].id == var[h] and not party.quests[i].done then
+					return ifsuccess;
+				end;
+			end;
+		end;
 	elseif typ == "partygold" then
 	elseif typ == "etiquette" then
+	elseif typ == "item" then
 	end;
 	return ifnot;
 end;

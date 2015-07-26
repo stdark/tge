@@ -2283,8 +2283,14 @@ function draw.mindgame()
 	local total_diplomacy = chars_mobs_npcs[current_mob].lvl_diplomacy*chars_mobs_npcs[current_mob].num_diplomacy;
 	if total_diplomacy >= 1 then
 		local counter = 0;
-		for i=1,#chars_mobs_npcs[current_mob].inventory_list do
+		--[[for i=1,#chars_mobs_npcs[current_mob].inventory_list do
 			if chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid == raws.buz then
+				counter = counter+1;
+			end;
+		end;
+		for i=1,#chars_mobs_npcs[current_mob].inventory_list do
+			if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].class == "alco" then
+				love.graphics.draw(media.images.items2, tiles_items[raws.buz],345+counter*200,550);--FIXME
 				counter = counter+1;
 			end;
 		end;
@@ -2293,12 +2299,14 @@ function draw.mindgame()
 				love.graphics.draw(media.images.items2, tiles_items[raws.buz],345+counter*200,550);--FIXME
 				counter = counter+1;
 			end;
-		end;
+		end;]]
 	end;
 	if total_diplomacy >= 1 and #global.minddrink_array >= 1 then
 		local id = global.minddrink_array[global.drinkmissle].spriteid
 		--love.graphics.draw(media.images.items2,tiles_items[id],x+496,y+360);
-		love.graphics.draw(media.images.items2,tiles_items[id],x+496,y+370);
+		local yplus = (2-inventory_ttx[id].h)*32;
+		local xplus = (1-inventory_ttx[id].w)*32;
+		love.graphics.draw(media.images.items2,tiles_items[id],x+496+xplus,y+370+yplus);
 	end;
 	--local coords = global.mindcursor_x .. "X" .. global.mindcursor_y;
 	--love.graphics.print(coords, 750,200);
@@ -2367,9 +2375,14 @@ function draw.mindgameCycle(before)
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_sad_icon,i,h,-384,-200);
 				elseif mindgame.map[i][h] > 100 and mindgame.map[i][h] <= 165 then
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_icons[mindgame.map[i][h]-100],i,h,-350,-200);
-				elseif mindgame.map[i][h] > 1000 then
+				elseif mindgame.map[i][h] > 1000 and  mindgame.map[i][h] < 2000 then
 					local tileid = mindgame.map[i][h] - 1000;
 					draw.drawMindObject(media.images.items2,tiles_items[tileid],i,h,-336,-170);
+				elseif mindgame.map[i][h] > 2000 and  mindgame.map[i][h] < 3000 then
+					local tileid = mindgame.map[i][h] - 2000;
+					local yplus = (2-inventory_ttx[tileid].h)*48;
+					local xplus = (1-inventory_ttx[tileid].w)*48;
+					draw.drawMindObject(media.images.items2,tiles_items[tileid],i,h,-336+xplus,-170+yplus);
 				end;
 			end;
 		end;
@@ -5963,7 +5976,7 @@ function draw.drawMindHex (hx,hy,cursor)
 	else
 		moveto_hex_x = hx*tile_w+tile_w/2+x-7;
 	end;
-	love.graphics.draw(media.images.hex, cursor, moveto_hex_x, moveto_hex_y);
+	love.graphics.draw(media.images.hex_ui, cursor, moveto_hex_x, moveto_hex_y);
 	--local coords = x .. "x" .. y;
 	--love.graphics.print(coords,moveto_hex_x+32, moveto_hex_y+16)
 end;
@@ -6109,7 +6122,7 @@ function draw.mindgameButtons()
 		end;
 	end;
 	
-	--drink
+	--drinks and food
 	local addx2 = 355;
 	
 	if total_diplomacy >= 1 and #global.minddrink_array >= 1 then
@@ -6124,7 +6137,11 @@ function draw.mindgameButtons()
 			else
 				global.drinkmissle = #global.minddrink_array;
 			end;
-			mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+			if global.minddrink_array[global.drinkmissle].typ == "alco" then
+				mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+			elseif global.minddrink_array[global.drinkmissle].typ == "food" then
+				mindmissle = 2000 + global.minddrink_array[global.drinkmissle].spriteid;
+			end;
 		end;
 	end;
 	
@@ -6140,7 +6157,11 @@ function draw.mindgameButtons()
 			else
 				global.drinkmissle = 1;
 			end;
-			mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+			if global.minddrink_array[global.drinkmissle].typ == "alco" then
+				mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+			elseif global.minddrink_array[global.drinkmissle].typ == "food" then
+				mindmissle = 2000 + global.minddrink_array[global.drinkmissle].spriteid;
+			end;
 		end;
 	end;
 	if total_diplomacy >= 1 and #global.minddrink_array >= 1 then
@@ -6150,7 +6171,11 @@ function draw.mindgameButtons()
 		global.buttons.d4_button:SizeToImage()
 		global.buttons.d4_button:SetText(lognames.mindgame.gift);
 		global.buttons.d4_button.OnClick = function(object)
-			mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+			if global.minddrink_array[global.drinkmissle].typ == "alco" then
+				mindmissle = 1000 + global.minddrink_array[global.drinkmissle].spriteid;
+			elseif global.minddrink_array[global.drinkmissle].typ == "food" then
+				mindmissle = 2000 + global.minddrink_array[global.drinkmissle].spriteid;
+			end;
 		end;
 	end;
 	
@@ -6433,12 +6458,12 @@ function draw.mindgameButtons()
 			else
 				global.current_connection = #global.connections_pull;
 			end;
-			local text = npc_ttx[party.connections[global.current_connection]].name .. ". " .. chats.questionPerEtiquette("doyouknowhim",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette); --FIXME
+			local text = npc.ttx[party.connections[global.current_connection]].name .. ". " .. chats.questionPerEtiquette("doyouknowhim",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette); --FIXME
 			global.connections_text_field:SetText(text);
 			mindmisle = 34;
 		end;
 
-		local text = npc_ttx[party.connections[global.current_connection]].name .. ". " .. chats.questionPerEtiquette("doyouknowhim",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette); --FIXME
+		local text = npc.ttx[party.connections[global.current_connection]].name .. ". " .. chats.questionPerEtiquette("doyouknowhim",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette); --FIXME
 		global.connections_text_field = loveframes.Create("text");
 		global.connections_text_field:SetPos(x+140,y+665);
 		global.connections_text_field:SetMaxWidth(400);
@@ -6456,8 +6481,7 @@ function draw.mindgameButtons()
 			else
 				global.current_connection = 1;
 			end;
-			print("NAME",party.connections[global.current_connection],npc_ttx[party.connections[global.current_connection]].name);
-			local text = npc_ttx[party.connections[global.current_connection]].name .. ". " .. chats.questionPerEtiquette("doyouknowhim",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette); --FIXME
+			local text = npc.ttx[party.connections[global.current_connection]].name .. ". " .. chats.questionPerEtiquette("doyouknowhim",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette); --FIXME
 			global.connections_text_field:SetText(text);
 			mindmisle = 34;
 		end;
