@@ -1062,7 +1062,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 					local incoming_physical_dmg = 0;
 					local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
 					local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
-					chance_to_hit = chance_to_hit + total_fate + chars_mobs_npcs[current_mob].bless_power;
+					chance_to_hit = chance_to_hit + total_fate;
 					chars_mobs_npcs[victim].fate = 0;
 					chars_mobs_npcs[victim].fateself = 0;
 					random_chance = math.random(1,100)-50;	
@@ -1432,7 +1432,7 @@ function damage.multidamage () --FIXME two hexes
 				local incoming_physical_dmg = 0;
 				local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
 				local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
-				chance_to_hit = chance_to_hit + total_fate + chars_mobs_npcs[current_mob].bless_power;
+				chance_to_hit = chance_to_hit + total_fate;
 				chars_mobs_npcs[j].fate = 0;
 				chars_mobs_npcs[j].fateself = 0;
 				random_chance = math.random(1,100)-50;	
@@ -1467,7 +1467,7 @@ function damage.multidamage () --FIXME two hexes
 					local incoming_physical_dmg = 0;
 					local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
 					local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
-					chance_to_hit = chance_to_hit + total_fate + chars_mobs_npcs[current_mob].bless_power;
+					chance_to_hit = chance_to_hit + total_fate;
 					chars_mobs_npcs[j].fate = 0;
 					chars_mobs_npcs[j].fateself = 0;
 					random_chance = math.random(1,100)-50;	
@@ -1941,10 +1941,12 @@ function damage.multidamage () --FIXME two hexes
 					for j=1,#chars_mobs_npcs do
 						if (helpers.cursorAtCurrentMob (j,boomx,boomy)) or (helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y)) then
 							local damageHP = damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[1]),"light",false);
-							damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[2]),"fire",false);
+							damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[1]),"fire",false);
+							--damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[2]),"fire",false);
 							damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[3]),"cold",false);
 							damageHP = damageHP + damage.magicalRes (j,damage.damageRandomizator(current_mob,10,lvl[4]),"static",false);
-							damageHP = damageHP + damage.physicalRes (j,20);
+							--damageHP = damageHP + damage.physicalRes (j,20);
+							damageHP = damageHP + damage.physicalRes (j,10+lvl[2]);
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
 							exp_for_what(damageHP,current_mob)
@@ -2276,7 +2278,17 @@ function damage.multidamage () --FIXME two hexes
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
 					exp_for_what(damageHP,current_mob);
-
+					if damageHPcold > 0 then
+						damage.STminus(j,damageHPcold,true);
+						exp_for_what(math.ceil(damageHPcold/3),current_mob);
+					end;
+					if damageHPstatic > 0 then
+						damage.RTminus(j,damageHPstatic,true);
+						exp_for_what(math.ceil(damageHPstatic/4),current_mob);
+					end;
+					if chars_mobs_npcs[j].hexes == 1 then
+						chars_mobs_npcs[j].rot = math.random(1,6);
+					end;
 				end;
 			end;
 		end;
@@ -2286,12 +2298,23 @@ function damage.multidamage () --FIXME two hexes
 					local damageHPcold = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[1],"cold");
 					local damageHPfire = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[2],"fire");
 					local damageHPstatic = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[3],"static");
-					local damageHPphysical = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[4]);
+					local damageHPacid = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[4]);
 					local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					exp_for_what(damageHP,current_mob);
+					if damageHPcold > 0 then
+						damage.STminus(j,damageHPcold,true);
+						exp_for_what(math.ceil(damageHPcold/3),current_mob);
+					end;
+					if damageHPstatic > 0 then
+						damage.RTminus(j,damageHPstatic,true);
+						exp_for_what(math.ceil(damageHPstatic/4),current_mob);
+					end;
+					if chars_mobs_npcs[j].hexes == 1 then
+						chars_mobs_npcs[j].rot = math.random(1,6);
+					end;
 				end;
 			end;
 		end;
@@ -2301,12 +2324,23 @@ function damage.multidamage () --FIXME two hexes
 					local damageHPcold = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[1],"cold");
 					local damageHPfire = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[2],"fire");
 					local damageHPstatic = damage.magicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[3],"static");
-					local damageHPphysical = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[4]);
+					local damageHPpoison = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[4]);
 					local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					exp_for_what(damageHP,current_mob);
+					if damageHPcold > 0 then
+						damage.STminus(j,damageHPcold,true);
+						exp_for_what(math.ceil(damageHPcold/3),current_mob);
+					end;
+					if damageHPstatic > 0 then
+						damage.RTminus(j,damageHPstatic,true);
+						exp_for_what(math.ceil(damageHPstatic/4),current_mob);
+					end;
+					if chars_mobs_npcs[j].hexes == 1 then
+						chars_mobs_npcs[j].rot = math.random(1,6);
+					end;
 				end;
 			end;
 		end;
@@ -2473,6 +2507,7 @@ function damage.multidamage () --FIXME two hexes
 						if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) then
 							debuff = damage.applyCondition (j,lvl[1],num[2],"darkcontamination","darkness",false,false,1,false);
 							chars_mobs_npcs[j].darkcontamination = math.max(chars_mobs_npcs[j].darkcontamination,debuff);
+							helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.contaminated[chars_mobs_npcs[j].gender]);
 							exp_for_what(math.ceil(debuff/2),current_mob)
 						end;
 					end;
@@ -3640,7 +3675,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	utils.randommore ();
 	random_chance = math.random(1,100)-50;
 	total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
-	chance_to_hit = chance_to_hit_norandom + random_chance + total_fate + chars_mobs_npcs[current_mob].rage;
+	chance_to_hit = chance_to_hit_norandom + random_chance + total_fate;
 	if missle_type == "slash" then
 		chance_to_hit = math.ceil(chance_to_hit/2);
 	elseif missle_type == "smash" then
@@ -3817,6 +3852,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			if chars_mobs_npcs[victim].mgt*1.5 < chars_mobs_npcs[current_mob].mgt then
 				chance_to_hands = 0;
 			end;
+			if chars_mobs_npcs[current_mob].rage > 0 then
+				chance_to_hands = math.ceil(math.max(0,math.min(chance_to_hands-chars_mobs_npcs[current_mob].rage,chance_to_hands/2)));
+			end;
 			if wpEffect == "deblock" and wpChance > math.random(1,100) then
 				chance_to_hands = 0;
 				helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.deblocked[chars_mobs_npcs[current_mob].gender]);
@@ -3896,6 +3934,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			if chars_mobs_npcs[victim].mgt*3 < chars_mobs_npcs[current_mob].mgt then
 				chance_to_block = 0;
 			end;
+			if chars_mobs_npcs[current_mob].rage > 0 then
+				chance_to_hands = math.ceil(math.max(0,math.min(chance_to_block-chars_mobs_npcs[current_mob].rage,chance_to_block/2)));
+			end;
 			if chance_to_block > 0 then
 				for i=#array_of_chances+1,chance_to_block do
 					array_of_chances[i] = "block";	
@@ -3956,6 +3997,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 				chance_to_parry = 0;
 			end;
 		end;
+		if chars_mobs_npcs[current_mob].rage > 0 then
+			chance_to_hands = math.ceil(math.max(0,math.min(chance_to_parry-chars_mobs_npcs[current_mob].rage,chance_to_parry/2)));
+		end;
 		if chance_to_parry > 0 then
 			for i=#array_of_chances+1,chance_to_parry do
 				array_of_chances[i] = "parrr";	
@@ -3976,6 +4020,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 				end;
 			end;
 		end;
+		if chars_mobs_npcs[current_mob].rage > 0 then
+			chance_to_hands = math.ceil(math.max(0,math.min(chance_to_parry-chars_mobs_npcs[current_mob].rage,chance_to_parry/2)));
+		end;
 		if chance_to_parry > 0 then
 			for i=#array_of_chances+1,chance_to_parry do
 				array_of_chances[i] = "parrl";	
@@ -3994,7 +4041,9 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 			DR = 0;
 			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.armorpenetrated[chars_mobs_npcs[current_mob].gender]);
 		end;
-		
+		if chars_mobs_npcs[current_mob].rage > 0 then
+			AC = math.ceil(math.max(0,math.min(AC-chars_mobs_npcs[current_mob].rage,AC/2)));
+		end;
 		if AC > 0 then
 			for i=#array_of_chances+1,AC do
 				if missle_type ~= "armorpenetration" and missle_type ~= "smarthit" then
@@ -5381,6 +5430,7 @@ function damage.instantCast () --FIXME use lvl, num
 			debuff = damage.applyCondition (victim,lvl[1],num[3],"filth","darkness",false,false,1,true);
 			if debuff > 0 then
 				chars_mobs_npcs[victim].filth = debuff;
+				helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.contaminated[chars_mobs_npcs[j].gender]);
 			end;
 		end;
 		if chars_mobs_npcs[donor].misfortune_dur > 0 then

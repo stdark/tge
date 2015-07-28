@@ -22,12 +22,15 @@ function chats.load ()
 	{question=6,answer=8004,nextquestion={10},remquestion={0},default=false},
 	{question=7,answer=8005,nextquestion={11},remquestion={0},default=false},
 	{question=8,answer=7779,nextquestion={0},remquestion={0},default=false},
-	{question=9,answer=7778,nextquestion={0},remquestion={0},default=true},
+	{question=9,answer=7778,nextquestion={0},remquestion={0},default=true}, --FIXME separate button?
 	--{question=10,answer=9,nextquestion={12},remquestion={0},default=false},
 	--{question=11,answer=9,nextquestion={12},remquestion={0},default=false},
 	{question=chats.ifCondition("questinprogress",nil,{4},0,0,10,0),answer=9,nextquestion={12},remquestion={0},default=true},
 	{question=chats.ifCondition("questinprogress",nil,{5},0,0,11,0),answer=9,nextquestion={12},remquestion={0},default=true},
 	{question=12,answer=10,nextquestion={10,11},remquestion={0},default=false},
+	{question=chats.ifCondition("questpart",nil,4,2,0,13,0),answer=12,nextquestion={9},remquestion={0},default=true},
+	{question=chats.ifCondition("questpart",nil,4,3,0,14,0),answer=13,nextquestion={9},remquestion={0},default=true},
+	{question=chats.ifCondition("questpart",nil,5,2,0,15,0),answer=14,nextquestion={9},remquestion={0},default=true},
 	},
 	
 	};
@@ -52,7 +55,7 @@ function chats.load ()
 	"Вернём мы тебе братца, готовь золотишко!",
 	"Нашинкуем пёсиков, хабар притащим!",
 	"Может тебя, грубияна, на твоём хвосте удавить?",
-	chats.questionPerEtiquette("goodbye",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
+	chats.questionPerEtiquette("goodbye",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), --FIXME separate button?
 	"По поводу твоего брата...",
 	"Что касается груза...",
 	"Да так, ничего.",
@@ -302,10 +305,8 @@ function chats.ifCondition(typ,subtyp,var,limit,comp,ifsuccess,ifnot)
 		end;
 	elseif typ == "questpart" then
 		for i=1, #party.quests do
-			for h=1,limit do
-				if party.quests[i].id == var and party.quests[limit[h]][stages] then
-					return ifsuccess;
-				end;
+			if party.quests[i].id == var and party.quests[i][stages][limit] and not party.quests[i].done then
+				return ifsuccess;
 			end;
 		end
 	elseif typ == "questdone" then

@@ -168,6 +168,7 @@ function playingState.load()
 	global.hang = false;
 	global.damageflag = false; --for charm,sleep,stun
 	global.questbook_page = 1;
+	global.food_by_id = {cheese={418},honey={419},apple={410,420},fruits={410,421},plants={410,415,416,420,421},meat={412,413,414},sausiges={414},bread={411},fish={417},mushroom={422}};
 	tempbb={};
 	tmp_ppoint={};
 	tmp_ppoint2={};
@@ -375,7 +376,7 @@ function playingState.load()
 
 		table.insert(chars_mobs_npcs,{uid=1,person="npc",control="ai",defaultai="cruiser",ai="cruiser",dangerai="away",waypoint={{16,11},{13,11},{8,11},{8,5},{13,4},{17,6}},nextpoint=2,x=16,y=11,rot=5,class="goblin",fraction="vagrants", party=2, name="Nils Larsen", face = 8,
 		personality={
-		current={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",food="glutton",bestfood=414,threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
+		current={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",food="glutton",bestfood={"cheese"},threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		default={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		alternative={chat="nilslarsen",etiquette = "criminal",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="disdain",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
@@ -766,6 +767,7 @@ function playingState.load()
 			end;
 		end;
 	end;
+	global.level_moral_add = 0; --good or bad area
 --/NEW LEVEL
 
 	trace.chars_around();
@@ -1840,7 +1842,7 @@ function playingState.keyreleased(key, unicode)
 			elseif not ai.mobWatchesTheMob (current_mob,false) then
 				 chars_mobs_npcs[current_mob].stealth = chars_mobs_npcs[current_mob].num_stealth*chars_mobs_npcs[current_mob].lvl_stealth;
 			else
-				helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.in_enemies_FOV);
+				helpers.addToActionLog( helpers.mobName(current_mob) .. " " .. lognames.actions.in_enemies_FOV);
 			end;
 		end;
 		if key=="p" then
@@ -3946,6 +3948,8 @@ function playingState.mousereleased (x,y,button)
 				local value = inventory_ttx[list[holding_smth].ttxid].a;
 				if chars_mobs_npcs[index].basiliskbreath == 0 then
 					helpers.addSatiation(index,value);
+				else
+					helpers.addToActionLog(lognames.actions.basiliskbreath_prevents_satiation);
 				end;
 				table.remove(list,holding_smth);
 				for i=1,11 do
@@ -4254,12 +4258,15 @@ function  playingState.mousepressed(x,y,button)
 							local index = mindmissle;
 							mindgame.map[global.mindcursor_x][global.mindcursor_y] = index;
 							if global.minddrink_array[global.drinkmissle].typ == "alco" then
+								if chars_mobs_npcs[victim].drunk > 0 then
+									mindgame.attempts = 1;--drunk, mb switch personality?
+								end;
 								local emo = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinks"];
-								local price = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinksprice"];
+								local price = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinksprice"];	
+								if emo == taster and price and price > inventory_ttx[index-1000].price then
+									emo = taster2;
+								end;
 								for i=1,12 do
-									if emo == taster and price and price > inventory_ttx[index-1000].price then
-										emo = taster2;
-									end;
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] + mindgame["flags_drinks"][emo][1][i]*math.ceil(chars_mobs_npcs[current_mob].chr/5);
 								end;
 								if emo == "boozer" then
@@ -4267,8 +4274,11 @@ function  playingState.mousepressed(x,y,button)
 										damage.applyConditionTwoFactors (current_mob,3,10,"drunk","poison","enu",false,1,true);
 										helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.drunk[chars_mobs_npcs[current_mob].gender]);
 									end;
+								end;
+								if emo == "boozer" or emo == "drunkard" or emo == "drinker" then
 									damage.applyConditionTwoFactors (victim,3,10,"drunk","poison","enu",false,1,true);
 									helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.drunk[chars_mobs_npcs[victim].gender]);
+									--add switchibg to drunk personality
 								end;
 								utils.playSfx(media.sounds.inv_bottle_put,1);
 								table.remove(chars_mobs_npcs[current_mob]["inventory_list"],global.minddrink_array[global.drinkmissle].itemid);
@@ -4286,11 +4296,18 @@ function  playingState.mousepressed(x,y,button)
 								mindmissle = false;
 							elseif global.minddrink_array[global.drinkmissle].typ == "food" then
 								local emo = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["food"];
+								print("EMO",emo);
 								local bestfood = chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["bestfood"];
-								for i=1,12 do
-									if emo == taster3 and bestfood and food == index-2000 then
-										emo = taster4;
+								if bestfood then
+									for i=1,#bestfood do
+										for h=1,#global.food_by_id[bestfood[i]] do
+											if global.food_by_id[bestfood[i]][h] == index-2000 then
+												emo = "taster4"; --FIXME my best food phrase for not tasters Or not?
+											end;
+										end;
 									end;
+								end;
+								for i=1,12 do
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] + mindgame["flags_food"][emo][1][i]*math.ceil(chars_mobs_npcs[current_mob].chr/5);
 								end;
 								utils.playSfx(media.sounds.inv_ingred_put,1);
@@ -8979,6 +8996,7 @@ function restoreRT ()
 						chars_mobs_npcs[i].fear = 0;
 						chars_mobs_npcs[i].panic = 0;
 						chars_mobs_npcs[i].charm = 0;
+						chars_mobs_npcs[i].st = math.max(chars_mobs_npcs[i].st,chars_mobs_npcs[index].st_base);--second breath
 						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.cheeresup[chars_mobs_npcs[i].gender]);
 					end;
 				end;

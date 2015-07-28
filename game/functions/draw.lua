@@ -2227,8 +2227,13 @@ function draw.mindgame()
 	love.graphics.setFont(mainFont);
 	love.graphics.setColor(0, 0, 0);
 	love.graphics.print(helpers.mobName(victim), x+55,y+100);
+	love.graphics.setColor(255, 255, 255);
 	local attempts = global.mindgame_attempts - global.mindgame_counter;
-	love.graphics.print(attempts,x+535,y+75);
+	--love.graphics.print(attempts,x+535,y+75);
+	for i=1,attempts do
+		love.graphics.draw(media.images.ui, mindstar, x+700-i*16, y+75);
+	end;
+	love.graphics.setColor(0, 0, 0);
 	love.graphics.setFont(mainFont);
 	draw.mindway ();
 	

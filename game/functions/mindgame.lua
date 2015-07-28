@@ -94,7 +94,7 @@ function mindgame.updateFlags()
 	
 	mindgame.flags_food = { --FIXME need phrases for food
 	
-	hungry      = {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("foodisgood",etiquette)},
+	hungry     	 = {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("foodisgood",etiquette)},
 	starving    = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"respect",chats.questionPerEtiquette("iamstarving",etiquette)},
 	glutton 	= {{0,0,0,0,0,0,0,0,0,1,0,0},false,"lol",chats.questionPerEtiquette("iamglutton",etiquette)},
 	full        = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("fulloffood",etiquette)},

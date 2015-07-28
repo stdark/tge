@@ -1247,7 +1247,7 @@ function helpers.countMoral(index)
 	elseif chars_mobs_npcs[index].fear == 0 then
 		demoral = math.ceil(demoral*1.25);
 	end;
-	if chars_mobs_npcs[index].class == "savage" or chars_mobs_npcs[index].class == "paladin" and (chars_mobs_npcs[index].fear == 0 and chars_mobs_npcs[index].panic == 0) then
+	if chars_mobs_npcs[index].class == "paladin" and (chars_mobs_npcs[index].fear == 0 and chars_mobs_npcs[index].panic == 0) then
 		demoral = math.ceil(demoral/2);
 	end;
 	if chars_mobs_npcs[index].class == "savage" and (chars_mobs_npcs[index].fear == 0 and chars_mobs_npcs[index].panic == 0) then
@@ -1256,7 +1256,7 @@ function helpers.countMoral(index)
 	if (chars_mobs_npcs[index].class == "barbarian" or chars_mobs_npcs[index].berserk > 0) and (chars_mobs_npcs[index].fear == 0 and chars_mobs_npcs[index].panic == 0) then
 		demoral = -1*demoral;
 	end;
-	local moral = chars_mobs_npcs[index].base_moral + self_leadership_bonus + leadership_bonus + chars_mobs_npcs[index].myrth_power - chars_mobs_npcs[index].despondency_power - demoral;
+	local moral = chars_mobs_npcs[index].base_moral + self_leadership_bonus + leadership_bonus + chars_mobs_npcs[index].myrth_power - chars_mobs_npcs[index].despondency_power - demoral + global.level_moral_add;
 	if chars_mobs_npcs[index].drunk > 0 then
 		moral = math.random(1,201)-101;
 	end;
@@ -1921,18 +1921,21 @@ function helpers.addMob(index,person)
 	chars_mobs_npcs[index].block=tmpclass2.block;
 	chars_mobs_npcs[index].parry = 0;
 
-	--[[chars_mobs_npcs[index].atkm=tmpclass2.atkm;
-	chars_mobs_npcs[index].amel=tmpclass2.amel;
-	chars_mobs_npcs[index].bmel=tmpclass2.bmel;
-	chars_mobs_npcs[index].cmel=tmpclass2.cmel;
-	chars_mobs_npcs[index].atkr=tmpclass2.atkr;
-	chars_mobs_npcs[index].arng=tmpclass2.arng;
-	chars_mobs_npcs[index].brng=tmpclass2.brng;
-	chars_mobs_npcs[index].crng=tmpclass2.crng;]]
-
 	chars_mobs_npcs[index].melee_stats = {rh={atkm=0,amel=0,bmel=0,cmel=0},lh={atkm=0,amel=0,bmel=0,cmel=0},rh1={atkm=0,amel=0,bmel=0,cmel=0},lh1={atkm=0,amel=0,bmel=0,cmel=0},rh2={atkm=0,amel=0,bmel=0,cmel=0},lh2={atkm=0,amel=0,bmel=0,cmel=0}};
 	chars_mobs_npcs[index].arms_health = {rh=1,lh=1,rh1=1,lh1=1,rh2=1,lh2=1};
 	chars_mobs_npcs[index].arms = tmpclass2.arms;
+	
+	for i=1, #chars_mobs_npcs[index].arms do
+		local hand = chars_mobs_npcs[index]["arms"][i];
+		chars_mobs_npcs[index]["melee_stats"][hand].atkm=0;
+		chars_mobs_npcs[index]["melee_stats"][hand].amel=0;
+		chars_mobs_npcs[index]["melee_stats"][hand].bmel=0;
+		chars_mobs_npcs[index]["melee_stats"][hand].cmel=0;
+	end;
+	chars_mobs_npcs[index].atkr=0;
+	chars_mobs_npcs[index].arng=0;
+	chars_mobs_npcs[index].brng=0;
+	chars_mobs_npcs[index].crng=0;
 
 	chars_mobs_npcs[index].aggro=0;
 	chars_mobs_npcs[index].aggressor = 0;
@@ -3152,7 +3155,7 @@ function helpers.drinkFromWell ()
 end;
 
 function helpers.randomCurse (char)
-	local curselist = {"curse","misfortune","darkgasp","darkcontamination","filth","fingerofdeath"};
+	local curselist = {"curse","misfortune","darkgasp","darkcontamination","filth","fingerofdeath","evileye","basiliskbreath"};
 	if char then
 		table.insert(curselist,"evileye");
 		table.insert(curselist,"basiliskbreath");
@@ -3162,7 +3165,6 @@ function helpers.randomCurse (char)
 end;
 
 function helpers.inspectScullpile ()
-	--log
 	local current_curse = helpers.randomCurse (true);
 	if current_curse ~= "misfortune" and current_curse ~= "filth" then
 		local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,current_curse,"darkness",false,"spothidden",1,true);
@@ -3172,18 +3174,39 @@ function helpers.inspectScullpile ()
 		chars_mobs_npcs[current_mob][current_curse .. "_power"] = math.max(chars_mobs_npcs[current_mob][current_curse .. "_power"],condition_power);
 		chars_mobs_npcs[current_mob][current_curse .. "_dur"] = math.max(chars_mobs_npcs[current_mob][current_curse .. "_dur"],condition_dur);
 	end;
+	if condition_power > 0 and condition_dur > 0 then
+		if current_curse == "curse" then	
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.cursed[chars_mobs_npcs[j].gender]);
+		elseif current_curse == "misfortune" then
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.cursed[chars_mobs_npcs[j].gender]);
+		elseif current_curse == "darkgasp" then
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.darkgasped[chars_mobs_npcs[j].gender]);
+		elseif current_curse == "darkcontamination" then
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.contaminated[chars_mobs_npcs[j].gender]);
+		elseif current_curse == "flith" then
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.contaminated[chars_mobs_npcs[j].gender]);
+		elseif current_curse == "fingerofdeath" then
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.fingerofdeathed[chars_mobs_npcs[j].gender]);
+		elseif current_curse == "evileye" then
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.cursed[chars_mobs_npcs[j].gender]);
+		elseif current_curse == "basiliskbreath" then
+			helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.cursed[chars_mobs_npcs[j].gender]);
+		end;
+	end;
 	game_status = "inventory";
 end;
 
 function helpers.inspectTrashHeap ()
-	--log
 	local condition = damage.applyCondition (current_mob,bags_list[bagid].condition_lvl,bags_list[bagid].condition_num,"disease","disease",false,"spothidden",1,true);
-	chars_mobs_npcs[current_mob].disease = math.max(chars_mobs_npcs[current_mob].disease,condition);
+	local debuff = math.max(chars_mobs_npcs[current_mob].disease,condition);
+	chars_mobs_npcs[current_mob].disease = debuff;
+	if debuff > 0 then
+		helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.diseased[chars_mobs_npcs[j].gender]);
+	end;
 	game_status = "inventory";
 end;
 
 function helpers.inspectCrystals ()
-	--log
 	if bags_list[bagid].charged then
 		local dmg = damage.magicalRes (current_mob,bags_list[bagid].power,"static")
 		local inspector = current_mob;
@@ -3200,6 +3223,7 @@ function helpers.inspectCrystals ()
 				damage.RTminus(current_mob,dmg,true);
 			end;
 		end;
+		helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.zapped[chars_mobs_npcs[j].gender]);
 		bags_list[bagid].charged = false;
 	end;
 	game_status = "inventory";
@@ -4161,28 +4185,23 @@ function helpers.recalcBattleStats (index)
 	chars_mobs_npcs[index].ac_debuff_power = 0;
 
 	if chars_mobs_npcs[index].person == "char" then --FIXME
-		chars_mobs_npcs[index].atkm = 0;
-		chars_mobs_npcs[index].amel = 0;
-		chars_mobs_npcs[index].bmel = 0;
-		chars_mobs_npcs[index].cmel = 0;
+		
+		for i=1, #chars_mobs_npcs[index].arms do
+			local hand = chars_mobs_npcs[index]["arms"][i];
+			chars_mobs_npcs[index]["melee_stats"][hand].atkm=0;
+			chars_mobs_npcs[index]["melee_stats"][hand].amel=0;
+			chars_mobs_npcs[index]["melee_stats"][hand].bmel=0;
+			chars_mobs_npcs[index]["melee_stats"][hand].cmel=0;
+		end;
+		
 		chars_mobs_npcs[index].atkr=0;
 		chars_mobs_npcs[index].arng = 0;
 		chars_mobs_npcs[index].brng = 0;
 		chars_mobs_npcs[index].crng = 0;
+		
 		chars_mobs_npcs[index].block = 0;
 		chars_mobs_npcs[index].parry = 0;
-	--[[else
-		chars_mobs_npcs[index].ac = tmpclass2.ac;
-		chars_mobs_npcs[index].atkm = tmpclass2.atkm;
-		chars_mobs_npcs[index].amel = tmpclass2.amel;
-		chars_mobs_npcs[index].bmel = tmpclass2.bmel;
-		chars_mobs_npcs[index].cmel = tmpclass2.cmel;
-		chars_mobs_npcs[index].atkr = tmpclass2.atkr;
-		chars_mobs_npcs[index].arng = tmpclass2.arng;
-		chars_mobs_npcs[index].brng = tmpclass2.brng;
-		chars_mobs_npcs[index].crng = tmpclass2.crng;
-		chars_mobs_npcs[index].block=0;
-		chars_mobs_npcs[index].parry=0;]]
+
 	end;
 
 	if chars_mobs_npcs[index].fear > 0 then --FEAR
@@ -4352,6 +4371,7 @@ function helpers.recalcBattleStats (index)
 	for i=1, #chars_mobs_npcs[index].arms do
 		local hand = chars_mobs_npcs[index]["arms"][i];
 		--print("HAND",hand);
+		chars_mobs_npcs[index]["melee_stats"][hand].atkm = chars_mobs_npcs[index]["melee_stats"][hand].atkm + chars_mobs_npcs[index].bless_power;
 		if chars_mobs_npcs[index]["equipment"][hand] and chars_mobs_npcs[index]["equipment"][hand] ~= 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].q > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class ~= "shield" then
 			if chars_mobs_npcs[index].lvl_sword>=2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "sword" then
 				add_atkm = chars_mobs_npcs[index].num_sword;
@@ -4399,6 +4419,7 @@ function helpers.recalcBattleStats (index)
 		end;
 	end;
 	--RANGED
+	chars_mobs_npcs[index].atkr = chars_mobs_npcs[index].atkr + chars_mobs_npcs[index].bless_power;
 	if chars_mobs_npcs[index]["equipment"].ranged ~= 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].q > 0 and chars_mobs_npcs[index]["equipment"].ammo ~= 0 then
 		if chars_mobs_npcs[index].lvl_bow >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].class == "bow" then
 			add_atkr = chars_mobs_npcs[index].num_bow;
@@ -4431,11 +4452,12 @@ function helpers.recalcBattleStats (index)
 		chars_mobs_npcs[index].brng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].b;
 		chars_mobs_npcs[index].crng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].c;
 	end
+	--/RANGED
 	if chars_mobs_npcs[index]["equipment"].lh ~= 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].lh].ttxid].class == "shield" and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].lh].q > 0 then
 		chars_mobs_npcs[index].block= chars_mobs_npcs[index].block+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].lh].ttxid].ac + math.ceil(chars_mobs_npcs[index].num_shield*chars_mobs_npcs[index].lvl_shield/2);
 	end;
 	if chars_mobs_npcs[index].acid_dur > 0 then
-		chars_mobs_npcs[index].ac= chars_mobs_npcs[index].ac-chars_mobs_npcs[index].acid_power;
+		chars_mobs_npcs[index].ac = chars_mobs_npcs[index].ac-chars_mobs_npcs[index].acid_power;
 	else
 		chars_mobs_npcs[index].acid_power=0;
 	end;
@@ -5011,9 +5033,10 @@ function helpers.countCurrentHexPrice (index_hex,index_mob)
 	if way_of_the_mob and #way_of_the_mob > 0 then
 		local hex_price = costs_table[map[way_of_the_mob[index_hex][2]][way_of_the_mob[index_hex][1]]];
 		local mobility_bonus = chars_mobs_npcs[index_mob].mobility_power;
-		local dex_bonus = math.ceil(chars_mobs_npcs[current_mob].dex/20);
-		local spd_bonus = math.ceil(chars_mobs_npcs[current_mob].spd/20); --FIXME: spd bonus: rt only?
+		local dex_bonus = math.ceil(chars_mobs_npcs[index_mob].dex/20);
+		local spd_bonus = math.ceil(chars_mobs_npcs[index_mob].spd/20); --FIXME: spd bonus: rt only?
 		local spell_penalty = 0;
+		local stealth_penalty = 5 - chars_mobs_npcs[index_mob].lvl_stealth;
 		if dlandscape_duration[chars_mobs_npcs[index_mob].x][chars_mobs_npcs[index_mob].y] == "ice" or dlandscape_duration[chars_mobs_npcs[index_mob].x][chars_mobs_npcs[index_mob].y] == "mud"
 		and chars_mobs_npcs[index_mob].mobility_dur == 0
 		then
@@ -5024,7 +5047,7 @@ function helpers.countCurrentHexPrice (index_hex,index_mob)
 			mobility_bonus = 0;
 			dex_bonus = 0;
 		end;
-		local price = math.max(5,20 + hex_price-mobility_bonus-dex_bonus-spd_bonus + spell_penalty);
+		local price = math.max(5,20 + hex_price-mobility_bonus-dex_bonus-spd_bonus + spell_penalty + stealth_penalty);
 		return price
 	else
 		return 0
