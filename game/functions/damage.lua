@@ -245,6 +245,8 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	local crit = 0;
 	local array_of_chances = {};
 	local chance_to_hit = 0;
+	local chance_to_miss = 0;
+	local hit_to_miss = 0;
 	local chance_to_crit = 0;
 	local chance_to_dodge = 0;
 	local chance_to_hands = 0;
@@ -297,14 +299,20 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		end;
 		if #shot_line > 10 then
 			range_penalty = math.min(0.01,(#shot_line - 10)*0.05);
+			if missle_type == "bolt" and chars_mobs_mpcs.lvl_crossbow >= 4 then
+				range_penalty = math.ceil(range_penalty/2);
+			end;
 		end;
 		chance_to_hit = math.ceil((50*helpers.sizeModifer(victim)+chars_mobs_npcs[current_mob].atkr+chars_mobs_npcs[current_mob].acu + delta_spd)*(1-range_penalty) + chars_mobs_npcs[current_mob].bless_power);
-		--FIXME sniper chance_to_hit + lv
 		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) 
 		and missle_type ~= "parabolicshot"
 		then
+			local paramod = 2;
 			helpers.addToActionLog( lognames.actions.targetpartlyhided);
-			chance_to_hit = math.ceil(chance_to_hit/2); --sniper*0.75
+			if missle_type == "arrow" and chars_mobs_mpcs.lvl_bow == 5 then
+				paramod = 1.5;
+			end;
+			chance_to_hit = math.ceil(chance_to_hit/paramod);
 		end;
 		--tricks
 		if missle_type == "carefulaimnig" then
@@ -315,1062 +323,1092 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			chance_to_hit =	math.ceil(chance_to_hit/2);
 		end;
 		--/tricks
-		if helpers.likeAStar () then
-			local eye_mod = 1;
-			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
-				eye_mod = math.max(0,eye_mod-0.5);
-			end;
-			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
-				eye_mod = math.max(0,eye_mod-0.5);
-			end;
-			if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
-				eye_mod = 0;
-			end;
-			chance_to_hit = math.ceil(chance_to_hit*eye_mod);
-		elseif helpers.likeABow () then
-			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
-				chance_to_hit = 0;
-			end;
-			if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
-				chance_to_hit = 0;
-			end;
-		elseif helpers.likeAGun () then
-			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 and chars_mobs_npcs[current_mob].leye and chars_mobs_npcs[current_mob].leye == 1 then
-				chance_to_hit = math.ceil(0.25*chance_to_hit);
-			end;
-			if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
-				chance_to_hit = 0;
-			end;
-		end;
-		utils.randommore ();
-		random_chance = math.random(1,100)-50;
 		total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
-		chance_to_hit = chance_to_hit + random_chance + total_fate;
+		chance_to_hit = chars_mobs_npcs[current_mob].atkr + math.ceil(chars_mobs_npcs[current_mob].acu/10) + total_fate;
 		chars_mobs_npcs[current_mob].fate = 0;
 		chars_mobs_npcs[current_mob].fateself = 0;
 		chars_mobs_npcs[victim].fate = 0;
 		chars_mobs_npcs[victim].fateself = 0;
 		
-		chance_to_crit = math.max(0,math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10 -  chars_mobs_npcs[victim].protection_power)); --FIX add weapon mastery
+		chance_to_crit = math.max(0,math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10 -  chars_mobs_npcs[victim].protection_power));
 		if attacked_from == "back" then
 			chance_to_crit = chance_to_crit*2;
 		end;
 		if shot_line[#shot_line-1] and not helpers.passCheck(shot_line[#shot_line-1][1],shot_line[#shot_line-1][2]) and missle_type ~= "parabolicshot" then --partly covered
 			chance_to_crit = 0;
 		end;
-		if chance_to_hit <= 0 then
-			iflucky = 0;
-			--utils.playSfx(media.sounds.sword_miss,1);
-			helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
-		else
-			iflucky = 1;
-			utils.randommore ();
-			hitzone = chars_mobs_npcs[victim]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[victim]["hitzones"][global.hex])];
+		if missle_type == "throwing" and  chars_mobs_npcs[current_mob].lvl_throwing == 5 then
+			chance_to_crit = chance_to_crit + chars_mobs_npcs[current_mob].num_throwing;
+		end;
+		utils.randommore ();
+		hitzone = chars_mobs_npcs[victim]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[victim]["hitzones"][global.hex])];
 --tricks
-			if missle_type == "blinding" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+		if missle_type == "blinding" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+			hitzone = "head";
+		elseif missle_type == "nailing" and helpers.randomLimb(victim,global.hex,true) then
+			hitzone = helpers.randomLimb(victim,global.hex);
+		elseif missle_type == "carefulaiming" or missle_type == "eagleseye" or missle_type == "finishing" then
+			if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
 				hitzone = "head";
-			elseif missle_type == "nailing" and helpers.randomLimb(victim,global.hex,true) then
-				hitzone = helpers.randomLimb(victim,global.hex);
-			elseif missle_type == "carefulaiming" or missle_type == "eagleseye" or missle_type == "finishing" then
-				if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
-					hitzone = "head";
-				elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
-					hitzone = "body";
-				end;
+			elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+				hitzone = "body";
 			end;
+		end;
 --/tricks
-			utils.randommore ();
-			dice = damage.damageRandomizator(current_mob,1,chars_mobs_npcs[current_mob].brng);
-			incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+math.ceil(chars_mobs_npcs[current_mob].acu/5));
-			--trick
-			if missle_type == "blinding" and not helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
-				incoming_physical_dmg = incoming_physical_dmg*2;
-			elseif missle_type == "maximumstreght" then
-				incoming_physical_dmg = incoming_physical_dmg + incoming_physical_dmg*chars_mobs_npcs[current_mob].mgt/100;
+		utils.randommore ();
+		dice = damage.damageRandomizator(current_mob,1,chars_mobs_npcs[current_mob].brng);
+		incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+math.ceil(chars_mobs_npcs[current_mob].acu/5));
+		if missle_type == "throwing" and chars_mobs_npcs[current_mob].lvl_throwing >= 4 then
+			incoming_physical_dmg = incoming_physical_dmg + math.ceil(chars_mobs_npcs[current_mob].mgt/10);
+		end;
+		--trick
+		if missle_type == "blinding" and not helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+			incoming_physical_dmg = incoming_physical_dmg*2;
+		elseif missle_type == "maximumstreght" then
+			incoming_physical_dmg = incoming_physical_dmg + incoming_physical_dmg*chars_mobs_npcs[current_mob].mgt/100;
+		end;
+		--/trick
+		--MISS
+		if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
+			delta_spd = chars_mobs_npcs[victim].spd + chars_mobs_npcs[current_mob].spd;
+		else
+			delta_spd = 0;
+		end;
+		helpers.recalcBattleStats (current_mob);
+		local eye_mod = 1;
+		if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+			eye_mod = math.max(2,eye_mod+1);
+		end;
+		if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+			eye_mod = math.max(2,eye_mod+1);
+		end;
+		if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
+			eye_mod = 4;
+		end;
+		
+		if helpers.likeAStar () then
+			local eye_mod = 1;
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+				eye_mod = math.min(3,eye_mod+3);
 			end;
-			--/trick
-		-- DODGE
-			if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) and missle_type ~= "hiddenstrike" then
-				chance_to_dodge = chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
-				if chars_mobs_npcs[victim].lvl_dodging >= 4 and chars_mobs_npcs[victim]["equipment"].cloak > 0 
-				and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].q > 0 then
-					chance_to_dodge = chance_to_dodge + inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].dg;
-				end;
-				if chars_mobs_npcs[victim].lvl_dodging < 3
-				and chars_mobs_npcs[victim]["equipment"].armor > 0
-				and  (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "leather"
-				or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "fur"
-				or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "skin"
-				) then
-					chance_to_dodge = 0;
-				elseif chars_mobs_npcs[victim].lvl_dodging < 4
-				and chars_mobs_npcs[victim]["equipment"].armor > 0
-				and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "chain" 
-				then
-					chance_to_dodge = 0;
-				elseif chars_mobs_npcs[victim].lvl_dodging < 5
-				and chars_mobs_npcs[victim]["equipment"].armor > 0
-				and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "plate" 
-				then
-					chance_to_dodge = 0;
-				end;
-				local dodge_dir_coff=0
-				if attacked_from=="front" then
-					dodge_dir_coff=1;
-				elseif attacked_from=="lh" then
-					dodge_dir_coff=1;
-				elseif attacked_from=="rh" then
-					dodge_dir_coff=1;
-				elseif attacked_from=="lback" then
-					dodge_dir_coff=0.75;
-				elseif attacked_from=="rback" then
-					dodge_dir_coff=0.75;
-				elseif attacked_from=="back" then
-					dodge_dir_coff=0.5;
-				end;
-				chance_to_dodge = chance_to_dodge*dodge_dir_coff;
-				if chars_mobs_npcs[victim].protectionmode == "block" then
-					chance_to_dodge = 0;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "hands" then
-					chance_to_dodge = 0;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "dodge" then
-					chance_to_dodge = chance_to_dodge*2;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "parry" then
-					chance_to_dodge = 0;
-				end;
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+				eye_mod = math.min(3,eye_mod+3);
 			end;
-			if chance_to_dodge > 0 then
-				for i=1,chance_to_dodge do
-					array_of_chances[i] = "dodge";	
-				end;
+		elseif helpers.likeABow () then
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+				eye_mod = math.min(8,eye_mod+4);
 			end;
-		--/DODGE
-		--HANDBLOCK
+			if chars_mobs_npcs[current_mob].leye and chars_mobs_npcs[current_mob].leye == 0 then
+				eye_mod = math.min(8,eye_mod+4);
+			end;
+		elseif helpers.likeAGun () then
+			if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 and chars_mobs_npcs[current_mob].leye and chars_mobs_npcs[current_mob].leye == 1 then
+				eye_mod = 5;
+			end;
+
+		end;
+		if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
+			eye_mod = 10;
+		end;
+		if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 
+		and chars_mobs_npcs[current_mob].leye and chars_mobs_npcs[current_mob].leye == 0 
+		then
+			eye_mod = 10;
+		end;
+		if chance_to_hit < 0 then
+			hit_to_miss = -1*chance_to_hit;
+		end;
+		chance_to_miss = (math.ceil(50*(2-helpers.sizeModifer(victim))) + delta_spd)*eye_mod+hit_to_miss;
+		if chance_to_miss > 0 then
+			for i=1,chance_to_dodge do
+				array_of_chances[i] = "miss";	
+			end;
+		end;
+	--/MISS
+	-- DODGE
+		if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) and missle_type ~= "hiddenstrike" then
+			chance_to_dodge = chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
+			if chars_mobs_npcs[victim].lvl_dodging >= 4 and chars_mobs_npcs[victim]["equipment"].cloak > 0 
+			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].q > 0 then
+				chance_to_dodge = chance_to_dodge + inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].dg;
+			end;
+			if chars_mobs_npcs[victim].lvl_dodging < 3
+			and chars_mobs_npcs[victim]["equipment"].armor > 0
+			and  (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "leather"
+			or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "fur"
+			or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "skin"
+			) then
+				chance_to_dodge = 0;
+			elseif chars_mobs_npcs[victim].lvl_dodging < 4
+			and chars_mobs_npcs[victim]["equipment"].armor > 0
+			and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "chain" 
+			then
+				chance_to_dodge = 0;
+			elseif chars_mobs_npcs[victim].lvl_dodging < 5
+			and chars_mobs_npcs[victim]["equipment"].armor > 0
+			and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "plate" 
+			then
+				chance_to_dodge = 0;
+			end;
+			local dodge_dir_coff=0
 			if attacked_from=="front" then
-				hands_dir_coff=1;
+				dodge_dir_coff=1;
 			elseif attacked_from=="lh" then
-				hands_dir_coff=1;
+				dodge_dir_coff=1;
 			elseif attacked_from=="rh" then
-				hands_dir_coff=1;
+				dodge_dir_coff=1;
 			elseif attacked_from=="lback" then
-				hands_dir_coff=0;
+				dodge_dir_coff=0.75;
 			elseif attacked_from=="rback" then
-				hands_dir_coff=0;
+				dodge_dir_coff=0.75;
 			elseif attacked_from=="back" then
-				hands_dir_coff=0;
+				dodge_dir_coff=0.5;
 			end;
-			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-			and (chars_mobs_npcs[victim].rh > 0 or chars_mobs_npcs[victim].lh > 0)
-			and chars_mobs_npcs[victim].lvl_unarmed >= 3
-			and missle_type == "throwing"
-			and helpers.mobCanDefendHimself(victim) then
-				chance_to_hands = math.ceil(chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff/2);	
-			end;	
-			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-			and chars_mobs_npcs[victim].lvl_unarmed >= 4
-			and missle_type == "arrow"
-			and helpers.mobCanDefendHimself(victim) then
-				chance_to_hands = math.ceil(chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff/2);	
-			end;
-			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-			and chars_mobs_npcs[victim].lvl_unarmed >= 4
-			and missle_type == "bolt"
-			and helpers.mobCanDefendHimself(victim) then
-				chance_to_hands = math.ceil(chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff/2);	
-			end;
-			if missle_type == "bullet" or missle_type == "ray" then
-				chance_to_hands = 0;
-			end;
+			chance_to_dodge = chance_to_dodge*dodge_dir_coff;
 			if chars_mobs_npcs[victim].protectionmode == "block" then
-				chance_to_hands = 0;
+				chance_to_dodge = 0;
 			end;
 			if chars_mobs_npcs[victim].protectionmode == "hands" then
-				chance_to_hands = chance_to_hands*2;
+				chance_to_dodge = 0;
 			end;
 			if chars_mobs_npcs[victim].protectionmode == "dodge" then
-				chance_to_hands = 0;
+				chance_to_dodge = chance_to_dodge*2;
 			end;
 			if chars_mobs_npcs[victim].protectionmode == "parry" then
-				chance_to_hands = 0;
+				chance_to_dodge = 0;
 			end;
-			if chance_to_hands > 0 then
-				for i=#array_of_chances+1,chance_to_hands do
-					array_of_chances[i] = "hands";	
+		end;
+		if chance_to_dodge > 0 then
+			for i=1,chance_to_dodge do
+				array_of_chances[i] = "dodge";	
+			end;
+		end;
+	--/DODGE
+	--HANDBLOCK
+		if attacked_from=="front" then
+			hands_dir_coff=1;
+		elseif attacked_from=="lh" then
+			hands_dir_coff=1;
+		elseif attacked_from=="rh" then
+			hands_dir_coff=1;
+		elseif attacked_from=="lback" then
+			hands_dir_coff=0;
+		elseif attacked_from=="rback" then
+			hands_dir_coff=0;
+		elseif attacked_from=="back" then
+			hands_dir_coff=0;
+		end;
+		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+		and (chars_mobs_npcs[victim].rh > 0 or chars_mobs_npcs[victim].lh > 0)
+		and chars_mobs_npcs[victim].lvl_unarmed >= 3
+		and missle_type == "throwing"
+		and helpers.mobCanDefendHimself(victim) then
+			chance_to_hands = math.ceil(chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff/2);	
+		end;	
+		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+		and chars_mobs_npcs[victim].lvl_unarmed >= 4
+		and missle_type == "arrow"
+		and helpers.mobCanDefendHimself(victim) then
+			chance_to_hands = math.ceil(chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff/2);	
+		end;
+		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+		and chars_mobs_npcs[victim].lvl_unarmed >= 4
+		and missle_type == "bolt"
+		and helpers.mobCanDefendHimself(victim) then
+			chance_to_hands = math.ceil(chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff/2);	
+		end;
+		if missle_type == "bullet" or missle_type == "ray" then
+			chance_to_hands = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "block" then
+			chance_to_hands = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "hands" then
+			chance_to_hands = chance_to_hands*2;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "dodge" then
+			chance_to_hands = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "parry" then
+			chance_to_hands = 0;
+		end;
+		if chance_to_hands > 0 then
+			for i=#array_of_chances+1,chance_to_hands do
+				array_of_chances[i] = "hands";	
+			end;
+		end;
+	--/HANDBLOCK
+	--BLOCK
+		if chars_mobs_npcs[victim]["equipment"].lh > 0 and helpers.mobCanDefendHimself (victim)
+		and chars_mobs_npcs[victim].lh > 0
+		and inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "shield"
+		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
+		and missle_type ~= "hiddenstrike"
+		and helpers.mobCanDefendHimself (victim) then
+			local block_dir_coff=0
+			if attacked_from=="front" then
+				block_dir_coff=1;
+			elseif attacked_from=="lh" then
+				block_dir_coff=0.5;
+			elseif attacked_from=="rh" then
+				block_dir_coff=0.35;
+			elseif attacked_from=="lback" then
+				block_dir_coff=0.25;
+			elseif attacked_from=="rback" then
+				block_dir_coff=0;
+			elseif attacked_from=="back" then
+				block_dir_coff=0;
+			end;
+			chance_to_block = block_dir_coff*(math.ceil(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].ac+chars_mobs_npcs[victim].num_shield*chars_mobs_npcs[victim].lvl_shield)-chars_mobs_npcs[current_mob].atkr);
+			utils.randommore ();
+			random_chance = math.random(1,100);
+			if chars_mobs_npcs[victim].protectionmode == "block" then
+				chance_to_block = chance_to_block*2;
+			end;
+			if chars_mobs_npcs[victim].protectionmode == "hands" then
+				chance_to_block = 0;
+			end
+			if chars_mobs_npcs[victim].protectionmode == "dodge" then
+				chance_to_block = 0;
+			end;
+			if chars_mobs_npcs[victim].protectionmode == "parry" then
+				chance_to_block = 0;
+			end;
+			if chance_to_block > 0 then
+				for i=#array_of_chances+1,chance_to_block do
+					array_of_chances[i] = "block";	
 				end;
 			end;
-		--/HANDBLOCK
-		--BLOCK
-			if chars_mobs_npcs[victim]["equipment"].lh > 0 and helpers.mobCanDefendHimself (victim)
-			and chars_mobs_npcs[victim].lh > 0
-			and inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "shield"
-			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
-			and missle_type ~= "hiddenstrike"
-			and helpers.mobCanDefendHimself (victim) then
-				local block_dir_coff=0
-				if attacked_from=="front" then
-					block_dir_coff=1;
-				elseif attacked_from=="lh" then
-					block_dir_coff=0.5;
-				elseif attacked_from=="rh" then
-					block_dir_coff=0.35;
-				elseif attacked_from=="lback" then
-					block_dir_coff=0.25;
-				elseif attacked_from=="rback" then
-					block_dir_coff=0;
-				elseif attacked_from=="back" then
-					block_dir_coff=0;
-				end;
-				chance_to_block = block_dir_coff*(math.ceil(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].ac+chars_mobs_npcs[victim].num_shield*chars_mobs_npcs[victim].lvl_shield)-chars_mobs_npcs[current_mob].atkr);
-				utils.randommore ();
-				random_chance = math.random(1,100);
-				if chars_mobs_npcs[victim].protectionmode == "block" then
-					chance_to_block = chance_to_block*2;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "hands" then
-					chance_to_block = 0;
-				end
-				if chars_mobs_npcs[victim].protectionmode == "dodge" then
-					chance_to_block = 0;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "parry" then
-					chance_to_block = 0;
-				end;
-				if chance_to_block > 0 then
-					for i=#array_of_chances+1,chance_to_block do
-						array_of_chances[i] = "block";	
-					end;
-				end;
-			end;
-		--/BLOCK
-		--PARRY
-			if helpers.mobCanDefendHimself (victim) -- RIGHT HAND
-			and missle_type ~= "ray"
-			and chars_mobs_npcs[victim].rh > 0
-			and chars_mobs_npcs[victim]["equipment"].rh > 0 and chars_mobs_npcs[victim]["equipment"].rh > 0 
-			and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword"
-			or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger"
-			or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff")
-			and (missle_type == "throwing" or missle_type == "arrow" or missle_type == "bolt")
-			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q > 0
-			and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh")
-			and helpers.mobCanDefendHimself (victim) and missle_type ~= "hiddenstrike" then
-				if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword" then
-					if chars_mobs_npcs[victim].lvl_sword >= 3 then
-						chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_sword/2);
-					end;
-				end;
-				if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
-					if chars_mobs_npcs[victim].lvl_dagger >= 4 then
-						chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_dagger/2);
-					end;
-				end;
-				if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff" then
-					if chars_mobs_npcs[victim].lvl_staff >= 2 then
-						chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_staff/2);
-					end;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "block" then
-					chance_to_parry = 0;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "hands" then
-					chance_to_parry = 0;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "dodge" then
-					chance_to_parry = 0;
-				end;
-				if chars_mobs_npcs[victim].protectionmode == "parry" then
-					chance_to_parry = chance_to_parry*2;
-				end;
-			end;
-			if chance_to_parry > 0 then
-				for i=#array_of_chances+1,chance_to_parry do
-					array_of_chances[i] = "parrr";	
-				end;
-			end;
-			if  helpers.mobCanDefendHimself (victim) -- LEFT HAND
-			and missle_type ~= "ray" and missle_type ~= "hiddenstrike"
-			and chars_mobs_npcs[victim].lh > 0
-			and chars_mobs_npcs[victim]["equipment"].lh > 0 and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "sword" or
-			inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "dagger")
-			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
-			and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh")
-			and helpers.mobCanDefendHimself (index) then
-				if chars_mobs_npcs[victim].lvl_sword > 1 then
+		end;
+	--/BLOCK
+	--PARRY
+		if helpers.mobCanDefendHimself (victim) -- RIGHT HAND
+		and missle_type ~= "ray"
+		and chars_mobs_npcs[victim].rh > 0
+		and chars_mobs_npcs[victim]["equipment"].rh > 0 and chars_mobs_npcs[victim]["equipment"].rh > 0 
+		and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword"
+		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger"
+		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff")
+		and (missle_type == "throwing" or missle_type == "arrow" or missle_type == "bolt")
+		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q > 0
+		and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh")
+		and helpers.mobCanDefendHimself (victim) and missle_type ~= "hiddenstrike" then
+			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword" then
+				if chars_mobs_npcs[victim].lvl_sword >= 3 then
 					chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_sword/2);
 				end;
-				if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
-					if chars_mobs_npcs[victim].lvl_dagger >= 4 then
-						chance_to_parry =  math.ceil(chars_mobs_npcs[victim].num_dagger/2);
-					end;
+			end;
+			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
+				if chars_mobs_npcs[victim].lvl_dagger >= 4 then
+					chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_dagger/2);
 				end;
 			end;
-			if chance_to_parry > 0 then
-				for i=#array_of_chances+1,chance_to_parry do
-					array_of_chances[i] = "parrl";	
+			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff" then
+				if chars_mobs_npcs[victim].lvl_staff >= 2 then
+					chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_staff/2);
 				end;
 			end;
-		--/PARRY
-		--AC
-			local add_ac,add_dt,add_dr = damage.calcArmorStats(victim,hitzone,attacked_from);
-			AC = AC + add_ac + chars_mobs_npcs[victim].ac;
-			DT = DT + add_dt + chars_mobs_npcs[victim].dt;
-			DR = DR + add_dr + chars_mobs_npcs[victim].dr;
-			if wpEffect == "through" and wpChance > math.random(1,100) then
-				AC = 0;
-				DT = 0;
-				DR = 0;
-				helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.armorpenetrated[chars_mobs_npcs[current_mob].gender]);
+			if chars_mobs_npcs[victim].protectionmode == "block" then
+				chance_to_parry = 0;
 			end;
-			if AC > 0 then --FIXME sniper 1/2 AC
-				for i=#array_of_chances+1,AC do
-					if missle_type ~= "shieldpenetration" or missle_type ~= "hiddenstrike" then
-						array_of_chances[i] = "ac";
-					end;
-				end;
-			end
-			--/AC
-			
-			--add rings, amulets, artifacts, modifers of armor pieces and melee weapon,
-			
-			if #array_of_chances > chance_to_hit then
-				fulldamage = 0;
-				hitResult = array_of_chances[chance_to_hit];
-				if hitResult == "dodge" then
-					--critical dodge
-					dodge = 1;
-					helpers.addToActionLog( victim_name .. lognames.actions.dodge[chars_mobs_npcs[current_mob].gender]);
-				elseif hitResult == "hands" then
-					--hammerhands and self-damage		
-					helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
-					hands = 1;
-					local incoming_physical_dmg_before_armor = incoming_physical_dmg;
-					incoming_physical_dmg = incoming_physical_dmg - DT;
-					incoming_physical_dmg = incoming_physical_dmg*DR/100;
-					if incoming_physical_dmg < 0 then
-						incoming_physical_dmg = 0;
-					end;
-					local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].h == 0 and inventory[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].ttxid].material < deltaDMG then
-						chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q - deltaDMG;
-						if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q == 0 then
-							--gloves destroyed
-						end;
-					end;
-					
-				elseif hitResult == "block" then
-					utils.playSfx(media.sounds.block,1);		
-					helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
-						chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg));
-						if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
-							--shield destroyed
-						end;
-					end;
-					block = 1;
-				elseif hitResult == "parrr" then
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].h == 0 then
-						chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].material-incoming_physical_dmg));
-						if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q == 0 then
-							--weapon destroyed
-						end;
-					end;
-					helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
-					parry = 1;
-				elseif hitResult == "parrl" then
-					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg));
-					chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].material-incoming_physical_dmg));
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
-						if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
-							--weapon destroyed
-						end;
-					end;
-					helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
-					parry = 1;
-				elseif hitResult == "ac" then
-					local incoming_physical_dmg_before_armor = incoming_physical_dmg;
-					incoming_physical_dmg = incoming_physical_dmg - DT;
-					incoming_physical_dmg = incoming_physical_dmg*DR/100;
-					if incoming_physical_dmg < 0 then
-						incoming_physical_dmg = 0;
-					end;
-					local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
-					damage.armorDestroying (hitzone,attacked_from,deltaDMG);
-					--
-				end;
-			else
-				fulldamage = 1;
+			if chars_mobs_npcs[victim].protectionmode == "hands" then
+				chance_to_parry = 0;
 			end;
-			if hitResult == "ac" or fulldamage == 1 then
-				--CRIT
-				utils.randommore ();
-				random_chance = math.random(1,100);
-				if chance_to_crit >= random_chance then
-					crit = 2; --FIXME sniper crit 2.5
-					--utils.playSfx(media.sounds.sword_crit,1);
-				elseif chance_to_crit < random_chance then
-					crit = 1; --FiXME sniper crit 1.25
-					--utils.playSfx(media.sounds.sword_impact,1);
-				end;
-				--/CRIT
-				incoming_physical_dmg = incoming_physical_dmg*crit*(1-range_penalty);
-				incoming_physical_dmg = math.ceil(math.max(0,incoming_physical_dmg - chars_mobs_npcs[victim].ironshirt_power)*(100-chars_mobs_npcs[victim].stoneskin_power)/100);
-				local mob_genocide = 1;
-	
-				--weapon modifers
-				if chars_mobs_npcs[current_mob]["equipment"]["ranged"] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["ranged"]].w > 0 then			
-					if chars_mobs_npcs[current_mob]["equipment"]["ranged"] > 0 then
-							--damage
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].damage) do
-							local dmg = damage.magicalRes (victim,value[value],value[element]);
-							if key == "hp" then
-								add_dmghp = dmg;
-								if value[vampirism] then
-									selfadd_hp = selfaddhp + math.ceil(dmg*value[vampirism_power]);
-								end;
-							elseif key == "sp" then 
-								dmgsp = dmg;
-								if value[vampirism] then
-									selfadd_sp = selfaddsp + math.ceil(dmg*value[vampirism_power]);
-								end;
-							elseif key == "st" then
-								dmgst = dmg;
-								if value[vampirism] then
-									selfadd_st = selfaddst + math.ceil(dmg*value[vampirism_power]);
-								end;
-							elseif key == "rt" then 
-								dmgrt = dmg;
-								if value[vampirism] then
-									selfadd_rt = selfaddrt + math.ceil(dmg*value[vampirism_power]);
-								end;
-							end;
-						end;
-						--/damage
-						--dots
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].dots) do
-							local power,duration = damage.applyDoT (victim,value[lvl],value[num],1,0,1,0,value[element],true);
-							if power > 0 and suration > 0 then
-								local power_str = tostring(key) .. "_power";
-								local duration_str = tostring(key) .. "_dur";
-								chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
-								chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
-							end;
-						end;
-						--/dots
-						--conditions
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].conditions) do
-							local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
-							if power > 0 then
-								chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
-								if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
-									global.damageflag = tostring(key);
-								end;
-							end;
-						end;
-						--/conditions
-						--twofactorconditions
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].twofactorconditions) do
-							local power,duration = damage.applyDoT (victim,value[lvl],value[num],tostring(key),value[element],false,false,1,true);
-							if power > 0 and suration > 0 then
-								local power_str = tostring(key) .. "_power";
-								local duration_str = tostring(key) .. "_dur";
-								chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
-								chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
-							end;
-						end;
-						--/twofactorconditions
-						--addself
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].addself) do
-							local dmg = damage.magicalRes (victim,value[value],value[element]);
-							if key == "hp" then
-								selfadd_hp = selfaddhp + value;
-							elseif key == "sp" then 
-								selfadd_sp = selfaddsp + value;
-							elseif key == "st" then
-								selfadd_st = selfaddst + value;
-							elseif key == "rt" then 
-								selfadd_rt = selfaddrt + value;
-							end;
-						end;
-						--/selfadd
-						--selfrem
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].remself) do
-							local dmg = damage.magicalRes (victim,value[value],value[element]);
-							if key == "hp" then
-								selfrem_hp = selfremhp + value;
-							elseif key == "sp" then 
-								selfrem_sp = selfremsp + value;
-							elseif key == "st" then
-								selfrem_st = selfremst + value;
-							elseif key == "rt" then 
-								selfrem_rt = selfremrt + value;
-							end;
-						end;	
-						--/selfrem
-						--genocide
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].genocide) do
-							if key == mobs_stats[chars_mobs_npcs[victim].class]
-							or key == mobs_stats[chars_mobs_npcs[victim].race]
-							or key == mobs_stats[chars_mobs_npcs[victim].size]
-							or key == mobs_stats[chars_mobs_npcs[victim].nature]
-							or key == mobs_stats[chars_mobs_npcs[victim].gender]
-							then
-								mob_genocide = value;
-								break;
-							end;
-						end;
-						--/genocide
-					end;	
-				end;
-				--/weapon modifers
-				
-				--ammo modifers
-				if chars_mobs_npcs[current_mob]["equipment"]["ammo"] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["ammo"]].w > 0 then			
-					if chars_mobs_npcs[current_mob]["equipment"]["ammo"] > 0 then
-							--damage
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].damage) do
-							local dmg = damage.magicalRes (victim,value[value],value[element]);
-							if key == "hp" then
-								add_dmghp = dmg;
-								if value[vampirism] then
-									selfadd_hp = selfaddhp + math.ceil(dmg*value[vampirism_power]);
-								end;
-							elseif key == "sp" then 
-								dmgsp = dmg;
-								if value[vampirism] then
-									selfadd_sp = selfaddsp + math.ceil(dmg*value[vampirism_power]);
-								end;
-							elseif key == "st" then
-								dmgst = dmg;
-								if value[vampirism] then
-									selfadd_st = selfaddst + math.ceil(dmg*value[vampirism_power]);
-								end;
-							elseif key == "rt" then 
-								dmgrt = dmg;
-								if value[vampirism] then
-									selfadd_rt = selfaddrt + math.ceil(dmg*value[vampirism_power]);
-								end;
-							end;
-						end;
-						--/damage
-						--dots
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].dots) do
-							local power,duration = damage.applyDoT (victim,value[lvl],value[num],1,0,1,0,value[element],true);
-							if power > 0 and suration > 0 then
-								local power_str = tostring(key) .. "_power";
-								local duration_str = tostring(key) .. "_dur";
-								chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
-								chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
-							end;
-						end;
-						--/dots
-						--conditions
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].conditions) do
-							local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
-							if power > 0 then
-								chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
-								if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
-									global.damageflag = tostring(key);
-								end;
-							end;
-						end;
-						--/conditions
-						--twofactorconditions
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].twofactorconditions) do
-							local power,duration = damage.applyDoT (victim,value[lvl],value[num],tostring(key),value[element],false,false,1,true);
-							if power > 0 and suration > 0 then
-								local power_str = tostring(key) .. "_power";
-								local duration_str = tostring(key) .. "_dur";
-								chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
-								chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
-							end;
-						end;
-						--/twofactorconditions
-						--addself
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].addself) do
-							local dmg = damage.magicalRes (victim,value[value],value[element]);
-							if key == "hp" then
-								selfadd_hp = selfaddhp + value;
-							elseif key == "sp" then 
-								selfadd_sp = selfaddsp + value;
-							elseif key == "st" then
-								selfadd_st = selfaddst + value;
-							elseif key == "rt" then 
-								selfadd_rt = selfaddrt + value;
-							end;
-						end;
-						--/selfadd
-						--selfrem
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].remself) do
-							local dmg = damage.magicalRes (victim,value[value],value[element]);
-							if key == "hp" then
-								selfrem_hp = selfremhp + value;
-							elseif key == "sp" then 
-								selfrem_sp = selfremsp + value;
-							elseif key == "st" then
-								selfrem_st = selfremst + value;
-							elseif key == "rt" then 
-								selfrem_rt = selfremrt + value;
-							end;
-						end;	
-						--/selfrem
-						--genocide
-						for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].genocide) do
-							if key == mobs_stats[chars_mobs_npcs[victim].class]
-							or key == mobs_stats[chars_mobs_npcs[victim].race]
-							or key == mobs_stats[chars_mobs_npcs[victim].size]
-							or key == mobs_stats[chars_mobs_npcs[victim].nature]
-							or key == mobs_stats[chars_mobs_npcs[victim].gender]
-							then
-								mob_genocide = value;
-								break;
-							end;
-						end;
-						--/genocide
-					end;	
-				end;
-				--/ammo modifers
-	
-				dmghp = incoming_physical_dmg*mob_genocide + add_dmghp;
-				
-				if wpChance > math.random(1,100) then
-					damage.weaponpEffect(victim,hitzone,wpEffect); -- weapon passives
-				end;
+			if chars_mobs_npcs[victim].protectionmode == "dodge" then
+				chance_to_parry = 0;
 			end;
-
-			if missle_type == "blinding" then
-				damage.operateAnEye(victim,"reye",false);
-				damage.operateAnEye(victim,"leye",false);
-				damage.operateAnEye(victim,"ceye",false);
-				helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
-			elseif missle_type == "nailing" then
-				chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_crossbow;
-			elseif missle_type == "shockingsparkle" then
-				local _rtdmg = chars_mobs_npcs[current_mob].num_thrownig;
-				damage.RTminus(victim,_rtdmg,true);
-			elseif missle_type == "finishing" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 5 then
-				damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
+			if chars_mobs_npcs[victim].protectionmode == "parry" then
+				chance_to_parry = chance_to_parry*2;
 			end;
-			
-			--dmghp = damage.physicalRes (victim,dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu/5) + add_dmghp; -- FIXME! Oil!
-			random_chance = math.random(100);
-			if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery" then --wasting ammo
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - 1;
-			elseif helpers.missleIsAweapon () then
-				local _ammo = 0;
-				if tricks.tricks_tips[missle_type].ammo and tricks.tricks_tips[missle_type].ammo > 0 then
-					_ammo = tricks.tricks_tips[missle_type].ammo;
-				end;
-				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - _ammo;
-			end;
-			if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q == 0 then
-				table.remove(chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo])
-				chars_mobs_npcs[current_mob]["equipment"].ammo = 0;
-			end;
-			local penalty = 0;
-			if helpers.aliveNature(current_mob) then
-				penalty = 4*helpers.visualConditions(current_mob,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
-				if helpers.blindedWithLight (current_mob,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y) then
-					penalty = penalty*2;
-				end;
-			end
-			if random_chance + chars_mobs_npcs[current_mob].fateself > (100 - chance_to_hit) + chars_mobs_npcs[current_mob].fate + penalty then
-				iflucky = 1;
-			else
-				iflucky = 0;
-			end;
-			chars_mobs_npcs[current_mob].fate = 0;
-			chars_mobs_npcs[current_mob].fateself = 0;
 		end;
-	else
-		chance_to_hit = 100;
-		iflucky = 1;
-	end;
-	if iflucky == 1 then
-		if helpers.missleIsAweapon () and missle_type ~= "bottle" then
-			if chars_mobs_npcs[victim].hp > 0 then
-				damage.HPminus(victim,dmghp,true);
+		if chance_to_parry > 0 then
+			for i=#array_of_chances+1,chance_to_parry do
+				array_of_chances[i] = "parrr";	
 			end;
-			if chars_mobs_npcs[victim].sp > 0 and dmgsp > 0 then
-				damage.SPminus(victim,dmgsp);
+		end;
+		if  helpers.mobCanDefendHimself (victim) -- LEFT HAND
+		and missle_type ~= "ray" and missle_type ~= "hiddenstrike"
+		and chars_mobs_npcs[victim].lh > 0
+		and chars_mobs_npcs[victim]["equipment"].lh > 0 and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "sword" or
+		inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "dagger")
+		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
+		and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh")
+		and helpers.mobCanDefendHimself (index) then
+			if chars_mobs_npcs[victim].lvl_sword >= 4 then
+				chance_to_parry = math.ceil(chars_mobs_npcs[victim].num_sword/2);
 			end;
-			if chars_mobs_npcs[victim].st > 0 and dmgst > 0 then
-				damage.STminus(victim,dmgst,false);
-			end;
-			if chars_mobs_npcs[victim].rt > 0 and dmgrt > 0 then
-				damage.RTminus(victim,dmgrt,false);
-			end;
-			local mode,lvl,num,effect,element,stat,skill,coff,luck = damage.classPassives(current_mob);
-			if mode and mode == "ranged" then
-				if algorythm == "2factors" then
-					damage.ApplyConditionTwoFactors(current_mob,lvl,num,effect,element,stat,skill,coff,luck);
-				elseif algorythm == "1factor" then
-					damage.ApplyCondition(current_mob,lvl,num,effect,element,stat,skill,coff,luck);
-				elseif algorythm == "simple" then
-					if effect == "hp" then
-						damage.HPminus(victim,num,true);
-					elseif effect == "sp" then
-						damage.SPminus(victim,num,true);
-					elseif effect == "st" then
-						damage.STminus(victim,num,true);
-					elseif effect == "rt" then
-						damage.RTminus(victim,num,true);
-					end;
-				elseif algorythm == "vampirism" then
-					if effect == "hp" then
-						damage.HPplus(current_mob,num,true);
-						damage.HPminus(victim,num,true);
-					elseif effect == "sp" then
-						damage.SPplus(current_mob,num,true);
-						damage.SPminus(victim,num,true);
-					elseif effect == "st" then
-						damage.STplus(current_mob,num,true);
-						damage.STminus(victim,num,true);
-					elseif effect == "rt" then
-						damage.RTplus(current_mob,num,true);
-						damage.RTminus(victim,num,true);
-					end;
+			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
+				if chars_mobs_npcs[victim].lvl_dagger >= 4 then
+					chance_to_parry =  math.ceil(chars_mobs_npcs[victim].num_dagger/2);
 				end;
 			end;
-		elseif missle_drive == "muscles" and  helpers.missleAtWarBook() then
-			local _damage = chars_mobs_npcs[current_mob].lvl_unarmed*chars_mobs_npcs[current_mob].num_unarmed;
-			local hitzone = false;
-			local tempspellname = "tricks.tricks_tips." .. missle_type .. ".title";
-			local spellname = loadstring("return " .. tempspellname)();
-			if missle_type == "lotus" then
-				if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
-					hitzone = "head";
-				elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
-					hitzone = "body";
-				end;
-				dmghp = damage.physicalRes (victim,_damage,hitzone)
-				damage.HPminus(victim,dmghp,true);
-				helpers.addToActionLog(agressor_name .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
+		end;
+		if chance_to_parry > 0 then
+			for i=#array_of_chances+1,chance_to_parry do
+				array_of_chances[i] = "parrl";	
 			end;
-			if missle_type == "evilswarm" then
-				local damageHP = 0;
-				for i=1,5 do
-					utils.randommore ();
-					local delta_spd = 0;
-					if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
-						delta_spd = chars_mobs_npcs[current_mob].spd + chars_mobs_npcs[victim].spd;
-					else
-						delta_spd = 100;
+		end;
+	--/PARRY
+	--AC
+		local add_ac,add_dt,add_dr = damage.calcArmorStats(victim,hitzone,attacked_from);
+		AC = AC + add_ac + chars_mobs_npcs[victim].ac;
+		DT = DT + add_dt + chars_mobs_npcs[victim].dt;
+		DR = DR + add_dr + chars_mobs_npcs[victim].dr;
+		if missle_type == "bolt" and chars_mobs_npcs[current_mob].lvl_crossbow == 5 then
+			DT = math.max(0,DT - chars_mobs_npcs[current_mob].num_crossbow);
+		end;
+		if missle_type == "arrow" and chars_mobs_npcs[current_mob].lvl_bow == 5 then
+			AC = math.max(0,AC - chars_mobs_npcs[current_mob].num_bow);
+		end;
+		if wpEffect == "through" and wpChance > math.random(1,100) then
+			AC = 0;
+			DT = 0;
+			DR = 0;
+			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.armorpenetrated[chars_mobs_npcs[current_mob].gender]);
+		end;
+		if AC > 0 then
+			for i=#array_of_chances+1,AC do
+				if missle_type ~= "shieldpenetration" or missle_type ~= "hiddenstrike" then
+					array_of_chances[i] = "ac";
+				end;
+			end;
+		end
+		--/AC
+		
+		--add rings, amulets, artifacts, modifers of armor pieces and melee weapon,
+		
+		if #array_of_chances > chance_to_hit then
+			fulldamage = 0;
+			hitResult = array_of_chances[chance_to_hit];
+			if  hitResult == "miss" then
+				helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
+			elseif hitResult == "dodge" then
+				--critical dodge
+				dodge = 1;
+				helpers.addToActionLog( victim_name .. lognames.actions.dodge[chars_mobs_npcs[current_mob].gender]);
+			elseif hitResult == "hands" then
+				--hammerhands and self-damage		
+				helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
+				hands = 1;
+				local incoming_physical_dmg_before_armor = incoming_physical_dmg;
+				incoming_physical_dmg = incoming_physical_dmg - DT;
+				incoming_physical_dmg = incoming_physical_dmg*DR/100;
+				if incoming_physical_dmg < 0 then
+					incoming_physical_dmg = 0;
+				end;
+				local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].h == 0 and inventory[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].ttxid].material < deltaDMG then
+					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q - deltaDMG;
+					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q == 0 then
+						--gloves destroyed
 					end;
-					local incoming_physical_dmg = 0;
-					local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
-					local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
-					chance_to_hit = chance_to_hit + total_fate;
-					chars_mobs_npcs[victim].fate = 0;
-					chars_mobs_npcs[victim].fateself = 0;
-					random_chance = math.random(1,100)-50;	
-					if chance_to_hit >= random_chance then
-						utils.randommore ();
-						random_chance = math.random(1,100)-50;
-						dice = damage.damageRandomizator(current_mob,1,chars_mobs_npcs[current_mob].brng);
-						incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu);
-						utils.randommore ();
-						random_chance = math.random(1,100)-50;
-						chance_to_crit = math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10);
-						if chance_to_crit > random_chance then
-							incoming_physical_dmg = incoming_physical_dmg*2;
+				end;
+				
+			elseif hitResult == "block" then
+				utils.playSfx(media.sounds.block,1);		
+				helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
+					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg));
+					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
+						--shield destroyed
+					end;
+				end;
+				block = 1;
+			elseif hitResult == "parrr" then
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].h == 0 then
+					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].material-incoming_physical_dmg));
+					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q == 0 then
+						--weapon destroyed
+					end;
+				end;
+				helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
+				parry = 1;
+			elseif hitResult == "parrl" then
+				chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg));
+				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].material-incoming_physical_dmg));
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
+					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
+						--weapon destroyed
+					end;
+				end;
+				helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
+				parry = 1;
+			elseif hitResult == "ac" then
+				local incoming_physical_dmg_before_armor = incoming_physical_dmg;
+				incoming_physical_dmg = incoming_physical_dmg - DT;
+				incoming_physical_dmg = incoming_physical_dmg*DR/100;
+				if incoming_physical_dmg < 0 then
+					incoming_physical_dmg = 0;
+				end;
+				local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
+				damage.armorDestroying (hitzone,attacked_from,deltaDMG);
+				--
+			end;
+		else
+			fulldamage = 1;
+		end;
+		if hitResult == "ac" or fulldamage == 1 then
+			--CRIT
+			utils.randommore ();
+			random_chance = math.random(1,100);
+			if chance_to_crit >= random_chance then
+				crit = 2; --FIXME sniper crit 2.5
+				--utils.playSfx(media.sounds.sword_crit,1);
+			elseif chance_to_crit < random_chance then
+				crit = 1; --FiXME sniper crit 1.25
+				--utils.playSfx(media.sounds.sword_impact,1);
+			end;
+			--/CRIT
+			incoming_physical_dmg = incoming_physical_dmg*crit*(1-range_penalty);
+			incoming_physical_dmg = math.ceil(math.max(0,incoming_physical_dmg - chars_mobs_npcs[victim].ironshirt_power)*(100-chars_mobs_npcs[victim].stoneskin_power)/100);
+			local mob_genocide = 1;
+
+			--weapon modifers
+			if chars_mobs_npcs[current_mob]["equipment"]["ranged"] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["ranged"]].w > 0 then			
+				if chars_mobs_npcs[current_mob]["equipment"]["ranged"] > 0 then
+						--damage
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].damage) do
+						local dmg = damage.magicalRes (victim,value[value],value[element]);
+						if key == "hp" then
+							add_dmghp = dmg;
+							if value[vampirism] then
+								selfadd_hp = selfaddhp + math.ceil(dmg*value[vampirism_power]);
+							end;
+						elseif key == "sp" then 
+							dmgsp = dmg;
+							if value[vampirism] then
+								selfadd_sp = selfaddsp + math.ceil(dmg*value[vampirism_power]);
+							end;
+						elseif key == "st" then
+							dmgst = dmg;
+							if value[vampirism] then
+								selfadd_st = selfaddst + math.ceil(dmg*value[vampirism_power]);
+							end;
+						elseif key == "rt" then 
+							dmgrt = dmg;
+							if value[vampirism] then
+								selfadd_rt = selfaddrt + math.ceil(dmg*value[vampirism_power]);
+							end;
 						end;
 					end;
-					damageHP = damageHP + damage.physicalRes (victim,incoming_physical_dmg);	
+					--/damage
+					--dots
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].dots) do
+						local power,duration = damage.applyDoT (victim,value[lvl],value[num],1,0,1,0,value[element],true);
+						if power > 0 and suration > 0 then
+							local power_str = tostring(key) .. "_power";
+							local duration_str = tostring(key) .. "_dur";
+							chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
+							chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
+						end;
+					end;
+					--/dots
+					--conditions
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].conditions) do
+						local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
+						if power > 0 then
+							chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
+							if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
+								global.damageflag = tostring(key);
+							end;
+						end;
+					end;
+					--/conditions
+					--twofactorconditions
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].twofactorconditions) do
+						local power,duration = damage.applyDoT (victim,value[lvl],value[num],tostring(key),value[element],false,false,1,true);
+						if power > 0 and suration > 0 then
+							local power_str = tostring(key) .. "_power";
+							local duration_str = tostring(key) .. "_dur";
+							chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
+							chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
+						end;
+					end;
+					--/twofactorconditions
+					--addself
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].addself) do
+						local dmg = damage.magicalRes (victim,value[value],value[element]);
+						if key == "hp" then
+							selfadd_hp = selfaddhp + value;
+						elseif key == "sp" then 
+							selfadd_sp = selfaddsp + value;
+						elseif key == "st" then
+							selfadd_st = selfaddst + value;
+						elseif key == "rt" then 
+							selfadd_rt = selfaddrt + value;
+						end;
+					end;
+					--/selfadd
+					--selfrem
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].remself) do
+						local dmg = damage.magicalRes (victim,value[value],value[element]);
+						if key == "hp" then
+							selfrem_hp = selfremhp + value;
+						elseif key == "sp" then 
+							selfrem_sp = selfremsp + value;
+						elseif key == "st" then
+							selfrem_st = selfremst + value;
+						elseif key == "rt" then 
+							selfrem_rt = selfremrt + value;
+						end;
+					end;	
+					--/selfrem
+					--genocide
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ranged"]].w].genocide) do
+						if key == mobs_stats[chars_mobs_npcs[victim].class]
+						or key == mobs_stats[chars_mobs_npcs[victim].race]
+						or key == mobs_stats[chars_mobs_npcs[victim].size]
+						or key == mobs_stats[chars_mobs_npcs[victim].nature]
+						or key == mobs_stats[chars_mobs_npcs[victim].gender]
+						then
+							mob_genocide = value;
+							break;
+						end;
+					end;
+					--/genocide
+				end;	
+			end;
+			--/weapon modifers
+			
+			--ammo modifers
+			if chars_mobs_npcs[current_mob]["equipment"]["ammo"] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["ammo"]].w > 0 then			
+				if chars_mobs_npcs[current_mob]["equipment"]["ammo"] > 0 then
+						--damage
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].damage) do
+						local dmg = damage.magicalRes (victim,value[value],value[element]);
+						if key == "hp" then
+							add_dmghp = dmg;
+							if value[vampirism] then
+								selfadd_hp = selfaddhp + math.ceil(dmg*value[vampirism_power]);
+							end;
+						elseif key == "sp" then 
+							dmgsp = dmg;
+							if value[vampirism] then
+								selfadd_sp = selfaddsp + math.ceil(dmg*value[vampirism_power]);
+							end;
+						elseif key == "st" then
+							dmgst = dmg;
+							if value[vampirism] then
+								selfadd_st = selfaddst + math.ceil(dmg*value[vampirism_power]);
+							end;
+						elseif key == "rt" then 
+							dmgrt = dmg;
+							if value[vampirism] then
+								selfadd_rt = selfaddrt + math.ceil(dmg*value[vampirism_power]);
+							end;
+						end;
+					end;
+					--/damage
+					--dots
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].dots) do
+						local power,duration = damage.applyDoT (victim,value[lvl],value[num],1,0,1,0,value[element],true);
+						if power > 0 and suration > 0 then
+							local power_str = tostring(key) .. "_power";
+							local duration_str = tostring(key) .. "_dur";
+							chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
+							chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
+						end;
+					end;
+					--/dots
+					--conditions
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].conditions) do
+						local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
+						if power > 0 then
+							chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
+							if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
+								global.damageflag = tostring(key);
+							end;
+						end;
+					end;
+					--/conditions
+					--twofactorconditions
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].twofactorconditions) do
+						local power,duration = damage.applyDoT (victim,value[lvl],value[num],tostring(key),value[element],false,false,1,true);
+						if power > 0 and suration > 0 then
+							local power_str = tostring(key) .. "_power";
+							local duration_str = tostring(key) .. "_dur";
+							chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
+							chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
+						end;
+					end;
+					--/twofactorconditions
+					--addself
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].addself) do
+						local dmg = damage.magicalRes (victim,value[value],value[element]);
+						if key == "hp" then
+							selfadd_hp = selfaddhp + value;
+						elseif key == "sp" then 
+							selfadd_sp = selfaddsp + value;
+						elseif key == "st" then
+							selfadd_st = selfaddst + value;
+						elseif key == "rt" then 
+							selfadd_rt = selfaddrt + value;
+						end;
+					end;
+					--/selfadd
+					--selfrem
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].remself) do
+						local dmg = damage.magicalRes (victim,value[value],value[element]);
+						if key == "hp" then
+							selfrem_hp = selfremhp + value;
+						elseif key == "sp" then 
+							selfrem_sp = selfremsp + value;
+						elseif key == "st" then
+							selfrem_st = selfremst + value;
+						elseif key == "rt" then 
+							selfrem_rt = selfremrt + value;
+						end;
+					end;	
+					--/selfrem
+					--genocide
+					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"]["ammo"]].w].genocide) do
+						if key == mobs_stats[chars_mobs_npcs[victim].class]
+						or key == mobs_stats[chars_mobs_npcs[victim].race]
+						or key == mobs_stats[chars_mobs_npcs[victim].size]
+						or key == mobs_stats[chars_mobs_npcs[victim].nature]
+						or key == mobs_stats[chars_mobs_npcs[victim].gender]
+						then
+							mob_genocide = value;
+							break;
+						end;
+					end;
+					--/genocide
+				end;	
+			end;
+			--/ammo modifers
+
+			dmghp = incoming_physical_dmg*mob_genocide + add_dmghp;
+			
+			if wpChance > math.random(1,100) then
+				damage.weaponpEffect(victim,hitzone,wpEffect); -- weapon passives
+			end;
+		end;
+
+		if missle_type == "blinding" then
+			damage.operateAnEye(victim,"reye",false);
+			damage.operateAnEye(victim,"leye",false);
+			damage.operateAnEye(victim,"ceye",false);
+			helpers.addToActionLog( victim_name .. lognames.actions.traumed[chars_mobs_npcs[index].gender]);
+		elseif missle_type == "nailing" then
+			chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_crossbow;
+		elseif missle_type == "shockingsparkle" then
+			local _rtdmg = chars_mobs_npcs[current_mob].num_thrownig;
+			damage.RTminus(victim,_rtdmg,true);
+		elseif missle_type == "finishing" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 5 then
+			damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
+		end;
+		
+		--dmghp = damage.physicalRes (victim,dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu/5) + add_dmghp; -- FIXME! Oil!
+		random_chance = math.random(100);
+		if missle_type == "bolt" or missle_type == "throwing" or missle_type == "bottle" or missle_type == "bullet" or missle_type == "battery" then --wasting ammo
+			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - 1;
+		elseif helpers.missleIsAweapon () then
+			local _ammo = 0;
+			if tricks.tricks_tips[missle_type].ammo and tricks.tricks_tips[missle_type].ammo > 0 then
+				_ammo = tricks.tricks_tips[missle_type].ammo;
+			end;
+			chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q - _ammo;
+		end;
+		if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].q == 0 then
+			table.remove(chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo])
+			chars_mobs_npcs[current_mob]["equipment"].ammo = 0;
+		end;
+		local penalty = 0;
+		if helpers.aliveNature(current_mob) then
+			penalty = 4*helpers.visualConditions(current_mob,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+			if helpers.blindedWithLight (current_mob,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y) then
+				penalty = penalty*2;
+			end;
+		end
+		if random_chance + chars_mobs_npcs[current_mob].fateself > (100 - chance_to_hit) + chars_mobs_npcs[current_mob].fate + penalty then
+			iflucky = 1;
+		else
+			iflucky = 0;
+		end;
+		chars_mobs_npcs[current_mob].fate = 0;
+		chars_mobs_npcs[current_mob].fateself = 0;
+	end;
+
+	if helpers.missleIsAweapon () and missle_type ~= "bottle" then
+		if chars_mobs_npcs[victim].hp > 0 then
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if chars_mobs_npcs[victim].sp > 0 and dmgsp > 0 then
+			damage.SPminus(victim,dmgsp);
+		end;
+		if chars_mobs_npcs[victim].st > 0 and dmgst > 0 then
+			damage.STminus(victim,dmgst,false);
+		end;
+		if chars_mobs_npcs[victim].rt > 0 and dmgrt > 0 then
+			damage.RTminus(victim,dmgrt,false);
+		end;
+		local mode,lvl,num,effect,element,stat,skill,coff,luck = damage.classPassives(current_mob);
+		if mode and mode == "ranged" then
+			if algorythm == "2factors" then
+				damage.ApplyConditionTwoFactors(current_mob,lvl,num,effect,element,stat,skill,coff,luck);
+			elseif algorythm == "1factor" then
+				damage.ApplyCondition(current_mob,lvl,num,effect,element,stat,skill,coff,luck);
+			elseif algorythm == "simple" then
+				if effect == "hp" then
+					damage.HPminus(victim,num,true);
+				elseif effect == "sp" then
+					damage.SPminus(victim,num,true);
+				elseif effect == "st" then
+					damage.STminus(victim,num,true);
+				elseif effect == "rt" then
+					damage.RTminus(victim,num,true);
 				end;
-				if chars_mobs_npcs[victim].hexes == 1 then
-					chars_mobs_npcs[victim].rot = math.random(1,6); --desorientation;
+			elseif algorythm == "vampirism" then
+				if effect == "hp" then
+					damage.HPplus(current_mob,num,true);
+					damage.HPminus(victim,num,true);
+				elseif effect == "sp" then
+					damage.SPplus(current_mob,num,true);
+					damage.SPminus(victim,num,true);
+				elseif effect == "st" then
+					damage.STplus(current_mob,num,true);
+					damage.STminus(victim,num,true);
+				elseif effect == "rt" then
+					damage.RTplus(current_mob,num,true);
+					damage.RTminus(victim,num,true);
 				end;
-				global.damageflag = "charm";
-				chars_mobs_npcs[victim].charm = 3;
-				chars_mobs_npcs[current_mob].fate = 0;
-				chars_mobs_npcs[current_mob].fateself = 0;
+			end;
+		end;
+	elseif missle_drive == "muscles" and  helpers.missleAtWarBook() then
+		local _damage = chars_mobs_npcs[current_mob].lvl_unarmed*chars_mobs_npcs[current_mob].num_unarmed;
+		local hitzone = false;
+		local tempspellname = "tricks.tricks_tips." .. missle_type .. ".title";
+		local spellname = loadstring("return " .. tempspellname)();
+		if missle_type == "lotus" then
+			if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+				hitzone = "head";
+			elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+				hitzone = "body";
+			end;
+			dmghp = damage.physicalRes (victim,_damage,hitzone)
+			damage.HPminus(victim,dmghp,true);
+			helpers.addToActionLog(agressor_name .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
+		end;
+		if missle_type == "evilswarm" then
+			local damageHP = 0;
+			for i=1,5 do
+				utils.randommore ();
+				local delta_spd = 0;
+				if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
+					delta_spd = chars_mobs_npcs[current_mob].spd + chars_mobs_npcs[victim].spd;
+				else
+					delta_spd = 100;
+				end;
+				local incoming_physical_dmg = 0;
+				local chance_to_hit = math.ceil(50*(2-helpers.sizeModifer(victim)))+chars_mobs_npcs[current_mob].atkr+chars_mobs_npcs[current_mob].acu + delta_spd;
+				local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
+				chance_to_hit = chance_to_hit + total_fate;
 				chars_mobs_npcs[victim].fate = 0;
 				chars_mobs_npcs[victim].fateself = 0;
-				damage.HPminus(victim,damageHP,true);
-				table.insert(damaged_mobs,victim);
-				damage.mobDamaged(victim,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob);
-				helpers.addToActionLog(agressor_name .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
-			end;
-		else -- magic
-			local lvl,num = helpers.countBoomNumbers ();
-			local tempspellname = "magic.spell_tips." .. missle_type .. ".title";
-			local spellname = loadstring("return " .. tempspellname)();
-			helpers.addToActionLog( agressor_name .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
-			if missle_type == "flamearrow" then
-				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,3),"fire"); --FIXME nil
-				damage.HPminus(victim,dmghp,true);
-				helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
-			end;
-			if missle_type == "staticharge" then
-				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,2,6),"static");
-				tmp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,2,6),"static");
-				dmgrt = -math.min(tmp,200-chars_mobs_npcs[victim].rt);
-				damage.HPminus(victim,dmghp,true);
-				damage.RTminus(victim,dmgrt,true);
-			end;
-			if missle_type == "poisonedspit" then
-				dmghp = damage.magicalRes (victim,2+num[1]*damage.damageRandomizator(current_mob,1,2),"poison");
-				local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"poison",false);
-				if dot_power > 0 and dot_dur > 0 then
-					chars_mobs_npcs[victim].poison_power = dot_power;
-					chars_mobs_npcs[victim].poison_dur = dot_dur;
-					helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.poisoned[chars_mobs_npcs[victim].gender]);
-				end;
-				chars_mobs_npcs[victim].poison_power = dotdur;
-				chars_mobs_npcs[victim].poison_dur = dotpower;
-				damage.HPminus(victim,dmghp,true);
-				if dot_power > 0 and dot_dur > 0  then
-					helpers.addToActionLog( victim_name .. lognames.actions.poisoned[chars_mobs_npcs[current_mob].gender]);
-				end;
-			end;
-			if missle_type == "coldbeam" then
-				dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,7),"cold")
-				dmgst = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,7),"cold")
-				damage.HPminus(victim,dmghp,true);
-				damage.STminus(victim,dmgst,true);
-			end;
-			if missle_type == "harm" then
-				if helpers.aliveNature(victim) then
-					dmghp = (8 + math.random(1,2)*num[1]);
-				else
-					dmghp = 0;
-				end;
-				damage.HPminus(victim,dmghp,true);
-			end;
-			if missle_type == "spiritualarrow" then
-				if helpers.soulNature(victim) then
-					dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,6)*num[1],"spirit");
-				else
-					dmghp = 0;
-				end;
-				damage.HPminus(victim,dmghp,true);
-			end;
-			if missle_type == "lightbolt" then
-				dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,4)*num[1],"light");
-				if chars_mobs_npcs[victim].nature == "undead" then
-					dmghp = v*2;
-				end;
-				damage.HPminus(victim,dmghp,true);
-			end;
-			if missle_type == "darkflame" then
-				dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,10)*num[1],"darkness")+damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,10)*num[1],"fire");
-				damage.HPminus(victim,dmghp,true);
-			end;
-			if missle_type == "mindblast" then
-				dmghp =  damage.magicalRes (victim,math.random(1,3)*num[1],"mind");
-				damage.HPminus(victim,dmghp,true);
-			end;
-			if missle_type == "deadlyswarm" then
-				local _damage =  5 + damage.damageRandomizator(current_mob,1,3)*(num[1]+num[2]);
-				dmghp = damage.physicalRes (victim,_damage,false)
-				damage.HPminus(victim,dmghp,true);
-				chars_mobs_npcs[victim].deadlyswarm = damage.applyCondition (victim,lvl[1],num[1],"deadlyswarm",false,"dex",false,1,false);
-			end;
-			if missle_type == "golemstopper" then
-				if chars_mobs_npcs[victim].nature == "golem" then
-					dmghp = damage.damageRandomizator(current_mob,1,10)*lvl[1]*num[2];
-				else
-					dmghp = 0;
-				end;
-				damage.HPminus(victim,dmghp,true);
-			end;
-			if missle_type == "destroyundead" then
-				if chars_mobs_npcs[victim].nature == "undead" then
-					dmghp =  damage.damageRandomizator(current_mob,1,10)*lvl[1]*num[1];
-				else
-					dmghp = 0;
-				end;
-				damage.HPminus(victim,dmghp,true);
-			end;
-
-			if missle_type == "windfist" then
-				chars_mobs_npcs[victim].stun = damage.applyCondition (victim,lvl[1],num[1],"stun",false,"enu",false,1,false);
-				local dmgrt = damage.damageRandomizator(current_mob,20,lvl[1]*num[1]);
-				damage.RTminus(victim,dmgrt,true);
-				local ring = boomareas.ringArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
-				local penalty = 0;
-				if chars_mobs_npcs[victim].size == "giant" then
-					penalty = 3;
-				end;
-				if chars_mobs_npcs[victim].nature == "golem" or chars_mobs_npcs[victim].class == "earthelemental" then
-					penalty = 2;
-				end;
-				if chars_mobs_npcs[victim].nature == "droid" or chars_mobs_npcs[victim].size == "big" then
-					penalty = 1;
-				end;
-				local sixrows_dir = chars_mobs_npcs[current_mob].rot;
-				for i=1,math.max(1,math.min(3,lvl[1]-1-penalty)) do
-					if helpers.passCheck(ring[i][sixrows[i][sixrows_dir]].x,ring[i][sixrows[i][sixrows_dir]].y) and chars_mobs_npcs[victim].status == 1 then
-						chars_mobs_npcs[victim].x = ring[i][sixrows[i][sixrows_dir]].x;
-						chars_mobs_npcs[victim].y = ring[i][sixrows[i][sixrows_dir]].y;
-						damage.landscapeHex(victim,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+				random_chance = math.random(1,100)-50;	
+				if chance_to_hit >= random_chance then
+					utils.randommore ();
+					random_chance = math.random(1,100)-50;
+					dice = damage.damageRandomizator(current_mob,1,chars_mobs_npcs[current_mob].brng);
+					incoming_physical_dmg = (dice*chars_mobs_npcs[current_mob].arng+chars_mobs_npcs[current_mob].crng+chars_mobs_npcs[current_mob].acu);
+					utils.randommore ();
+					random_chance = math.random(1,100)-50;
+					chance_to_crit = math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10);
+					if chance_to_crit > random_chance then
+						incoming_physical_dmg = incoming_physical_dmg*2;
 					end;
 				end;
-				helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.stunned[chars_mobs_npcs[victim].gender]);
+				damageHP = damageHP + damage.physicalRes (victim,incoming_physical_dmg);	
 			end;
-			
-			if missle_type=="lightning" then
-				dmghp = damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,8)*num[1],"static");
-				damage.HPminus(victim,dmghp,true);
-				local tmp = math.ceil(dmghp/10);
-				dmgrt = math.min(tmp,200-chars_mobs_npcs[victim].rt)
-				damage.RTminus(victim,dmgrt,true);
+			if chars_mobs_npcs[victim].hexes == 1 then
+				chars_mobs_npcs[victim].rot = math.random(1,6); --desorientation;
 			end;
-			if missle_type=="sunray" then
-				dmghp = 20 + damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,20)*num[1],"light");
-				damage.HPminus(victim,dmghp,true);
+			global.damageflag = "charm";
+			chars_mobs_npcs[victim].charm = 3;
+			chars_mobs_npcs[current_mob].fate = 0;
+			chars_mobs_npcs[current_mob].fateself = 0;
+			chars_mobs_npcs[victim].fate = 0;
+			chars_mobs_npcs[victim].fateself = 0;
+			damage.HPminus(victim,damageHP,true);
+			table.insert(damaged_mobs,victim);
+			damage.mobDamaged(victim,current_mob,damageHP);
+			exp_for_what(damageHP,current_mob);
+			helpers.addToActionLog(agressor_name .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
+		end;
+	else -- MAGIC
+		local lvl,num = helpers.countBoomNumbers ();
+		local tempspellname = "magic.spell_tips." .. missle_type .. ".title";
+		local spellname = loadstring("return " .. tempspellname)();
+		helpers.addToActionLog( agressor_name .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
+		if missle_type == "flamearrow" then
+			dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,3),"fire"); --FIXME nil
+			damage.HPminus(victim,dmghp,true);
+			helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
+		end;
+		if missle_type == "staticharge" then
+			dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,2,6),"static");
+			tmp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,2,6),"static");
+			dmgrt = -math.min(tmp,200-chars_mobs_npcs[victim].rt);
+			damage.HPminus(victim,dmghp,true);
+			damage.RTminus(victim,dmgrt,true);
+		end;
+		if missle_type == "poisonedspit" then
+			dmghp = damage.magicalRes (victim,2+num[1]*damage.damageRandomizator(current_mob,1,2),"poison");
+			local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"poison",false);
+			if dot_power > 0 and dot_dur > 0 then
+				chars_mobs_npcs[victim].poison_power = dot_power;
+				chars_mobs_npcs[victim].poison_dur = dot_dur;
+				helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.poisoned[chars_mobs_npcs[victim].gender]);
 			end;
-			if missle_type == "acidburst" then -- FIXME: not ac but debuff ac
-				dmghp = damage.magicalRes (victim,damage.damageRandomizator(current_mob,2,18)*num[1],"acid");
-				damage.HPminus(victim,dmghp,true);
-				tmp = num[1];
-				debuffpower = math.max(tmp,chars_mobs_npcs[victim].ac);
-				debuffdur = lvl[1]*3
-				chars_mobs_npcs[victim].ac_debuff_power = debuffpower;
-				chars_mobs_npcs[victim].ac_debuff_dur = debuffdur;
-				dotpower = num[1]; 
-				dotdur = lvl[1]*3;
-				chars_mobs_npcs[victim].acid_power = dotpower;
-				chars_mobs_npcs[victim].acid_dur = dotdur;
-				helpers.addToActionLog( victim_name .. lognames.actions.acided[chars_mobs_npcs[victim].gender]);
+			chars_mobs_npcs[victim].poison_power = dotdur;
+			chars_mobs_npcs[victim].poison_dur = dotpower;
+			damage.HPminus(victim,dmghp,true);
+			if dot_power > 0 and dot_dur > 0  then
+				helpers.addToActionLog( victim_name .. lognames.actions.poisoned[chars_mobs_npcs[current_mob].gender]);
 			end;
-			
-			-- continue from here
-			if missle_type=="razors" and chars_mobs_npcs[victim].motion == "walking" then
-				dmghp = math.ceil(damage.damageRandomizator(current_mob,1,5)*num[1]*(100-chars_mobs_npcs[victim].ac)/100)
-				damage.HPminus(victim,dmghp,true);
-				if helpers.traumaNature(victim) then
-					dotpower = math.random(9);
-					chars_mobs_npcs[victim].bleeding = math.max(chars_mobs_npcs[victim].bleeding,dotpower);
-					helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[current_mob].gender]);
+		end;
+		if missle_type == "coldbeam" then
+			dmghp = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,7),"cold")
+			dmgst = damage.magicalRes (victim,num[1]*damage.damageRandomizator(current_mob,1,7),"cold")
+			damage.HPminus(victim,dmghp,true);
+			damage.STminus(victim,dmgst,true);
+		end;
+		if missle_type == "harm" then
+			if helpers.aliveNature(victim) then
+				dmghp = (8 + math.random(1,2)*num[1]);
+			else
+				dmghp = 0;
+			end;
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if missle_type == "spiritualarrow" then
+			if helpers.soulNature(victim) then
+				dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,6)*num[1],"spirit");
+			else
+				dmghp = 0;
+			end;
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if missle_type == "lightbolt" then
+			dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,4)*num[1],"light");
+			if chars_mobs_npcs[victim].nature == "undead" then
+				dmghp = v*2;
+			end;
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if missle_type == "darkflame" then
+			dmghp =  damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,10)*num[1],"darkness")+damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,10)*num[1],"fire");
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if missle_type == "mindblast" then
+			dmghp =  damage.magicalRes (victim,math.random(1,3)*num[1],"mind");
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if missle_type == "deadlyswarm" then
+			local _damage =  5 + damage.damageRandomizator(current_mob,1,3)*(num[1]+num[2]);
+			dmghp = damage.physicalRes (victim,_damage,false)
+			damage.HPminus(victim,dmghp,true);
+			chars_mobs_npcs[victim].deadlyswarm = damage.applyCondition (victim,lvl[1],num[1],"deadlyswarm",false,"dex",false,1,false);
+		end;
+		if missle_type == "golemstopper" then
+			if chars_mobs_npcs[victim].nature == "golem" then
+				dmghp = damage.damageRandomizator(current_mob,1,10)*lvl[1]*num[2];
+			else
+				dmghp = 0;
+			end;
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if missle_type == "destroyundead" then
+			if chars_mobs_npcs[victim].nature == "undead" then
+				dmghp =  damage.damageRandomizator(current_mob,1,10)*lvl[1]*num[1];
+			else
+				dmghp = 0;
+			end;
+			damage.HPminus(victim,dmghp,true);
+		end;
+
+		if missle_type == "windfist" then
+			chars_mobs_npcs[victim].stun = damage.applyCondition (victim,lvl[1],num[1],"stun",false,"enu",false,1,false);
+			local dmgrt = damage.damageRandomizator(current_mob,20,lvl[1]*num[1]);
+			damage.RTminus(victim,dmgrt,true);
+			local ring = boomareas.ringArea(chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+			local penalty = 0;
+			if chars_mobs_npcs[victim].size == "giant" then
+				penalty = 3;
+			end;
+			if chars_mobs_npcs[victim].nature == "golem" or chars_mobs_npcs[victim].class == "earthelemental" then
+				penalty = 2;
+			end;
+			if chars_mobs_npcs[victim].nature == "droid" or chars_mobs_npcs[victim].size == "big" then
+				penalty = 1;
+			end;
+			local sixrows_dir = chars_mobs_npcs[current_mob].rot;
+			for i=1,math.max(1,math.min(3,lvl[1]-1-penalty)) do
+				if helpers.passCheck(ring[i][sixrows[i][sixrows_dir]].x,ring[i][sixrows[i][sixrows_dir]].y) and chars_mobs_npcs[victim].status == 1 then
+					chars_mobs_npcs[victim].x = ring[i][sixrows[i][sixrows_dir]].x;
+					chars_mobs_npcs[victim].y = ring[i][sixrows[i][sixrows_dir]].y;
+					damage.landscapeHex(victim,chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
 				end;
-				--if chars_mobs_npcs[victim].legs > 0 then
-					--trauma
-				--end;
 			end;
-			
-			if missle_type == "manaburn" then
-				local debuff = math.min(chars_mobs_npcs[victim].sp,num[2]);
-				damage.SPminus(victim,debuff,true);
-				local _damage = damage.magicalRes (victim,debuff,"fire");
-				damage.HPminus(victim,_damage,true);
-				local damaged_mobs = {};
-				table.insert(damaged_mobs,victim);
+			helpers.addToActionLog( helpers.mobName(victim) .. lognames.actions.stunned[chars_mobs_npcs[victim].gender]);
+		end;
+		
+		if missle_type=="lightning" then
+			dmghp = damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,8)*num[1],"static");
+			damage.HPminus(victim,dmghp,true);
+			local tmp = math.ceil(dmghp/10);
+			dmgrt = math.min(tmp,200-chars_mobs_npcs[victim].rt)
+			damage.RTminus(victim,dmgrt,true);
+		end;
+		if missle_type=="sunray" then
+			dmghp = 20 + damage.magicalRes (victim,damage.damageRandomizator(current_mob,1,20)*num[1],"light");
+			damage.HPminus(victim,dmghp,true);
+		end;
+		if missle_type == "acidburst" then -- FIXME: not ac but debuff ac
+			dmghp = damage.magicalRes (victim,damage.damageRandomizator(current_mob,2,18)*num[1],"acid");
+			damage.HPminus(victim,dmghp,true);
+			tmp = num[1];
+			debuffpower = math.max(tmp,chars_mobs_npcs[victim].ac);
+			debuffdur = lvl[1]*3
+			chars_mobs_npcs[victim].ac_debuff_power = debuffpower;
+			chars_mobs_npcs[victim].ac_debuff_dur = debuffdur;
+			dotpower = num[1]; 
+			dotdur = lvl[1]*3;
+			chars_mobs_npcs[victim].acid_power = dotpower;
+			chars_mobs_npcs[victim].acid_dur = dotdur;
+			helpers.addToActionLog( victim_name .. lognames.actions.acided[chars_mobs_npcs[victim].gender]);
+		end;
+		
+		-- continue from here
+		if missle_type=="razors" and chars_mobs_npcs[victim].motion == "walking" then
+			dmghp = math.ceil(damage.damageRandomizator(current_mob,1,5)*num[1]*(100-chars_mobs_npcs[victim].ac)/100)
+			damage.HPminus(victim,dmghp,true);
+			if helpers.traumaNature(victim) then
+				dotpower = math.random(9);
+				chars_mobs_npcs[victim].bleeding = math.max(chars_mobs_npcs[victim].bleeding,dotpower);
+				helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[current_mob].gender]);
 			end;
-			
-			if missle_type == "boilingblood" then
-				local debuff = lvl[1]*num[1];
-				local _damage = damage.magicalRes (victim,debuff,"fire");
-				if _damage >= chars_mobs_npcs[victim].hp then
-					chars_mobs_npcs[j].revenge_type = "acid";
-					chars_mobs_npcs[j].revenge_power = lvl[2]*num[2];
-				end; 
-				damage.HPminus(victim,_damage,true);
-				local damaged_mobs = {};
-				table.insert(damaged_mobs,victim);
+			--if chars_mobs_npcs[victim].legs > 0 then
+				--trauma
+			--end;
+		end;
+		
+		if missle_type == "manaburn" then
+			local debuff = math.min(chars_mobs_npcs[victim].sp,num[2]);
+			damage.SPminus(victim,debuff,true);
+			local _damage = damage.magicalRes (victim,debuff,"fire");
+			damage.HPminus(victim,_damage,true);
+			local damaged_mobs = {};
+			table.insert(damaged_mobs,victim);
+		end;
+		
+		if missle_type == "boilingblood" then
+			local debuff = lvl[1]*num[1];
+			local _damage = damage.magicalRes (victim,debuff,"fire");
+			if _damage >= chars_mobs_npcs[victim].hp then
+				chars_mobs_npcs[j].revenge_type = "acid";
+				chars_mobs_npcs[j].revenge_power = lvl[2]*num[2];
+			end; 
+			damage.HPminus(victim,_damage,true);
+			local damaged_mobs = {};
+			table.insert(damaged_mobs,victim);
+		end;
+		
+		if missle_type == "incineration" then
+			chars_mobs_npcs[victim].cold_dur = 0;
+			chars_mobs_npcs[victim].cold_power = 0;
+			dotdmg = damage.damageRandomizator(current_mob,1,15)*(100-chars_mobs_npcs[victim].rezfire)/100;
+			local dmglog = 0;
+			local selfdmglog = 0;
+			dmghp = chars_mobs_npcs[current_mob].num_fire*(100-chars_mobs_npcs[victim].rezfire)/100;
+			chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp - dmghp;
+			dmglog = dmglog + dmghp;
+			while (chars_mobs_npcs[victim].hp >= 0 or chars_mobs_npcs[current_mob].sp >= 0) do
+				chars_mobs_npcs[current_mob].sp = chars_mobs_npcs[current_mob].sp - 1;
+				if chars_mobs_npcs[victim].shieldoflight == 0 then
+					chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp - math.min(dotdmg,chars_mobs_npcs[victim].hp);
+					dmglog = dmglog + dotdmg;
+				end;
+				if chars_mobs_npcs[victim].hp <= 0 or chars_mobs_npcs[current_mob].sp <= 0  or chars_mobs_npcs[current_mob].hp <= 0 then
+					chars_mobs_npcs[victim].flame_power= chars_mobs_npcs[current_mob].num_fire*(100-chars_mobs_npcs[victim].rezfire)/100;
+					chars_mobs_npcs[victim].flame_dur= chars_mobs_npcs[current_mob].lvl_fire;
+					break;
+				end;
 			end;
-			
-			if missle_type == "incineration" then
-				chars_mobs_npcs[victim].cold_dur = 0;
-				chars_mobs_npcs[victim].cold_power = 0;
-				dotdmg = damage.damageRandomizator(current_mob,1,15)*(100-chars_mobs_npcs[victim].rezfire)/100;
+			--damage.mobDamaged(victim,current_mob,dmglog);
+			helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmglog .. lognames.actions.metr .. lognames.actions.ofhp);
+			if selfdmglog > 0 then
+				helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[current_mob].gender] .. selfdmglog .. lognames.actions.metr .. lognames.actions.ofhp);	
+			end;
+			damage.HPcheck(victim);
+		end;
+				
+		if missle_type == "implosion" then
+			dmgst = math.min(chars_mobs_npcs[victim].st,lvl[1]*num[1]);
+			dmgrt = math.min(chars_mobs_npcs[victim].rt,lvl[1]*num[1]);
+			dmghp = math.min(chars_mobs_npcs[victim].hp,lvl[1]*num[1])+(chars_mobs_npcs[current_mob].lvl[1]*num[1]-dmgst);
+			damage.STminus(victim,dmgst,true);
+			damage.RTminus(victim,dmgrt,true);
+			damage.HPminus(victim,dmghp,true);
+		end;
+		
+		if missle_type=="massdistortion" then
+			if chars_mobs_npcs[victim].shieldoflight == 0 then
+				if chars_mobs_npcs[victim].person == "char" then
+					dmghp = math.min(chars_mobs_npcs[victim].hp,math.ceil(0.25*chars_mobs_npcs[current_mob].hp_max)+2*num[1]);
+				elseif  chars_mobs_npcs[victim].person == "mob" then
+					mobmaxhp = chars_mobs_npcs[victim].hp_max;
+					dmghp = math.min(chars_mobs_npcs[victim].hp,math.ceil(0.25*mobmaxhp.hp)+2*num[1]);
+				end;
+				damage.HPminus(victim,dmghp,true);
+			end;
+		end;
+		
+		if missle_type == "dehydratation" then
+			if chars_mobs_npcs[victim].nature~="undead" 
+			and chars_mobs_npcs[victim].nature~="golem" 
+			and chars_mobs_npcs[victim].nature~="droid" and chars_mobs_npcs[victim].nature~="elemental" then
 				local dmglog = 0;
-				local selfdmglog = 0;
-				dmghp = chars_mobs_npcs[current_mob].num_fire*(100-chars_mobs_npcs[victim].rezfire)/100;
-				chars_mobs_npcs[victim].hp= chars_mobs_npcs[victim].hp - dmghp;
+				local dmglog2 = 0;
+				dmghp = num[1];
+				dmgst = damage.damageRandomizator(current_mob,1,12);
+				chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp - dmghp;
 				dmglog = dmglog + dmghp;
-				while (chars_mobs_npcs[victim].hp >= 0 or chars_mobs_npcs[current_mob].sp >= 0) do
+				dmglog2 = dmglog2 + dmgst;
+				while (chars_mobs_npcs[victim].st >= 0 or chars_mobs_npcs[current_mob].sp >= 0) do
 					chars_mobs_npcs[current_mob].sp = chars_mobs_npcs[current_mob].sp - 1;
 					if chars_mobs_npcs[victim].shieldoflight == 0 then
-						chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp - math.min(dotdmg,chars_mobs_npcs[victim].hp);
-						dmglog = dmglog + dotdmg;
+						chars_mobs_npcs[victim].st = chars_mobs_npcs[victim].st - math.min(dmgst,chars_mobs_npcs[victim].st);
+						dmghp = dmghp + dmgst;
 					end;
-					if chars_mobs_npcs[victim].hp <= 0 or chars_mobs_npcs[current_mob].sp <= 0  or chars_mobs_npcs[current_mob].hp <= 0 then
-						chars_mobs_npcs[victim].flame_power= chars_mobs_npcs[current_mob].num_fire*(100-chars_mobs_npcs[victim].rezfire)/100;
-						chars_mobs_npcs[victim].flame_dur= chars_mobs_npcs[current_mob].lvl_fire;
+					if chars_mobs_npcs[victim].st <= 0 or chars_mobs_npcs[current_mob].sp <= 0 or chars_mobs_npcs[current_mob].hp <= 0 then
 						break;
 					end;
 				end;
-				--damage.mobDamaged(victim,current_mob,dmglog);
-				helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmglog .. lognames.actions.metr .. lognames.actions.ofhp);
-				if selfdmglog > 0 then
-					helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[current_mob].gender] .. selfdmglog .. lognames.actions.metr .. lognames.actions.ofhp);	
-				end;
-				damage.HPcheck(victim);
-			end;
-					
-			if missle_type == "implosion" then
-				dmgst = math.min(chars_mobs_npcs[victim].st,lvl[1]*num[1]);
-				dmgrt = math.min(chars_mobs_npcs[victim].rt,lvl[1]*num[1]);
-				dmghp = math.min(chars_mobs_npcs[victim].hp,lvl[1]*num[1])+(chars_mobs_npcs[current_mob].lvl[1]*num[1]-dmgst);
-				damage.STminus(victim,dmgst,true);
-				damage.RTminus(victim,dmgrt,true);
-				damage.HPminus(victim,dmghp,true);
-			end;
-			
-			if missle_type=="massdistortion" then
-				if chars_mobs_npcs[victim].shieldoflight == 0 then
-					if chars_mobs_npcs[victim].person == "char" then
-						dmghp = math.min(chars_mobs_npcs[victim].hp,math.ceil(0.25*chars_mobs_npcs[current_mob].hp_max)+2*num[1]);
-					elseif  chars_mobs_npcs[victim].person == "mob" then
-						mobmaxhp = chars_mobs_npcs[victim].hp_max;
-						dmghp = math.min(chars_mobs_npcs[victim].hp,math.ceil(0.25*mobmaxhp.hp)+2*num[1]);
+				while (chars_mobs_npcs[victim].hp >= 0 or chars_mobs_npcs[current_mob].sp >= 0) do
+					chars_mobs_npcs[current_mob].sp=  chars_mobs_npcs[current_mob].sp-1
+					if chars_mobs_npcs[victim].shieldoflight == 0 then
+						chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp-math.min(dotdmg,chars_mobs_npcs[victim].hp)
+						dmglog = dmglog + dotdmg;
 					end;
-					damage.HPminus(victim,dmghp,true);
-				end;
-			end;
-			
-			if missle_type == "dehydratation" then
-				if chars_mobs_npcs[victim].nature~="undead" 
-				and chars_mobs_npcs[victim].nature~="golem" 
-				and chars_mobs_npcs[victim].nature~="droid" and chars_mobs_npcs[victim].nature~="elemental" then
-					local dmglog = 0;
-					local dmglog2 = 0;
-					dmghp = num[1];
-					dmgst = damage.damageRandomizator(current_mob,1,12);
-					chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp - dmghp;
-					dmglog = dmglog + dmghp;
-					dmglog2 = dmglog2 + dmgst;
-					while (chars_mobs_npcs[victim].st >= 0 or chars_mobs_npcs[current_mob].sp >= 0) do
-						chars_mobs_npcs[current_mob].sp = chars_mobs_npcs[current_mob].sp - 1;
-						if chars_mobs_npcs[victim].shieldoflight == 0 then
-							chars_mobs_npcs[victim].st = chars_mobs_npcs[victim].st - math.min(dmgst,chars_mobs_npcs[victim].st);
-							dmghp = dmghp + dmgst;
-						end;
-						if chars_mobs_npcs[victim].st <= 0 or chars_mobs_npcs[current_mob].sp <= 0 or chars_mobs_npcs[current_mob].hp <= 0 then
-							break;
-						end;
+					if chars_mobs_npcs[victim].hp <= 0 or chars_mobs_npcs[current_mob].sp <= 0 or chars_mobs_npcs[current_mob].hp <= 0 then
+						break;
 					end;
-					while (chars_mobs_npcs[victim].hp >= 0 or chars_mobs_npcs[current_mob].sp >= 0) do
-						chars_mobs_npcs[current_mob].sp=  chars_mobs_npcs[current_mob].sp-1
-						if chars_mobs_npcs[victim].shieldoflight == 0 then
-							chars_mobs_npcs[victim].hp = chars_mobs_npcs[victim].hp-math.min(dotdmg,chars_mobs_npcs[victim].hp)
-							dmglog = dmglog + dotdmg;
-						end;
-						if chars_mobs_npcs[victim].hp <= 0 or chars_mobs_npcs[current_mob].sp <= 0 or chars_mobs_npcs[current_mob].hp <= 0 then
-							break;
-						end;
-					end;
-				else
-					dmghp = 0;
-					dmglog = 0;
 				end;
-				--damage.mobDamaged(victim,current_mob,dmglog);
-				helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmglog .. lognames.actions.metr .. lognames.actions.ofhp);
-				helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmglog2 .. lognames.actions.metr .. lognames.actions.ofst);
-				if selfdmglog > 0 then
-					helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[current_mob].gender] .. selfdmglog .. lognames.actions.metr .. lognames.actions.ofhp);	
-				end;
-				damage.HPcheck(victim);
+			else
+				dmghp = 0;
+				dmglog = 0;
 			end;
+			--damage.mobDamaged(victim,current_mob,dmglog);
+			helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmglog .. lognames.actions.metr .. lognames.actions.ofhp);
+			helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. victim_name .. " " .. dmglog2 .. lognames.actions.metr .. lognames.actions.ofst);
+			if selfdmglog > 0 then
+				helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[current_mob].gender] .. selfdmglog .. lognames.actions.metr .. lognames.actions.ofhp);	
+			end;
+			damage.HPcheck(victim);
 		end;
-	else
-		helpers.addToActionLog( agressor_name .. lognames.actions.sht[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
 	end;
+
 	local alldmg = math.ceil(dmghp + dmgsp/2 + dmgst/4 + dmgrt/8);
 	local _damager = current_mob;
 	if missle_type == "hiddenstrike" and damage.falseDamager(chars_mobs.npcs[victim].x,chars_mobs.npcs[victim].y,3) then
@@ -1430,7 +1468,7 @@ function damage.multidamage () --FIXME two hexes
 					delta_spd = 100;
 				end;
 				local incoming_physical_dmg = 0;
-				local chance_to_hit = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob].atkr+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;
+				local chance_to_hit = math.ceil(50*(2-helpers.sizeModifer(victim)))+chars_mobs_npcs[current_mob].atkr+chars_mobs_npcs[current_mob].acu + delta_spd;
 				local total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
 				chance_to_hit = chance_to_hit + total_fate;
 				chars_mobs_npcs[j].fate = 0;
@@ -3586,6 +3624,8 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	local wpEffect,wpChance = damage.weaponPassives(current_mob,victim,"melee");
 	local array_of_chances = {};
 	local chance_to_hit = 0;
+	local chance_to_miss = 0;
+	local hit_to_miss = 0;
 	local chance_to_crit = 0;
 	local chance_to_dodge = 0;
 	local chance_to_hands = 0;
@@ -3654,28 +3694,8 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 		end;
 	end;
 	local attacked_from = helpers.attackDirection(current_mob,victim);
-	if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
-		delta_spd = chars_mobs_npcs[current_mob].spd + chars_mobs_npcs[victim].spd;
-	else
-		delta_spd = 100;
-	end;
-	helpers.recalcBattleStats (current_mob);
-	chance_not_to_miss = math.ceil(50*helpers.sizeModifer(victim))+chars_mobs_npcs[current_mob]["melee_stats"][attacking_hand].atkm+(chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[victim].spd)+chars_mobs_npcs[current_mob].acu + delta_spd;	
-	local eye_mod = 1;
-	if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
-		eye_mod = math.max(0,eye_mod-0.5);
-	end;
-	if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
-		eye_mod = math.max(0,eye_mod-0.5);
-	end;
-	if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
-		eye_mod = 0;
-	end;
-	chance_to_hit_norandom = math.ceil(chance_not_to_miss*eye_mod);
-	utils.randommore ();
-	random_chance = math.random(1,100)-50;
 	total_fate = chars_mobs_npcs[current_mob].fateself + chars_mobs_npcs[victim].fate - (chars_mobs_npcs[victim].fateself + chars_mobs_npcs[current_mob].fate);
-	chance_to_hit = chance_to_hit_norandom + random_chance + total_fate;
+	chance_to_hit = chars_mobs_npcs[current_mob]["melee_stats"][attacking_hand].atkm + math.ceil(chars_mobs_npcs[current_mob].acu/10) + total_fate;
 	if missle_type == "slash" then
 		chance_to_hit = math.ceil(chance_to_hit/2);
 	elseif missle_type == "smash" then
@@ -3689,7 +3709,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	chars_mobs_npcs[current_mob].fateself = 0;
 	chars_mobs_npcs[victim].fate = 0;
 	chars_mobs_npcs[victim].fateself = 0;
-	chance_to_crit = math.max(0,math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10) - chars_mobs_npcs[victim].protection_power); --FIX add weapon mastery
+	chance_to_crit = math.max(0,math.ceil((chars_mobs_npcs[current_mob].luk-chars_mobs_npcs[victim].luk)/10) - chars_mobs_npcs[victim].protection_power);
 	if attacked_from == "back" then
 		chance_to_crit = chance_to_crit*2;
 	end;
@@ -3699,699 +3719,746 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	if missle_type == "lunge" then
 		chance_to_crit = chance_to_crit*2;
 	end;
-	if chance_to_hit <= 0 then
-		iflucky = 0;
-		utils.playSfx(media.sounds.sword_miss,1);
-		helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
+--HIT		
+	--MISS
+	if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
+		delta_spd = chars_mobs_npcs[victim].spd + chars_mobs_npcs[current_mob].spd;
 	else
-		iflucky = 1;
-		utils.randommore ();
-		hitzone = chars_mobs_npcs[victim]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[victim]["hitzones"][global.hex])];	
-		if missle_type == "scullcrusher" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
-			hitzone = "head";
-			incoming_physical_dmg = math.ceil(incoming_physical_dmg*10);
-		elseif missle_type == "woodcutter" and helpers.randomLimb(victim,global.hex,true) then
-			hitzone = helpers.randomLimb(victim,global.hex);
-		elseif (missle_type == "stomachhit" or missle_type == "ribbraker" or missle_type == "impale" or missle_type == "vilehit" or missle_type == "bitsouloutr") and helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
-			hitzone = "body";
-		elseif missle_type == "oblivion" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
-			hitzone = "head";
-		elseif missle_type == "stunner"  then
-			if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
-				hitzone = "head";
-			elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
-				hitzone = "body";
-			end;
-		end;
-		local might_modifer = damage.mightModifer(current_mob,attacking_hand);
-	--DAMAGE
-		incoming_physical_dmg = damage.countDamage(current_mob,attacking_hand,nil);
-		if missle_type == "slash" then
-			incoming_physical_dmg = math.ceil(incoming_physical_dmg*3);
-		elseif missle_type == "smash" then
-			incoming_physical_dmg = math.ceil(incoming_physical_dmg*5);
-		elseif missle_type == "lunge" then	
-			incoming_physical_dmg = math.ceil(incoming_physical_dmg*1.5);
-		end;	
-	-- DODGE
-	
-		if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) and missle_type ~= "feint" and missle_type ~= "smarthit" then
-			
-			chance_to_dodge = math.ceil(chars_mobs_npcs[victim].dex/5)+chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
-			if chars_mobs_npcs[victim].lvl_dodging >= 4 and chars_mobs_npcs[victim]["equipment"].cloak > 0 
-			and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].q > 0 then
-				chance_to_dodge = chance_to_dodge + inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].ttxid].dg; -- +CLOAK
-			end;
-			if chars_mobs_npcs[victim].lvl_dodging < 3
-			and chars_mobs_npcs[victim]["equipment"].armor > 0
-			and  (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "leather"
-			or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "fur"
-			or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "skin"
-			) then
-				chance_to_dodge = 0;
-			elseif chars_mobs_npcs[victim].lvl_dodging < 4
-			and chars_mobs_npcs[victim]["equipment"].armor > 0
-			and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "chain" 
-			then
-				chance_to_dodge = 0;
-			elseif chars_mobs_npcs[victim].lvl_dodging < 5
-			and chars_mobs_npcs[victim]["equipment"].armor > 0
-			and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "plate" 
-			then
-				chance_to_dodge = 0;
-			end;
-			local dodge_dir_coff=0
-			if attacked_from=="front" then
-				dodge_dir_coff=1;
-			elseif attacked_from=="lh" then
-				dodge_dir_coff=1;
-			elseif attacked_from=="rh" then
-				dodge_dir_coff=1;
-			elseif attacked_from=="lback" then
-				dodge_dir_coff=0.75;
-			elseif attacked_from=="rback" then
-				dodge_dir_coff=0.75;
-			elseif attacked_from=="back" then
-				dodge_dir_coff=0.5;
-			end;
-			chance_to_dodge = chance_to_dodge*dodge_dir_coff;
-			if chars_mobs_npcs[victim].protectionmode == "block" then
-				chance_to_dodge = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "hands" then
-				chance_to_dodge = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "dodge" then
-				chance_to_dodge = chance_to_dodge*2;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "parry" then
-				chance_to_dodge = 0;
-			end;
-		end;
-		if chance_to_dodge > 0 then
-			for i=1,chance_to_dodge do
-				array_of_chances[i] = "dodge";	
-			end;
-		end;
-	--/DODGE
-	--HANDBLOCK --ONLY for arms == 2, so no Sheevas!
-		if missle_type ~= "feint" and missle_type ~= "smarthit" then
-			if attacked_from=="front" then
-				hands_dir_coff=1;
-			elseif attacked_from=="lh" then
-				hands_dir_coff=1;
-			elseif attacked_from=="rh" then
-				hands_dir_coff=1;
-			elseif attacked_from=="lback" then
-				hands_dir_coff=0;
-			elseif attacked_from=="rback" then
-				hands_dir_coff=0;
-			elseif attacked_from=="back" then
-				hands_dir_coff=0;
-			end;
-			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-			and chars_mobs_npcs[victim].lvl_unarmed >= 2
-			and helpers.mobHasHealthyHands(victim) > 0
-			and (chars_mobs_npcs[current_mob]["equipment"][attacking_hand] == 0 or currentMobWeaponClass == "claws" or currentMobWeaponClass == "knuckle" or currentMobWeaponClass == "tentacle" or currentMobWeaponClass == "nipper")
-			and helpers.mobCanDefendHimself(victim) then
-				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;	
-			end;	
-			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-			and chars_mobs_npcs[victim].lvl_unarmed >= 3
-			and helpers.mobHasHealthyHands(victim) > 0
-			and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and (currentMobWeaponClass == "staff" or currentMobWeaponClass == "club" or currentMobWeaponClass == "dagger" )
-			and helpers.mobCanDefendHimself (victim) then
-				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
-			end;
-			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-			and chars_mobs_npcs[victim].lvl_unarmed >= 3
-			and helpers.mobHasHealthyHands(victim) > 0
-			and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and currentMobWeaponClass == "flagpole"
-			and helpers.mobCanDefendHimself (victim) then
-				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
-			end;
-			if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
-			and chars_mobs_npcs[victim].lvl_unarmed == 5
-			and helpers.mobHasHealthyHands(victim) > 0
-			and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and currentMobWeaponClass == "sword" and currentMobWeaponSubClass ~= "thsword"
-			and helpers.mobCanDefendHimself (victim) then
-				chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "block" then
-				chance_to_hands = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "hands" then
-				chance_to_hands = chance_to_hands*2;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "dodge" then
-				chance_to_hands = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "parry" then
-				chance_to_hands = 0;
-			end;
-			if chars_mobs_npcs[victim].mgt*1.5 < chars_mobs_npcs[current_mob].mgt then
-				chance_to_hands = 0;
-			end;
-			if chars_mobs_npcs[current_mob].rage > 0 then
-				chance_to_hands = math.ceil(math.max(0,math.min(chance_to_hands-chars_mobs_npcs[current_mob].rage,chance_to_hands/2)));
-			end;
-			if wpEffect == "deblock" and wpChance > math.random(1,100) then
-				chance_to_hands = 0;
-				helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.deblocked[chars_mobs_npcs[current_mob].gender]);
-			end;
-			if chance_to_hands > 0 then
-				for i=#array_of_chances+1,chance_to_hands do
-					array_of_chances[i] = "hands";	
-				end;
-			end;
-		end;
-	--/HANDBLOCK
-	
-	local _protector_index = helpers.ifUmbrella (); --umbrella trick (shield skill)
-	local formervictim = victim; 
-	if helpers.mobCanDefendHimself (victim) and _protector_index then
-		if _protector_index > 1 then
-			victim = _protector_index[1];
-			point_to_go_x = chars_mobs_npcs[victim].x;
-			point_to_go_y = chars_mobs_npcs[victim].y;
-			helpers.turnMob (current_mob);
-		else
-			local _x = chars_mobs_npcs[victim].x;
-			local _y = chars_mobs_npcs[victim].y;
-			chars_mobs_npcs[victim].x = chars_mobs_npcs[_protector_index[1]].x;
-			chars_mobs_npcs[victim].y = chars_mobs_npcs[_protector_index[1]].y;
-			chars_mobs_npcs[_protector_index[1]].x = _x;
-			chars_mobs_npcs[_protector_index[1]].y = _y;
-			victim = _protector_index[1];
-		end;
-		chars_mobs_npcs[victim].trick = "none";
-		chars_mobs_npcs[victim].protectionmode = "none";
-		chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
-		helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.covered[chars_mobs_npcs[victim].gender] .. helpers.mobName(formervictim));
+		delta_spd = 0;
 	end;
-	
-	--BLOCK --only for two arms!
-		if chars_mobs_npcs[victim]["equipment"].lh > 0 and helpers.mobCanDefendHimself (victim)
-		and inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "shield"
-		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
-		and helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim]["arms_health"].lh > 0 
-		and missle_type ~= "feint" and missle_type ~= "smarthit" 
-		then
-			local block_dir_coff=0
-			if attacked_from=="front" then
-				block_dir_coff=1;
-			elseif attacked_from=="lh" then
-				block_dir_coff=1;
-			elseif attacked_from=="rh" then
-				block_dir_coff=0.75;
-			elseif attacked_from=="lback" then
-				block_dir_coff=0.5;
-			elseif attacked_from=="rback" then
-				block_dir_coff=0;
-			elseif attacked_from=="back" then
-				block_dir_coff=0;
-			end;
-			chance_to_block = block_dir_coff*(math.ceil(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].ac+chars_mobs_npcs[victim].num_shield*chars_mobs_npcs[victim].lvl_shield)-chars_mobs_npcs[current_mob]["melee_stats"][attacking_hand].atkm);
-			if wpEffect == "deblock" and wpChance > math.random(1,100) then
-				chance_to_block = 0;
-				helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.deblocked[chars_mobs_npcs[current_mob].gender]);
-			end;
-			utils.randommore ();
-			random_chance = math.random(1,100);
-			
-			if chars_mobs_npcs[victim].protectionmode == "block" then
-				chance_to_block = chance_to_block*2;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "hands" then
-				chance_to_block = 0;
-			end
-			if chars_mobs_npcs[victim].protectionmode == "dodge" then
-				chance_to_block = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "parry" then
-				chance_to_block = 0;
-			end;
-			if chars_mobs_npcs[victim].mgt*3 < chars_mobs_npcs[current_mob].mgt then
-				chance_to_block = 0;
-			end;
-			if chars_mobs_npcs[current_mob].rage > 0 then
-				chance_to_hands = math.ceil(math.max(0,math.min(chance_to_block-chars_mobs_npcs[current_mob].rage,chance_to_block/2)));
-			end;
-			if chance_to_block > 0 then
-				for i=#array_of_chances+1,chance_to_block do
-					array_of_chances[i] = "block";	
-				end;
-			end;
+	helpers.recalcBattleStats (current_mob);
+	local eye_mod = 1;
+	if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+		eye_mod = math.max(2,eye_mod+1);
+	end;
+	if chars_mobs_npcs[current_mob].reye and chars_mobs_npcs[current_mob].reye == 0 then
+		eye_mod = math.max(2,eye_mod+1);
+	end;
+	if chars_mobs_npcs[current_mob].ceye and chars_mobs_npcs[current_mob].ceye == 0 then
+		eye_mod = 4;
+	end;
+	if chance_to_hit < 0 then
+		hit_to_miss = -1*chance_to_hit;
+	end;
+	chance_to_miss = (math.ceil(50*(2-helpers.sizeModifer(victim))) + delta_spd)*eye_mod+hit_to_miss;	
+	if chance_to_miss > 0 then
+		for i=1,chance_to_dodge do
+			array_of_chances[i] = "miss";	
 		end;
-	--/BLOCK
-	--PARRY --and nagas? -- need cycle for 4- and 6- handed creatures
-		if helpers.mobCanDefendHimself (victim) -- RIGHT HAND
-		and chars_mobs_npcs[victim]["equipment"].rh > 0 and chars_mobs_npcs[victim]["arms_health"][chars_mobs_npcs[victim]["arms"][1]] > 0 
-		and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword"
-		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "flagpole"
-		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger"
-		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff"
-		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].subclass == "hetchet")
-		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q > 0
-		and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh") 
-		and missle_type ~= "feint" and missle_type ~= "smarthit"
+	end;
+	--/MISS
+	utils.randommore ();
+	hitzone = chars_mobs_npcs[victim]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[victim]["hitzones"][global.hex])];	
+	if missle_type == "scullcrusher" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+		hitzone = "head";
+
+	elseif missle_type == "woodcutter" and helpers.randomLimb(victim,global.hex,true) then
+		hitzone = helpers.randomLimb(victim,global.hex);
+	elseif (missle_type == "stomachhit" or missle_type == "ribbraker" or missle_type == "impale" or missle_type == "vilehit" or missle_type == "bitsouloutr") and helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+		hitzone = "body";
+	elseif missle_type == "oblivion" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+		hitzone = "head";
+	elseif missle_type == "stunner"  then
+		if helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+			hitzone = "head";
+		elseif helpers.mobHasHitZoneAtHex(victim,global.hex,"body") then
+			hitzone = "body";
+		end;
+	end;
+	local might_modifer = damage.mightModifer(current_mob,attacking_hand);
+--DAMAGE
+	incoming_physical_dmg = damage.countDamage(current_mob,attacking_hand,nil);
+	if missle_type == "slash" then
+		incoming_physical_dmg = math.ceil(incoming_physical_dmg*3);
+	elseif missle_type == "smash" then
+		incoming_physical_dmg = math.ceil(incoming_physical_dmg*5);
+	elseif missle_type == "lunge" then	
+		incoming_physical_dmg = math.ceil(incoming_physical_dmg*1.5);
+	end;	
+-- DODGE
+
+	if chars_mobs_npcs[victim].num_dodging > 0 and helpers.mobCanDefendHimself (victim) and missle_type ~= "feint" and missle_type ~= "smarthit" then
+		
+		chance_to_dodge = math.ceil(chars_mobs_npcs[victim].dex/5)+chars_mobs_npcs[victim].num_dodging*chars_mobs_npcs[victim].lvl_dodging;
+		if chars_mobs_npcs[victim].lvl_dodging >= 4 and chars_mobs_npcs[victim]["equipment"].cloak > 0 
+		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].q > 0 then
+			chance_to_dodge = chance_to_dodge + inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].cloak].ttxid].dg; -- +CLOAK
+		end;
+		if chars_mobs_npcs[victim].lvl_dodging < 3
+		and chars_mobs_npcs[victim]["equipment"].armor > 0
+		and  (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "leather"
+		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "fur"
+		or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "skin"
+		) then
+			chance_to_dodge = 0;
+		elseif chars_mobs_npcs[victim].lvl_dodging < 4
+		and chars_mobs_npcs[victim]["equipment"].armor > 0
+		and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "chain" 
 		then
-			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword" then
-				if chars_mobs_npcs[victim].lvl_sword > 1 then
-					chance_to_parry = chars_mobs_npcs[victim].num_sword;
-				end;
-			end;
-			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
-				if chars_mobs_npcs[victim].lvl_dagger > 3 then
-					chance_to_parry = chars_mobs_npcs[victim].num_dagger;
-				end;
-			end;
-			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff" then
-				if chars_mobs_npcs[victim].lvl_staff > 1 then
-					chance_to_parry = chars_mobs_npcs[victim].num_staff;
-				end;
-			end;
-			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "spear" and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
-				if chars_mobs_npcs[victim].lvl_spear > 3 then
-					chance_to_parry = chars_mobs_npcs[victim].num_spear;
-				end;
-			end;
-			if (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].subclass == "hetchet" or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].subclass == "poleaxe") and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
-				if chars_mobs_npcs[victim].lvl_axe > 1 then
-					chance_to_parry = chars_mobs_npcs[victim].num_axe;
-				end;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "block" then
-				chance_to_parry = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "hands" then
-				chance_to_parry = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "dodge" then
-				chance_to_parry = 0;
-			end;
-			if chars_mobs_npcs[victim].protectionmode == "parry" then
-				chance_to_parry = chance_to_parry*2;
-			end;
-			if chars_mobs_npcs[victim].mgt*2 < chars_mobs_npcs[current_mob].mgt then
-				chance_to_parry = 0;
-			end;
+			chance_to_dodge = 0;
+		elseif chars_mobs_npcs[victim].lvl_dodging < 5
+		and chars_mobs_npcs[victim]["equipment"].armor > 0
+		and  inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].armor].ttxid].subclass == "plate" 
+		then
+			chance_to_dodge = 0;
+		end;
+		local dodge_dir_coff=0
+		if attacked_from=="front" then
+			dodge_dir_coff=1;
+		elseif attacked_from=="lh" then
+			dodge_dir_coff=1;
+		elseif attacked_from=="rh" then
+			dodge_dir_coff=1;
+		elseif attacked_from=="lback" then
+			dodge_dir_coff=0.75;
+		elseif attacked_from=="rback" then
+			dodge_dir_coff=0.75;
+		elseif attacked_from=="back" then
+			dodge_dir_coff=0.5;
+		end;
+		chance_to_dodge = chance_to_dodge*dodge_dir_coff;
+		if chars_mobs_npcs[victim].protectionmode == "block" then
+			chance_to_dodge = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "hands" then
+			chance_to_dodge = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "dodge" then
+			chance_to_dodge = chance_to_dodge*2;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "parry" then
+			chance_to_dodge = 0;
+		end;
+	end;
+	if chance_to_dodge > 0 then
+		for i=1,chance_to_dodge do
+			array_of_chances[i] = "dodge";	
+		end;
+	end;
+--/DODGE
+--HANDBLOCK --ONLY for arms == 2, so no Sheevas!
+	if missle_type ~= "feint" and missle_type ~= "smarthit" then
+		if attacked_from=="front" then
+			hands_dir_coff=1;
+		elseif attacked_from=="lh" then
+			hands_dir_coff=1;
+		elseif attacked_from=="rh" then
+			hands_dir_coff=1;
+		elseif attacked_from=="lback" then
+			hands_dir_coff=0;
+		elseif attacked_from=="rback" then
+			hands_dir_coff=0;
+		elseif attacked_from=="back" then
+			hands_dir_coff=0;
+		end;
+		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+		and chars_mobs_npcs[victim].lvl_unarmed >= 2
+		and helpers.mobHasHealthyHands(victim) > 0
+		and (chars_mobs_npcs[current_mob]["equipment"][attacking_hand] == 0 or currentMobWeaponClass == "claws" or currentMobWeaponClass == "knuckle" or currentMobWeaponClass == "tentacle" or currentMobWeaponClass == "nipper")
+		and helpers.mobCanDefendHimself(victim) then
+			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;	
+		end;	
+		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+		and chars_mobs_npcs[victim].lvl_unarmed >= 3
+		and helpers.mobHasHealthyHands(victim) > 0
+		and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and (currentMobWeaponClass == "staff" or (currentMobWeaponClass == "crushing" and currentMobWeaponSubClass ~= "thmace") or currentMobWeaponClass == "dagger" )
+		and helpers.mobCanDefendHimself (victim) then
+			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
+		end;
+		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+		and chars_mobs_npcs[victim].lvl_unarmed >= 3
+		and helpers.mobHasHealthyHands(victim) > 0
+		and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and currentMobWeaponClass == "flagpole"
+		and helpers.mobCanDefendHimself (victim) then
+			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
+		end;
+		if helpers.mobHasHandblock (victim) and helpers.mobCanDefendHimself (victim)
+		and chars_mobs_npcs[victim].lvl_unarmed == 5
+		and helpers.mobHasHealthyHands(victim) > 0
+		and chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 
+		and ((currentMobWeaponClass == "sword" and currentMobWeaponSubClass ~= "thsword") or (currentMobWeaponClass == "axe" and currentMobWeaponSubClass ~= "polearm"))
+		and helpers.mobCanDefendHimself (victim) then
+			chance_to_hands = chars_mobs_npcs[victim].lvl_unarmed*chars_mobs_npcs[victim].num_unarmed*hands_dir_coff;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "block" then
+			chance_to_hands = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "hands" then
+			chance_to_hands = chance_to_hands*2;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "dodge" then
+			chance_to_hands = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "parry" then
+			chance_to_hands = 0;
+		end;
+		if chars_mobs_npcs[victim].mgt*1.5 < chars_mobs_npcs[current_mob].mgt then
+			chance_to_hands = 0;
 		end;
 		if chars_mobs_npcs[current_mob].rage > 0 then
-			chance_to_hands = math.ceil(math.max(0,math.min(chance_to_parry-chars_mobs_npcs[current_mob].rage,chance_to_parry/2)));
+			chance_to_hands = math.ceil(math.max(0,math.min(chance_to_hands-chars_mobs_npcs[current_mob].rage,chance_to_hands/2)));
 		end;
-		if chance_to_parry > 0 then
-			for i=#array_of_chances+1,chance_to_parry do
-				array_of_chances[i] = "parrr";	
+		if wpEffect == "deblock" and wpChance > math.random(1,100) then
+			chance_to_hands = 0;
+			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.deblocked[chars_mobs_npcs[current_mob].gender]);
+		end;
+		if chance_to_hands > 0 then
+			for i=#array_of_chances+1,chance_to_hands do
+				array_of_chances[i] = "hands";	
 			end;
 		end;
-		if  helpers.mobCanDefendHimself (victim) -- LEFT HAND
-		and chars_mobs_npcs[victim]["arms_health"][chars_mobs_npcs[victim]["arms"][2]] > 0  and chars_mobs_npcs[victim]["equipment"].lh > 0 and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "sword" or
-		inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "dagger")
-		and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
-		and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh")
-		and helpers.mobCanDefendHimself (index) then
+	end;
+--/HANDBLOCK
+
+local _protector_index = helpers.ifUmbrella (); --umbrella trick (shield skill)
+local formervictim = victim; 
+if helpers.mobCanDefendHimself (victim) and _protector_index then
+	if _protector_index > 1 then
+		victim = _protector_index[1];
+		point_to_go_x = chars_mobs_npcs[victim].x;
+		point_to_go_y = chars_mobs_npcs[victim].y;
+		helpers.turnMob (current_mob);
+	else
+		local _x = chars_mobs_npcs[victim].x;
+		local _y = chars_mobs_npcs[victim].y;
+		chars_mobs_npcs[victim].x = chars_mobs_npcs[_protector_index[1]].x;
+		chars_mobs_npcs[victim].y = chars_mobs_npcs[_protector_index[1]].y;
+		chars_mobs_npcs[_protector_index[1]].x = _x;
+		chars_mobs_npcs[_protector_index[1]].y = _y;
+		victim = _protector_index[1];
+	end;
+	chars_mobs_npcs[victim].trick = "none";
+	chars_mobs_npcs[victim].protectionmode = "none";
+	chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
+	helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.covered[chars_mobs_npcs[victim].gender] .. helpers.mobName(formervictim));
+end;
+
+--BLOCK --only for two arms!
+	if chars_mobs_npcs[victim]["equipment"].lh > 0 and helpers.mobCanDefendHimself (victim)
+	and inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "shield"
+	and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
+	and helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim]["arms_health"].lh > 0 
+	and missle_type ~= "feint" and missle_type ~= "smarthit" 
+	then
+		local block_dir_coff=0
+		if attacked_from=="front" then
+			block_dir_coff=1;
+		elseif attacked_from=="lh" then
+			block_dir_coff=1;
+		elseif attacked_from=="rh" then
+			block_dir_coff=0.75;
+		elseif attacked_from=="lback" then
+			block_dir_coff=0.5;
+		elseif attacked_from=="rback" then
+			block_dir_coff=0;
+		elseif attacked_from=="back" then
+			block_dir_coff=0;
+		end;
+		chance_to_block = block_dir_coff*(math.ceil(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].ac+chars_mobs_npcs[victim].num_shield*chars_mobs_npcs[victim].lvl_shield)-chars_mobs_npcs[current_mob]["melee_stats"][attacking_hand].atkm);
+		if wpEffect == "deblock" and wpChance > math.random(1,100) then
+			chance_to_block = 0;
+			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.deblocked[chars_mobs_npcs[current_mob].gender]);
+		end;
+		utils.randommore ();
+		random_chance = math.random(1,100);
+		
+		if chars_mobs_npcs[victim].protectionmode == "block" then
+			chance_to_block = chance_to_block*2;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "hands" then
+			chance_to_block = 0;
+		end
+		if chars_mobs_npcs[victim].protectionmode == "dodge" then
+			chance_to_block = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "parry" then
+			chance_to_block = 0;
+		end;
+		if chars_mobs_npcs[victim].mgt*3 < chars_mobs_npcs[current_mob].mgt then
+			chance_to_block = 0;
+		end;
+		if chars_mobs_npcs[current_mob].rage > 0 then
+			chance_to_hands = math.ceil(math.max(0,math.min(chance_to_block-chars_mobs_npcs[current_mob].rage,chance_to_block/2)));
+		end;
+		if chance_to_block > 0 then
+			for i=#array_of_chances+1,chance_to_block do
+				array_of_chances[i] = "block";	
+			end;
+		end;
+	end;
+--/BLOCK
+--PARRY --and nagas? -- need cycle for 4- and 6- handed creatures
+	if helpers.mobCanDefendHimself (victim) -- RIGHT HAND
+	and chars_mobs_npcs[victim]["equipment"].rh > 0 and chars_mobs_npcs[victim]["arms_health"][chars_mobs_npcs[victim]["arms"][1]] > 0 
+	and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword"
+	or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "flagpole"
+	or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger"
+	or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff"
+	or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].subclass == "hetchet")
+	and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q > 0
+	and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh") 
+	and missle_type ~= "feint" and missle_type ~= "smarthit"
+	then
+		if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "sword" then
 			if chars_mobs_npcs[victim].lvl_sword > 1 then
 				chance_to_parry = chars_mobs_npcs[victim].num_sword;
 			end;
-			if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
-				if chars_mobs_npcs[victim].lvl_dagger > 3 then
-					chance_to_parry = chars_mobs_npcs[victim].num_dagger;
-				end;
+		end;
+		if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
+			if chars_mobs_npcs[victim].lvl_dagger >= 4 then
+				chance_to_parry = chars_mobs_npcs[victim].num_dagger;
 			end;
 		end;
-		if chars_mobs_npcs[current_mob].rage > 0 then
-			chance_to_hands = math.ceil(math.max(0,math.min(chance_to_parry-chars_mobs_npcs[current_mob].rage,chance_to_parry/2)));
-		end;
-		if chance_to_parry > 0 then
-			for i=#array_of_chances+1,chance_to_parry do
-				array_of_chances[i] = "parrl";	
+		if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "staff" then
+			if chars_mobs_npcs[victim].lvl_staff >= 2 then
+				chance_to_parry = chars_mobs_npcs[victim].num_staff;
 			end;
 		end;
-	--/PARRY
-	--AC
-		local add_ac,add_dt,add_dr = damage.calcArmorStats(victim,hitzone,attacked_from);
-		AC = AC + add_ac + chars_mobs_npcs[victim].ac;
-		DT = DT + add_dt + chars_mobs_npcs[victim].dt;
-		DR = DR + add_dr + chars_mobs_npcs[victim].dr;
-		
-		if wpEffect == "through" and wpChance > math.random(1,100) then
-			AC = 0;
-			DT = 0;
-			DR = 0;
-			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.armorpenetrated[chars_mobs_npcs[current_mob].gender]);
+		if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "flagpole" and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
+			if chars_mobs_npcs[victim].lvl_spear >= 3 then
+				chance_to_parry = chars_mobs_npcs[victim].num_spear;
+			end;
 		end;
-		if chars_mobs_npcs[current_mob].rage > 0 then
-			AC = math.ceil(math.max(0,math.min(AC-chars_mobs_npcs[current_mob].rage,AC/2)));
+		if (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].subclass == "hetchet" or inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].subclass == "poleaxe") and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
+			if chars_mobs_npcs[victim].lvl_axe > 1 then
+				chance_to_parry = chars_mobs_npcs[victim].num_axe;
+			end;
 		end;
-		if AC > 0 then
-			for i=#array_of_chances+1,AC do
-				if missle_type ~= "armorpenetration" and missle_type ~= "smarthit" then
-					array_of_chances[i] = "ac";
-				end;
-			end;
-		end
-		--/AC
-		
-		--add rings, amulets, artifacts, modifers of armor pieces and melee weapon,
-		
-		if #array_of_chances > chance_to_hit then
-			fulldamage = 0;
-			hitResult = array_of_chances[chance_to_hit];
-			local _x,_y = helpers.findPlaceBehindAnEnemy (current_mob);
-			if (chars_mobs_npcs[victim].trick == "acrobat" and _x ~= 0) then
-				hitResult = "dodge";
-				chars_mobs_npcs[victim].trick = "none";
-				chars_mobs_npcs[victim].x = x;
-				chars_mobs_npcs[victim].y = y;
-				chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
-				helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.fooledwithdodge[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
-			end;
-			local armorDmgMod = 1;
-			if wpEffect == "destroy" and wpChance > math.random(1,100) then
-				armorDmgMod = 2;
-			end;
-			if hitResult == "dodge" then
-				if chars_mobs_npcs[victim].trick == "torero" then
-					chars_mobs_npcs[victim].trick = "none";
-					chars_mobs_npcs[current_mob].rt = 0;
-				end;
-				dodge = 1;
-				helpers.addToActionLog( victim_name .. lognames.actions.dodge[chars_mobs_npcs[current_mob].gender]);
-			elseif hitResult == "hands" then
-				--hammerhands and self-damage		
-				helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
-				hands = 1;
-				local incoming_physical_dmg_before_armor = incoming_physical_dmg;
-				incoming_physical_dmg = incoming_physical_dmg - DT;
-				incoming_physical_dmg = incoming_physical_dmg*DR/100;
-				if incoming_physical_dmg < 0 then
-					incoming_physical_dmg = 0;
-				end;
-				local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
-				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].h == 0 and inventory[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].ttxid].material < deltaDMG then
-					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q - deltaDMG;
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q == 0 then
-						--gloves destroyed
-					end;
-				end;	
-			elseif hitResult == "block" then
-				utils.playSfx(media.sounds.block,1);		
-				helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
-				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
-					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg*armorDmgMod));
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
-						--shield destroyed
-					end;
-					if chars_mobs_npcs[victim].trick == "bump" then
-						chars_mobs_npcs[victim].trick = "none";
-						local x,y = helpers.findPlaceBehindAnEnemy (current_mob);
-						if x ~= 0 then
-							chars_mobs_npcs[current_mob].x = x;
-							chars_mobs_npcs[current_mob].y = y;
-							chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
-							helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.bumpedwithshield[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
-						end;
-					end;
-					if chars_mobs_npcs[victim].trick == "ribhit" then
-						chars_mobs_npcs[victim].trick = "none";
-						chars_mobs_npcs[current_mob].rt = 0;
-						chars_mobs_npcs[current_mob].stun = chars_mobs_npcs[victim].lv_shield;
-						helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.hitedwithshield[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
-					end;
-				end;
-				block = 1;
-			elseif hitResult == "parrr" then --victim with 4/6 hands?
-				if  chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].h then
-					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].material-incoming_physical_dmg));
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q == 0 then
-						--weapon destroyed
-					end;
-				end;
-				if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].h == 0 then
-					chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"][attacking_hand]].ttxid].material-incoming_physical_dmg*armorDmgMod));
-					if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q then
-						--weapon destroyed	
-					end;
-				end;
-				helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
-				parry = 1;
-			elseif hitResult == "parrl" then --victim with 4/6 hands?
-				if  chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h then
-					chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg));
-					if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
-						--weapon destroyed
-					end;
-				end;
-				if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].h == 0 then
-					chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"][attacking_hand]].ttxid].material-incoming_physical_dmg*armorDmgMod));
-					if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q then
-						--weapon destroyed	
-					end;
-				end;
-				helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
-				parry = 1;
-			elseif hitResult == "ac" then
-				local incoming_physical_dmg_before_armor = incoming_physical_dmg;
-				incoming_physical_dmg = incoming_physical_dmg - DT;
-				incoming_physical_dmg = incoming_physical_dmg*DR/100;
-				if incoming_physical_dmg < 0 then
-					incoming_physical_dmg = 0;
-				end;
-				local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
-				if missle_type == "nutchopper" then
-					deltaDMG = deltaDMG*chars_mobs_npcs[current_mob].lvl_axe+chars_mobs_npcs[current_mob].num_axe;
-				end;
-				damage.armorDestroying (hitzone,attacked_from,deltaDMG);
-				--
-			end;
-		else
-			fulldamage = 1;
+		if chars_mobs_npcs[victim].protectionmode == "block" then
+			chance_to_parry = 0;
 		end;
-		if hitResult == "ac" or fulldamage == 1 then
-			--CRIT
-			utils.randommore ();
-			random_chance = math.random(1,100);
-			if chance_to_crit >= random_chance then
-				crit = 2;
-				utils.playSfx(media.sounds.sword_crit,1);
-			elseif chance_to_crit < random_chance then
-				crit = 1;
-				utils.playSfx(media.sounds.sword_impact,1);
-			end;
-			--/CRIT
-			incoming_physical_dmg = incoming_physical_dmg*crit;
-			incoming_physical_dmg = math.ceil(math.max(0,incoming_physical_dmg - chars_mobs_npcs[victim].ironshirt_power)*(100-chars_mobs_npcs[victim].stoneskin_power)/100);
-			if wpEffect == "bleeding" and wpChance > math.random(1,100) then
-				chars_mobs_npcs[victim].bleeding = 	chars_mobs_npcs[victim].bleeding + math.random(1,10);
-				helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[current_mob].gender]);
-			end;
-			if wpChance > math.random(1,100) then
-				damage.weaponpEffect(victim,hitzone,wpEffect); -- weapon passives
-				if missle_type == "woodcutter" and helpers.randomLimb(victim,global.hex,true) then
-					damage.weaponpEffect(victim,hitzone,"chop");	
-				end;
-			end;
-			local mob_genocide = 1;
-			--tricks
-			if missle_type == "stunner" then
-				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
-					chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_crushing;
-					global.damageflag = "stun";
-				end;
-			elseif missle_type == "decapitator" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 10 then
-				damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
-			elseif missle_type == "coupdegrace" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 25 and (chars_mpbs_npcs[victm].paralyze > 0 or chars_mpbs_npcs[victm].stun > 0 or chars_mpbs_npcs[victm].sleep > 0 or chars_mpbs_npcs[victm].immobilize > 0) then
-				damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
-			elseif missle_type == "stomachhit" then
-				if helpers.aliveNature(victim) then
-					chars_mobs_npcs[victim].rt = math.min(50,chars_mobs_npcs[current_mob].rt); 
-				end;
-			elseif missle_type == "sleepfinger" then
-				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
-					chars_mobs_npcs[victim].sleep = chars_mobs_npcs[current_mob].lvl_unarmed;
-					global.damageflag = "sleep";
-				end;
-			elseif missle_type == "impale" then
-				if helpers.aliveNature(victim) then
-					chars_mobs_npcs[victim].pneumothorax = 1; 
-				end;
-			elseif missle_type == "pin" then
-				chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_flagpole;
-			elseif missle_type == "bitsoulout" then	
-				if helpers.aliveNature(victim) then
-					chars_mobs_npcs[victim].rt = 0; 
-				end;
-			elseif missle_type == "ribbreaker" then
-				if helpers.aliveNature(victim) then
-					chars_mobs_npcs[victim].st = math.min(50,chars_mobs_npcs[current_mob].st);  
-				end;
-			elseif missle_type == "spinalshock" then
-				if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
-					chars_mobs_npcs[victim].paralyze = chars_mobs_npcs[current_mob].lvl_crushing; 
-				end;
-			elseif missle_type == "backstab" then
-				chars_mobs_npcs[victim].rt = 0;
-				chars_mobs_npcs[victim].charm = chars_mobs_npcs[current_mob].lvl_staff;
-			elseif missle_type == "oblivion" then
-				chars_mobs_npcs[victim].sp = math.max(0,chars_mobs_npcs[victim].sp - math.ceil(chars_mobs_npcs[victim].sp*0.25));
-				chars_mobs_npcs[victim].feeblemind = chars_mobs_npcs[current_mob].lvl_staff;
-			elseif missle_type == "deafen" then	
-				chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_staff;
-				global.damageflag = "stun";
-			elseif missle_type == "bloodyhit" then
-				if helpers.traumaNature(victim) then
-					chars_mobs_npcs[victim].bleeding = chars_mobs_npcs[victim].bleeding + chars_mobs_npcs[current_mob].lvl_dagger;
-				end;
-			end;
-			--weapon modifers
-			if chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].w > 0 then			
-				if chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 then
-						--damage
-					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].damage) do
-						local dmg = damage.magicalRes (victim,value[value],value[element]);
-						if key == "hp" then
-							add_dmghp = dmg;
-							if value[vampirism] then
-								selfadd_hp = selfaddhp + math.ceil(dmg*value[vampirism_power]);
-							end;
-						elseif key == "sp" then 
-							dmgsp = dmg;
-							if value[vampirism] then
-								selfadd_sp = selfaddsp + math.ceil(dmg*value[vampirism_power]);
-							end;
-						elseif key == "st" then
-							dmgst = dmg;
-							if value[vampirism] then
-								selfadd_st = selfaddst + math.ceil(dmg*value[vampirism_power]);
-							end;
-						elseif key == "rt" then 
-							dmgrt = dmg;
-							if value[vampirism] then
-								selfadd_rt = selfaddrt + math.ceil(dmg*value[vampirism_power]);
-							end;
-						end;
-					end;
-					--/damage
-					--dots
-					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].dots) do
-						local power,duration = damage.applyDoT (victim,value[lvl],value[num],1,0,1,0,value[element],true);
-						if power > 0 and suration > 0 then
-							local power_str = tostring(key) .. "_power";
-							local duration_str = tostring(key) .. "_dur";
-							chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
-							chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
-						end;
-					end;
-					--/dots
-					--conditions
-					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].conditions) do
-						local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
-						if power > 0 then
-							chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
-							if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
-								global.damageflag = tostring(key);
-							end;
-						end;
-					end;
-					--/conditions
-					--twofactorconditions
-					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].twofactorconditions) do
-						local power,duration = damage.applyDoT (victim,value[lvl],value[num],tostring(key),value[element],false,false,1,true);
-						if power > 0 and suration > 0 then
-							local power_str = tostring(key) .. "_power";
-							local duration_str = tostring(key) .. "_dur";
-							chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
-							chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
-						end;
-					end;
-					--/twofactorconditions
-					--addself
-					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].addself) do
-						local dmg = damage.magicalRes (victim,value[value],value[element]);
-						if key == "hp" then
-							selfadd_hp = selfaddhp + value;
-						elseif key == "sp" then 
-							selfadd_sp = selfaddsp + value;
-						elseif key == "st" then
-							selfadd_st = selfaddst + value;
-						elseif key == "rt" then 
-							selfadd_rt = selfaddrt + value;
-						end;
-					end;
-					--/selfadd
-					--selfrem
-					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].remself) do
-						local dmg = damage.magicalRes (victim,value[value],value[element]);
-						if key == "hp" then
-							selfrem_hp = selfremhp + value;
-						elseif key == "sp" then 
-							selfrem_sp = selfremsp + value;
-						elseif key == "st" then
-							selfrem_st = selfremst + value;
-						elseif key == "rt" then 
-							selfrem_rt = selfremrt + value;
-						end;
-					end;	
-					--/selfrem
-					--genocide
-					for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].genocide) do
-						if key == mobs_stats[chars_mobs_npcs[victim].class]
-						or key == mobs_stats[chars_mobs_npcs[victim].race]
-						or key == mobs_stats[chars_mobs_npcs[victim].size]
-						or key == mobs_stats[chars_mobs_npcs[victim].nature]
-						or key == mobs_stats[chars_mobs_npcs[victim].gender]
-						then
-							mob_genocide = value;
-							break;
-						end;
-					end;
-					--/genocide
-				end;	
-			end;
-			dmghp = incoming_physical_dmg*mob_genocide + add_dmghp;
-			--/weapon modifers
-			if chars_mobs_npcs[current_mob].executor_dur > 0 and chars_mobs_npcs[current_mob].size == "giant" then
-				dmghp = dmghp+math.ceil(dmghp*(chars_mobs_npcs[current_mob].executor_power/20));
-			end;
-			if chars_mobs_npcs[victim].hp > 0 then
-				damage.mobDamaged (victim,current_mob,dmghp);
-				boomareas.bloodGround (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
-				if crit ==1 then
-					helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
-				else
-					helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.crit[chars_mobs_npcs[current_mob].gender] .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
-				end;
-				damage.HPminus(victim,dmghp,false);
-				if dmghp > 0 and chars_mobs_npcs[current_mob].thirstofblood > 0 then
-					chars_mobs_npcs[current_mob].mgt_buff_power = chars_mobs_npcs[current_mob].thirstofblood;
-					chars_mobs_npcs[current_mob].mgt_buff_dur = 1;
-					chars_mobs_npcs[current_mob].spd_buff_power = chars_mobs_npcs[current_mob].thirstofblood;
-					chars_mobs_npcs[current_mob].spd_buff_dur = 1;
-					chars_mobs_npcs[current_mob].thirstofblood = chars_mobs_npcs[current_mob].thirstofblood + 3;
-				else
-					chars_mobs_npcs[current_mob].thirstofblood = 0;
-				end;
-			end;
-			if chars_mobs_npcs[victim].sp > 0 and dmgsp > 0 then
-				damage.mobDamaged (victim,current_mob,math.ceil(dmgsp/2));
-				chars_mobs_npcs[victim].sp = math.max(0,chars_mobs_npcs[victim].sp - dmgsp);
-				helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[victim].gender] .. dmgsp .. lognames.actions.metr .. lognames.actions.ofsp);
-			end;
-			if chars_mobs_npcs[victim].st > 0 and dmgst > 0 then
-				damage.mobDamaged (victim,current_mob,math.ceil(dmgst/3));
-				chars_mobs_npcs[victim].st =  math.max(0,chars_mobs_npcs[victim].st - dmgst);
-				helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[victim].gender] .. dmgst .. lognames.actions.metr .. lognames.actions.ofst);
-			end;
-			if chars_mobs_npcs[victim].rt > 0 and dmgrt > 0 then
-				damage.mobDamaged (victim,current_mob,math.ceil(dmgrt/4));
-				chars_mobs_npcs[victim].rt =  math.max(0,chars_mobs_npcs[victim].rt - dmgrt);
-				helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[victim].gender] .. dmgrt .. lognames.actions.metr .. lognames.actions.ofrt);	
-			end;
-			local alldmg =  math.ceil(dmghp + dmgsp/2 + dmgst/4 + dmgrt/8);
-			exp_for_what(alldmg,current_mob);
+		if chars_mobs_npcs[victim].protectionmode == "hands" then
+			chance_to_parry = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "dodge" then
+			chance_to_parry = 0;
+		end;
+		if chars_mobs_npcs[victim].protectionmode == "parry" then
+			chance_to_parry = chance_to_parry*2;
+		end;
+		if chars_mobs_npcs[victim].mgt*2 < chars_mobs_npcs[current_mob].mgt then
+			chance_to_parry = 0;
 		end;
 	end;
+	if chars_mobs_npcs[current_mob].rage > 0 then
+		chance_to_hands = math.ceil(math.max(0,math.min(chance_to_parry-chars_mobs_npcs[current_mob].rage,chance_to_parry/2)));
+	end;
+	if chance_to_parry > 0 then
+		for i=#array_of_chances+1,chance_to_parry do
+			array_of_chances[i] = "parrr";	
+		end;
+	end;
+	if  helpers.mobCanDefendHimself (victim) -- LEFT HAND
+	and chars_mobs_npcs[victim]["arms_health"][chars_mobs_npcs[victim]["arms"][2]] > 0  and chars_mobs_npcs[victim]["equipment"].lh > 0 and (inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "sword" or
+	inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].class == "dagger")
+	and chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q > 0
+	and (attacked_from == "front" or attacked_from == "rh" or attacked_from == "lh")
+	and helpers.mobCanDefendHimself (index) then
+		if chars_mobs_npcs[victim].lvl_sword > 1 then
+			chance_to_parry = chars_mobs_npcs[victim].num_sword;
+		end;
+		if inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].class == "dagger" then
+			if chars_mobs_npcs[victim].lvl_dagger > 3 then
+				chance_to_parry = chars_mobs_npcs[victim].num_dagger;
+			end;
+		end;
+	end;
+	if chars_mobs_npcs[current_mob].rage > 0 then
+		chance_to_hands = math.ceil(math.max(0,math.min(chance_to_parry-chars_mobs_npcs[current_mob].rage,chance_to_parry/2)));
+	end;
+	if chance_to_parry > 0 then
+		for i=#array_of_chances+1,chance_to_parry do
+			array_of_chances[i] = "parrl";	
+		end;
+	end;
+--/PARRY
+--AC
+	local add_ac,add_dt,add_dr = damage.calcArmorStats(victim,hitzone,attacked_from);
+	AC = AC + add_ac + chars_mobs_npcs[victim].ac;
+	DT = DT + add_dt + chars_mobs_npcs[victim].dt;
+	DR = DR + add_dr + chars_mobs_npcs[victim].dr;
+	
+	if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].ttxid].class == "axe" then
+		if chars_mobs_npcs[current_mob].lvl_axe >= 4 then
+			DR = math.ceil(DR/2);
+		end;
+		if chars_mobs_npcs[current_mob].lvl_axe == 5 then
+			DT = 0;
+		end;
+	end;
+	
+	if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].ttxid].class == "crushing" then
+		if chars_mobs_npcs[current_mob].lvl_crushing >= 3 then
+			DR = math.ceil(DR/2);
+		end;
+		if chars_mobs_npcs[current_mob].lvl_crushing >= 4 then
+			AC = math.ceil(AC/2);
+		end;
+	end;
+	
+	if wpEffect == "through" and wpChance > math.random(1,100) then
+		AC = 0;
+		DT = 0;
+		DR = 0;
+		helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.armorpenetrated[chars_mobs_npcs[current_mob].gender]);
+	end;
+	if chars_mobs_npcs[current_mob].rage > 0 then
+		AC = math.ceil(math.max(0,math.min(AC-chars_mobs_npcs[current_mob].rage,AC/2)));
+	end;
+	if AC > 0 then
+		for i=#array_of_chances+1,AC do
+			if missle_type ~= "armorpenetration" and missle_type ~= "smarthit" then
+				array_of_chances[i] = "ac";
+			end;
+		end;
+	end
+	--/AC
+	
+	--add rings, amulets, artifacts, modifers of armor pieces and melee weapon,
+	
+	if #array_of_chances > chance_to_hit then
+		fulldamage = 0;
+		hitResult = array_of_chances[chance_to_hit];
+		local _x,_y = helpers.findPlaceBehindAnEnemy (current_mob);
+		if (chars_mobs_npcs[victim].trick == "acrobat" and _x ~= 0) then
+			hitResult = "dodge";
+			chars_mobs_npcs[victim].trick = "none";
+			chars_mobs_npcs[victim].x = x;
+			chars_mobs_npcs[victim].y = y;
+			chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
+			helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.fooledwithdodge[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
+		end;
+		local armorDmgMod = 1;
+		if wpEffect == "destroy" and wpChance > math.random(1,100) then
+			armorDmgMod = 2;
+		end;
+		if hitResult == "miss" then
+			utils.playSfx(media.sounds.sword_miss,1);
+			helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.miss[chars_mobs_npcs[current_mob].gender]);
+		elseif hitResult == "dodge" then
+			if chars_mobs_npcs[victim].trick == "torero" then
+				chars_mobs_npcs[victim].trick = "none";
+				chars_mobs_npcs[current_mob].rt = 0;
+			end;
+			dodge = 1;
+			helpers.addToActionLog( victim_name .. lognames.actions.dodge[chars_mobs_npcs[current_mob].gender]);
+		elseif hitResult == "hands" then
+			--hammerhands and self-damage		
+			helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
+			hands = 1;
+			local incoming_physical_dmg_before_armor = incoming_physical_dmg;
+			incoming_physical_dmg = incoming_physical_dmg - DT;
+			incoming_physical_dmg = incoming_physical_dmg*DR/100;
+			if incoming_physical_dmg < 0 then
+				incoming_physical_dmg = 0;
+			end;
+			local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
+			if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].h == 0 and inventory[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].ttxid].material < deltaDMG then
+				chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q - deltaDMG;
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].gloves].q == 0 then
+					--gloves destroyed
+				end;
+			end;	
+		elseif hitResult == "block" then
+			utils.playSfx(media.sounds.block,1);		
+			helpers.addToActionLog( victim_name .. lognames.actions.block[chars_mobs_npcs[current_mob].gender]);
+			if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h == 0 then
+				chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg*armorDmgMod));
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
+					--shield destroyed
+				end;
+				if chars_mobs_npcs[victim].trick == "bump" then
+					chars_mobs_npcs[victim].trick = "none";
+					local x,y = helpers.findPlaceBehindAnEnemy (current_mob);
+					if x ~= 0 then
+						chars_mobs_npcs[current_mob].x = x;
+						chars_mobs_npcs[current_mob].y = y;
+						chars_mobs_npcs[victim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
+						helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.bumpedwithshield[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
+					end;
+				end;
+				if chars_mobs_npcs[victim].trick == "ribhit" then
+					chars_mobs_npcs[victim].trick = "none";
+					chars_mobs_npcs[current_mob].rt = 0;
+					chars_mobs_npcs[current_mob].stun = chars_mobs_npcs[victim].lv_shield;
+					helpers.addToActionLog(helpers.mobName(victim) .. lognames.actions.hitedwithshield[chars_mobs_npcs[victim].gender] .. helpers.mobName(current_mob));
+				end;
+			end;
+			block = 1;
+		elseif hitResult == "parrr" then --victim with 4/6 hands?
+			if  chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].h then
+				chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].ttxid].material-incoming_physical_dmg));
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].rh].q == 0 then
+					--weapon destroyed
+				end;
+			end;
+			if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].h == 0 then
+				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"][attacking_hand]].ttxid].material-incoming_physical_dmg*armorDmgMod));
+				if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q then
+					--weapon destroyed	
+				end;
+			end;
+			helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
+			parry = 1;
+		elseif hitResult == "parrl" then --victim with 4/6 hands?
+			if  chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].h then
+				chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q = chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].ttxid].material-incoming_physical_dmg));
+				if chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"].lh].q == 0 then
+					--weapon destroyed
+				end;
+			end;
+			if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].h == 0 then
+				chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q - math.max(0,math.abs(inventory_ttx[chars_mobs_npcs[victim]["inventory_list"][chars_mobs_npcs[victim]["equipment"][attacking_hand]].ttxid].material-incoming_physical_dmg*armorDmgMod));
+				if chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q then
+					--weapon destroyed	
+				end;
+			end;
+			helpers.addToActionLog( victim_name .. lognames.actions.parry[chars_mobs_npcs[current_mob].gender]);
+			parry = 1;
+		elseif hitResult == "ac" then
+			local incoming_physical_dmg_before_armor = incoming_physical_dmg;
+			incoming_physical_dmg = incoming_physical_dmg - DT;
+			incoming_physical_dmg = incoming_physical_dmg*DR/100;
+			if incoming_physical_dmg < 0 then
+				incoming_physical_dmg = 0;
+			end;
+			local deltaDMG = incoming_physical_dmg_before_armor - incoming_physical_dmg;
+			if missle_type == "nutchopper" then
+				deltaDMG = deltaDMG*chars_mobs_npcs[current_mob].lvl_axe+chars_mobs_npcs[current_mob].num_axe;
+			end;
+			damage.armorDestroying (hitzone,attacked_from,deltaDMG);
+			--
+		end;
+	else
+		fulldamage = 1;
+	end;
+	if hitResult == "ac" or fulldamage == 1 then
+		--CRIT
+		utils.randommore ();
+		random_chance = math.random(1,100);
+		if chance_to_crit >= random_chance then
+			crit = 2;
+			utils.playSfx(media.sounds.sword_crit,1);
+		elseif chance_to_crit < random_chance then
+			crit = 1;
+			utils.playSfx(media.sounds.sword_impact,1);
+		end;
+		--/CRIT
+		if missle_type == "scullcrusher" and helpers.mobHasHitZoneAtHex(victim,global.hex,"head") then
+			incoming_physical_dmg = math.ceil(incoming_physical_dmg*10);
+		end;
+		incoming_physical_dmg = incoming_physical_dmg*crit;
+		incoming_physical_dmg = math.ceil(math.max(0,incoming_physical_dmg - chars_mobs_npcs[victim].ironshirt_power)*(100-chars_mobs_npcs[victim].stoneskin_power)/100);
+		if wpEffect == "bleeding" and wpChance > math.random(1,100) then
+			chars_mobs_npcs[victim].bleeding = 	chars_mobs_npcs[victim].bleeding + math.random(1,10);
+			helpers.addToActionLog( victim_name .. lognames.actions.isbleeding[chars_mobs_npcs[current_mob].gender]);
+		end;
+		if wpChance > math.random(1,100) then
+			damage.weaponpEffect(victim,hitzone,wpEffect); -- weapon passives
+			if missle_type == "woodcutter" and helpers.randomLimb(victim,global.hex,true) then
+				damage.weaponpEffect(victim,hitzone,"chop");	
+			end;
+		end;
+		local mob_genocide = 1;
+		--tricks
+		if missle_type == "stunner" then
+			if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
+				chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_crushing;
+				global.damageflag = "stun";
+			end;
+		elseif missle_type == "decapitator" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 10 then
+			damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
+		elseif missle_type == "coupdegrace" and chars_mpbs_npcs[victm].hp/chars_mpbs_npcs[victm].hp_max*100 <= 25 and (chars_mpbs_npcs[victm].paralyze > 0 or chars_mpbs_npcs[victm].stun > 0 or chars_mpbs_npcs[victm].sleep > 0 or chars_mpbs_npcs[victm].immobilize > 0) then
+			damage.HPminus(victm,chars_mpbs_npcs[victm].hp,true);
+		elseif missle_type == "stomachhit" then
+			if helpers.aliveNature(victim) then
+				chars_mobs_npcs[victim].rt = math.min(50,chars_mobs_npcs[current_mob].rt); 
+			end;
+		elseif missle_type == "sleepfinger" then
+			if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
+				chars_mobs_npcs[victim].sleep = chars_mobs_npcs[current_mob].lvl_unarmed;
+				global.damageflag = "sleep";
+			end;
+		elseif missle_type == "impale" then
+			if helpers.aliveNature(victim) then
+				chars_mobs_npcs[victim].pneumothorax = 1; 
+			end;
+		elseif missle_type == "pin" then
+			chars_mobs_npcs[victim].immobilize = chars_mobs_npcs[current_mob].lvl_flagpole;
+		elseif missle_type == "bitsoulout" then	
+			if helpers.aliveNature(victim) then
+				chars_mobs_npcs[victim].rt = 0; 
+			end;
+		elseif missle_type == "ribbreaker" then
+			if helpers.aliveNature(victim) then
+				chars_mobs_npcs[victim].st = math.min(50,chars_mobs_npcs[current_mob].st);  
+			end;
+		elseif missle_type == "spinalshock" then
+			if helpers.aliveNature(victim) and chars_mobs_npcs[victim].stun == 0 and chars_mobs_npcs[victim].sleep == 0 then
+				chars_mobs_npcs[victim].paralyze = chars_mobs_npcs[current_mob].lvl_crushing; 
+			end;
+		elseif missle_type == "backstab" then
+			chars_mobs_npcs[victim].rt = 0;
+			chars_mobs_npcs[victim].charm = chars_mobs_npcs[current_mob].lvl_staff;
+		elseif missle_type == "oblivion" then
+			chars_mobs_npcs[victim].sp = math.max(0,chars_mobs_npcs[victim].sp - math.ceil(chars_mobs_npcs[victim].sp*0.25));
+			chars_mobs_npcs[victim].feeblemind = chars_mobs_npcs[current_mob].lvl_staff;
+		elseif missle_type == "deafen" then	
+			chars_mobs_npcs[victim].stun = chars_mobs_npcs[current_mob].lvl_staff;
+			global.damageflag = "stun";
+		elseif missle_type == "bloodyhit" then
+			if helpers.traumaNature(victim) then
+				chars_mobs_npcs[victim].bleeding = chars_mobs_npcs[victim].bleeding + chars_mobs_npcs[current_mob].lvl_dagger;
+			end;
+		end;
+		--weapon modifers
+		if chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].w > 0 then			
+			if chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 then
+					--damage
+				for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].damage) do
+					local dmg = damage.magicalRes (victim,value[value],value[element]);
+					if key == "hp" then
+						add_dmghp = dmg;
+						if value[vampirism] then
+							selfadd_hp = selfaddhp + math.ceil(dmg*value[vampirism_power]);
+						end;
+					elseif key == "sp" then 
+						dmgsp = dmg;
+						if value[vampirism] then
+							selfadd_sp = selfaddsp + math.ceil(dmg*value[vampirism_power]);
+						end;
+					elseif key == "st" then
+						dmgst = dmg;
+						if value[vampirism] then
+							selfadd_st = selfaddst + math.ceil(dmg*value[vampirism_power]);
+						end;
+					elseif key == "rt" then 
+						dmgrt = dmg;
+						if value[vampirism] then
+							selfadd_rt = selfaddrt + math.ceil(dmg*value[vampirism_power]);
+						end;
+					end;
+				end;
+				--/damage
+				--dots
+				for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].dots) do
+					local power,duration = damage.applyDoT (victim,value[lvl],value[num],1,0,1,0,value[element],true);
+					if power > 0 and suration > 0 then
+						local power_str = tostring(key) .. "_power";
+						local duration_str = tostring(key) .. "_dur";
+						chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
+						chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
+					end;
+				end;
+				--/dots
+				--conditions
+				for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].conditions) do
+					local power = damage.applyCondition (victim,value[lvl],value[num],value[element],false,false,1,true);
+					if power > 0 then
+						chars_mobs_npcs[victim][tostring(key)] = math.max(power,chars_mobs_npcs[victim][tostring(key)]);
+						if tostring(key) == "sleep" or tostring(key) == "charm" or tostring(key) == "stun" or tostring(key) == "panic" then
+							global.damageflag = tostring(key);
+						end;
+					end;
+				end;
+				--/conditions
+				--twofactorconditions
+				for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].twofactorconditions) do
+					local power,duration = damage.applyDoT (victim,value[lvl],value[num],tostring(key),value[element],false,false,1,true);
+					if power > 0 and suration > 0 then
+						local power_str = tostring(key) .. "_power";
+						local duration_str = tostring(key) .. "_dur";
+						chars_mobs_npcs[victim][power_str] = math.max(power,chars_mobs_npcs[victim][power_str]);
+						chars_mobs_npcs[victim][duration_str] = math.max(duration,chars_mobs_npcs[victim][duration_str]);
+					end;
+				end;
+				--/twofactorconditions
+				--addself
+				for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].addself) do
+					local dmg = damage.magicalRes (victim,value[value],value[element]);
+					if key == "hp" then
+						selfadd_hp = selfaddhp + value;
+					elseif key == "sp" then 
+						selfadd_sp = selfaddsp + value;
+					elseif key == "st" then
+						selfadd_st = selfaddst + value;
+					elseif key == "rt" then 
+						selfadd_rt = selfaddrt + value;
+					end;
+				end;
+				--/selfadd
+				--selfrem
+				for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].remself) do
+					local dmg = damage.magicalRes (victim,value[value],value[element]);
+					if key == "hp" then
+						selfrem_hp = selfremhp + value;
+					elseif key == "sp" then 
+						selfrem_sp = selfremsp + value;
+					elseif key == "st" then
+						selfrem_st = selfremst + value;
+					elseif key == "rt" then 
+						selfrem_rt = selfremrt + value;
+					end;
+				end;	
+				--/selfrem
+				--genocide
+				for key,value in pairs (items_modifers[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][attacking_hand]].w].genocide) do
+					if key == mobs_stats[chars_mobs_npcs[victim].class]
+					or key == mobs_stats[chars_mobs_npcs[victim].race]
+					or key == mobs_stats[chars_mobs_npcs[victim].size]
+					or key == mobs_stats[chars_mobs_npcs[victim].nature]
+					or key == mobs_stats[chars_mobs_npcs[victim].gender]
+					then
+						mob_genocide = value;
+						break;
+					end;
+				end;
+				--/genocide
+			end;	
+		end;
+		dmghp = incoming_physical_dmg*mob_genocide + add_dmghp;
+		--/weapon modifers
+		if chars_mobs_npcs[current_mob].executor_dur > 0 and chars_mobs_npcs[current_mob].size == "giant" then
+			dmghp = dmghp+math.ceil(dmghp*(chars_mobs_npcs[current_mob].executor_power/20));
+		end;
+		if chars_mobs_npcs[victim].hp > 0 then
+			damage.mobDamaged (victim,current_mob,dmghp);
+			boomareas.bloodGround (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
+			if crit ==1 then
+				helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
+			else
+				helpers.addToActionLog( agressor_name .. lognames.actions.atk[chars_mobs_npcs[current_mob].gender] .. victim_name .. lognames.actions.crit[chars_mobs_npcs[current_mob].gender] .. " " .. dmghp .. lognames.actions.metr .. lognames.actions.ofhp);
+			end;
+			damage.HPminus(victim,dmghp,false);
+			if dmghp > 0 and chars_mobs_npcs[current_mob].thirstofblood > 0 then
+				chars_mobs_npcs[current_mob].mgt_buff_power = chars_mobs_npcs[current_mob].thirstofblood;
+				chars_mobs_npcs[current_mob].mgt_buff_dur = 1;
+				chars_mobs_npcs[current_mob].spd_buff_power = chars_mobs_npcs[current_mob].thirstofblood;
+				chars_mobs_npcs[current_mob].spd_buff_dur = 1;
+				chars_mobs_npcs[current_mob].thirstofblood = chars_mobs_npcs[current_mob].thirstofblood + 3;
+			else
+				chars_mobs_npcs[current_mob].thirstofblood = 0;
+			end;
+		end;
+		if chars_mobs_npcs[victim].sp > 0 and dmgsp > 0 then
+			damage.mobDamaged (victim,current_mob,math.ceil(dmgsp/2));
+			chars_mobs_npcs[victim].sp = math.max(0,chars_mobs_npcs[victim].sp - dmgsp);
+			helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[victim].gender] .. dmgsp .. lognames.actions.metr .. lognames.actions.ofsp);
+		end;
+		if chars_mobs_npcs[victim].st > 0 and dmgst > 0 then
+			damage.mobDamaged (victim,current_mob,math.ceil(dmgst/3));
+			chars_mobs_npcs[victim].st =  math.max(0,chars_mobs_npcs[victim].st - dmgst);
+			helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[victim].gender] .. dmgst .. lognames.actions.metr .. lognames.actions.ofst);
+		end;
+		if chars_mobs_npcs[victim].rt > 0 and dmgrt > 0 then
+			damage.mobDamaged (victim,current_mob,math.ceil(dmgrt/4));
+			chars_mobs_npcs[victim].rt =  math.max(0,chars_mobs_npcs[victim].rt - dmgrt);
+			helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[victim].gender] .. dmgrt .. lognames.actions.metr .. lognames.actions.ofrt);	
+		end;
+		local alldmg =  math.ceil(dmghp + dmgsp/2 + dmgst/4 + dmgrt/8);
+		exp_for_what(alldmg,current_mob);
+	end;
+--/HIT
 	local mode,lvl,num,effect,element,stat,skill,coff,luck = damage.classPassives(current_mob);
 	if mode and mode == "melee" then
 		if algorythm == "2factors" then
@@ -6769,7 +6836,11 @@ function damage.mightModifer(index,hand)
 	elseif  currentMobWeaponSubClass == "tentacles" then
 		modifer = 0.1;
 	elseif  currentMobWeaponSubClass == "thsword" then
-		modifer = 1.5;
+		modifer = 0.25;
+	elseif  currentMobWeaponSubClass == "thmace" then
+		modifer = 0.3;
+	elseif  currentMobWeaponSubClass == "poleaxe" then
+		modifer = 0.35;
 	elseif currentMobWeaponSubClass == "shortsword" then
 		modifer = 0.075;
 	elseif currentMobWeaponClass == "sword" then
@@ -6792,7 +6863,7 @@ function damage.mightModifer(index,hand)
 	if chars_mobs_npcs[index]["arms_health"][hand] == 0 then --attacking hand broken
 		modifer = 0;
 	elseif chars_mobs_npcs[index]["arms_health"][secondhand] == 0 and chars_mobs_npcs[index]["equipment"][secondhand] == 0 
-	and (currentMobWeaponSubClass == "thsword" or currentMobWeaponSubClass == "poleaxe" or currentMobWeaponSubClass == "staff" or currentMobWeaponClass == "flagpole" or currentMobWeaponSubClass == "hetchet") then
+	and (currentMobWeaponSubClass == "thsword" or currentMobWeaponSubClass == "poleaxe" or currentMobWeaponSubClass == "thmace" or currentMobWeaponSubClass == "staff" or currentMobWeaponClass == "flagpole" or currentMobWeaponSubClass == "hetchet") then
 		modifer = 0.025;
 	end;
 	return modifer;
@@ -7280,6 +7351,7 @@ function damage.countDamage(index,hand,flag)
 	helpers.recalcBattleStats (index);
 	local might_modifer = damage.mightModifer(index,hand);
 	local dice = 0;
+	local weapon_skill_bonus = 0;
 	if flag == "min" then
 		dice = 1;
 	elseif flag == "max" then
@@ -7287,7 +7359,28 @@ function damage.countDamage(index,hand,flag)
 	else
 		dice = damage.damageRandomizator(index,1,chars_mobs_npcs[index]["melee_stats"][hand].bmel); -- main variant
 	end;
-	local dmg = math.ceil((dice*chars_mobs_npcs[index]["melee_stats"][hand].amel+chars_mobs_npcs[index]["melee_stats"][hand].cmel+might_modifer*chars_mobs_npcs[index].mgt)+chars_mobs_npcs[index].heroism_power);
+	if chars_mobs_npcs[index]["equipment"][hand] > 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].q > 0 then
+		if inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "sword" and chars_mobs_npcs[index].lvl_sword == 5 then
+			weapon_skill_bonus = chars_mobs_npcs[index].num_sword;
+		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "axe" and chars_mobs_npcs[index].lvl_axe >= 1 then
+			weapon_skill_bonus = chars_mobs_npcs[index].num_axe;
+		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "crushing" and chars_mobs_npcs[index].lvl_crushing >= 1 then
+			weapon_skill_bonus = chars_mobs_npcs[index].num_crushing;
+		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "flagpole" and chars_mobs_npcs[index].lvl_flagpole >= 2 then
+			weapon_skill_bonus = chars_mobs_npcs[index].num_flagpole;
+		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "staff" and chars_mobs_npcs[index].lvl_staff >= 4 then
+			weapon_skill_bonus = chars_mobs_npcs[index].num_staff;
+			if chars_mobs_npcs[index].lvl_staff == 5 then
+				weapon_skill_bonus = weapon_skill_bonus + chars_mobs_npcs[index].num_unarmed;
+			end;
+		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "dagger" and chars_mobs_npcs[index].lvl_dagger == 5 then
+			weapon_skill_bonus = chars_mobs_npcs[index].num_dagger;
+		end;
+	end;
+	if chars_mobs_npcs[index]["equipment"][hand] == 0 then
+		weapon_skill_bonus = chars_mobs_npcs[index].num_unarmed;
+	end;
+	local dmg = math.ceil((dice*chars_mobs_npcs[index]["melee_stats"][hand].amel+chars_mobs_npcs[index]["melee_stats"][hand].cmel+might_modifer*chars_mobs_npcs[index].mgt)+chars_mobs_npcs[index].heroism_power + weapon_skill_bonus);
 	return dmg;
 end;
 

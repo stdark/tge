@@ -2659,14 +2659,20 @@ function helpers.countMeleeRecoveryChar (index)
 		end;
 	end;
 
-	if chars_mobs_npcs[index]["equipment"].rh == 0 and chars_mobs_npcs[index].lvl_unarmed >= 3 then
+	if chars_mobs_npcs[index]["equipment"].rh == 0 and chars_mobs_npcs[index].lvl_unarmed >= 4 then
 		 skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_unarmed);
-	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "sword" and chars_mobs_npcs[index].lvl_sword >= 3 then
+	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "sword" and chars_mobs_npcs[index].lvl_sword >= 2 then
 		skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_sword);
 	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "axe" and chars_mobs_npcs[index].lvl_axe >= 3 then
 		skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_axe);
-	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "staff" and chars_mobs_npcs[index].lvl_staff == 5 then
+	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "staff" and chars_mobs_npcs[index].lvl_staff >= 3 then
 		skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_unarmed);
+	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "crushing" and chars_mobs_npcs[index].lvl_staff == 5 then
+		skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_crushing);
+	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "dagger" and chars_mobs_npcs[index].lvl_dagger >= 1 then
+		skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_dagger);
+	elseif chars_mobs_npcs[index]["equipment"].rh > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].class == "flagpole" and chars_mobs_npcs[index].lvl_flagpole == 5 then
+		skillweaponrecovery =  math.min(20,chars_mobs_npcs[index].num_flagpole);
 	end;
 
 	if chars_mobs_npcs[index].num_armmastery > 0 and chars_mobs_npcs[index].lvl_armmastery <= 4 then
@@ -2720,9 +2726,9 @@ function helpers.countRangeRecoveryChar (index)
 		local prerecovery = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].rt;
 		if inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "bow" and chars_mobs_npcs[index].lvl_bow >= 3 then
 			prerecovery = math.ceil(prerecovery/2);
-		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "crossbow"  and chars_mobs_npcs[index].lvl_crossbow >= 2 then
+		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "crossbow"  and chars_mobs_npcs[index].lvl_crossbow >= 3 then
 			prerecovery = math.ceil(prerecovery/2);
-		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "firearm"  and chars_mobs_npcs[index].lvl_firearms >= 4  then
+		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "firearm"  and chars_mobs_npcs[index].lvl_firearms == 5  then
 			prerecovery = math.ceil(prerecovery/2);
 		elseif inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "blaster"  and chars_mobs_npcs[index].lvl_blaster == 5  then
 			prerecovery = math.ceil(prerecovery/2);
@@ -2730,7 +2736,7 @@ function helpers.countRangeRecoveryChar (index)
 		recovery = prerecovery;
 	elseif chars_mobs_npcs[index]["equipment"].ranged == 0 and chars_mobs_npcs[index]["equipment"].ammo > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].class == "throwing" then
 		local prerecovery = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].throwing].ttxid].rt;
-		if chars_mobs_npcs[index].lvl_throwing >= 4 then
+		if chars_mobs_npcs[index].lvl_throwing >= 3 then
 			prerecovery = math.ceil(prerecovery/2);
 		end;
 		recovery = prerecovery;
@@ -2761,9 +2767,7 @@ function helpers.countRangeRecoveryChar (index)
 		end;
 		recovery = recovery+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].rt;
 	end
-	print("REC",index,recovery)
 	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
-
 	return recovery;
 end;
 
@@ -4127,6 +4131,7 @@ function helpers.recalcBattleStats (index)
 	local poison_mod2 = 1;
 	local add_atkm = 0;
 	local add_atkr = 0;
+	local add_cr = 0;
 	if chars_mobs_npcs[index].person == "mob" then
 		tmpclass="mobs_stats." .. chars_mobs_npcs[index].class;
 		tmpclass2=loadstring("return " .. tmpclass)();
@@ -4373,13 +4378,13 @@ function helpers.recalcBattleStats (index)
 		--print("HAND",hand);
 		chars_mobs_npcs[index]["melee_stats"][hand].atkm = chars_mobs_npcs[index]["melee_stats"][hand].atkm + chars_mobs_npcs[index].bless_power;
 		if chars_mobs_npcs[index]["equipment"][hand] and chars_mobs_npcs[index]["equipment"][hand] ~= 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].q > 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class ~= "shield" then
-			if chars_mobs_npcs[index].lvl_sword>=2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "sword" then
+			if chars_mobs_npcs[index].lvl_sword>=1 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "sword" then
 				add_atkm = chars_mobs_npcs[index].num_sword;
 			end
 			if chars_mobs_npcs[index].lvl_axe >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "axe" then
 				add_atkm = chars_mobs_npcs[index].num_axe;
 			end;
-			if chars_mobs_npcs[index].lvl_flagpole >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "flagpole" then
+			if chars_mobs_npcs[index].lvl_flagpole >= 1 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "flagpole" then
 				add_atkm = chars_mobs_npcs[index].num_flagpole;
 			end;
 			if chars_mobs_npcs[index].lvl_crushing >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "crushing" then
@@ -4387,6 +4392,9 @@ function helpers.recalcBattleStats (index)
 			end;
 			if chars_mobs_npcs[index].lvl_staff >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "staff" then
 				add_atkm = chars_mobs_npcs[index].num_staff;
+				if chars_mobs_npcs[index].lvl_staff == 5 then
+					add_atkm = add_atkm + chars_mobs_npcs[index].num_unarmed;
+				end;
 			end;
 			if chars_mobs_npcs[index].lvl_dagger >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"][hand]].ttxid].class == "dagger" then
 				add_atkm = chars_mobs_npcs[index].num_dagger;
@@ -4421,36 +4429,54 @@ function helpers.recalcBattleStats (index)
 	--RANGED
 	chars_mobs_npcs[index].atkr = chars_mobs_npcs[index].atkr + chars_mobs_npcs[index].bless_power;
 	if chars_mobs_npcs[index]["equipment"].ranged ~= 0 and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].q > 0 and chars_mobs_npcs[index]["equipment"].ammo ~= 0 then
-		if chars_mobs_npcs[index].lvl_bow >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].class == "bow" then
+		if chars_mobs_npcs[index].lvl_bow >= 1 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].class == "bow" then
 			add_atkr = chars_mobs_npcs[index].num_bow;
 		end;
-		if chars_mobs_npcs[index].lvl_crossbow >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "crossbow" then
+		if chars_mobs_npcs[index].lvl_crossbow >= 1 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "crossbow" then
 			add_atkr = chars_mobs_npcs[index].num_crossbow;
 		end;
-		if chars_mobs_npcs[index].lvl_firearms >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "firearms" then
+		if chars_mobs_npcs[index].lvl_firearms >= 1 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "firearms" then
 			add_atkr = chars_mobs_npcs[index].num_firearms;
 		end;
-		if chars_mobs_npcs[index].lvl_firearms >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "blaster" then
+		if chars_mobs_npcs[index].lvl_firearms >= 1 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "blaster" then
 			add_atkr = chars_mobs_npcs[index].num_blaster;
 		end;
+		
+		if chars_mobs_npcs[index].lvl_bow >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].class == "bow" then
+			add_cr = chars_mobs_npcs[index].num_bow;
+		end;
+		if chars_mobs_npcs[index].lvl_crossbow >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "crossbow" then
+			add_cr = chars_mobs_npcs[index].num_crossbow;
+		end;
+		if chars_mobs_npcs[index].lvl_firearms >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "firearms" then
+			add_cr = chars_mobs_npcs[index].num_firearms;
+		end;
+		if chars_mobs_npcs[index].lvl_firearms >= 2 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].class == "blaster" then
+			add_cr = chars_mobs_npcs[index].num_blaster;
+		end;
+		
 		chars_mobs_npcs[index].atkr = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].atk+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].atk+add_atkr;
 		chars_mobs_npcs[index].arng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].a+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].a;
 		chars_mobs_npcs[index].brng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].b+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].b;
-		chars_mobs_npcs[index].crng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].c+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].c;
+		chars_mobs_npcs[index].crng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ranged].ttxid].c+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].c+add_cr;
 	elseif chars_mobs_npcs[index]["equipment"].ranged == 0 then
-		chars_mobs_npcs[index].atkr=0;
+		chars_mobs_npcs[index].atkr = 0;
 		chars_mobs_npcs[index].arng = 0;
 		chars_mobs_npcs[index].brng = 0;
 		chars_mobs_npcs[index].crng = 0;
 	end;
 	if chars_mobs_npcs[index]["equipment"].ammo ~= 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].class == "throwing" then
-		if chars_mobs_npcs[index].lvl_throwing >= 2 and inventory_ttx[chars_mobs_npcs[index]["equipment"].ammo].class == "throwing" then
+		if chars_mobs_npcs[index].lvl_throwing >= 1 and inventory_ttx[chars_mobs_npcs[index]["equipment"].ammo].class == "throwing" then
 			add_atkr= chars_mobs_npcs[index].num_throwing;
+		end
+		if chars_mobs_npcs[index].lvl_throwing >= 2 and inventory_ttx[chars_mobs_npcs[index]["equipment"].ammo].class == "throwing" then
+			add_cr = chars_mobs_npcs[index].num_throwing;
 		end
 		chars_mobs_npcs[index].atkr = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].atk+add_atkr;
 		chars_mobs_npcs[index].arng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].a;
 		chars_mobs_npcs[index].brng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].b;
-		chars_mobs_npcs[index].crng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].c;
+		chars_mobs_npcs[index].crng = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].ammo].ttxid].c+add_cr;
+		
 	end
 	--/RANGED
 	if chars_mobs_npcs[index]["equipment"].lh ~= 0 and inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].lh].ttxid].class == "shield" and chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].lh].q > 0 then

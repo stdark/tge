@@ -17,7 +17,7 @@ function draw.fogOfWar(x,y)
 	love.graphics.setColor(255, 255, 255);
 	if darkness[1][y][x] == 0 then
 		love.graphics.setColor(255, 255, 255);	
-	elseif darkness[1][y][x] == 1 and global.status == "battle" then
+	elseif darkness[1][y][x] == 1 and global.status == "battle" and game_status =="sensing" then
 		love.graphics.setColor(125, 125, 125);	
 	elseif darkness[1][y][x] == 2 then
 		love.graphics.setColor(0, 0, 0);	

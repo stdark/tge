@@ -348,24 +348,24 @@ function playingState.load()
 	if global.level_to_load == 1 then
 	--mobs
 		
-		--[[table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=13,y=16,rot=5,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=13,y=16,rot=5,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=6,rot=6,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=9,y=6,rot=4,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=11,y=5,rot=2,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=43,y=27,rot=3,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=16,y=5,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=14,y=7,rot=1,class="naga",fraction="bandidos",party=4});
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});]]
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});
 		
 		
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4});
+		--[[table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=36,y=60,rot=6,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=40,y=55,rot=4,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=37,y=62,rot=2,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=36,y=70,rot=3,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=34,y=60,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=32,y=63,rot=1,class="naga",fraction="bandidos",party=4});
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=30,y=70,rot=4,class="mage",fraction="bandidos",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=30,y=70,rot=4,class="mage",fraction="bandidos",party=4});]]
 		
 
 		for i=(chars+1),#chars_mobs_npcs do
