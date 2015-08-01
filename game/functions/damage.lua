@@ -2313,6 +2313,18 @@ function damage.multidamage () --FIXME two hexes
 					local damageHPphysical = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[4]);
 					local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
 					damage.HPminus(j,damageHP,true);
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"cold",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[j].cold_power = dot_power;
+						chars_mobs_npcs[j].cold_dur = dot_dur;
+						helpers.addToActionLog( lognames.actions.cooled[chars_mobs_npcs[j].gender]);
+					end;
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[2],num[2],1,0,1,0,"flame",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[j].flame_power = dot_power;
+						chars_mobs_npcs[j].flame_dur = dot_dur;
+						helpers.addToActionLog( lognames.actions.flamed[chars_mobs_npcs[j].gender]);
+					end;
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
 					exp_for_what(damageHP,current_mob);
@@ -2339,6 +2351,18 @@ function damage.multidamage () --FIXME two hexes
 					local damageHPacid = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,3)*num[4]);
 					local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
 					damage.HPminus(j,damageHP,true);
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"cold",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[j].cold_power = dot_power;
+						chars_mobs_npcs[j].cold_dur = dot_dur;
+						helpers.addToActionLog( lognames.actions.cooled[chars_mobs_npcs[j].gender]);
+					end;
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[2],num[2],1,0,1,0,"flame",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[j].flame_power = dot_power;
+						chars_mobs_npcs[j].flame_dur = dot_dur;
+						helpers.addToActionLog( lognames.actions.flamed[chars_mobs_npcs[j].gender]);
+					end;
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
 					exp_for_what(damageHP,current_mob);
@@ -2365,6 +2389,18 @@ function damage.multidamage () --FIXME two hexes
 					local damageHPpoison = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,2)*num[4]);
 					local damageHP = damageHPcold + damageHPfire + damageHPstatic + damageHPphysical;
 					damage.HPminus(j,damageHP,true);
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[1],num[1],1,0,1,0,"cold",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[j].cold_power = dot_power;
+						chars_mobs_npcs[j].cold_dur = dot_dur;
+						helpers.addToActionLog( lognames.actions.cooled[chars_mobs_npcs[j].gender]);
+					end;
+					local dot_power,dot_dur = damage.applyDoT (victim,lvl[2],num[2],1,0,1,0,"flame",false);
+					if dot_power > 0 and dot_dur > 0 then
+						chars_mobs_npcs[j].flame_power = dot_power;
+						chars_mobs_npcs[j].flame_dur = dot_dur;
+						helpers.addToActionLog( lognames.actions.flamed[chars_mobs_npcs[j].gender]);
+					end;
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
 					exp_for_what(damageHP,current_mob);
@@ -2453,6 +2489,7 @@ function damage.multidamage () --FIXME two hexes
 	if missle_type == "divineintervantion" then
 		local price = 0;
 		for i = 1,chars do
+			local canbehealed = false;
 			price = price+chars_mobs_npcs[i].bleeding + chars_mobs_npcs[i].flame_power*chars_mobs_npcs[i].flame_dur + chars_mobs_npcs[i].poison_power*chars_mobs_npcs[i].poison_dur
 			+chars_mobs_npcs[i].cold_power*chars_mobs_npcs[i].cold_dur+chars_mobs_npcs[i].acid_power*chars_mobs_npcs[i].acid_dur+ chars_mobs_npcs[i].disease*10
 			+chars_mobs_npcs[i].drunk*10+chars_mobs_npcs[i].insane*10+chars_mobs_npcs[i].fear*10+chars_mobs_npcs[i].feeblemind*10+chars_mobs_npcs[i].paralyze*10
@@ -2466,53 +2503,33 @@ function damage.multidamage () --FIXME two hexes
 				price = price+100;
 			elseif chars_mobs_npcs[i].status == -1 then
 				price = price+1000;
+			elseif chars_mobs_npcs[i].status == -2 then
+				price = price+10000;
 			end;
-			chars_mobs_npcs[i].status = 1;
-			chars_mobs_npcs[i].hp = chars_mobs_npcs[i].hp_max;
-			chars_mobs_npcs[i].sp = chars_mobs_npcs[i].sp_max;
-			chars_mobs_npcs[i].st = chars_mobs_npcs[i].st_max;
-			chars_mobs_npcs[i].rt = 200;
-
-			chars_mobs_npcs[i].bleeding = 0;
-			chars_mobs_npcs[i].flame_power=0;
-			chars_mobs_npcs[i].flame_dur=0;
-			chars_mobs_npcs[i].poison_power=0;
-			chars_mobs_npcs[i].poison_dur=0;
-			chars_mobs_npcs[i].poison_status=0;
-			chars_mobs_npcs[i].cold_power=0;
-			chars_mobs_npcs[i].cold_dur=0;
-			chars_mobs_npcs[i].acid_power=0;
-			chars_mobs_npcs[i].acid_dur=0;
-			chars_mobs_npcs[i].disease = 0;
-			chars_mobs_npcs[i].drunk = 0;
-			chars_mobs_npcs[i].insane = 0;
-			chars_mobs_npcs[i].fear=0;
-			chars_mobs_npcs[i].feeblemind = 0;
-			chars_mobs_npcs[i].paralyze = 0;
-			chars_mobs_npcs[i].madness = 0;
-			chars_mobs_npcs[i].filth_power=0;
-			chars_mobs_npcs[i].filth_dur=0;
-			chars_mobs_npcs[i].darkgasp = 0
-			chars_mobs_npcs[i].darkcontamination = 0;
-			chars_mobs_npcs[i].basiliskbreath = 0;
-			chars_mobs_npcs[i].evileye = 0;
-			chars_mobs_npcs[i].despondency_power=0;
-			chars_mobs_npcs[i].despondency_dur=0;
-			chars_mobs_npcs[i].blind_power = 0;
-			chars_mobs_npcs[i].blind_dur = 0;
-			chars_mobs_npcs[i].curse = 0;
-			chars_mobs_npcs[i].deadlyswarm = 0;
-			chars_mobs_npcs[i].freeze = 0;
-			chars_mobs_npcs[i].stone = 0;
-			chars_mobs_npcs[i].immobilize = 0;
-
-			damage.operateAnEye(i,"reye",true);
-			damage.operateAnEye(i,"leye",true);
-			damage.operateAnEye(i,"ceye",true);
-			
-			chars_mobs_npcs[i]["arms_health"].rh = 1;
-			chars_mobs_npcs[i]["arms_health"].lh = 1;
-			chars_mobs_npcs[i].pneumothorax = 0;
+			if chars_mobs_npcs[i].x == 0 then
+				local body_atparty,body_index,body_bringer = helpers.hasDeadBody(i,false);
+				if body_atparty then
+					canbehealed = true;
+					local freehexes = {};
+					local rings = boomareas.ringArea(chars_mobs_npcs[body_bringer].x,chars_mobs_npcs[body_bringer].y);
+					for h=1,3 do
+						for k=1,#rings[h] do
+							if helpers.passCheck(rings[h][k].x,rings[h][k].y) and not helpers.cursorAtMob(rings[h][k].x,rings[h][k].y) and darkness[1][rings[h][k].y][rings[h][k].x] == 0 then
+								table.insert(freehexes,{x=rings[h][k].x,y=rings[h][k].y});
+							end;
+						end;
+					end;
+					local rnd = math.random(1,#freehexes);
+					chars_mobs_npcs[i] = freehexes[rnd].x;
+					chars_mobs_npcs[i] = freehexes[rnd].y;
+					helpers.removeItem(body_bringer,body_index);
+				end;
+			else
+				canbehealed = true;
+			end;
+			if canbehealed == true then
+				helpers.divineHeal(i);
+			end;
 		end;
 		local ageprice = math.ceil(price)/365;
 		chars_mobs_npcs[i].age = chars_mobs_npcs[i].age + ageprice;
@@ -3370,12 +3387,13 @@ function damage.multidamage () --FIXME two hexes
 				exp_for_what(damageHP+math.ceil(damageST/2),current_mob)
 				local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"cold",false);
 				if dot_power > 0 and dot_dur > 0 then
-					chars_mobs_npcs[j].acid_power = dot_power;
-					chars_mobs_npcs[j].acid_dur = dot_dur;
+					chars_mobs_npcs[j].cold_power = dot_power;
+					chars_mobs_npcs[j].cold_dur = dot_dur;
 					helpers.addToActionLog( lognames.actions.cooled[chars_mobs_npcs[j].gender]);
 				end;
 				local debuff = damage.applyCondition (j,lvl[1],num[2],"freeze","cold",false,false,1,false);
 				if debuff > 0 then
+					helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.freezed[chars_mobs_npcs[j].gender]);
 					exp_for_what(math.ceil(debuff/3),current_mob);
 				end;
 				helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.freezed[chars_mobs_npcs[j].gender]);
@@ -5941,7 +5959,7 @@ function damage.instantCast () --FIXME use lvl, num
 	
 	if missle_type == "fireelemental" then
 		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="fireelemental",fraction="party"});
-		helpers.addMob(#chars_mobs_npcs,"mob");
+		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].torchlight = 100000;
 		chars_mobs_npcs[#chars_mobs_npcs].firebelt_dur = 100000;
 		chars_mobs_npcs[#chars_mobs_npcs].firebelt_power = 3;
@@ -5953,14 +5971,14 @@ function damage.instantCast () --FIXME use lvl, num
 	
 	if missle_type == "airelemental" then
 		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="airelemental",fraction="party"});
-		helpers.addMob(#chars_mobs_npcs,"mob");
+		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
 	end;
 	
 	if missle_type == "waterelemental" then
 		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="waterelemental",fraction="party"});
-		helpers.addMob(#chars_mobs_npcs,"mob");
+		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		chars_mobs_npcs[#chars_mobs_npcs].waterwalking = 100000;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
@@ -5968,14 +5986,14 @@ function damage.instantCast () --FIXME use lvl, num
 	
 	if missle_type == "earthelemental" then
 		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="earthelemental",fraction="party"});
-		helpers.addMob(#chars_mobs_npcs,"mob");
+		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
 	end;
 	
 	if missle_type == "clone" then
 		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="clone",fraction="party"});
-		helpers.addMob(#chars_mobs_npcs,"mob");
+		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		chars_mobs_npcs[#chars_mobs_npcs].hp = lvl[1]*num[1];
 		helpers.addToActionLog(lognames.actions.clonecreated);

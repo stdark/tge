@@ -42,6 +42,7 @@ function playingState.load()
 	require "functions.boomareas"
 	require "functions.draw"
 	--require "functions.helpers"
+	require "functions.mobsoperatons"
 	require "functions.trace"
 	require "functions.pathfinding"
 	require "functions.mindgame"
@@ -150,11 +151,12 @@ function playingState.load()
 	triggers_data ();
 
 	fractions={
-	party={party=0,greens=-100,bandidos=-100,vagrants = 0,merchants=0},
-	greens={party=-100,greens=0,bandidos=0,vagrants = 0,merchants=0},
-	bandidos={party=-100,greens=0,bandidos=0,vagrants = 0,merchants=0},
-	vagrants={party=0,greens=0,bandidos=0,vagrants = 100,merchants=0},
-	merchants={party=0,greens=0,bandidos=0,vagrants = 0,merchants=0},
+	party={party=100,greens=-100,bandidos=-100,vagrants = 0,merchants=0,contrabandists=0},
+	greens={party=-100,greens=100,bandidos=0,vagrants = 0,merchants=0,contrabandists=-100},
+	bandidos={party=-100,greens=0,bandidos=100,vagrants = 0,merchants=0,contrabandists=-100},
+	vagrants={party=0,greens=0,bandidos=0,vagrants = 100,merchants=0,contrabandists=0},
+	merchants={party=0,greens=0,bandidos=0,vagrants = 0,merchants=100,contrabandists=0},
+	contrabandists={party=0,greens=-100,bandidos=-100,vagrants = 0,merchants=0,contrabandists=100},
 	};
 
 	mob_w=32
@@ -337,7 +339,7 @@ function playingState.load()
 		table.insert(chars_mobs_npcs,{uid=-4,person="char",control="player",party=1,x=10,y=14,rot=3 });
 
 		for i = 1,chars do
-			helpers.addMob(i,"char");
+			mobsoperatons.addMob(i,"char");
 		end;
 	end;
 	current_mob = 1;
@@ -369,7 +371,7 @@ function playingState.load()
 		
 
 		for i=(chars+1),#chars_mobs_npcs do
-			helpers.addMob(i,"mob");
+			mobsoperatons.addMob(i,"mob");
 		end;
 
 		local totalmobs = #chars_mobs_npcs;
@@ -390,22 +392,23 @@ function playingState.load()
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
-		table.insert(chars_mobs_npcs,{uid=2,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=20,y=10,rot=2,class="goblin",fraction="vagrants", party=2, name="Ivan Susanin", face = 8,
+		--[[table.insert(chars_mobs_npcs,{uid=2,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=20,y=10,rot=2,class="goblin",fraction="vagrants", party=2, name="Rattus Parchedtail", face = 8,
 		personality={
 		current={chat="rattusparchedtail",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",food="full",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil},
 		guards_x=20,guards_y=10,
 		guards={{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4},{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4},{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4}}
 		},
-		
 		default={chat="rattusparchedtail",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",food="full",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil},
 		guards_x=20,guards_y=10,
 		guards={{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4},{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4},{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4}}
 		},
+
 		--default={chat="ivansusanin",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		alternative={chat="cheguevara_quest_in_progress",etiquette = "criminal",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="disdain",gold="middleclass",drinks="boozer",food="full",threat="coward"},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
-		});
+		});]]
+		table.insert(chars_mobs_npcs,npc.ttx["rattusparchedtail"]);
 		table.insert(chars_mobs_npcs,{uid=3,person="npc",control="ai",defaultai="stay",ai="random",dangerai="away",x=18,y=8,rot=4,class="goblin",fraction="vagrants",  party=2, name="Pavlik Morozoff", face = 7,
 		personality={
 		current={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
@@ -452,7 +455,7 @@ function playingState.load()
 		});
 
 		for i=(totalmobs+1),#chars_mobs_npcs do
-			helpers.addMob(i,"npc");
+			mobsoperatons.addMob(i,"npc");
 		end;
 
 		sort_switcher=0;
@@ -1736,7 +1739,8 @@ end;
 
 function playingState.keypressed(key, unicode)
 	if chars_mobs_npcs[current_mob].control == "player" or game_status == "menu" then
-		if game_status ~= "moving" and game_status ~= "sensing" then
+		--if game_status ~= "moving" and game_status ~= "sensing" then --small screens!
+		if game_status ~= "moving" then
 			if key == "up" then
 				if map_y > 0 then
 					map_y = map_y-1;
@@ -2413,53 +2417,54 @@ function playingState.mousereleased (x,y,button)
 					price = helpers.recountPrice(price,current_mob,victim);
 					if helpers.payGold(price) then
 						calendar.add_time_interval(calendar.delta_temple_heals);
-
 						utils.playSfx(media.sounds["spell_heal"], 1);
-						helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.healed[chars_mobs_npcs[current_mob].gender]);
-
-						chars_mobs_npcs[current_mob].hp = chars_mobs_npcs[current_mob].hp_max;
-						chars_mobs_npcs[current_mob].sp = chars_mobs_npcs[current_mob].sp_max;
-						chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st_max;
-						chars_mobs_npcs[current_mob].rt = 200;
-
-						chars_mobs_npcs[current_mob].bleeding = 0;
-						chars_mobs_npcs[current_mob].flame_power=0;
-						chars_mobs_npcs[current_mob].flame_dur=0;
-						chars_mobs_npcs[current_mob].poison_power=0;
-						chars_mobs_npcs[current_mob].poison_dur=0;
-						chars_mobs_npcs[current_mob].poison_status=0;
-						chars_mobs_npcs[current_mob].cold_power=0;
-						chars_mobs_npcs[current_mob].cold_dur=0;
-						chars_mobs_npcs[current_mob].acid_power=0;
-						chars_mobs_npcs[current_mob].acid_dur=0;
-						chars_mobs_npcs[current_mob].disease = 0;
-						chars_mobs_npcs[current_mob].drunk = 0;
-						chars_mobs_npcs[current_mob].insane = 0;
-						chars_mobs_npcs[current_mob].fear=0;
-						chars_mobs_npcs[current_mob].silence = 0;
-						chars_mobs_npcs[current_mob].madness = 0;
-						chars_mobs_npcs[current_mob].filth_power=0;
-						chars_mobs_npcs[current_mob].filth_dur=0;
-						chars_mobs_npcs[current_mob].darkgasp = 0
-						chars_mobs_npcs[current_mob].darkcontamination = 0;
-						chars_mobs_npcs[current_mob].basiliskbreath = 0;
-						chars_mobs_npcs[current_mob].evileye = 0;
-						chars_mobs_npcs[current_mob].despondency_power=0;
-						chars_mobs_npcs[current_mob].despondency_dur=0;
-						chars_mobs_npcs[current_mob].blind_power = 0;
-						chars_mobs_npcs[current_mob].blind_dur = 0;
-						chars_mobs_npcs[current_mob].curse = 0;
-						chars_mobs_npcs[current_mob].deadlyswarm = 0;
-						damage.operateAnEye(current_mob,"reye",true);
-						damage.operateAnEye(current_mob,"leye",true);
-						damage.operateAnEye(current_mob,"ceye",true);
-						chars_mobs_npcs[current_mob]["arms_health"].rh = 1;
-						chars_mobs_npcs[current_mob]["arms_health"].lh = 1;
-						chars_mobs_npcs[current_mob].pneumothorax = 0;
+						helpers.divineHeal(current_mob);
 					end;
 					clearText();
 					loveframes.util.RemoveAll();
 					game_status = "neutral";
+				elseif chats.rules[index][current_questions[linenumber]].answer == 1004 then --temple
+					local price = 0;
+					local body_atparty,body_index,body_bringer = nil;
+					local mob_index = nil;
+					for i=1,chars do
+						body_atparty,body_index,body_bringer = helpers.hasDeadBody(i,true);
+						if body_atparty then
+							mob_index = i;
+							break;
+						end;
+					end;
+					if body_atparty then
+						if chars_mobs_npcs[i].status == -1 then
+							price = price+10000;
+						elseif chars_mobs_npcs[i].status == -2 then
+							price = price+100000;
+						elseif chars_mobs_npcs[i].stone > 0 then
+							price = price+1000;
+						end;
+						price = helpers.recountPrice(price,current_mob,victim);
+						if helpers.payGold(price) then
+							calendar.add_time_interval(calendar.delta_temple_heals);
+							local freehexes = {};
+							local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+							for h=1,3 do
+								for k=1,#rings[h] do
+									if helpers.passCheck(rings[h][k].x,rings[h][k].y) and not helpers.cursorAtMob(rings[h][k].x,rings[h][k].y) and darkness[1][rings[h][k].y][rings[h][k].x] == 0 then
+										table.insert(freehexes,{x=rings[h][k].x,y=rings[h][k].y});
+									end;
+								end;
+							end;
+							local rnd = math.random(1,#freehexes);
+							chars_mobs_npcs[i] = freehexes[rnd].x;
+							chars_mobs_npcs[i] = freehexes[rnd].y;
+							helpers.removeItem(body_bringer,body_index);
+							utils.playSfx(media.sounds["spell_heal"], 1);
+							helpers.divineHeal(mob_index);
+						end;
+						clearText();
+						loveframes.util.RemoveAll();
+						game_status = "neutral";
+					end;
 				elseif chats.rules[index][current_questions[linenumber]].answer == 2001 then
 					current_shop = chars_mobs_npcs[victim].shop;
 					current_bar = traders[current_shop].bars[1];
@@ -2606,7 +2611,7 @@ function playingState.mousereleased (x,y,button)
 						end;
 					end;
 					
-					helpers.recreateDrinkAndFoodArray();
+					mindgame.recreateDrinkAndFoodArray();
 					
 					mindmissle = false;
 					global.current_threat = 1;
@@ -4326,7 +4331,7 @@ function  playingState.mousepressed(x,y,button)
 								mindmissle = false;
 							end;							
 							global.drinkmissle = 1;
-							helpers.recreateDrinkAndFoodArray();
+							mindgame.recreateDrinkAndFoodArray();
 							loveframes.util.RemoveAll();
 							draw.mindgameButtons();
 						elseif mindmissle >=10 and mindmissle <= 16 then --threats

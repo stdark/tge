@@ -387,3 +387,24 @@ function mindgame.checkJoke(joke,mobindex)
 	end;
 	return _reaction;
 end;
+
+function mindgame.recreateDrinkAndFoodArray()
+	global.minddrink_array = {};
+	for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+		if chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid == raws.buz then
+			table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="alco",price=1});
+		end;
+	end;
+	
+	for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+		if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].class == " alcohol" then
+			table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="alco",price=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].price});
+		end;
+	end;
+	
+	for i=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+		if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].class == "food" then
+			table.insert(global.minddrink_array,{itemid=i,spriteid=chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid,typ="food",price=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][i].ttxid].price});
+		end;
+	end;
+end;

@@ -305,7 +305,7 @@ function chats.ifCondition(typ,subtyp,var,limit,comp,ifsuccess,ifnot)
 		end;
 	elseif typ == "questpart" then
 		for i=1, #party.quests do
-			if party.quests[i].id == var and party.quests[i][stages][limit] and not party.quests[i].done then
+			if party.quests[i].id == var and party.quests[i][stages][limit] and (not comp and not party.quests[i].done) or (comp and party.quests[i].done) then
 				return ifsuccess;
 			end;
 		end
