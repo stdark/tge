@@ -33,6 +33,13 @@ function chats.load ()
 	{question=chats.ifCondition("questpart",nil,5,2,0,15,0),answer=14,nextquestion={9},remquestion={0},default=true},
 	},
 	
+	dortussmarttooth = {
+	{question=1,answer=2,nextquestion={4},remquestion={chats.ifCondition("race",nil,{"goblin"},0,0,4,3)},default=true}, --not 4 but condition check party/fraction
+	{question=2,answer=chats.ifCondition("secretgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
+	{question=3,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
+	{question=4,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
+	},
+	
 	};
 	chats.questions = {
 	ivansusanin={chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), "Кто мы?", "А звать-то как?", "Как мы сюда попали?","Знать бы...","И на кого же ты тут охотишься?"},
@@ -59,12 +66,26 @@ function chats.load ()
 	"По поводу твоего брата...",
 	"Что касается груза...",
 	"Да так, ничего.",
-	"У меня плохие новости: твой брат погиб...",
-	"Я вызволил твоего брата!",
-	"Вот твой груз.",
+	chats.changeFractionRelations("У меня плохие новости: твой брат погиб...",{{"party","contrabandists",20}}),
+	chats.changeFractionRelations("Я вызволил твоего брата!",{{"party","contrabandists",25},{"party","greens",-25}}),
+	chats.changeFractionRelations("Вот твой груз.",{{"party","contrabandists",25},{"party","swampers",-25}}),
+	},
+	
+	dortussmarttooth = {
+	chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
+	"Так ты и есть тот самый пленник гоблинов, у котором рассказывают деревенские?",
+	"Не ты ли родственник Раттуса Палохвоста?",
+	"Подожди, надо разобраться с твоими пленителями.",
+	"Ладно, сейчас разберёмся с клеткой.",
+	"Брат братом, но ведь и у тебя есть заначка... Ты мне место, я тебе — свободу.",
+	"Нет.",
+	"Придётся принести твоему брату печальную весть... Мол, не смотря на все старания, подлые гоблины успели оборвать нить жизни подающего надежды коммерсанта... За дополнительную плату можем указать, где находится тело — для проведения погребальных обрядов и всего такого.",
+	"Брат опасался, как бы ты чего не разболтал. Думаю, за тебя мёртвого он заплатит не меньше, чем за живого.",
+	"Думаю, сейчас кое кто поделится секретами...",
 	},
 	
 	};
+	
 	chats.answers = {
 	ivansusanin={"Ты глянь...","Я-то? Охотник, бродяга... Так ли это важно?", "Западный Крюлод, вернее то, что от него осталось после Расплаты.","Четыре подозрительных типа. Перепили или со скалами удачно пободались?","Имя — тлен!", "Вероятно, вас выбросило на берег волнами.", "Амнезия, стало быть. У всех четверых разом, да?", "На кроликов.", "На наивных дурачков вроде вас. Шутка."};
 	nilslarsen={"Принесла нелёгкая...",chats.phrasesPerRandom("whoru_im_rude"),"Не твоё дело!","Отвали!","Щаззз..."},
@@ -88,10 +109,27 @@ function chats.load ()
 	"Новости?",
 	"Поторапливайтесь!",
 	"Я вас нанял не для того, чтоб вы глупыми вопросами меня изводили!", 
-	"Это печальная весть. Что ж, надесюсь, он не болтал лишнего. Вот золото.", --add fraction relations
-	"Вот это спасибо, мой братец — ценный помощник! Ваше золото!", --add fraction relations
-	"Мои замечтальные коробочки! Держите награду!"--add fraction relations
+	chats.questCompleted("Это печальная весть. Что ж, надесюсь, он не болтал лишнего. Вот золото.",{{id,stage}}),
+	chats.questCompleted("Вот за это спасибо, мой братец — ценный помощник! Ваше золото!",{{id,stage}}),
+	chats.questCompleted("Мои замечтальные коробочки! Держите награду!",{{id,stage}}),
 	},
+	
+	dortussmarttooth = {
+	"А, кого в котёл?",
+	"Не ешь меня, зелёный, я невкусный!",
+	"Наконец-то не зелёная морда! Вытащи меня отсюда, мой брат хорошо заплатит!",
+	"Да-да, это я, вытаскивай меня скорее!",
+	"Брат нанял спасателей!",
+	"Режь зеленух!",
+	"Свобода!",
+	"Э, откуда?!",
+	"Ладно-ладно, подавись!", --comic diplo check frac rep minus
+	"Сам выберусь!",
+	"Эй! Чего это?!",
+	"Ладно, согласен. Вот карта.", --comic charisma check frac rep minus
+	"Ладно, согласен. Вот карта.", --comic diplo check frac rep minus
+	"Спасите! Помогите! Гоблинов верните!", -- diplo --diplomacy fear = secret passage
+	};
 	
 	catchedthief={chats.questionPerEtiquette("gotyouthief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("youarethief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("iliketales",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("lookinglikeathief",chars_mobs_npcs[victim]["personality"]["current"].etiquette)}, --thiefcatched
 		
@@ -362,6 +400,88 @@ function chats.rudeRatmanGoAway(index)
 	elseif chars_mobs_npcs[index].race == "halfling" then	
 		phrase = "Вали отсюда, недомерок!"
 		helpers.addAffront(7);
+	end;
+	return phrase;
+end;
+
+function chats.changeFractionRelations(phrase,fracs) --fracs = {{fraction1,fraction2,value},{fraction1,fraction2,value},{fraction1,fraction2,value}}
+	for i=1,#fracs do
+		fractions[frac[i][1]][frac[i][2]] = fractions[frac[i][1]][frac[i][2]] + frac[i][3];
+		fractions[frac[i][2]][frac[i][1]] = fractions[frac[i][2]][frac[i][1]] + frac[i][3];
+		helpers.addToActionLog(lognames.actions.fractions_relations_changed);
+	end;
+	return phrase;
+end;
+
+function chats.questCompleted(phrase,quests)
+	for i=1,#party.quests do
+		for h=1,#quests do
+			if party.quests[i].id == quests[h].quest then
+				party.quests[i].stage = quests[h].stage;
+				party.quests[i].done = true;
+				local divisor = 0;
+				helpers.addToActionLog(lognames.actions.quest_done);
+				if quests[quests[h].quest][quests[h].stage].xp then
+					for i=1,chars do
+						if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 then
+							divisor = divisor + 1;
+						end;
+					end;
+					for i=1,chars do
+						if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 then
+							local xp =  math.ceil(quests[quests[h].quest][quests[h].stage]/divisor);
+							chars_mobs_npcs[i].xp = chars_mobs_npcs[i].xp + xp;
+							helpers.addToActionLog( chars_stats[i].name .. lognames.actions.got[chars_mobs_npcs[current_mob].gender] .. xp .. lognames.actions.ofexp);
+						end;
+					end;	
+					--utils.playSfx(media.sounds.exp,1);	
+				end;
+				if quests[quests[h].quest][quests[h].stage].promotion then
+					for i=1,chars do
+						if chars_mobs_npcs[i].class == chars_mobs_npcs[i]["oldclass"] then
+							chars_mobs_npcs[i].class = chars_mobs_npcs[i]["newclass"];
+							helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.gotpromotion[i][gender]);
+							--utils.playSfx(media.sounds.promotion,1);
+						end;
+					end;
+				end;
+				if quests[quests[h].quest][quests[h].stage].fractions then
+					chats.changeFractionRelations(nil,quests[quests[h].quest][quests[h].stage].fractions);
+				end;
+				if quests[quests[h].quest][quests[h].stage].gold then
+					party.gold = party.gold + quests[quests[h].quest][quests[h].stage].gold;
+					utils.playSfx(media.sounds.gold_dzen,1);
+					helpers.addToActionLog(lognames.actions.partygot .. quests[quests[h].quest][quests[h].stage].gold .. lognames.actions.withgold);
+				end;
+				if quests[quests[h].quest][quests[h].stage].items_plus then
+					table.insert(bags_list,{x=chars_mobs_npcs[current_mob].x,y=chars_mobs_npcs[index].y,xi= chars_mobs_npcs[current_mob].x,yi= chars_mobs_npcs[index].y,typ="bag",opened=false,locked=false,dir=0,img=bag_img});
+					for i=1,#quests[quests[h].quest][quests[h].stage].items_plus do
+						table.insert(bags_list[#bags_list],{ttxid=quests[quests[h].quest]["items_plus"].ttxid,q=quests[quests[h].quest]["items_plus"].q,w=quests[quests[h].quest]["items_plus"].w,e=quests[quests[h].quest]["items_plus"].e,r=quests[quests[h].quest]["items_plus"].r,h=quests[quests[h].quest]["items_plus"].h});
+						helpers.zeroLastBag ();
+						sorttarget = "bag";
+						dragfrom="bag"
+						current_bag = #bags_list;
+						th = #bags_list;
+						bagid = #bags_list;
+						helpers.resort_inv(bagid);
+					end;
+				end;
+				if quests[quests[h].quest][quests[h].stage].items_minus then
+					for i=1,chars do
+						for k=1,#quests[quests[h].quest][quests[h].stage].items_minus do
+							for j=1,#chars_mobs_npcs[i]["inventory_list"] do
+								if quests[quests[h].quest]["items_minus"][k] == chars_mobs_npcs[i]["inventory_list"][j].ttxid then
+									local given_item = quests[quests[h].quest]["items_minus"][k]
+									helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.gave[chars_mobs_npcs[current_mob].gender] .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][given_item].ttxid].title .. lognames.actions.frominv);
+									table.remove(chars_mobs_npcs[i]["inventory_list"],given_item);
+									helpers.renumber(given_item,i);
+								end;
+							end;
+						end;
+					end;
+				end;
+			end;
+		end;
 	end;
 	return phrase;
 end;
