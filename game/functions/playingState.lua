@@ -350,24 +350,24 @@ function playingState.load()
 	if global.level_to_load == 1 then
 	--mobs
 		
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=13,y=16,rot=5,class="goblin",fraction="greens",party=4});
+		--[[table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=13,y=16,rot=5,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=6,rot=6,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=9,y=6,rot=4,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=11,y=5,rot=2,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=43,y=27,rot=3,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=16,y=5,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=14,y=7,rot=1,class="naga",fraction="bandidos",party=4});
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=10,y=7,rot=4,class="mage",fraction="bandidos",party=4});]]
 		
 		
-		--[[table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4});
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=38,y=52,rot=5,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=36,y=60,rot=6,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=40,y=55,rot=4,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=37,y=62,rot=2,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=36,y=70,rot=3,class="goblin",fraction="greens",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=34,y=60,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=32,y=63,rot=1,class="naga",fraction="bandidos",party=4});
-		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=30,y=70,rot=4,class="mage",fraction="bandidos",party=4});]]
+		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=30,y=70,rot=4,class="mage",fraction="bandidos",party=4});
 		
 
 		for i=(chars+1),#chars_mobs_npcs do
@@ -4158,6 +4158,27 @@ function playingState.mousereleased (x,y,button)
 					chars_mobs_npcs[current_mob]["equipment"].slot=holding_smth;
 					holding_smth=0;
 				end;
+			end;
+			if selected_portrait > 0 and selected_portrait == current_mob -- drink a potion
+			and inventory_ttx[list[holding_smth].ttxid].class == "musicalinstrument" then
+				game_status = "neutral";
+				global.theme_music_volume = math.max(0.01,global.theme_music_volume - 0.05);
+				for i=1,#global.theme_music_array do
+					local volume = math.ceil(100*global.theme_music_array[i].track:getVolume())/100;
+					if global.theme_music_array[i].type == global.music_switch_to then
+						global.theme_music_array[i]["track"]:setVolume(math.max(0,volume - 0.95));
+					end;
+				end;
+				if list[holding_smth].ttxid == 505 then
+					utils.playSfx(media.sounds.guitar, 1);	
+				elseif list[holding_smth].ttxid == 506 then
+					utils.playSfx(media.sounds.harmonica, 1);	
+				end;
+				list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false,bagid);
+				bag[tmp_bagid][inv_quad_x][inv_quad_y] = holding_smth;
+				--sfx.soundsOfInv("put",dragfrom);
+				holding_smth=0;
+				find_nonfree_space_at_inv();
 			end;
 			helpers.recalcBattleStats (current_mob);
 		end;

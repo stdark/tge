@@ -214,16 +214,18 @@ function utils.playThemeMusic (music,start_volume,music_type)
 end;
 
 function utils.themeMusicVolumeDynamic ()
+	local _deltaplus = 0.0005;
+	local _deltaminus = 0.01;
 	for i=1,#global.theme_music_array do
 		if global.music_switch_to == "mainmenu" and global.theme_music_array[i].type == global.music_switch_to then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume < global.theme_music_volume then
-				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume+_deltaplus);
 			end;
 		elseif global.theme_music_array[i].type == "mainmenu" then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume > 0 then
-				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume-_deltaminus);
 			end;
 			if volume <= 0 then
 				global.theme_music_array[i]["track"]:setVolume(0);
@@ -233,12 +235,12 @@ function utils.themeMusicVolumeDynamic ()
 		if global.music_switch_to == "battle" and global.theme_music_array[i].type == global.music_switch_to then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume < global.theme_music_volume then
-				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume+_deltaplus);
 			end;
 		elseif global.theme_music_array[i].type == "battle" then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume > 0 then
-				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume-_deltaminus);
 			end;
 			if volume <= 0 then
 				global.theme_music_array[i]["track"]:setVolume(0);
@@ -248,12 +250,12 @@ function utils.themeMusicVolumeDynamic ()
 		if global.music_switch_to == "peace" and global.theme_music_array[i].type == global.music_switch_to then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume < global.theme_music_volume then
-				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume+_deltaplus);
 			end;
 		elseif global.theme_music_array[i].type == "peace" then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume > 0 then
-				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume-_deltaminus);
 			end;
 			if volume <= 0 then
 				global.theme_music_array[i]["track"]:setVolume(0);
@@ -264,12 +266,12 @@ function utils.themeMusicVolumeDynamic ()
 		if global.music_switch_to == "comic" and global.theme_music_array[i].type == global.music_switch_to then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume < global.theme_music_volume then
-				global.theme_music_array[i]["track"]:setVolume(volume+0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume+_deltaplus);
 			end;
 		elseif global.theme_music_array[i].type == "comic" then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume > 0 then
-				global.theme_music_array[i]["track"]:setVolume(volume-0.01);
+				global.theme_music_array[i]["track"]:setVolume(volume-_deltaminus);
 			end;
 			if volume <= 0 then
 				global.theme_music_array[i]["track"]:setVolume(0);

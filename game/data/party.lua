@@ -292,6 +292,8 @@ chars_stats[4].inventory_list={
 {ttxid=146,q=10,w=0,e=0,r=1,h=0},
 {ttxid=171,q=1,w=0,e=0,r=1,h=0},
 {ttxid=186,q=1,w=0,e=0,r=1,h=0},
+{ttxid=506,q=1,w=0,e=0,r=1,h=0},
+{ttxid=505,q=1,w=0,e=0,r=1,h=0},
 }
 
 inventory_bag={};

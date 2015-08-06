@@ -366,6 +366,10 @@ function loadingState.start(media, finishCallback)
 			loader.newSource(media.sounds, "clats", "sounds/clats.ogg");
 			loader.newSource(media.sounds, "teleport", "sounds/teleport.ogg");
 			loader.newSource(media.sounds, "altar", "sounds/altar.ogg");
+			
+			loader.newSource(media.sounds, "harmonica", "sounds/musicalinstruments_harmonica.ogg");
+			loader.newSource(media.sounds, "guitar", "sounds/musicalinstruments_guitar.ogg");
+			
 		end;
 	end;
 	utils.printDebug("started loading")

@@ -413,15 +413,18 @@ function chats.changeFractionRelations(phrase,fracs) --fracs = {{fraction1,fract
 	return phrase;
 end;
 
-function chats.questCompleted(phrase,quests)
+function chats.questCompleted(phrase,qas) --qas = {{quest_id,stage_id,{...}}
 	for i=1,#party.quests do
-		for h=1,#quests do
-			if party.quests[i].id == quests[h].quest then
-				party.quests[i].stage = quests[h].stage;
+		for h=1,#qas do
+			if party.quests[i].id == qas[h][1] then
+				party.quests[i].stage = qas[h][2];
 				party.quests[i].done = true;
 				local divisor = 0;
-				helpers.addToActionLog(lognames.actions.quest_done);
-				if quests[quests[h].quest][quests[h].stage].xp then
+				if quests[qas[h][1]][qas[h][2]].done then
+					helpers.addToActionLog(lognames.actions.quest_done);
+					--utils.playSfx(media.sounds.questdone,1);	
+				end;
+				if quests[qas[h][1]][qas[h][2]].xp then
 					for i=1,chars do
 						if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 then
 							divisor = divisor + 1;
@@ -429,14 +432,14 @@ function chats.questCompleted(phrase,quests)
 					end;
 					for i=1,chars do
 						if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 then
-							local xp =  math.ceil(quests[quests[h].quest][quests[h].stage]/divisor);
+							local xp =  math.ceil(quests[qas[h][1]][qas[h][2]]/divisor);
 							chars_mobs_npcs[i].xp = chars_mobs_npcs[i].xp + xp;
 							helpers.addToActionLog( chars_stats[i].name .. lognames.actions.got[chars_mobs_npcs[current_mob].gender] .. xp .. lognames.actions.ofexp);
 						end;
 					end;	
 					--utils.playSfx(media.sounds.exp,1);	
 				end;
-				if quests[quests[h].quest][quests[h].stage].promotion then
+				if quests[qas[h][1]][qas[h][2]].promotion then
 					for i=1,chars do
 						if chars_mobs_npcs[i].class == chars_mobs_npcs[i]["oldclass"] then
 							chars_mobs_npcs[i].class = chars_mobs_npcs[i]["newclass"];
@@ -445,18 +448,18 @@ function chats.questCompleted(phrase,quests)
 						end;
 					end;
 				end;
-				if quests[quests[h].quest][quests[h].stage].fractions then
-					chats.changeFractionRelations(nil,quests[quests[h].quest][quests[h].stage].fractions);
+				if quests[qas[h][1]][qas[h][2]].fractions then
+					chats.changeFractionRelations(nil,quests[qas[h][1]][qas[h][2]].fractions);
 				end;
-				if quests[quests[h].quest][quests[h].stage].gold then
-					party.gold = party.gold + quests[quests[h].quest][quests[h].stage].gold;
+				if quests[qas[h][1]][qas[h][2]].gold then
+					party.gold = party.gold + quests[qas[h][1]][qas[h][2]].gold;
 					utils.playSfx(media.sounds.gold_dzen,1);
-					helpers.addToActionLog(lognames.actions.partygot .. quests[quests[h].quest][quests[h].stage].gold .. lognames.actions.withgold);
+					helpers.addToActionLog(lognames.actions.partygot .. quests[qas[h][1]][qas[h][2]].gold .. lognames.actions.withgold);
 				end;
-				if quests[quests[h].quest][quests[h].stage].items_plus then
+				if quests[qas[h][1]][qas[h][2]].items_plus then
 					table.insert(bags_list,{x=chars_mobs_npcs[current_mob].x,y=chars_mobs_npcs[index].y,xi= chars_mobs_npcs[current_mob].x,yi= chars_mobs_npcs[index].y,typ="bag",opened=false,locked=false,dir=0,img=bag_img});
-					for i=1,#quests[quests[h].quest][quests[h].stage].items_plus do
-						table.insert(bags_list[#bags_list],{ttxid=quests[quests[h].quest]["items_plus"].ttxid,q=quests[quests[h].quest]["items_plus"].q,w=quests[quests[h].quest]["items_plus"].w,e=quests[quests[h].quest]["items_plus"].e,r=quests[quests[h].quest]["items_plus"].r,h=quests[quests[h].quest]["items_plus"].h});
+					for i=1,#quests[qas[h][1]][qas[h][2]].items_plus do
+						table.insert(bags_list[#bags_list],{ttxid=quests[qas[h][1]][qas[h][2]]["items_plus"].ttxid,q=quests[qas[h][1]][qas[h][2]]["items_plus"].q,w=quests[qas[h][1]][qas[h][2]]["items_plus"].w,e=quests[qas[h][1]][qas[h][2]]["items_plus"].e,r=quests[qas[h][1]][qas[h][2]]["items_plus"].r,h=quests[qas[h][1]][qas[h][2]]["items_plus"].h});
 						helpers.zeroLastBag ();
 						sorttarget = "bag";
 						dragfrom="bag"
@@ -466,12 +469,12 @@ function chats.questCompleted(phrase,quests)
 						helpers.resort_inv(bagid);
 					end;
 				end;
-				if quests[quests[h].quest][quests[h].stage].items_minus then
+				if quests[qas[h][1]][qas[h][2]].items_minus then
 					for i=1,chars do
-						for k=1,#quests[quests[h].quest][quests[h].stage].items_minus do
+						for k=1,#quests[qas[h][1]][qas[h][2]].items_minus do
 							for j=1,#chars_mobs_npcs[i]["inventory_list"] do
-								if quests[quests[h].quest]["items_minus"][k] == chars_mobs_npcs[i]["inventory_list"][j].ttxid then
-									local given_item = quests[quests[h].quest]["items_minus"][k]
+								if quests[qas[h][1]][qas[h][2]]["items_minus"][k] == chars_mobs_npcs[i]["inventory_list"][j].ttxid then
+									local given_item = quests[qas[h][1]][qas[h][2]]["items_minus"][k]
 									helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.gave[chars_mobs_npcs[current_mob].gender] .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][given_item].ttxid].title .. lognames.actions.frominv);
 									table.remove(chars_mobs_npcs[i]["inventory_list"],given_item);
 									helpers.renumber(given_item,i);
