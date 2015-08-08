@@ -349,6 +349,8 @@ party.affronts={1};
 
 party.connections = {"nilslarsen"};
 
+party.bardstales = {};
+
 party.gold = 9800000;
 
 party.quests = {

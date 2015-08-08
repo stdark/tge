@@ -59,6 +59,7 @@ function sprites.load()
 	mindgame_sad_icon = love.graphics.newQuad(64*11, 64*3, 128,128, media.images.mindgame_icons_img:getWidth(), media.images.mindgame_icons_img:getHeight());
 	mindgame_troll_icon = love.graphics.newQuad(64*13, 64*3, 128,128, media.images.mindgame_icons_img:getWidth(), media.images.mindgame_icons_img:getHeight());
 	mindgame_affront_icon = love.graphics.newQuad(64*8, 64*5, 128,64, media.images.mindgame_icons_img:getWidth(), media.images.mindgame_icons_img:getHeight());
+	mindgame_music_icon = love.graphics.newQuad(64*15, 64*3, 64,64, media.images.mindgame_icons_img:getWidth(), media.images.mindgame_icons_img:getHeight());
 	
 	mindstar = love.graphics.newQuad(990,730, 32, 32, media.images.ui:getWidth(), media.images.ui:getHeight());
 	papermap_pin = love.graphics.newQuad(230,870, 22, 41, media.images.ui:getWidth(), media.images.ui:getHeight());

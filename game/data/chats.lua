@@ -248,8 +248,7 @@ function chats.questionPerEtiquette(question,etiquette)
 	iamfat={none="Нет, не буду.",peasant="Поголодал я в детстве немало... Теперь и отказаться не могу...",criminal="По приютам я с детства скитался... Не доедал, не досыпал...",noble="Увы, и я подвержен этому пороку.",warrior="И так уже портупея не застёгивается...",lightpriest="Свет простит мне мою слабость...",darkpriest="Никому не говори. Услышу от кого — убью!",savage="Твоя не рассказывать!",scientist="Что ж тут поделаешь, такой обмен веществ..."},
 	delicios = {none="Весьма неплохо.",peasant="Нажористая штука!",criminal="Отличная жратва!",noble="Как в лучших ресторанах.",warrior="Знатный трофей!",lightpriest="Словно Свет согревает изнутри...",darkpriest="Да, стоило подольше оставаться живым, чтоб это попробовать!",savage="Вкусно! Давай ещё!",scientist="Надо же, не думал, что после Расплаты возможно найти такое чудо!"},
 	disgustingfood = {none="Гадость какая.",peasant="Таким и поле удобрить грешно!",criminal="Что за отрава?",noble="Какая наглость — предложить мне эту.. ...субстанцию!",warrior="В армии всякое доводилось жрать, но это...",lightpriest="Да проклянёт тебя Свет, неразумный!",darkpriest="И как, трудно было осмелиться предложить эту гадость мне?",savage="Моя такое не есть!",scientist="Технологический процесс при изготовлении был грубейшим образом нарушен..."},
-	foodpoisoned = {none="Я с кем попало не ем!",peasant="Не-не, мне ишшо пожить охота!",criminal="Чо вы мне подсовываете, мокрушники?",noble="Вы думаете, я рискну это попробовать?",warrior="Ага-ага, вот я так часовых и снимал!",lightpriest="Большой грех ты замыслило, чадо!!",darkpriest="Думаешь, на меня подействует то, что ты понамешал?",savage="Моя такое не есть!",scientist="Интересно, если мы проведём полное алхимическое иследование этого образца: что покажут тесты?"},
-	
+	foodpoisoned = {none="Я с кем попало не ем!",peasant="Не-не, мне ишшо пожить охота!",criminal="Чо вы мне подсовываете, мокрушники?",noble="Вы думаете, я рискну это попробовать?",warrior="Ага-ага, вот я так часовых и снимал!",lightpriest="Большой грех ты замыслило, чадо!!",darkpriest="Думаешь, на меня подействует то, что ты понамешал?",savage="Моя такое не есть!",scientist="Интересно, если мы проведём полное алхимическое иследование этого образца: что покажут тесты?"},	
 	};
 	local what2say = questions[question][etiquette];
 	return what2say;
@@ -406,8 +405,8 @@ end;
 
 function chats.changeFractionRelations(phrase,fracs) --fracs = {{fraction1,fraction2,value},{fraction1,fraction2,value},{fraction1,fraction2,value}}
 	for i=1,#fracs do
-		fractions[frac[i][1]][frac[i][2]] = fractions[frac[i][1]][frac[i][2]] + frac[i][3];
-		fractions[frac[i][2]][frac[i][1]] = fractions[frac[i][2]][frac[i][1]] + frac[i][3];
+		fractions[fracs[i][1]][fracs[i][2]] = fractions[fracs[i][1]][fracs[i][2]] + fracs[i][3];
+		fractions[fracs[i][2]][fracs[i][1]] = fractions[fracs[i][2]][fracs[i][1]] + fracs[i][3];
 		helpers.addToActionLog(lognames.actions.fractions_relations_changed);
 	end;
 	return phrase;

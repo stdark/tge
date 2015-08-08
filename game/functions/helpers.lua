@@ -4829,10 +4829,6 @@ function helpers.mobAtBody (index)
 	return mobs_at_hex;
 end;
 
-function helpers.musicPull() --FIXME not completed
-	return false
-end;
-
 function helpers.turnMob (index) --FIXME 2hex
 	local need_rot = chars_mobs_npcs[index].rot;
 	if chars_mobs_npcs[index].hexes == 1 then

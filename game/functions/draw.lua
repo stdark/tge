@@ -2378,6 +2378,8 @@ function draw.mindgameCycle(before)
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_troll_icon,i,h,-384,-200);
 				elseif mindgame.map[i][h] == 37 then
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_sad_icon,i,h,-384,-200);
+				elseif mindgame.map[i][h] == 38 then
+					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_music_icon,i,h,-350,-145);
 				elseif mindgame.map[i][h] > 100 and mindgame.map[i][h] <= 165 then
 					draw.drawMindObject(media.images.mindgame_icons_img,mindgame_icons[mindgame.map[i][h]-100],i,h,-350,-200);
 				elseif mindgame.map[i][h] > 1000 and  mindgame.map[i][h] < 2000 then
@@ -6498,6 +6500,56 @@ function draw.mindgameButtons()
 		global.buttons.w7_button:SetText(lognames.mindgame.call);
 		global.buttons.w7_button.OnClick = function(object)
 			mindmisle = 34;
+			end;
+	end;
+	--bardstales
+	if total_diplomacy >= 1  and #global.bardstales_pull > 0 and chars_mobs_npcs[current_mob].musician and not global.musicused then
+		global.buttons.w1_button = loveframes.Create("imagebutton");
+		global.buttons.w1_button:SetImage(media.images.button9);
+		global.buttons.w1_button:SetPos(x+35,y+710);
+		global.buttons.w1_button:SizeToImage()
+		global.buttons.w1_button:SetText("<<<");
+		global.buttons.w1_button.OnClick = function(object)
+			if global.current_bardstale > 1 then
+				global.current_bardstale = global.current_bardstale - 1;
+			else
+				global.current_bardstale = #global.bardstales_pull;
+			end;
+			local text = samples_ttx[global.current_bardstale].title;
+			global.bardstales_text_field:SetText(text);
+			mindmisle = 38;
+		end;
+
+		local text = samples_ttx[global.current_bardstale].title;		
+		global.bardstales_text_field = loveframes.Create("text");
+		global.bardstales_text_field:SetPos(x+140,y+710);
+		global.bardstales_text_field:SetMaxWidth(400);
+		global.bardstales_text_field:SetFont(bookFont);
+		global.bardstales_text_field:SetText(text);
+
+		global.buttons.w6_button = loveframes.Create("imagebutton");
+		global.buttons.w6_button:SetImage(media.images.button9);
+		global.buttons.w6_button:SetPos(x+535,y+710);
+		global.buttons.w6_button:SizeToImage()
+		global.buttons.w6_button:SetText(">>>");
+		global.buttons.w6_button.OnClick = function(object)
+			if global.current_bardstale < #global.bardstales_pull then
+				global.current_bardstale = global.current_bardstale + 1;
+			else
+				global.current_bardstale = 1;
+			end;
+			local text = samples_ttx[global.current_bardstale].title;
+			global.bardstales_text_field:SetText(text);
+			mindmisle = 38;
+		end;
+
+		global.buttons.w7_button = loveframes.Create("imagebutton");
+		global.buttons.w7_button:SetImage(media.images.button9);
+		global.buttons.w7_button:SetPos(x+635,y+710);
+		global.buttons.w7_button:SizeToImage()
+		global.buttons.w7_button:SetText(lognames.mindgame.call);
+		global.buttons.w7_button.OnClick = function(object)
+			mindmisle = 38;
 			end;
 	end;
 	draw.mindgameLog ();
