@@ -88,7 +88,12 @@ function mobsoperatons.addMob(index,person)
 	chars_mobs_npcs[index].aggressor = 0;
 	chars_mobs_npcs[index].perks = tmpclass2.perks;
 	chars_mobs_npcs[index].immunities = tmpclass2.immunities;
-
+	
+	chars_mobs_npcs[index].controlled_by = 0;
+	chars_mobs_npcs[index].controlled_mob = 0;
+	chars_mobs_npcs[index].controlled_undead = 0;
+	chars_mobs_npcs[index].controlled_summon = 0;
+	
 	--chars_mobs_npcs[index].class = tmpclass2.class;
 
 	chars_mobs_npcs[index].hp_base = tmpclass2.lv*tmpclass2.hp_base_mod;

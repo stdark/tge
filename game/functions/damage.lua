@@ -3614,6 +3614,15 @@ function damage.ifBattleEnds() --FIXME even mobs ll be able to start and end bat
 				chars_mobs_npcs[i].tmpexpdeaths = 0;
 			end;
 		end;
+		for i=1,#chars_mobs_npcs do
+			chars_mobs_npcs[i].controlled_by = 0;
+			chars_mobs_npcs[i].controlled_mob = 0;
+			chars_mobs_npcs[i].controlled_undead = 0;
+			chars_mobs_npcs[i].controlled_summon = 0;
+			if chars_mobs_npcs[i].summoned then
+				damage.HPminus(chars_mobs_npcs[i].hp);
+			end;
+		end;
 	end;
 	if not helpers.partyAlive () then
 		game_status = "gameover";
@@ -5081,6 +5090,14 @@ function damage.instantCast () --FIXME use lvl, num
 					_buff = prebuff+delta;
 				end;
 				chars_mobs_npcs[victim].enslave = chars_mobs_npcs[victim].enslave-_buff;
+				if chars_mobs_npcs[victim].enslave <= 0 then
+					if chars_mobs_npcs[victim].controlledby ~= 0 then
+						if chars_mobs_npcs[chars_mobs_npcs[victim].controlledby].controlled_mob == index then
+							chars_mobs_npcs[chars_mobs_npcs[victim].controlledby].controlled_mob = 0;
+						end;
+						chars_mobs_npcs[victim].controlledby = 0;
+					end;
+				end;
 				prebuff = prebuff-_buff;
 				buff = buff + _buff;
 			end;
@@ -5816,14 +5833,15 @@ function damage.instantCast () --FIXME use lvl, num
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		if lvl[1]*num[1] > chars_mobs_npcs[victim].rezmind
 		and chars_mobs_npcs[victim].sleep==0
-		and chars_mobs_npcs[victim].berserk==0 and chars_mobs_npcs[victim].stone==0
+		and chars_mobs_npcs[victim].enslave == 0
+		and chars_mobs_npcs[victim].charm == 0
+		and chars_mobs_npcs[victim].berserk==0 
+		and chars_mobs_npcs[victim].stone==0
 		and chars_mobs_npcs[victim].freeze==0
 		then
 			debuff=10+lvl[1]*num[1];
 			chars_mobs_npcs[victim].berserk=debuff;
 			chars_mobs_npcs[victim].fear = 0;
-			chars_mobs_npcs[victim].charm=0;
-			chars_mobs_npcs[victim].enslave=0;
 			chars_mobs_npcs[victim].battleai="melee";
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.berserk[chars_mobs_npcs[victim].gender]);
 		else
@@ -5839,13 +5857,14 @@ function damage.instantCast () --FIXME use lvl, num
 		and chars_mobs_npcs[victim].insane==0 and chars_mobs_npcs[victim].sleep==0
 		and chars_mobs_npcs[victim].enslave==0 and chars_mobs_npcs[victim].stone==0
 		and chars_mobs_npcs[victim].freeze==0
+		and chars_mobs_npcs[victim].charm == 0
+		and chars_mobs_npcs[victim].berserk==0 
 		then
 			debuff=10+lvl[1]*num[1];
-			chars_mobs_npcs[victim].enslave=debuff;
+			chars_mobs_npcs[victim].enslave = debuff;
 			chars_mobs_npcs[victim].fear = 0;
-			chars_mobs_npcs[victim].charm=0;
-			chars_mobs_npcs[victim].berserk=0;
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.enslaved[chars_mobs_npcs[victim].gender]);
+			helpers.recontrolMobs(current_mob,"enslave",vitcim);
 		else
 			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
@@ -5864,6 +5883,7 @@ function damage.instantCast () --FIXME use lvl, num
 			chars_mobs_npcs[victim].fear = 0;
 			chars_mobs_npcs[victim].berserk=0;
 			helpers.addToActionLog(helpers.mobName(victim) .. " " .. lognames.actions.controlled[chars_mobs_npcs[victim].gender]);
+			helpers.recontrolMobs(current_mob,"controlundead",vitcim);
 		else
 			helpers.addToActionLog(lognames.actions.noeffect);
 		end;
@@ -5967,6 +5987,7 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[#chars_mobs_npcs].fireprint_power = 3;
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
+		helpers.recontrolMobs(current_mob,"summon",vitcim);
 	end;
 	
 	if missle_type == "airelemental" then
@@ -5974,6 +5995,7 @@ function damage.instantCast () --FIXME use lvl, num
 		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
+		helpers.recontrolMobs(current_mob,"summon",vitcim);
 	end;
 	
 	if missle_type == "waterelemental" then
@@ -5982,6 +6004,7 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		chars_mobs_npcs[#chars_mobs_npcs].waterwalking = 100000;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
+		helpers.recontrolMobs(current_mob,"summon",vitcim);
 	end;
 	
 	if missle_type == "earthelemental" then
@@ -5989,9 +6012,10 @@ function damage.instantCast () --FIXME use lvl, num
 		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
 		helpers.addToActionLog( lognames.actions.elementalcalled);
+		helpers.recontrolMobs(current_mob,"summon",vitcim);
 	end;
 	
-	if missle_type == "clone" then
+	if missle_type == "clone" then --need recontrol or not?
 		table.insert(chars_mobs_npcs,{person="mob",control="ai",ai="agr",x=boomx,y=boomy,rot=math.random(1,6),class="clone",fraction="party"});
 		mobsoperatons.addMob(#chars_mobs_npcs,"mob");
 		chars_mobs_npcs[#chars_mobs_npcs].summoned = true;
@@ -6228,7 +6252,8 @@ function damage.mindGameCast()
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
 		if chars_mobs_npcs[current_mob].lvl_mind*chars_mobs_npcs[current_mob].num_mind > chars_mobs_npcs[victim].rezmind
 		and chars_mobs_npcs[victim].sleep==0
-		and chars_mobs_npcs[victim].berserk==0 and chars_mobs_npcs[victim].stone==0
+		and chars_mobs_npcs[victim].berserk==0
+		and chars_mobs_npcs[victim].stone==0
 		and chars_mobs_npcs[victim].freeze==0
 		then
 			local debuff = chars_mobs_npcs[current_mob].lvl_mind;
@@ -6582,6 +6607,9 @@ function damage.deadNow (index)
 	if hlandscape[chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] > 25 then
 		hlandscape[chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] = 0;
 	end;
+	
+	helpers.recontrolMobs(index,"any",false);
+	
 	chars_mobs_npcs[index].status = -1;
 	chars_mobs_npcs[index].protectionmode = "none";
 	chars_mobs_npcs[index].trick = "none";
@@ -6811,6 +6839,14 @@ function damage.uncondNow (index)
 	chars_mobs_npcs[index].dash_dur = 0;
 	chars_mobs_npcs[index].dash_power = 0;
 	chars_mobs_npcs[index].invisibility = 0;
+	if chars_mobs_npcs[index].controlledby ~= 0 then
+		if chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_mob == index then
+			chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_mob = 0;
+		elseif chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_undead == index then
+			chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_undead = 0;
+		end;
+		chars_mobs_npcs[index].controlledby = 0;
+	end;
 	tmp_name_uncond = chars_stats[index].name;
 	helpers.addToActionLog( tmp_name_uncond .. lognames.actions.uncond);
 	--

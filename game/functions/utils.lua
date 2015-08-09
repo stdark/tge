@@ -220,7 +220,7 @@ function utils.themeMusicVolumeDynamic ()
 		if global.music_switch_to == "mainmenu" and global.theme_music_array[i].type == global.music_switch_to then
 			local volume = global.theme_music_array[i].track:getVolume()
 			if volume < global.theme_music_volume then
-				global.theme_music_array[i]["track"]:setVolume(volume+_deltaplus);
+				global.theme_music_array[i]["track"]:setVolume(volume+_deltaminus);
 			end;
 		elseif global.theme_music_array[i].type == "mainmenu" then
 			local volume = global.theme_music_array[i].track:getVolume()

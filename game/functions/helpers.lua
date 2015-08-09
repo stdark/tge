@@ -5418,5 +5418,48 @@ function helpers.divineHeal(index)
 	chars_mobs_npcs[index]["arms_health"].rh = 1;
 	chars_mobs_npcs[index]["arms_health"].lh = 1;
 	chars_mobs_npcs[index].pneumothorax = 0;
+	
+	if chars_mobs_npcs[index].controlledby ~= 0 then
+		if chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_mob == index then
+			chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_mob = 0;
+		elseif chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_undead == index then
+			chars_mobs_npcs[chars_mobs_npcs[index].controlledby].controlled_undead = 0;
+		end;
+		chars_mobs_npcs[index].controlledby = 0;
+	end;
+	
 	helpers.addToActionLog(helpers.mobName(index) .. lognames.actions.healed[chars_mobs_npcs[index].gender]);
+end;
+
+function helpers.recontrolMobs(index,spell,newcontrolled)
+	for i=1,#chars_mobs_npcs do
+		if chars_mobs_npcs[index].ai ~= "building" and chars_mobs_npcs[i].controlledby == index then
+			if spell == "enslave" or spell == "any" then
+				local controlled = chars_mobs_npcs[index].controlled_mob;
+				chars_mobs_npcs[controlled].enslave = 0;
+				chars_mobs_npcs[controlled].controlledby = 0;
+				chars_mobs_npcs[index].controlled_mob = 0;
+			elseif spell == "controlundead" or spell == "any" then
+				local controlled = chars_mobs_npcs[index].controlled_undead;
+				hars_mobs_npcs[controlled].enslave = 0;
+				chars_mobs_npcs[index].controlled_undead = 0;
+				chars_mobs_npcs[controlled].controlledby = 0;
+			elseif spell == "summon" or spell == "any" then
+				local controlled = chars_mobs_npcs[index].controlled_summon;
+				chars_mobs_npcs[index].controlled_summon = 0;
+				chars_mobs_npcs[controlled].controlledby = 0;
+				damage.HPminus(controlled);
+			end;	
+		end;
+	end;
+	if newcontrolled then
+		chars_mobs_npcs[newcontroleed].controlledby = index;	
+		if spell == "enslave" then
+			chars_mobs_npcs[index].controlled_enslave = newcontroleed;
+		elseif spell == "controlundead" then
+			chars_mobs_npcs[index].controlled_undead = newcontroleed;
+		elseif spell == "summon" then
+			chars_mobs_npcs[index].controlled_summon = newcontroleed;
+		end;
+	end;
 end;
