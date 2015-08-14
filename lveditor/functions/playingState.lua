@@ -70,8 +70,11 @@ function playingState.load()
 	end;
 	door_img = {};
 	for i=1,4 do
-		local _x = (i-1)*64;
-		table.insert(door_img,love.graphics.newQuad(_x, 448, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
+		door_img[i] = {};
+		for h=1,5 do
+			local _x = (h-1)*64;
+			door_img[i][h]=love.graphics.newQuad(_x, 448, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+		end;
 	end;
 	--/special objects
 	
@@ -304,6 +307,7 @@ function playingState.load()
 	well_current_power = 5;
 	well_current_duration = 10;
 	well_current_map = 1;
+	
 	chest_current_rotation = 1;
 	chest_current_material = 25;
 	chest_current_opened = 1;
@@ -317,6 +321,21 @@ function playingState.load()
 	chest_traptypes={"none","random","fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
 	chest_current_traptype_index = 1;
 	chest_current_traptype_name=chest_traptypes[chest_current_traptype_index];
+	
+	door_current_rotation = 1;
+	door_current_material = 25;
+	door_current_opened = 1;
+	door_current_locked = 1;
+	door_locktypes = {"none","simple","cylinder","disk"};
+	door_current_locktype_index = 1;
+	door_current_locktype_name = door_locktypes[door_current_locktype_index];
+	door_current_lockcode = "random";
+	door_current_trapcode = "random";
+	door_current_trappower = 10;
+	door_traptypes={"none","random","fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
+	door_current_traptype_index = 1;
+	door_current_traptype_name=door_traptypes[door_current_traptype_index];
+	
 	trap_current_trapcode = "random";
 	trap_current_trappower = 10;
 	trap_traptypes={"random","fire","cold","static","poison","acid","disease","spikes","teleport",",bell"};
@@ -799,6 +818,154 @@ function special_objects_parametres (special_objects_status)
 	end;
 	
 	if special_objects_status == "ch" then
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-140);
+		text:SetMaxWidth(100);
+		text:SetText("lock type");
+		
+		button1 = loveframes.Create("button")
+		button1:SetPos(global.screenWidth-140, global.screenHeight-140);
+		button1:SetHeight(20);
+		button1:SetWidth(20);
+		button1:SetText("<");
+		button1.OnClick = function(object)
+			if chest_current_locktype_index and chest_current_locktype_index  > 1 then
+				chest_current_locktype_index = chest_current_locktype_index - 1;
+				chest_current_locktype_name = chest_locktypes[chest_current_locktype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		button2 = loveframes.Create("button")
+		button2:SetPos(global.screenWidth-40, global.screenHeight-140);
+		button2:SetHeight(20);
+		button2:SetWidth(20);
+		button2:SetText(">");
+		button2.OnClick = function(object)
+			if chest_current_locktype_index and chest_current_locktype_index < #chest_locktypes then
+				chest_current_locktype_index = chest_current_locktype_index + 1;
+				chest_current_locktype_name = chest_locktypes[chest_current_locktype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		
+		if chest_current_locktype_index > 1 then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-120);
+			text:SetMaxWidth(100);
+			text:SetText("lock code");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-120);
+			textinput:SetWidth(76);
+			textinput:SetText(chest_current_lockcode);
+			textinput:SetLimit(12);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					chest_current_lockcode  = text;
+				end;
+			end;
+		end;
+		
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-100);
+		text:SetMaxWidth(100);
+		text:SetText("trap type");
+		
+		button3 = loveframes.Create("button")
+		button3:SetPos(global.screenWidth-140, global.screenHeight-100);
+		button3:SetHeight(20);
+		button3:SetWidth(20);
+		button3:SetText("<");
+		button3.OnClick = function(object)
+			if chest_current_traptype_index and chest_current_traptype_index  > 1 then
+				chest_current_traptype_index = chest_current_traptype_index - 1;
+				chest_current_traptype_name = chest_traptypes[chest_current_traptype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		button4 = loveframes.Create("button")
+		button4:SetPos(global.screenWidth-40, global.screenHeight-100);
+		button4:SetHeight(20);
+		button4:SetWidth(20);
+		button4:SetText(">");
+		button4.OnClick = function(object)
+			if chest_current_traptype_index and chest_current_traptype_index < #chest_traptypes then
+				chest_current_traptype_index = chest_current_traptype_index + 1;
+				chest_current_traptype_name = chest_traptypes[chest_current_traptype_index];
+				loveframes.util.RemoveAll();
+				drawUIButtons();
+				draw_buttons();
+				special_objects_parametres(special_objects_status);
+			end;
+		end;
+		
+		if chest_current_traptype_index > 1 then
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-80);
+			text:SetMaxWidth(100);
+			text:SetText("trap power");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-80);
+			textinput:SetWidth(76);
+			textinput:SetText(chest_current_trappower);
+			textinput:SetLimit(2);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					chest_current_trappower  = text; 
+				end;
+			end;
+			
+			local text = loveframes.Create("text");
+			text:SetPos(global.screenWidth-200, global.screenHeight-60);
+			text:SetMaxWidth(100);
+			text:SetText("trap code");
+			
+			local textinput = loveframes.Create("textinput");
+			textinput:SetPos(global.screenWidth-120, global.screenHeight-60);
+			textinput:SetWidth(76);
+			textinput:SetText(chest_current_trapcode);
+			textinput:SetLimit(9);
+			textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+			textinput.OnEnter = function(object, text)
+				if text ~= nil then
+					chest_current_trapcode  = text; --"random","random3","random4","random5","123456789"
+				end;
+			end;
+			
+		end;
+		
+		local text = loveframes.Create("text");
+		text:SetPos(global.screenWidth-200, global.screenHeight-40);
+		text:SetMaxWidth(100);
+		text:SetText("material");
+		
+		local textinput = loveframes.Create("textinput");
+		textinput:SetPos(global.screenWidth-120, global.screenHeight-40);
+		textinput:SetWidth(76);
+		textinput:SetText(chest_current_material);
+		textinput:SetLimit(9);
+		textinput:SetUsable({"0","1","2","3","4","5","6","7","8","9"});
+		textinput.OnEnter = function(object, text)
+			if text ~= nil and tonumber(text) > 0 then
+				chest_current_material  = tonumber(text); --"random","random3","random4","random5","123456789"
+			end;
+		end;
+
+	end;
+	
+	if special_objects_status == "dr" then
 		local text = loveframes.Create("text");
 		text:SetPos(global.screenWidth-200, global.screenHeight-140);
 		text:SetMaxWidth(100);
@@ -2715,6 +2882,19 @@ function playingState.mousepressed(x, y, button)
 		end;
 	end;
 	
+	if editor_status == "objects" and special_objects_status == "dr" then
+		if button=="wu" then
+			if door_current_rotation < 4 then
+				door_current_rotation = door_current_rotation + 1;
+			end;
+		end;
+		if button=="wd" then
+			if door_current_rotation > 1 then
+				door_current_rotation = door_current_rotation - 1;
+			end;
+		end;
+	end;
+	
 	loveframes.mousepressed(x, y, button);
 end
 
@@ -2800,6 +2980,26 @@ function playingState.mousereleased(x, y, button)
 				_trapcode = chest_current_trapcode;
 			end;
 			table.insert(bags_list,{x=ring[chest_current_rotation].x,y=ring[chest_current_rotation].y,xi=cursor_world_x,yi=cursor_world_y,typ="chest", dir=chest_current_rotation,inspected=false, material=chest_current_material,opened = false, locked=_locked, locktype=_locktype, lockcode =_lockcode, traped=_traped, triggers="", trapmodel=_traptype, trappower=_trappower,trapcode=_trapcode, img=chest_img[chestImageIndexFromMaterial(chest_current_material)][chest_current_rotation]});
+			elseif special_objects_status == "dr" then
+			local ring = smallRingArea(cursor_world_x,cursor_world_y);
+			local _locked = "false";
+			local _locktype = "false";
+			local _lockcode = "false";
+			if door_current_locktype_index > 1 then
+				_locked = true;
+				_locktype = door_current_locktype_index - 1;
+				_lockcode = door_current_lockcode;
+			end;
+			local _traped = "false";
+			local _traptype = "false";
+			local _trapcode = "false";
+			local _trappower = "false";
+			if door_current_traptype_index > 1 then
+				_traped = true;
+				_traptype = door_traptypes[door_current_traptype_index];
+				_trapcode = door_current_trapcode;
+			end;
+			table.insert(bags_list,{x=cursor_world_x,y=cursor_world_y,xi=cursor_world_x,yi=cursor_world_y,typ="door", dir=door_current_rotation,inspected=false, material=door_current_material,opened = false, locked=_locked, locktype=_locktype, lockcode =_lockcode, traped=_traped, triggers="", trapmodel=_traptype, trappower=_trappower,trapcode=_trapcode, img=door_img[doorImageIndexFromMaterial(door_current_material)][door_current_rotation]});
 		elseif special_objects_status == "tr" then
 			_traptype = trap_traptypes[trap_current_traptype_index];
 			_trapcode = trap_current_trapcode;
@@ -2873,6 +3073,18 @@ function playingState.keyreleased(key)
 end;
 
 function chestImageIndexFromMaterial (material)
+	local index = 1;
+	if material > 25 and material <= 50 then
+		index = 2;
+	elseif material > 50 and material <= 75 then
+		index = 3;
+	elseif material > 75 then
+		index = 4;
+	end;
+	return index;
+end;
+
+function doorImageIndexFromMaterial (material)
 	local index = 1;
 	if material > 25 and material <= 50 then
 		index = 2;
@@ -4159,6 +4371,7 @@ function playingState.draw()
 		
 		bg=bag_img,
 		ch=chest_img[chestImageIndexFromMaterial(chest_current_material)][chest_current_rotation],
+		dr=door_img[doorImageIndexFromMaterial(door_current_material)][door_current_rotation],
 		cr=crystals_img,
 		th=trashheap_img,
 		sp=scullpile_img,
@@ -4187,6 +4400,13 @@ function playingState.draw()
 			love.graphics.print(text,global.screenWidth-100, global.screenHeight-160);
 			love.graphics.print(chest_current_locktype_name,global.screenWidth-100, global.screenHeight-140);	
 			love.graphics.print(chest_current_traptype_name,global.screenWidth-100, global.screenHeight-100);		
+		end;
+		
+		if special_objects_status == "dr" then
+			local text = "rotation: " .. door_current_rotation;
+			love.graphics.print(text,global.screenWidth-100, global.screenHeight-160);
+			love.graphics.print(door_current_locktype_name,global.screenWidth-100, global.screenHeight-140);	
+			love.graphics.print(door_current_traptype_name,global.screenWidth-100, global.screenHeight-100);		
 		end;
 		
 		if special_objects_status == "wl" then

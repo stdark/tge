@@ -411,6 +411,11 @@ function helpers.countBoomNumbers ()
 			lvl[i] = 3;
 			num[i] = 10;
 		end;
+	elseif missle_drive == "music" then
+		for i =1,4 do
+			lvl[i] = chars_mobs_npcs[current_mob].lvl_music;
+			num[i] = chars_mobs_npcs[current_mob].num_music;
+		end;
 	end;
 	return lvl,num;
 end;
@@ -2136,6 +2141,7 @@ function helpers.countMeleeRecoveryChar (index)
 	local armorrecovery = 0;
 	local shieldrecovery = 0;
 	local speedrecovery = 0;
+	local over_penalty = 0;
 
 	if chars_mobs_npcs[index]["equipment"].rh > 0 then
 		recovery = inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].rh].ttxid].rt;
@@ -2202,8 +2208,10 @@ function helpers.countMeleeRecoveryChar (index)
 		end;
 		recovery = recovery+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].rt;
 	end
-
-	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
+	if helpers.Overburdened (current_mob) then
+		over_penalty = 50;	
+	end;
+	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5)) + over_penalty;
 
 	return recovery;
 end;
@@ -2259,7 +2267,7 @@ function helpers.countRangeRecoveryChar (index)
 			armorrecovery = 20;
 		end;
 		recovery = recovery+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].rt;
-	end
+	end;
 	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
 	return recovery;
 end;
@@ -3111,8 +3119,10 @@ function helpers.inv_tips_add()
 	tip_classtitle = inventory_ttx[tmpinv2].classtitle;
 	tip_class = inventory_ttx[tmpinv2].class;
 	tip_price = inventory_ttx[tmpinv2].price; --base price
+	tip_weight = inventory_ttx[tmpinv2].weight;
 	if tip_class == "ammo" or tip_class == "throwing" then
 		tip_price = tip_price*list[tmpinv].q;
+		tip_weight = tip_weight*list[tmpinv].q;
 	end;
 	tip_hardened = "";
 	if list[tmpinv].h > 0 and list[tmpinv].h < 1000 then
@@ -3777,14 +3787,14 @@ function helpers.recalcBattleStats (index)
 		chars_mobs_npcs[index].dex_debuff_power = math.max(chars_mobs_npcs[index].dex_debuff_power,math.ceil(chars_mobs_npcs[index].dex/2));
 		chars_mobs_npcs[index].acu_debuff_power = math.max(chars_mobs_npcs[index].acu_debuff_power,math.ceil(chars_mobs_npcs[index].acu/2));
 	end;
-	if chars_mobs_npcs[index].poison_dur > 0  then --POISON
+	if chars_mobs_npcs[index].poison_dur > 0 and chars_mobs_npcs[index].poison_status < chars_mobs_npcs[index].hp_max then --POISON
 		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + math.ceil(chars_mobs_npcs[index].mgt*0.25);
 		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + math.ceil(chars_mobs_npcs[index].enu*0.25);
 		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.25);
 		chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.25);
 		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(chars_mobs_npcs[index].int*0.1);
 		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.1);
-	else
+	elseif chars_mobs_npcs[index].poison_dur > 0 then
 		chars_mobs_npcs[index].mgt_debuff_power = chars_mobs_npcs[index].mgt_debuff_power + math.ceil(chars_mobs_npcs[index].mgt*0.5);
 		chars_mobs_npcs[index].enu_debuff_power = chars_mobs_npcs[index].enu_debuff_power + math.ceil(chars_mobs_npcs[index].enu*0.5);
 		chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.5);
@@ -3801,10 +3811,23 @@ function helpers.recalcBattleStats (index)
 		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.5);
 		chars_mobs_npcs[index].chr_debuff_power = chars_mobs_npcs[index].chr_debuff_power + math.ceil(chars_mobs_npcs[index].chr*0.5);
 	end;
-	if chars_mobs_npcs[index].disease > 0  then --INSANE
+	if chars_mobs_npcs[index].insane > 0  then --INSANE
 		chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(chars_mobs_npcs[index].int*0.75);
 		chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.75);
 		chars_mobs_npcs[index].chr_debuff_power = chars_mobs_npcs[index].chr_debuff_power + math.ceil(chars_mobs_npcs[index].chr*0.75);
+	end;
+	if chars_mobs_npcs[index].person == "char" then
+		if chars_mobs_npcs[index].sleepiness then --SLEEPINESS
+			chars_mobs_npcs[index].int_debuff_power = chars_mobs_npcs[index].int_debuff_power + math.ceil(chars_mobs_npcs[index].int*0.25);
+			chars_mobs_npcs[index].spr_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].spr*0.25);
+			chars_mobs_npcs[index].chr_debuff_power = chars_mobs_npcs[index].chr_debuff_power + math.ceil(chars_mobs_npcs[index].chr*0.25);
+			chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.25);
+			chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.25);
+		end;
+		if helpers.Overburdened(current_mob) then --overburdening
+			chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.5);
+			chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.5);
+		end;
 	end;
 	for e=1,#chars_mobs_npcs[index]["equipment"] do
 		if chars_mobs_npcs[index]["equipment"][e] > 0 then
@@ -4785,6 +4808,32 @@ function helpers.addHunger(index,value)
 	end;
 end;
 
+function helpers.addSleepiness(index,value)
+	if helpers.aliveNature(index) then
+		chars_mobs_npcs[index].vigor = chars_mobs_npcs[index].vigor - value;
+		if chars_mobs_npcs[index].vigor < 0 and chars_mobs_npcs[index].sp > 0 and not chars_mobs_npcs[index].sleepiness then
+			chars_mobs_npcs[index].sleepiness = true;
+			local mob_name = helpers.mobName(index);
+			helpers.addToActionLog( mob_name .. lognames.actions.feelssleepy[chars_mobs_npcs[current_mob].gender]);
+		end;
+		if chars_mobs_npcs[index].vigor < -chars_mobs_npcs[index].enu and chars_mobs_npcs[index].status == 1 then
+			chars_mobs_npcs[index].insane = 5;
+			chars_mobs_npcs[index][madeffect[rnd]] =  math.abs(chars_mobs_npcs[index].sleepiness);
+			helpers.addToActionLog( mob_name .. lognames.actions.insane[chars_mobs_npcs[current_mob].gender]);
+		end;
+	end;
+end;
+
+function helpers.vigorPlus(index,value) --FIXME not sure if needed
+	if helpers.aliveNature(index) then
+		chars_mpbs_npcs[index].vigor = math.min(chars_mpbs_npcs[index].enu*3600,chars_mpbs_npcs[index].vigor+value);
+		if chars_mpbs_npcs[index].vigor > 0  then
+			chars_mobs_npcs[index].sleepiness = false;
+			chars_mobs_npcs[index].insane = 0;
+		end;
+	end;
+end;
+
 function helpers.mobHasPerk(index,perk)
 	for i=1,#chars_mobs_npcs[index]["perks"] do
 		if chars_mobs_npcs[index]["perks"][i] == perk then
@@ -5462,4 +5511,20 @@ function helpers.recontrolMobs(index,spell,newcontrolled)
 			chars_mobs_npcs[index].controlled_summon = newcontroleed;
 		end;
 	end;
+end;
+
+function helpers.countWeight (index)
+	local weight = 0;
+	for i=1,#chars_mobs_npcs[index]["inventory_list"] do
+		weight = weight + inventory_ttx[chars_mobs_npcs[index]["inventory_list"][i].ttxid].weight;
+	end;
+	return weight;
+end;
+
+function helpers.Overburdened (index)
+	local weight = helpers.countWeight (index);
+	if weight > chars_mobs_npcs[current_mob].mgt*3+10 then
+		return true;
+	end;
+	return false;
 end;

@@ -2617,17 +2617,19 @@ function playingState.mousereleased (x,y,button)
 					
 					global.bardstales_pull = {};
 					for i=1,#party.bardstales do
-						local instrument_id = nil;
-						for key,value in pairs(instruments) do
-							if party.bardstales[i].instrument == key then
-								instrument_id = value;
+						if chars_mobs_npcs[current_mob].num_music > 0 then
+							local instrument_id = nil;
+							for key,value in pairs(instruments) do
+								if party.bardstales[i].instrument == key then
+									instrument_id = value;
+								end;
 							end;
-						end;
-						if instrument_id then
-							for j=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
-								if chars_mobs_npcs[current_mob]["inventory_list"][j].ttxid == instrument_id then
-									table.insert(global.bardstales_pull,i);
-									break;
+							if instrument_id then
+								for j=1,#chars_mobs_npcs[current_mob]["inventory_list"] do
+									if chars_mobs_npcs[current_mob]["inventory_list"][j].ttxid == instrument_id then
+										table.insert(global.bardstales_pull,i);
+										break;
+									end;
 								end;
 							end;
 						end;
@@ -3995,7 +3997,9 @@ function playingState.mousereleased (x,y,button)
 			end;
 
 			if selected_portrait > 0 and selected_portrait == current_mob and holding_smth > 0 -- bomb
-			and inventory_ttx[list[holding_smth].ttxid].subclass == "bomb" then
+			and inventory_ttx[list[holding_smth].ttxid].subclass == "bomb" 
+			and helpers.countDistance (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,cursor_world_x,cursor_world_y) <= 3 + math.ceil(chars_mobs_npcs[current_mob].mgt/10)
+			then
 				bomb_smth = holding_smth;
 				utils.playSfx(media.sounds.inv_bottle_put,1);
 				potionname = inventory_ttx[list[holding_smth].ttxid].title;
@@ -4181,8 +4185,9 @@ function playingState.mousereleased (x,y,button)
 					holding_smth=0;
 				end;
 			end;
-			if selected_portrait > 0 and selected_portrait == current_mob -- drink a potion
+			if selected_portrait > 0 and selected_portrait == current_mob -- play music
 			and inventory_ttx[list[holding_smth].ttxid].class == "musicalinstrument" then
+			--FIXME if num_music > 0 else noice
 				game_status = "neutral";
 				global.theme_music_volume = math.max(0.01,global.theme_music_volume - 0.05);
 				for i=1,#global.theme_music_array do
@@ -8789,7 +8794,7 @@ function restoreRT ()
 					damage.HPplus(i,chars_mobs_npcs[i].hp_regeneration);
 					helpers.addHunger(i,value);
 				end;
-				if chars_mobs_npcs[i].sp < chars_mobs_npcs[i].sp_max and chars_mobs_npcs[i].sp_regeneration > 0 and helpers.doNotFeelHunger(i) then
+				if chars_mobs_npcs[i].sp < chars_mobs_npcs[i].sp_max and chars_mobs_npcs[i].sp_regeneration > 0 and helpers.doNotFeelHunger(i) and chars_mobs_npcs[i].insane == 0 then
 					damage.SPplus(i,chars_mobs_npcs[i].sp_regeneration,true);
 					helpers.addHunger(i,value);
 				end;
@@ -8834,7 +8839,7 @@ function restoreRT ()
 										damage.STminus(i,value,false);
 									end;
 								end;
-								if key == rt then
+								if key == rt and party.resting == 0 then
 									if value > 0 then
 										damage.RTplus(i,value,false);
 									else
@@ -9002,16 +9007,17 @@ function restoreRT ()
 	end;
 	
 	for i=1,#chars_mobs_npcs do
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].slow_dur == 0 then
+
+		if party.resting == 0 and chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].slow_dur == 0 then
 			chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 		end;
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur == 0 then
+		if  party.resting == 0 and chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur == 0 then
 			chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 		end;
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur > 0 and chars_mobs_npcs[i].haste > 0 then
+		if  party.resting == 0 and chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur > 0 and chars_mobs_npcs[i].haste > 0 then
 			chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 		end;
-		if chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur > 0 and chars_mobs_npcs[i].haste == 0 then
+		if  party.resting == 0 and chars_mobs_npcs[i].rt < 200 and chars_mobs_npcs[i].status == 1 and  chars_mobs_npcs[i].freeze==0 and chars_mobs_npcs[i].stone==0 and chars_mobs_npcs[i].haste > 0 and chars_mobs_npcs[i].slow_dur > 0 and chars_mobs_npcs[i].haste == 0 then
 			if global.timer200/2 == math.ceil(global.timer200/2) then
 				chars_mobs_npcs[i].rt = chars_mobs_npcs[i].rt+1;
 			end;

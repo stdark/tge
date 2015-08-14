@@ -5,7 +5,7 @@ chars_stats={};
                    
 chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name="John Doo", face=1, age=25, lv=1, xp=0, nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="none", shader={225, 230, 0, 125},
-            mgt=5,enu=24,dex=15,spd=25,acu=15,sns=15,int=50,spr=50,chr=25,luk=50, --stats
+            mgt=15,enu=24,dex=15,spd=25,acu=15,sns=15,int=50,spr=50,chr=25,luk=50, --stats
             hp_regeneration = 0, sp_regeneration = 0, st_regeneration = 0,moral = 20, nightvision = 0, claws = 0, teeth = 0,
             ac=0,dt=0,dr=0,
             rezfire=0, rezcold=0, rezstatic=0, rezpoison=0, rezacid=0, rezmind=0, rezspirit=0, rezdisease=0, rezlight=0, rezdarkness=0,--resistances
@@ -19,8 +19,8 @@ chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=4,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=10, num_monsterid=20,num_stuffid=1, num_thievery = 20, num_leadership = 20,num_regeneration = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 5, lvl_leadership = 5,lvl_regeneration = 0,--skills other lvl
+            num_alchemy=20,num_repair=4,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=10, num_monsterid=20,num_stuffid=1, num_thievery = 20, num_leadership = 20,num_regeneration = 0,num_music = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 5, lvl_leadership = 5,lvl_regeneration = 0,lvl_music=0,--skills other lvl
                    }
 chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name="Johnny Bravo", face=2,  age=25, lv=1, xp=0, nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="criminal", shader={200, 255, 200, 125},
@@ -38,8 +38,8 @@ chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=1, num_picklocking=15, num_traps=10, num_spothidden=15, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=3, lvl_spothidden=3, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
+            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=1, num_picklocking=15, num_traps=10, num_spothidden=15, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=3, lvl_spothidden=3, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music=0,--skills other lvl
                    }
 chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name="John Rambo", face=3,  age=25, lv=1, xp=0,  nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="warrior", shader={200, 200, 255, 125},
@@ -57,8 +57,8 @@ chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
+            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music=0,--skills other lvl
                    }
 chars_stats[4]={class="rogue", subclass=1, race="woodelf", sprite = "rogue", name="John Galt", face=7,  age=25,  lv=1, xp=0,  nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="noble", shader={255, 125, 255, 125},
@@ -76,8 +76,8 @@ chars_stats[4]={class="rogue", subclass=1, race="woodelf", sprite = "rogue", nam
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=0, num_thievery = 1, num_leadership = 0,num_regeneration = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=0, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,--skills other lvl
+            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=0, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 20,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=0, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music = 5,--skills other lvl
                    }               
 
 chars_stats[1].spells={
@@ -352,6 +352,8 @@ party.connections = {"nilslarsen"};
 party.bardstales = {};
 
 party.gold = 9800000;
+
+party.resting = 0;
 
 party.quests = {
 {id=1,stages={true,true,true,false,false},done=false},

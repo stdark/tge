@@ -253,7 +253,7 @@ skills={"unarmed","sword","axe","flagpole","crushing","staff","dagger","bow","cr
 "fire","water","air","earth","body","mind","spirit","light","darkness",
 "alchemy","repair","stuffid","stealth","picklocking","traps","spothidden","monsterid","thievery",
 "bodybuilding","armmastery","meditation","mysticism",
-"trading","thievery","diplomacy","leadership","regeneration"
+"trading","thievery","diplomacy","leadership","regeneration","music",
 };
 
 stats={"mgt","enu","spd","dex","acu","sns","int","spr","luk","chr"};

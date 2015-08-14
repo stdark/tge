@@ -1550,6 +1550,16 @@ function draw.stats(index)
 	love.graphics.print("/", x+240,y+420);
 	love.graphics.print(chars_mobs_npcs[index].enu*10, x+250,y+420);
 	
+	love.graphics.print(lognames.stats.vigor, x+40,y+450);
+	love.graphics.print(chars_mobs_npcs[index].vigor, x+210,y+450);
+	--love.graphics.print("/", x+240,y+450);
+	--love.graphics.print(chars_mobs_npcs[index].enu, x+250,y+450);
+	
+	love.graphics.print(lognames.stats.burden, x+40,y+480);
+	love.graphics.print(chars_mobs_npcs[index].mgt*3+10, x+210,y+480);
+	love.graphics.print("/", x+240,y+480);
+	love.graphics.print(helpers.countWeight (current_mob), x+250,y+480);
+	
 	--
 	love.graphics.print(lognames.stats.atkm, x+400,y+220);
 	love.graphics.print(chars_mobs_npcs[index]["melee_stats"]["rh"].atkm, x+600,y+220);
@@ -1572,7 +1582,7 @@ function draw.stats(index)
 		love.graphics.print(lognames.stats.dmgr, x+400,y+310);
 		love.graphics.print(1*chars_mobs_npcs[index].arng+chars_mobs_npcs[index].crng+math.ceil(chars_mobs_npcs[index].acu/100),x+600,y+310);
 		love.graphics.print(" — ", x+620,y+310);
-		love.graphics.print(chars_mobs_npcs[index].brng*chars_mobs_npcs[index].arng+chars_mobs_npcs[index].crng+math.ceil(chars_mobs_npcs[index].acu/100),x+640,y+310);
+		love.graphics.print(chars_mobs_npcs[index].brng*chars_mobs_npcs[index].arng+chars_mobs_npcs[index].crng+math.ceil(chars_mobs_npcs[index].acu/100),x+680,y+310);
 	else
 		love.graphics.print(lognames.stats.atkr, x+400,y+280);
 		love.graphics.print(0, x+600,y+280);
@@ -1580,7 +1590,7 @@ function draw.stats(index)
 		love.graphics.print(lognames.stats.dmgr, x+400,y+310);
 		love.graphics.print(0,x+600,y+310);
 		love.graphics.print(" — ", x+630,y+310);
-		love.graphics.print(0,x+640,y+310);
+		love.graphics.print(0,x+680,y+310);
 	end;
 	--
 	local protection = helpers.countProtection (index);
@@ -1853,6 +1863,11 @@ function draw.stats(index)
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
+	if chars_mobs_npcs[current_mob].sleepiness then
+		local str = tips_conditions.sleepiness;
+		love.graphics.print(str, x+944,y+260 + addy4*15);
+		addy4 = addy4 + 1;
+	end;
 	if chars_mobs_npcs[current_mob].immobilize > 0 then
 		local str = tips_conditions.immobilized;
 		love.graphics.print(str, x+944,y+260 + addy4*15);
@@ -1948,6 +1963,12 @@ function draw.stats(index)
 		love.graphics.print(str, x+944,y+260 + addy4*15);
 		addy4 = addy4 + 1;
 	end;
+	if helpers.Overburdened (current_mob) then
+		local str = tips_conditions.overburdened;
+		love.graphics.print(str, x+944,y+260 + addy4*15);
+		addy4 = addy4 + 1;
+	end;
+	
 	
 	love.graphics.setFont(mainFont);
 end;
@@ -3900,13 +3921,18 @@ end;
 
 function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 	loveframes.util.RemoveAll();
-	love.graphics.draw(media.images.ui, tip,mX,mY);
-	local x, y, w, h = tip:getViewport( );
+	--love.graphics.draw(media.images.ui, tip,mX,mY);
+	love.graphics.draw(media.images.tip,mX,mY);
+	--local x, y, w, h = tip:getViewport( );
+	local w = media.images.tip:getWidth( );
+	local h = media.images.tip:getHeight( );
 	if chars_mobs_npcs[current_mob].lvl_monsterid >= 3 then
-		love.graphics.draw(media.images.ui, tip,mX+w,mY); 
+		--love.graphics.draw(media.images.ui, tip,mX+w,mY);
+		love.graphics.draw(media.images.tip,mX+w,mY);
 	end;
 	if chars_mobs_npcs[current_mob].lvl_monsterid >= 4 then
-		love.graphics.draw(media.images.ui, tip,mX+2*w,mY); 
+		--love.graphics.draw(media.images.ui, tip,mX+2*w,mY);
+		love.graphics.draw(media.images.tip,mX+2*w,mY);
 	end;
 	if chars_mobs_npcs[tmpc].person == "mob" then
 		local tmpclass="mobs_stats." .. chars_mobs_npcs[tmpc].class
@@ -4250,6 +4276,16 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
 			addy3 = addy3 + 1;
 		end;
+		if chars_mobs_npcs[current_mob].insane > 0 then
+			local str = tips_conditions.insane;
+			love.graphics.print(str, mX+w+addx2,y+150 + addy3*15);
+			addy4 = addy4 + 1;
+		end;
+		if chars_mobs_npcs[current_mob].sleepiness then
+			local str = tips_conditions.sleepiness;
+			love.graphics.print(str,mX+w+addx2,y+150 + addy3*15);
+			addy4 = addy4 + 1;
+		end;
 		if chars_mobs_npcs[tmpc].filth_dur > 0 then
 			local string = tips_conditions.filth;
 			love.graphics.print(string, mX+w+addx2,mY+150 + addy3*15);
@@ -4529,7 +4565,8 @@ end;
 
 function draw.spellbooktips ()
 	loveframes.util.RemoveAll();
-	love.graphics.draw(media.images.ui, tip,mX,mY);
+	--love.graphics.draw(media.images.ui, tip,mX,mY);
+	love.graphics.draw(media.images.tip,mX,mY);
 	love.graphics.setColor(0, 0, 0);
 	love.graphics.setFont(statFont);
 	love.graphics.print(magic.spell_tips[missle_type].title, mX+70-#magic.spell_tips[missle_type].title,mY+10);
@@ -4621,7 +4658,8 @@ end;
 
 function draw.warbooktips ()
 	loveframes.util.RemoveAll();
-	love.graphics.draw(media.images.ui, tip,mX,mY);
+	--love.graphics.draw(media.images.ui, tip,mX,mY);
+	love.graphics.draw(media.images.tip,mX,mY);
 	love.graphics.setColor(0, 0, 0);
 	love.graphics.setFont(statFont);
 	love.graphics.print(tricks.tricks_tips[missle_type].title, mX+70-#tricks.tricks_tips[missle_type].title,mY+10);
@@ -4714,7 +4752,8 @@ end;
 function draw.inventorytips ()
 	helpers.inv_tips_add();
 	loveframes.util.RemoveAll();
-	love.graphics.draw(media.images.ui, tip,mX,mY);
+	--love.graphics.draw(media.images.ui, tip,mX,mY);
+	love.graphics.draw(media.images.tip,mX,mY);
 	love.graphics.setColor(0, 0, 0);
 	love.graphics.setFont(statFont);
 	love.graphics.print(tip_title, mX,mY+10);
@@ -4818,11 +4857,18 @@ function draw.inventorytips ()
 		love.graphics.print(tips_titles.power .. " ", mX+10,mY+300);
 		love.graphics.print(tip_quantity, mX+100,mY+300);
 	end;
+	
+	if tip_class ~= "gold" then
+		love.graphics.print(tips_titles.weight, mX+10,mY+340);
+		love.graphics.print(tip_weight, mX+70,mY+340);
+		love.graphics.print(tips_titles.wmetric, mX+110,mY+340);
+	end;
+	
     if tip_class ~= "gold" and tip_class ~= "message"  and tip_class ~= "letter" and tip_class ~= "map" then
-		love.graphics.print(tips_titles.price, mX+10,mY+340);
-		love.graphics.print(tip_price, mX+70,mY+340);
+		love.graphics.print(tips_titles.price, mX+10,mY+360);
+		love.graphics.print(tip_price, mX+70,mY+360);
 		if tips_titles.price ~= lognames.actions.unknown then
-			love.graphics.print(lognames.actions.withgold,mX+150,mY+340);
+			love.graphics.print(lognames.actions.withgold,mX+150,mY+360);
 		end;
 		love.graphics.setFont(mainFont); 
 	end;
@@ -4830,7 +4876,7 @@ function draw.inventorytips ()
 		love.graphics.print(tips_titles.quantity .. " ", mX+10,mY+300);
 		love.graphics.print(tip_quantity, mX+100,mY+300);
 	end;
-	love.graphics.print(tip_hardened, mX+10,mY+360);
+	love.graphics.print(tip_hardened, mX+10,mY+380);
     love.graphics.setColor(255, 255, 255);
 end;
 
@@ -5611,8 +5657,9 @@ function draw.hold ()
 	end;
 end;
 
-function draw.tradersSpeech()
-	love.graphics.draw(media.images.ui, tip_sub,mX,mY+360);
+function draw.tradersSpeech() --FIXME one string lower
+	--love.graphics.draw(media.images.ui, tip_sub,mX,mY+360);
+	love.graphics.draw(media.images.subtip,mX,mY+360);
 	local text = "";
 	if game_status == "buying" then
 		if global.preprice == global.price then

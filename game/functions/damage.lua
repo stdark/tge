@@ -4701,6 +4701,19 @@ function damage.instantCast () --FIXME use lvl, num
 	local recovery = helpers.countMagicRecovery (current_mob,missle_type,missle_drive);
 	chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-recovery;
 	
+	if missle_drive == "music" then
+		local rings = boomareas.ringArea(boomx,boomy);
+		for h=1, math.max(1,chars_mobs_npcs[current_mob].lvl_music-2) do
+			for i=1,#rings[h] do
+				for j=1,chars do
+--FIXME
+				end;
+			end;
+		end;
+		if missle_type == "heal" then
+		end;
+	end;
+	
 	if missle_type == "heal" then
 		prebuff = damage.damageRandomizator(current_mob,1,5)*lvl[1]+num[1]*5;
 		buff=math.min(prebuff,math.abs(chars_mobs_npcs[victim].hp_max-chars_mobs_npcs[victim].hp));
@@ -5492,7 +5505,7 @@ function damage.instantCast () --FIXME use lvl, num
 	if missle_type == "transfusion" then
 		local donor = current_mob;
 		local rings = boomareas.ringArea(boomx,boomy);
-		for i=h, #rings do
+		for h=1, #rings do
 			for i=1,#rings[h] do
 				for j=1,chars do
 					if helpers.cursorAtMob(rings[h][i].x,rings[h][i].y) then

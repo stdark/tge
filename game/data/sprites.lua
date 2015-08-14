@@ -102,8 +102,8 @@ function sprites.load()
 	anvil_icon = love.graphics.newQuad(120,870,106,76, media.images.ui:getWidth(), media.images.ui:getHeight());
 	bin_icon = love.graphics.newQuad(120,700,112,160, media.images.ui:getWidth(), media.images.ui:getHeight());
 	logpaper = love.graphics.newQuad(0, 465, 348,133, media.images.ui:getWidth(), media.images.ui:getHeight());
-	tip = love.graphics.newQuad(360, 250, 240,360, media.images.ui:getWidth(), media.images.ui:getHeight());
-	tip_sub = love.graphics.newQuad(778, 769, 240,107, media.images.ui:getWidth(), media.images.ui:getHeight());
+	--tip = love.graphics.newQuad(360, 250, 240,360, media.images.ui:getWidth(), media.images.ui:getHeight());
+	--tip_sub = love.graphics.newQuad(778, 769, 240,107, media.images.ui:getWidth(), media.images.ui:getHeight());
 	btn_plus = love.graphics.newQuad(14, 1010, 14,14, media.images.ui:getWidth(), media.images.ui:getHeight());
 	btn_minus = love.graphics.newQuad(0, 1010, 14,14, media.images.ui:getWidth(), media.images.ui:getHeight());
 	btn_apply = love.graphics.newQuad(0, 980, 90,30, media.images.ui:getWidth(), media.images.ui:getHeight());
@@ -197,12 +197,24 @@ function sprites.load()
 		local _x = (i-1)*64;
 		table.insert(cauldron_img,love.graphics.newQuad(_x, 384, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
 	end;
-	
+--FIXME! lveditor has diffirent door sprites!
 	door_img = {};
 	for i=1,4 do
 		local _x = (i-1)*64;
 		table.insert(door_img,love.graphics.newQuad(_x, 448, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight()));
 	end;
+
+	--[[
+	door_img = {};
+	for i=1,4 do
+		door_img[i] = {};
+		for h=1,5 do
+			local _x = (h-1)*64;
+			door_img[i][h]=love.graphics.newQuad(_x, 448, 64,96, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
+		end;
+	end;
+	]]
+	
 	--[[
 	obelisk_img = love.graphics.newQuad(0, 17*32, 64,128, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());
 	altar_img = love.graphics.newQuad(64, 17*32, 64,64, media.images.tmpobjs:getWidth(), media.images.tmpobjs:getHeight());

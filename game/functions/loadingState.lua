@@ -117,6 +117,8 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "sbook", "img/spellbook.dds");
 			loader.newImage(media.images, "wbook", "img/warbook.dds");
 			loader.newImage(media.images, "msg", "img/message.dds");
+			loader.newImage(media.images, "tip", "img/ui/tip.dds");
+			loader.newImage(media.images, "subtip", "img/ui/subtip.dds");
 			
 			--loader.newImage(media.images, "light", "img/light.dds");
 			

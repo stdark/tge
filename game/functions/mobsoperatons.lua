@@ -195,6 +195,7 @@ function mobsoperatons.addMob(index,person)
 		chars_mobs_npcs[index].rng = 5+math.ceil((chars_mobs_npcs[index].spd+chars_mobs_npcs[index].dex)/10);
 		chars_mobs_npcs[index].sense =10+math.ceil(chars_mobs_npcs[index].sns/5);
 		chars_mobs_npcs[index].satiation = chars_mobs_npcs[index].enu*10;
+		chars_mobs_npcs[index].vigor = chars_mobs_npcs[index].enu*3600;
 	--end;
 
 	chars_mobs_npcs[index].sp_stat = chars_mobs_npcs[index].int;
@@ -305,6 +306,7 @@ function mobsoperatons.addMob(index,person)
 	chars_mobs_npcs[index].slow_dur = 0;
 	chars_mobs_npcs[index].weakness_power = 0;
 	chars_mobs_npcs[index].weakness_dur = 0;
+	chars_mobs_npcs[index].sleepiness = false;
 
 	chars_mobs_npcs[index].protfromfire_power = 0;
 	chars_mobs_npcs[index].protfromfire_dur = 0;
@@ -475,10 +477,12 @@ function mobsoperatons.addMob(index,person)
 	chars_mobs_npcs[index].lvl_stuffid=tmpclass2.lvl_stuffid;
 	chars_mobs_npcs[index].num_thievery=tmpclass2.num_thievery;
 	chars_mobs_npcs[index].lvl_thievery=tmpclass2.lvl_thievery;
-	chars_mobs_npcs[index].num_leadership= tmpclass2.num_leadership
-	chars_mobs_npcs[index].lvl_leadership= tmpclass2.lvl_leadership
-	chars_mobs_npcs[index].num_regeneration= tmpclass2.num_regeneration
-	chars_mobs_npcs[index].lvl_regeneration= tmpclass2.lvl_regeneraton
+	chars_mobs_npcs[index].num_leadership= tmpclass2.num_leadership;
+	chars_mobs_npcs[index].lvl_leadership= tmpclass2.lvl_leadership;
+	chars_mobs_npcs[index].num_regeneration= tmpclass2.num_regeneration;
+	chars_mobs_npcs[index].lvl_regeneration= tmpclass2.lvl_regeneraton;
+	chars_mobs_npcs[index].num_music= tmpclass2.num_music;
+	chars_mobs_npcs[index].lvl_music= tmpclass2.lvl_music;
 
 	chars_mobs_npcs[index].rezfire=tmpclass2.rezfire;
 	chars_mobs_npcs[index].rezcold=tmpclass2.rezcold;

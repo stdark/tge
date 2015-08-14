@@ -70,4 +70,25 @@ function calendar.add_time_interval(array)
 	calendar.hour = calendar.hour + hours;
 	calendar.min = calendar.min + mins;
 	calendar.sec = calendar.sec + secs;
+	--FIXME may be resting at rt? rt to 199, then do not rise untill timer stops
+	local value = array.secs + array.mins*60 + array.hours*3600 + array.days*3600*24 + array.weeks*3600*24*7 + array.months*3600*24*30 + array.years*3600*24*365;
+	if party.resting == 0 then
+		for i=1,chars do
+			if chars_mobs_npcs[i].sleep == 0 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].status == 1 then
+				helpers.addSleepiness(i,value);
+			end;
+		end;
+	else
+		for i=1,chars do
+			if chars_mobs_npcs[i].evileye == 0 then
+				helpers.vigorPlus(i,value);
+			end;
+		end;
+		party.resting = math.max(0,party.resting - value);
+		if party.resting == 0 then
+			--rt to 200
+			--WAKE UP!
+		end;
+	end;
+	--FIXME add HP SP ST regeneration
 end;
