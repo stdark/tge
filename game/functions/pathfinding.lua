@@ -16,6 +16,8 @@ function path_finding (mode,ignore_mobs)
 			mob_range = 0;
 		elseif chars_mobs_npcs[current_mob].wingsoflight > 0 then
 			mob_range = chars_mobs_npcs[current_mob].wingsoflight;
+		elseif helpers.Overloaded (current_mob) then
+			mob_range = 0;
 		end;
 		
 	elseif mode == 1 then --peace

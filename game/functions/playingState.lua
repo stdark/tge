@@ -3957,7 +3957,7 @@ function playingState.mousereleased (x,y,button)
 				end;
 			end;
 			
-			if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- oil a weapon
+			if selected_portrait > 0 and selected_portrait == current_mob  and holding_smth > 0 -- prepair to oil a weapon
 			and (inventory_ttx[list[holding_smth].ttxid].subclass == "trioil" or inventory_ttx[list[holding_smth].ttxid].subclass =="oil"
 			or inventory_ttx[list[holding_smth].ttxid].subclass == "chargeoil" or inventory_ttx[list[holding_smth].ttxid].subclass == "hardoil"
 			or inventory_ttx[list[holding_smth].ttxid].subclass == "resetoil" or inventory_ttx[list[holding_smth].ttxid].subclass == "eternaloil"
@@ -7747,12 +7747,21 @@ function  playingState.mousepressed(x,y,button)
 		if helpers.inSlot("rh")
 		and chars_mobs_npcs[current_mob]["equipment"].rh > 0
 		and (oiltype == "trioil" or oiltype == "oil")
+		and (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].class == "sword"
+		or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].class == "dagger"
+		or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].class == "axe"
+		or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].rh].ttxid].class == "flagpole"
+		)
+		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["rh"]].e == 0
+		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["rh"]].w == 0
 		then
 			helpers.oilItemInSlot(current_mob,"rh",oiltype,oilpower,oileffect);
 		elseif helpers.inSlot("lh")
 		and chars_mobs_npcs[current_mob]["equipment"].lh > 0
 		and (inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].class == "sword"
 		or inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].lh].ttxid].class == "dagger")
+		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["lh"]].e == 0
+		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["lh"]].w == 0
 		and (oiltype == "trioil" or oiltype == "oil")
 		then
 			helpers.oilItemInSlot(current_mob,"lh",oiltype,oilpower,oileffect);
@@ -7762,6 +7771,8 @@ function  playingState.mousepressed(x,y,button)
 		and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class ~= "bullet"
 		and (oiltype == "trioil" or oiltype == "oil")
 		and (oiltype == "trioil" or oiltype == "oil")
+		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["ammo"]].e == 0
+		and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"]["ammo"]].w == 0
 		then
 			helpers.oilItemInSlot(current_mob,"ammo",oiltype,oilpower,oileffect);
 		elseif helpers.inSlot("ranged")

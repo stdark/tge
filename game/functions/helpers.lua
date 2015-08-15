@@ -3825,8 +3825,8 @@ function helpers.recalcBattleStats (index)
 			chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.25);
 		end;
 		if helpers.Overburdened(current_mob) then --overburdening
-			chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + math.ceil(chars_mobs_npcs[index].spd*0.5);
-			chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + math.ceil(chars_mobs_npcs[index].dex*0.5);
+			chars_mobs_npcs[index].spd_debuff_power = chars_mobs_npcs[index].spd_debuff_power + helpers.Overweight(index);
+			chars_mobs_npcs[index].dex_debuff_power = chars_mobs_npcs[index].dex_debuff_power + helpers.Overweight(index);
 		end;
 	end;
 	for e=1,#chars_mobs_npcs[index]["equipment"] do
@@ -5523,8 +5523,21 @@ end;
 
 function helpers.Overburdened (index)
 	local weight = helpers.countWeight (index);
-	if weight > chars_mobs_npcs[current_mob].mgt*3+10 then
+	if weight > chars_mobs_npcs[index].mgt*3+10 then
 		return true;
 	end;
 	return false;
+end;
+
+function helpers.Overloaded (index)
+	local weight = helpers.countWeight (index);
+	if weight > math.ceil(chars_mobs_npcs[index].mgt*3.2)+10 then
+		return true;
+	end;
+	return false;
+end;
+
+function helpers.Overweight (index)
+	local over = helpers.countWeight (index) - chars_mobs_npcs[index].mgt*3+10;
+	return over;
 end;
