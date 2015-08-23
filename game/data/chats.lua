@@ -35,7 +35,7 @@ function chats.load ()
 	
 	dortussmarttooth = {
 	{question=1,answer=2,nextquestion={4},remquestion={chats.ifCondition("race",nil,{"goblin"},0,0,4,3)},default=true}, --not 4 but condition check party/fraction
-	{question=2,answer=chats.ifCondition("secretgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
+	{question=2,answer=4,nextquestion={4},remquestion={1},default=true},
 	{question=3,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
 	{question=4,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
 	},

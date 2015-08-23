@@ -390,7 +390,7 @@ function playingState.load()
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="coward"},music={main="none",bestsongs={},hatedsongs={},bestinstruments={},hatedinstruments={}},humor={multi=1,ifsuccess=10,ifnot=4,ifknown={3},known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});
-		table.insert(chars_mobs_npcs,{uid=9,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=3,y=24,rot=1,class="goblin",fraction="vagrants", party=2, name="Che Guevara", face = 8,
+		table.insert(chars_mobs_npcs,{uid=10,person="npc",control="ai",defaultai="stay",ai="stay",dangerai="away",x=3,y=24,rot=1,class="goblin",fraction="vagrants", party=2, name="Che Guevara", face = 8,
 		personality={
 		current={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",food="overfed",threat="coward"},music={main="none",bestsongs={},hatedsongs={},bestinstruments={},hatedinstruments={}},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		default={chat="cheguevara",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="coward"},music={main="none",bestsongs={},hatedsongs={},bestinstruments={},hatedinstruments={}},humor={multi=1,ifsuccess=10,ifnot=4,ifknown=3,known_jokes={},code={{"revenge","trick","massacre","rasist","sex","stupidness"},{},{"goblin"},{"elf"}}},secrets={chantage={{id=1,emo=2,pow=1}},rumours={{id=2,emo=1,pow=1},{id=3,emo=1,pow=1}},known_secrets={}},known_nlps={},affronts={emo=5,modifer=1,additional_tags={},known_affronts={}},connections={{npc=2,emo=8,power=1}},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
@@ -414,8 +414,11 @@ function playingState.load()
 		thiefcatcher={chat="catchedthief",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,5,0,0,0,0,0,0,0},mindflags={default="agression",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil}},
 		}
 		});]]
+		
 		table.insert(chars_mobs_npcs,npc.ttx["rattusparchedtail"]);
-		table.insert(chars_mobs_npcs,{uid=3,person="npc",control="ai",defaultai="stay",ai="random",dangerai="away",x=18,y=8,rot=4,class="goblin",fraction="vagrants",  party=2, name="Pavlik Morozoff", face = 7,
+		table.insert(chars_mobs_npcs,npc.ttx["dortussmarttooth"]);
+		
+		table.insert(chars_mobs_npcs,{uid=9,person="npc",control="ai",defaultai="stay",ai="random",dangerai="away",x=18,y=8,rot=4,class="goblin",fraction="vagrants",  party=2, name="Pavlik Morozoff", face = 7,
 		personality={
 		current={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="brave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
 		default={chat="nilslarsen",etiquette = "none",mindmap=1,mindstatus={0,0,0,0,0,0,0,0,0,0,0,0},mindflags={default="boring",gold="middleclass",drinks="boozer",threat="vrave"},mindgameresults={1,3,nil,nil,2,nil,nil,nil,nil,nil,nil,nil}},
@@ -461,6 +464,7 @@ function playingState.load()
 		});
 
 		for i=(totalmobs+1),#chars_mobs_npcs do
+			print("chars_mobs_npcs UID",i,chars_mobs_npcs[i].uid)
 			mobsoperatons.addMob(i,"npc");
 		end;
 

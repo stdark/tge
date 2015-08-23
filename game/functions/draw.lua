@@ -3990,7 +3990,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 	love.graphics.setFont(mainFont);
 	love.graphics.print(helpers.mobName(tmpc), mX+100,mY+5);
 	love.graphics.print(lognames.mob_names[chars_mobs_npcs[tmpc].class], mX+100,mY+20);
-	love.graphics.print(nature[chars_mobs_npcs[tmpc].nature], mX+100+#lognames.mob_names[chars_mobs_npcs[tmpc].class]/2,mY+35);
+	love.graphics.print(nature[chars_mobs_npcs[tmpc].nature], mX+100,mY+35);
 	if chars_mobs_npcs[tmpc].hp>=chars_mobs_npcs[tmpc].hp_max then
 		love.graphics.setColor(0, 155, 0);
 		love.graphics.print(healthstatus.healthy, mX+100,mY+50);
@@ -4166,9 +4166,9 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 	
 	if chars_mobs_npcs[current_mob].lvl_monsterid >= 2 then
 		local protection = helpers.countProtection (tmpc);
-		local ac = lognames.zones["total"] .. " " .. protection[1] .. ":" .. 	protection[4] .. "-" .. protection[7] .. ":" .. protection[10] .. "-" .. protection[13];
-		local dt = lognames.zones["total"] .. " " .. protection[2] .. ":" .. 	protection[5] .. "-" .. protection[8] .. ":" .. protection[11] .. "-" .. protection[14];
-		local dr = lognames.zones["total"] .. " " .. protection[3] .. ":" .. 	protection[6] .. "-" .. protection[9] .. ":" .. protection[12] .. "-" .. protection[15];
+		local ac = lognames.zones["total"] .. " " .. protection[1] .. ": " .. 	protection[7] .. "(" .. protection[4] .. ")/" .. protection[13] .. "(" .. protection[10] .. ")";
+		local dt = lognames.zones["total"] .. " " .. protection[2] .. ": " .. 	protection[8] .. "(" .. protection[5] .. ")/" .. protection[14] .. "(" .. protection[11] .. ")";
+		local dr = lognames.zones["total"] .. " " .. protection[3] .. ": " .. 	protection[9] .. "(" .. protection[6] .. ")/" .. protection[15] .. "(" .. protection[12] .. ")";
 		love.graphics.print(lognames.stats.ac, mX+addx,mY+290);
 		love.graphics.print(ac, mX+addx2,mY+290);
 		love.graphics.print(lognames.stats.dt, mX+addx,mY+305);
@@ -4221,7 +4221,7 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 				local class = inventory_ttx[tmp].classtitle;
 				local subclass = inventory_ttx[tmp].subclasstitle;
 				local tmp = nil;
-				local idvalue = inventory_ttx[list[work_this].ttxid].level*20 + add*10;
+				local idvalue = inventory_ttx[chars_mobs_npcs[tmpc]["inventory_list"][slot].ttxid].level*20 + add*10;
 				local idskill = chars_mobs_npcs[current_mob].lvl_stuffid*chars_mobs_npcs[current_mob].num_stuffid + chars_mobs_npcs[current_mob].int;
 				if idskill == 0 then
 					tmp = class;
