@@ -4166,6 +4166,7 @@ function playingState.mousereleased (x,y,button)
 				elseif inventory_ttx[list[holding_smth].ttxid].class == "ebook" then
 					pagebook=1;
 					littype="ebook";
+					holding_smth=0;
 					game_status="literature";
 				end;
 			end;
@@ -4204,7 +4205,7 @@ function playingState.mousereleased (x,y,button)
 					holding_smth=0;
 				end;
 			end;
-			if selected_portrait > 0 and selected_portrait == current_mob -- play music
+			if holding_smth > 0 and selected_portrait > 0 and selected_portrait == current_mob -- play music
 			and inventory_ttx[list[holding_smth].ttxid].class == "musicalinstrument" then
 			--FIXME if num_music > 0 else noice
 				game_status = "neutral";

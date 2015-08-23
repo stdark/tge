@@ -5541,3 +5541,12 @@ function helpers.Overweight (index)
 	local over = helpers.countWeight (index) - chars_mobs_npcs[index].mgt*3+10;
 	return over;
 end;
+
+function helpers.ifPartyKnowsSecret(index)
+	for i=1,#party.secrets do
+		if party.secrets[i] == index then
+			return true;
+		end;
+	end;
+	return false;
+end;

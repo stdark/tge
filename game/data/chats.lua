@@ -34,10 +34,10 @@ function chats.load ()
 	},
 	
 	dortussmarttooth = {
-	{question=1,answer=2,nextquestion={4},remquestion={chats.ifCondition("race",nil,{"goblin"},0,0,4,3)},default=true}, --not 4 but condition check party/fraction
+	{question=1,answer=2,nextquestion={chats.ifCondition("questgot",nil,{4},0,0,4,0),chats.ifCondition("infogot",nil,{4},0,0,2,0)},remquestion={chats.ifCondition("race",nil,{"goblin"},0,0,4,3)},default=true}, --not 4 but condition check party/fraction
 	{question=2,answer=4,nextquestion={4},remquestion={1},default=true},
-	{question=3,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
-	{question=4,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=true},
+	{question=3,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=false},
+	{question=4,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=false},
 	},
 	
 	};
@@ -358,6 +358,14 @@ function chats.ifCondition(typ,subtyp,var,limit,comp,ifsuccess,ifnot)
 		for i=1, #party.quests do
 			for h=1,#var do
 				if party.quests[i].id == var[h] and not party.quests[i].done then
+					return ifsuccess;
+				end;
+			end;
+		end;
+	elseif typ == "infogot" then
+		for i=1, #party.secrets do
+			for h=1,#var do
+				if party.secrets[i] == var[h] then
 					return ifsuccess;
 				end;
 			end;

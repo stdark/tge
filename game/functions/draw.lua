@@ -5270,6 +5270,7 @@ function draw.ui ()
 		local x,y = helpers.centerObject(media.images.map);
 		love.graphics.draw(media.images.map, x,y-50);
 	end;
+	love.graphics.setColor(255, 255, 255);
 	local _txt = cursor_world_x .. "x" .. cursor_world_y;
 	love.graphics.print(_txt,50,10);
 	if current_mob then
