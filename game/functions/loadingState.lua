@@ -114,6 +114,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "greenface", "img/greenface.dds");
 			loader.newImage(media.images, "m", "img/bolt.dds");
 			loader.newImage(media.images, "book", "img/book.dds");
+			loader.newImage(media.images, "ebook", "img/ebook.dds");
 			loader.newImage(media.images, "sbook", "img/spellbook.dds");
 			loader.newImage(media.images, "wbook", "img/warbook.dds");
 			loader.newImage(media.images, "msg", "img/message.dds");

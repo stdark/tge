@@ -294,6 +294,7 @@ chars_stats[4].inventory_list={
 {ttxid=186,q=1,w=0,e=0,r=1,h=0},
 {ttxid=506,q=1,w=0,e=0,r=1,h=0},
 {ttxid=505,q=1,w=0,e=0,r=1,h=0},
+{ttxid=519,q=1,w=0,e=0,r=1,h=0},
 }
 
 inventory_bag={};
@@ -361,3 +362,5 @@ party.quests = {
 }
 
 party.known_fountains = {};
+
+party.ebook = {1,2,3,4,5,6};

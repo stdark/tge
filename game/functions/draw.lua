@@ -2509,6 +2509,41 @@ function draw.book()
 		local path_to_pic = gobelens_ttx[list[tmp_book].q]["pic"]
 		local pic = media.images[path_to_pic];
 		love.graphics.draw(pic, x,y-50);
+	elseif littype == "ebook" then
+		local x,y = helpers.centerObject(media.images.ebook);
+		love.graphics.draw(media.images.ebook, x,y-50);	
+		local font_ = ebooks_ttx[party.ebook[pagebook]]["font"];
+		local text_ = ebooks_ttx[party.ebook[pagebook]]["text"];
+		local title_ = ebooks_ttx[party.ebook[pagebook]]["title"];
+		local pic = ebooks_ttx[party.ebook[pagebook]]["pic"];
+		local color_main = ebooks_ttx[party.ebook[pagebook]]["color_main"];
+		local color_title = ebooks_ttx[party.ebook[pagebook]]["color_title"];
+		if pic ~= "" then
+			love.graphics.draw(pic, x+520,y-60);
+		end;
+		loveframes.util.RemoveAll();
+		local text = loveframes.Create("text");
+		local colortext = {};
+		local r,g,b = unpack(color_main);
+		table.insert(colortext, {color = {r, g, b,200}, font = font_});
+		table.insert(colortext, text_);
+		
+		love.graphics.setColor(0, 255, 0);
+		text:SetPos(x+180, y+110);
+		text:SetMaxWidth(660);
+		text:SetText(colortext);
+		
+		local title = loveframes.Create("text");
+		local colortext = {};
+		local r,g,b = unpack(color_title);
+		table.insert(colortext, {color = {r, g, b, 200}, font = font_});
+		table.insert(colortext, title_);
+		
+		local title = loveframes.Create("text");
+		title:SetPos(x+210, y+50);
+		title:SetMaxWidth(600);
+		title:SetText(colortext);
+		
 	end;
 end;
 
@@ -4183,7 +4218,19 @@ function  draw.mobtips () --FIXME inventory and weapon in rh/lh/ranged + armor
 			if slot and slot > 0 then
 				local tmp = chars_mobs_npcs[tmpc]["inventory_list"][slot].ttxid;
 				local title = inventory_ttx[tmp].title;
-				love.graphics.print(title, mX+2*w,mY+300 + addy3*15);
+				local class = inventory_ttx[tmp].classtitle;
+				local subclass = inventory_ttx[tmp].subclasstitle;
+				local tmp = nil;
+				local idvalue = inventory_ttx[list[work_this].ttxid].level*20 + add*10;
+				local idskill = chars_mobs_npcs[current_mob].lvl_stuffid*chars_mobs_npcs[current_mob].num_stuffid + chars_mobs_npcs[current_mob].int;
+				if idskill == 0 then
+					tmp = class;
+				elseif idskill > 0 and idskill < idvalue then
+					tmp = subclass;
+				elseif idskill > 0 and idskill >= idvalue then
+					tmp = title;
+				end;
+				love.graphics.print(tmp, mX+2*w,mY+300 + addy3*15);
 				addy3 = addy3 + 1;
 			end;
 		end;

@@ -3403,7 +3403,7 @@ function helpers.idAndRepair(dragfrom)
 	if work_this > 0 then
 		local idvalue = inventory_ttx[list[work_this].ttxid].level*20 + add*10;
 		local idskill = chars_mobs_npcs[current_mob].lvl_stuffid*chars_mobs_npcs[current_mob].num_stuffid + chars_mobs_npcs[current_mob].int;
-		print("ID:",idvalue,idskill);
+		--print("ID:",idvalue,idskill);
 		if work_this > 0 and list[work_this].r == 0 and (idskill > idvalue or chars_mobs_npcs[current_mob].lvl_stuffid == 5) then
 			list[work_this].r = 1;
 			helpers.addToActionLog( lognames.actions.identified);

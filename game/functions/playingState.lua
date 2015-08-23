@@ -29,6 +29,7 @@ function playingState.load()
 	require "data.tricks"
 	--require "data.comics"
 	require "data.books"
+	require "data.ebooks"
 	require "data.messages"
 	require "data.maps"
 	require "data.gobelens"
@@ -63,6 +64,7 @@ function playingState.load()
 	lightWorld = love.light.newWorld();
 	lightWorld.setBlur(32)
 	mainFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 10);
+	ebookFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
 	statFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
 	tipFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 12);
 	--tipFont = love.graphics.newFont("fonts/HoMMFontCyr.ttf", 12);
@@ -136,6 +138,7 @@ function playingState.load()
 	magic_tips_load ();
 	--comics_load();
 	books_load ();
+	ebooks_load ();
 	maps_load ();
 	gobelens_load ();
 	msgs_load ();
@@ -1947,7 +1950,7 @@ function playingState.keyreleased(key, unicode)
 		and chars_mobs_npcs[current_mob].control=="player"
 		and chars_mobs_npcs[current_mob].person=="char"
 		and chars_stats[current_mob].spellbook==1
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook"  or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats" or game_status == "mindgame") then
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook"  or game_status == "questbook" or game_status == "warbook" or game_status == "skills" or game_status == "stats" or (game_status == "mindgame" and not global.magic_used)) then
 			loveframes.util.RemoveAll();
 			if game_status~="spellbook" then
 				page=1;
@@ -2582,7 +2585,8 @@ function playingState.mousereleased (x,y,button)
 				elseif chats.rules[index][current_questions[linenumber]].answer >= 5000 and chats.rules[index][current_questions[linenumber]].answer <= 5999 then --argumentation several mindfields per npc, so index = x-5000
 					global.mindhero_x = 5;
 					global.mindhero_y = 5;
-					global.usedmusic = false;
+					global.music_used = false;
+					global.magic_used = false;
 					global.mindway = {};
 					chat_log = {};
 					local index = chats.rules[index][current_questions[linenumber]].answer - 5000;
@@ -4076,7 +4080,14 @@ function playingState.mousereleased (x,y,button)
 				holding_smth = 0;
 			end;
 			if holding_smth>0 and selected_portrait>0 and selected_portrait==current_mob --read a book, letter, message
-			and (inventory_ttx[list[holding_smth].ttxid].class == "book" or inventory_ttx[list[holding_smth].ttxid].class == "message" or inventory_ttx[list[holding_smth].ttxid].class == "letter" or inventory_ttx[list[holding_smth].ttxid].class == "map"  or inventory_ttx[list[holding_smth].ttxid].class == "gobelen")
+			and (
+			   inventory_ttx[list[holding_smth].ttxid].class == "book" 
+			or inventory_ttx[list[holding_smth].ttxid].class == "message" 
+			or inventory_ttx[list[holding_smth].ttxid].class == "letter" 
+			or inventory_ttx[list[holding_smth].ttxid].class == "map"  
+			or inventory_ttx[list[holding_smth].ttxid].class == "gobelen"
+			or inventory_ttx[list[holding_smth].ttxid].class == "ebook"
+			)
 			and  chars_mobs_npcs[current_mob].status==1
 			and  chars_mobs_npcs[current_mob].stone==0
 			and  chars_mobs_npcs[current_mob].freeze==0
@@ -4148,6 +4159,10 @@ function playingState.mousereleased (x,y,button)
 					utils.playSfx(media.sounds.inv_cloth_take, 1);
 					littype="gobelen";
 					game_status="literature";
+				elseif inventory_ttx[list[holding_smth].ttxid].class == "ebook" then
+					pagebook=1;
+					littype="ebook";
+					game_status="literature";
 				end;
 			end;
 			if holding_smth > 0 and selected_portrait > 0 and selected_portrait == current_mob --read a scroll
@@ -4189,17 +4204,31 @@ function playingState.mousereleased (x,y,button)
 			and inventory_ttx[list[holding_smth].ttxid].class == "musicalinstrument" then
 			--FIXME if num_music > 0 else noice
 				game_status = "neutral";
-				global.theme_music_volume = math.max(0.01,global.theme_music_volume - 0.05);
-				for i=1,#global.theme_music_array do
-					local volume = math.ceil(100*global.theme_music_array[i].track:getVolume())/100;
-					if global.theme_music_array[i].type == global.music_switch_to then
-						global.theme_music_array[i]["track"]:setVolume(math.max(0,volume - 0.95));
+				if chars_mobs_npcs[current_mob].num_music > 0 and chars_mobs_npcs[current_mob].rt >= 50 and chars_mobs_npcs[current_mob].st >= 50 then
+					damage.RTminus(current_mob,50,false);
+					damage.STminus(current_mob,50,false);
+					global.theme_music_volume = math.max(0.01,global.theme_music_volume - 0.05);
+					for i=1,#global.theme_music_array do
+						local volume = math.ceil(100*global.theme_music_array[i].track:getVolume())/100;
+						if global.theme_music_array[i].type == global.music_switch_to then
+							global.theme_music_array[i]["track"]:setVolume(math.max(0,volume - 0.95));
+						end;
 					end;
-				end;
-				if list[holding_smth].ttxid == 505 then
-					utils.playSfx(media.sounds.guitar, 1);	
-				elseif list[holding_smth].ttxid == 506 then
-					utils.playSfx(media.sounds.harmonica, 1);	
+					if list[holding_smth].ttxid == 505 then
+						utils.playSfx(media.sounds.guitar, 1);	
+					elseif list[holding_smth].ttxid == 506 then
+						utils.playSfx(media.sounds.harmonica, 1);	
+					end;
+					if global.status == "battle" then
+						missle_drive = "music";
+						missle_type = inventory_ttx[list[holding_smth].ttxid].a;
+						game_status = "instant_cast";
+						
+					end;
+				elseif chars_mobs_npcs[current_mob].num_music == 0  then	
+					--no skill
+				elseif chars_mobs_npcs[current_mob].num_music > 0 and (chars_mobs_npcs[current_mob].rt < 50 or chars_mobs_npcs[current_mob].st < 50) then
+					--need rest
 				end;
 				list,bag,tmp_bagid = helpers.whatSortTarget(dragfrom,false,false,bagid);
 				bag[tmp_bagid][inv_quad_x][inv_quad_y] = holding_smth;
@@ -5693,6 +5722,19 @@ function  playingState.mousepressed(x,y,button)
 		end;
 	end;
 	
+	if button == "l"  and  game_status == "literature" and littype == "ebook" then
+		local x,y = helpers.centerObject(media.images.ebook);
+		if mX>x and mX <= x+460 and mY>y+20 and mY < y+680 and pagebook > 1 then
+			--utils.playSfx(media.sounds.bookpage, 1);
+			print("minus")
+			pagebook = pagebook-1;
+		elseif  mX >= x+460 and mX < x+960 and mY > y+20 and mY < y+680 and pagebook < #party.ebook then
+			--utils.playSfx(media.sounds.bookpage, 1);
+			pagebook = pagebook + 1;
+			print("plus")
+		end;
+	end;
+	
 --btns at alchemy --FIXME: btns at alchemy picklocking traptools
 
 --mills
@@ -6414,7 +6456,7 @@ function  playingState.mousepressed(x,y,button)
 		if button == "l"
 		and mX>=global.screenWidth-255 and mX<=global.screenWidth-170
 		and mY >= global.screenHeight-160 and mY<=global.screenHeight-60
-		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook")
+		and (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding" or game_status == "spellbook" or gamestatus == "warbook" or gamestatus == "questbook" or (game_status == "mindgame" and not global.magic_used))
 		and chars_mobs_npcs[current_mob].person == "char"
 		and chars_mobs_npcs[current_mob].control == "player"
 		and chars_stats[current_mob].spellbook == 1 then

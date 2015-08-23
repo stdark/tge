@@ -1,5 +1,5 @@
 ai = {}
-
+--FIXME: temp foc = 360, trace_hexes to separate function
 function ai.behavior()
 	utils.printDebug("ai_called");
 	mob_can_move = 0;
@@ -136,6 +136,7 @@ function ai.behavior()
 --AGR Shooter
 	if chars_mobs_npcs[current_mob].ai == "agr" and chars_mobs_npcs[current_mob].battleai == "shooter" then
 		if chars_mobs_npcs[current_mob]["equipment"].ammo and chars_mobs_npcs[current_mob].inventory_list[chars_mobs_npcs[current_mob]["equipment"].ammo].q > 0 then
+			--[[
 			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 			for j=1,#chars_mobs_npcs do
 				for h=1,3 do
@@ -165,6 +166,24 @@ function ai.behavior()
 					table.insert(mob_detects_enemies, j)
 				end;	
 			end;
+			]]
+			local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
+			for j=1,#chars_mobs_npcs do
+				for h=1,3 do
+					for i=1,6 do
+						if not ai.friendOrFoe (current_mob,j)
+						and chars_mobs_npcs[j].x == rings[h][i].x
+						and chars_mobs_npcs[j].y == rings[h][i].y
+						and chars_mobs_npcs[j].status == 1
+						and chars_mobs_npcs[j].invisibility == 0
+						and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].y][chars_mobs_npcs[j].x] == 0 then
+							chars_mobs_npcs[current_mob].ai = "away";
+						end;
+					end;
+				end;
+			end;
+			mob_detects_enemies = ai.detectEnemiesInRange();
+			
 			if #mob_detects_enemies > 0 and chars_mobs_npcs[current_mob].battleai == "shooter" and chars_mobs_npcs[current_mob].ai == "agr" then
 				for e=1,#mob_detects_enemies do --for aggro
 					local tmpfrac = chars_mobs_npcs[mob_detects_enemies[e]].fraction;
@@ -237,7 +256,7 @@ function ai.behavior()
 			end;
 		end;
 		if chars_mobs_npcs[current_mob].feeblemind == 0 and chars_mobs_npcs[current_mob].sp > chars_mobs_npcs[current_mob].sp_limit then		
-			for j=1,#chars_mobs_npcs do
+			--[[for j=1,#chars_mobs_npcs do
 				trace.trace_hexes (current_mob,j,trace.sightArray (current_mob),true);
 				if not ai.friendOrFoe (current_mob,j)
 				and math.abs(chars_mobs_npcs[j].x - chars_mobs_npcs[current_mob].x) <= #shot_line
@@ -252,7 +271,8 @@ function ai.behavior()
 				then
 					table.insert(mob_detects_enemies, j)
 				end;	
-			end;
+			end;]]
+			mob_detects_enemies = ai.detectEnemiesInRange();
 			if #mob_detects_enemies > 0 and chars_mobs_npcs[current_mob].battleai == "battlemage" and chars_mobs_npcs[current_mob].ai == "agr" then
 				for e=1,#mob_detects_enemies do --for aggro
 					local tmpfrac = chars_mobs_npcs[mob_detects_enemies[e]].fraction;
@@ -495,7 +515,7 @@ function ai.behavior()
 			end;
 		end;
 		if #mob_detects_enemies == 0 and chars_mobs_npcs[current_mob].immobilize == 0 then
-			for l=1, #chars_mobs_npcs do
+			--[[for l=1, #chars_mobs_npcs do
 				if darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[l].y][chars_mobs_npcs[l].x] == 0 and not ai.friendOrFoe (current_mob,l)
 				and l ~= current_mob
 				and chars_mobs_npcs[l].status == 1
@@ -511,7 +531,8 @@ function ai.behavior()
 						table.insert(mob_detects_enemies,l);
 					end;
 				end;
-			end;
+			end;]]
+			mob_detects_enemies = ai.detectEnemiesInRange();
 		end;
 		if #mob_detects_enemies > 0 then
 			for e=1,#mob_detects_enemies do --for aggro
@@ -908,4 +929,28 @@ function ai.party_array_full ()
 		end;
 	end;
 	return party_array
+end;
+
+function ai.detectEnemiesInRange()
+	local mob_detects_enemies = {};
+	local tmp_fov = chars_mobs_npcs[current_mob].fov;
+	chars_mobs_npcs[current_mob].fov = 360;
+	for j=1,#chars_mobs_npcs do
+		trace.trace_hexes (current_mob,j,trace.sightArray (current_mob),true);
+		if not ai.friendOrFoe (current_mob,j)
+		and math.abs(chars_mobs_npcs[j].x - chars_mobs_npcs[current_mob].x) <= #shot_line
+		and math.abs(chars_mobs_npcs[j].y - chars_mobs_npcs[current_mob].y) <= #shot_line
+		and  #shot_line > 0
+		and shot_line[#shot_line][1] == chars_mobs_npcs[j].x
+		and shot_line[#shot_line][2] == chars_mobs_npcs[j].y 
+		and chars_mobs_npcs[j].status == 1
+		and chars_mobs_npcs[j].invisibility == 0
+		and darkness[chars_mobs_npcs[current_mob].party][chars_mobs_npcs[j].x][chars_mobs_npcs[j].y] == 0 
+		and chars_mobs_npcs[j].invisibility == 0 and chars_mobs_npcs[j].stealth == 0
+		then
+			table.insert(mob_detects_enemies, j)
+		end;	
+	end;
+	chars_mobs_npcs[current_mob].fov = tmp_fov;
+	return mob_detects_enemies;
 end;

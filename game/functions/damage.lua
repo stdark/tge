@@ -4705,12 +4705,85 @@ function damage.instantCast () --FIXME use lvl, num
 		local rings = boomareas.ringArea(boomx,boomy);
 		for h=1, math.max(1,chars_mobs_npcs[current_mob].lvl_music-2) do
 			for i=1,#rings[h] do
+				if missle_type == "streetfight" then --klavesin
+					for j=1,#chars_mobs_npcs do
+						local value = damage.applyCondition (j,lvl[1],num[1],"berserk",nil,"int",nil,1,false);
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and value > 0 and chars_mobs_npcs[j].berserk == 0 and chars_mobs_npcs[j].charm == 0 and chars_mobs_npcs[j].fear == 0 and chars_mobs_npcs[j].enslave == 0 then
+							chars_mobs_npcs[j].berserk = value;
+						end;
+					end;
+				elseif missle_type == "charmingmelody" then --blockflute
+					for j=1,#chars_mobs_npcs do
+						local value = damage.applyCondition (j,lvl[1],num[1],"charm",nil,"int",nil,1,false);
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and value > 0 and chars_mobs_npcs[j].berserk == 0 and chars_mobs_npcs[j].charm == 0 and chars_mobs_npcs[j].fear == 0 and chars_mobs_npcs[j].enslave == 0 then
+							chars_mobs_npcs[j].charm = value;
+						end;
+					end;
+				elseif missle_type == "scarysound" then
+					for j=1,#chars_mobs_npcs do
+						local value = damage.applyCondition (j,lvl[1],num[1],"fear",nil,"int",nil,1,false);
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and value > 0 and chars_mobs_npcs[j].berserk == 0 and chars_mobs_npcs[j].charm == 0 and chars_mobs_npcs[j].fear == 0 and chars_mobs_npcs[j].enslave == 0 then
+							chars_mobs_npcs[j].fear = value;
+						end;
+					end;
+				elseif missle_type == "spleen" then
+					for j=1,#chars_mobs_npcs do
+						local power,duration = damage.applyConditionTwoFactors (j,lvl[1],num[1],"despondency",nil,"int",nil,1,false);
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and helpers.aliveNature(j) and power > 0 and chars_mobs_npcs[j].despondency_power then
+							chars_mobs_npcs[j].despondency_power = power;
+							chars_mobs_npcs[j].despondency_duration = duration;
+						end;
+					end;
+				elseif missle_type == "alegria" then --harmonica
+					for j=1,#chars_mobs_npcs do
+						local power,duration = damage.applyConditionTwoFactors (j,lvl[1],num[1],"myrth",nil,"int",nil,1,false);
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and helpers.aliveNature(j) and power > 0 and chars_mobs_npcs[j].myrth_power then
+							chars_mobs_npcs[j].myrth_power = power;
+							chars_mobs_npcs[j].myrth_duration = duration;
+						end;
+					end;
+				elseif missle_type == "killthebard" then
+					local value = (num[1]+chars_mobs_npcs[current_mob].chr)*lvl[1];
+					for j=1,#chars_mobs_npcs do
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and chars_mobs_npcs[j].control == "ai" then
+							chars_mobs_npcs[j].aggressor = chars_mobs_npcs[current_mob].id;
+							chars_mobs_npcs[j].aggro = value;
+						end;
+					end;
+				elseif missle_type == "musicaltonic" then
+					local value = chars_mobs_npcs[j].music_lvl*chars_mobs_npcs[j].music_num;
+					for j=1,#chars_mobs_npcs do
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y then
+							damage.STplus(j,value,true);
+						end;
+					end;
+				elseif missle_type == "bravemarch" then
+					for j=1,#chars_mobs_npcs do
+						local power,duration = lvl[1]*num[1];
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and helpers.aliveNature(j) and power > 0 and chars_mobs_npcs[j].heroism_power then
+							chars_mobs_npcs[j].heroism_power = power;
+							chars_mobs_npcs[j].heroism_duration = duration;
+						end;
+					end;
+				elseif missle_type == "bloodydreams" then
+				elseif missle_type == "lullaby" then
+					for j=1,#chars_mobs_npcs do
+						local value = damage.applyCondition (j,lvl[1],num[1],"sleep",nil,"int",nil,1,false);
+						if chars_mobs_npcs[j].x == rings[h][i].x and chars_mobs_npcs[j].y == rings[h][i].y and value > 0 and chars_mobs_npcs[j].sleep == 0 and chars_mobs_npcs[j].charm == 0 and chars_mobs_npcs[j].fear == 0 and chars_mobs_npcs[j].enslave == 0 then
+							chars_mobs_npcs[j].charm = value;
+						end;
+					end;
+				elseif missle_type == "pandemonium" then
+				end;
 				for j=1,chars do
 --FIXME
+				
+				
 				end;
+				
+				
+				
 			end;
-		end;
-		if missle_type == "heal" then
 		end;
 	end;
 	
@@ -6060,6 +6133,7 @@ end;
 
 function damage.mindGameCast()
 	utils.printDebug("Mindcast!");
+	global.magic_used = true;
 	local phrase1 = "";
 	--local phrase2 = "";
 	local lvl,num = helpers.countBoomNumbers ();
