@@ -17,7 +17,8 @@ function draw.fogOfWar(x,y)
 	love.graphics.setColor(255, 255, 255);
 	if darkness[1][y][x] == 0 then
 		love.graphics.setColor(255, 255, 255);	
-	elseif darkness[1][y][x] == 1 and global.status == "battle" and game_status =="sensing" then
+	--elseif darkness[1][y][x] == 1 and global.status == "battle" and game_status =="sensing" then
+	elseif darkness[1][y][x] == 1 and game_status =="sensing" then
 		love.graphics.setColor(125, 125, 125);	
 	elseif darkness[1][y][x] == 2 then
 		love.graphics.setColor(0, 0, 0);	
@@ -3829,8 +3830,8 @@ function draw.mobs (mx,my,highlight,index)
 	end;
 end;
 
-function draw.highlight_mob (index)
-	draw.mobs(nil,nil,true,index);
+function draw.highlightMob (index)
+	draw.mobs(chars_mobs_npcs[index].x,chars_mobs_npcs[index].y,true,index);
 end;
 
 function draw.bag ()
@@ -6004,22 +6005,6 @@ function draw.mindway ()
 		end;
 	end;
 end;
---[[
-function draw.fogOfWar_() --hexes, not uising
-	if game_status ~= "sensing" then
-		trace.wizardEye ();
-	end;
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
-			if darkness[1][my+map_y][mx+map_x] == 2 then
-				draw.drawHex (mx+map_x,my+map_y,tile_black,media.images.hex_ui);
-			end
-			if darkness[1][my+map_y][mx+map_x] == 1 and global.grey then
-				draw.drawHex (mx+map_x,my+map_y,tile_grey,media.images.hex_ui);
-			end;
-		end;
-	end;
- end;]]
 
 function draw.housewatch (current_house)
 	loveframes.util.RemoveAll();

@@ -53,7 +53,7 @@ font=ebookFont,
 pic="",
 color_main={0,255,0},
 color_title={255,255,0},
-text="KERNEL: /usr/lib/debug/boot/tge-nix-137.24.0-725-generic\nDUMPFILE: Downloads/crash/VmCore\nCPUS: 2086\nDATE: Sun Jul 23 17:12:25 1502\nUPTIME: 1502:4:12:17:08\nLOAD AVERAGE: 2.20, 0.84, 0.49\nTASKS: 100500\nNODENAME: kappa_station\nRELEASE: 137.24.0-725-generic\nVERSION: #TGE-nix (Varnguard) at 137.24.0-725-generic kerne\nMACHINE: VARN  (1024 Thz)\nMEMORY: 2056 PB x 12 banks\nPANIC: :[ ***] Kernel panic - not syncing: Fatal Machine check\nPID: 0\nCOMMAND: swapper/12\nTASK: error ... no info ..\nCPU: 5\nSTATE: TASK_RUNNING (PANIC)\n",
+text="KERNEL: /usr/lib/debug/boot/tge-nix-137.24.0-725-generic\nDUMPFILE: Downloads/crash/VmCore\nCPUS: 2086\nDATE: Sun Jul 23 17:12:25 1502\nUPTIME: 1502:4:12:17:08\nLOAD AVERAGE: 2.20, 0.84, 0.49\nTASKS: 100500\nNODENAME: kappa_station\nRELEASE: 137.24.0-725-generic\nVERSION: #TGE-nix (Varnguard) at 137.24.0-725-generic kernel\nMACHINE: VARN  (1024 Thz)\nMEMORY: 2056 PB x 12 banks\nPANIC: :[ ***] Kernel panic - not syncing: Fatal Machine check\nPID: 0\nCOMMAND: swapper/12\nTASK: error ... no info ..\nCPU: 5\nSTATE: TASK_RUNNING (PANIC)\n",
 },
 
 }

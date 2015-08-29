@@ -1439,6 +1439,7 @@ function damage.multidamage () --FIXME two hexes
 	utils.printDebug("multidamage called");
 	clear_elandscape();
 	helpers.clearBoomLight ();
+	helpers.clearCastLight ();
 	draw.shaderIrradiation ();
 	if missle_drive == "spellbook" then
 		local tempspellname="magic.spell_tips." .. missle_type .. ".title";
@@ -5375,8 +5376,8 @@ function damage.instantCast () --FIXME use lvl, num
 	--FIXME
 	
 	if missle_type == "wingsoflight" then
-		buff= chars_mobs_npcs[current_mob].num_lvl+chars_mobs_npcs[current_mob].lvl_light;
-		chars_mobs_npcs[victim].wingsoflight=buff;
+		buff= chars_mobs_npcs[current_mob].lvl[1]*chars_mobs_npcs[current_mob].num[2];
+		chars_mobs_npcs[victim].wingsoflight = buff;
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 	end;
 

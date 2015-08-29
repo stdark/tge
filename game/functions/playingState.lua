@@ -84,7 +84,7 @@ function playingState.load()
 
 	global.use_walk_animation = false;
 	global.walk_animation_speed = 0.1;
-	
+	global.recalc_lights_vs_shadows = true;
 	global.highlight_party = 0;
 
 	map_w = #map;
@@ -950,27 +950,31 @@ function playingState.update(dt)
 	if global.timer >= 1000 then
 		global.timer=0;
 	end;
-	for i=1,#lights do
-		local xx,yy = 0,0;
-		if lights[i].typ == "ground" then
-			xx,yy = helpers.hexToPixels (lights[i].x+1,lights[i].y+1);
-			if lights[i].y/2 == math.ceil(lights[i].y/2) then
-				xx,ww = helpers.hexToPixels (lights[i].x,lights[i].y+1); --ww is correct!
+	if global.recalc_lights_vs_shadows then
+		for i=1,#lights do
+			local xx,yy = 0,0;
+			if lights[i].typ == "ground" then
+				xx,yy = helpers.hexToPixels (lights[i].x+1,lights[i].y+1);
+				if lights[i].y/2 == math.ceil(lights[i].y/2) then
+					xx,ww = helpers.hexToPixels (lights[i].x,lights[i].y+1); --ww is correct!
+				end;
+				xx = xx + math.random(1,8)-4;
+				yy = yy -64 + math.random(1,8)-4;
+			elseif lights[i].typ == "mob" then
+				xx,yy = helpers.hexToPixels (lights[i].x,lights[i].y);
+				xx = xx - 16 + math.random(1,8)-4;
+				yy = yy - 32 + math.random(1,8)-4;
 			end;
-			xx = xx + math.random(1,8)-4;
-			yy = yy -64 + math.random(1,8)-4;
-		elseif lights[i].typ == "mob" then
-			xx,yy = helpers.hexToPixels (lights[i].x,lights[i].y);
-			xx = xx - 16 + math.random(1,8)-4;
-			yy = yy - 32 + math.random(1,8)-4;
+			if lights[i].typ ~= "default" and lights[i].typ ~= "missle" and lights[i].typ ~= "boom" and  lights[i].typ ~= "cast" then
+				lights[i]["light"].setPosition(xx,yy);
+			end;
 		end;
-		if lights[i].typ ~= "default" and lights[i].typ ~= "missle" and lights[i].typ ~= "boom" and  lights[i].typ ~= "cast" then
-			lights[i]["light"].setPosition(xx,yy);
+		helpers.castShadows();
+		for i=1,#shadows do
+			local xx,yy =  helpers.hexToPixels(shadows[i].x+map_x,shadows[i].y+map_y);
+			shadows[i]["shadow"].setPosition(xx+tile_w/2,yy+tile_h/2);
 		end;
-	end;
-	for i=1,#shadows do
-		local xx,yy =  helpers.hexToPixels(shadows[i].x+map_x,shadows[i].y+map_y);
-		shadows[i]["shadow"].setPosition(xx+tile_w/2,yy+tile_h/2);
+		global.recalc_lights_vs_shadows = false;
 	end;
 	if game_status ~= "pause" then
 		dt = math.min(dt, 0.0166);
@@ -1503,9 +1507,9 @@ function playingState.update(dt)
 
 		if game_status == "restoring" then
 			if global.lookaround then
-				for i = 1, chars do
-					--trace.first_watch(i); --FIXME need or not?
-				end;
+				--[[for i = 1, chars do
+					trace.first_watch(i); --FIXME need or not?
+				end;]]
 				global.lookaround = false;
 			end;
 			restoreRT();
@@ -1754,25 +1758,25 @@ function playingState.keypressed(key, unicode)
 			if key == "up" then
 				if map_y > 0 then
 					map_y = map_y-1;
-					helpers.castShadows();
+					global.recalc_lights_vs_shadows = true;
 				end;
 			end;
 			if key == "down" then
 				if map_y < (map_h-40) then
 					map_y = map_y+1;
-					helpers.castShadows();
+					global.recalc_lights_vs_shadows = true;
 				end;
 			end;
 			if key == "left" then
 				if map_x >= 2 then
 					map_x = map_x-1;
-					helpers.castShadows();
+					global.recalc_lights_vs_shadows = true;
 				end;
 			end;
 			if key == "right" then
 				if map_x <= (map_w-30) then
 					map_x = map_x+1;
-					helpers.castShadows();
+					global.recalc_lights_vs_shadows = true;
 				end;
 			end;
 		end;
@@ -6904,6 +6908,19 @@ function  playingState.mousepressed(x,y,button)
 						damage.shoot();
 					end;
 				end;
+				
+				
+				if love.mouse.isDown("l") and mY < global.screenHeight-160 and game_status == "sensing"
+				and chars_mobs_npcs[current_mob].wingsoflight > 0
+				and darkness[1][cursor_world_x][cursor_world_y] == 0 and helpers.passCheck (cursor_world_x,cursor_world_y)
+				then
+					chars_mobs_npcs[current_mob].x = cursor_world_x;
+					chars_mobs_npcs[current_mob].y = cursor_world_y;
+					--FIXME sound and effect
+					local rtminus = 100-chars_mobs_npcs[current_mob].wingsoflight;
+					chars_mobs_npcs[current_mob].wingsoflight = 0;
+					damage.RTminus(current_mob,rtminus,false);
+				end;
 
 				if love.mouse.isDown("l") and mY < global.screenHeight-160 and game_status == "sensing"
 				and helpers.cursorAtEnemy (cursor_world_x,cursor_world_y)
@@ -8019,11 +8036,15 @@ function mobMoving()
 		utils.playSfx(snd,1);
 		b = chars_mobs_npcs[current_mob].x;
 		a = chars_mobs_npcs[current_mob].y;
+		global.recalc_lights_vs_shadows = true;
 		local rings = boomareas.ringArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 		for i=1,6 do
 			for j=1, #chars_mobs_npcs do
-				if rings[1][i] and chars_mobs_npcs[j].x == rings[1][i].x and chars_mobs_npcs[j].y == rings[1][i].y and chars_mobs_npcs[j].invisibility > 0 then
+				if rings[1][i] and chars_mobs_npcs[j].x == rings[1][i].x and chars_mobs_npcs[j].y == rings[1][i].y then
 					chars_mobs_npcs[j].invisibility = 0;
+					chars_mobs_npcs[current_mob].invisibility = 0;
+					chars_mobs_npcs[current_mob].stealth = math.max(0,chars_mobs_npcs[current_mob].stealth - chars_mobs_npcs[j].lvl_spothidden*chars_mobs_npcs[j].num_spothidden);
+					chars_mobs_npcs[current_mob].stealth = math.max(0,chars_mobs_npcs[j].stealth - chars_mobs_npcs[current_mob].lvl_spothidden*chars_mobs_npcs[current_mob].num_spothidden);
 				end;
 			end;
 		end;
@@ -8058,7 +8079,7 @@ function mobMoving()
 			chars_mobs_npcs[current_mob].x = way_of_the_mob[path_counter][1];
 			chars_mobs_npcs[current_mob].y = way_of_the_mob[path_counter][2];
 			if chars_mobs_npcs[current_mob].stealth > 0 then
-				chars_mobs_npcs[current_mob].stealth =  chars_mobs_npcs[current_mob].stealth - ai.mobWatchesTheMobNum (current_mob,false);
+				chars_mobs_npcs[current_mob].stealth =  chars_mobs_npcs[current_mob].stealth - math.max(0,ai.mobWatchesTheMobNum (current_mob,false) - helpers.countStealthsCover(current_mob));
 				if chars_mobs_npcs[current_mob].stealth < 0 then
 					chars_mobs_npcs[current_mob].stealth = 0;
 				end;
@@ -8088,7 +8109,8 @@ function mobMoving()
 			if chars_mobs_npcs[current_mob].bleeding > 0 then
 				boomareas.bloodGround (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 			end;
-			if global.status == "peace" and ai.enemyWatchesYou () then --FIXME SLOWWWW
+			--if global.status == "peace" and ai.enemyWatchesYou () then --FIXME SLOWWWW
+			if ai.mobWatchesTheMob (current_mob,true) then
 				helpers.interrupt();
 				letaBattleBegin ();
 			end;
@@ -8168,6 +8190,8 @@ function mobMoving()
 		--mob ends moving
 		if trapped == 1 then
 			chars_mobs_npcs[current_mob].rt = math.max(0,chars_mobs_npcs[current_mob].rt - 50);
+			chars_mobs_npcs[current_mob].stealths = 0;
+			chars_mobs_npcs[current_mob].invisibility = 0;
 		end;
 		if path_counter == 0 and trapped ~= 1 then
 			chars_mobs_npcs[current_mob].waterwalking = 0;
@@ -8431,6 +8455,7 @@ function exp_for_what(value,index) --FIXME
 end;
 
 function missle_fly ()
+	global.recalc_lights_vs_shadows = true;
 	if global.timers.msla_timer >= 0.02 then
 		add_to_mslx = add_to_mslx + add_msl_x;
 		if missle_type ~= "bottle" then
@@ -8487,6 +8512,7 @@ function missle_fly ()
 end
 
 function meteor_fly()
+	global.recalc_lights_vs_shadows = true;
 	meteor_y = meteor_y-25;
 	if meteor_y <= 0 then
 		in_fly=0;
@@ -8604,7 +8630,15 @@ function restoreRT ()
 					end;
 				end;
 				if chars_mobs_npcs[i].stealth > 0 then
-					chars_mobs_npcs[i].stealth =  chars_mobs_npcs[i].stealth - ai.mobWatchesTheMobNum (i,false);
+					local unstealths = ai.mobWatchesTheMobNum (i,false);
+					local cover = helpers.countStealthsCover(i);
+					if (unstealths - cover) > 0 then
+						chars_mobs_npcs[i].stealth =  chars_mobs_npcs[i].stealth - (unstealths - cover);
+					else
+						if cover > 0 then
+							chars_mobs_npcs[i].stealth = math.min(chars_mobs_npcs[i].lvl_stealth*chars_mobs_npcs[i].num_stealth,chars_mobs_npcs[i].stealth+cover);
+						end;
+					end;
 					if chars_mobs_npcs[i].stealth < 0 then
 						chars_mobs_npcs[i].stealth = 0;
 					end;
@@ -9127,7 +9161,11 @@ function restoreRT ()
 				end;
 			end;
 			chars_mobs_npcs[i].protectionmode = "none";
-			game_status = "neutral";
+			if chars_mobs_npcs[i].wingsoflight == 0 then
+				game_status = "neutral";
+			else
+				game_status = "sense";
+			end;
 			ignore_kb = 0;
 			if not global.lookaround then
 				--trace.lookaround(i); --FIXME slowdown?
@@ -9472,7 +9510,7 @@ function playingState.draw()
 		draw.rain (100,10,10,255,255,255,150);
 	end;
 	if global.draw_temphud == 1 then --FIXME
-		love.graphics.draw(media.images.hud, 0,0);
+--		love.graphics.draw(media.images.hud, 0,0);
 	end;
 
 	if global.draw_interface == 1 then
@@ -9533,20 +9571,20 @@ function playingState.draw()
   -- love.graphics.setCanvas()
   -- love.graphics.draw(myCanvas)
 	if (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding") and chars_mobs_npcs[current_mob].control == "player" then
-		if global.highlight_party == 1  then
-			draw.highlight_mob (current_mob);
-		elseif global.highlight_party == 2 then
-			for i=1,#chars_mobs_npcs do
-				if chars_mobs_npcs[i].control == "player" then
-					draw.highlight_mob (i);
-				end;
-			end;
-		end;
 		if global.highlight_party ~= 0  then
 			draw.cursor();
 			draw.line();
 			if (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and game_status == "pathfinding" and path_status==1 then
 				draw.way();
+			end;
+		end;
+		if global.highlight_party == 1  then
+			draw.highlightMob (current_mob);
+		elseif global.highlight_party == 2 then
+			for i=1,#chars_mobs_npcs do
+				if chars_mobs_npcs[i].control == "player" then
+					draw.highlightMob (i);
+				end;
 			end;
 		end;
 	end;

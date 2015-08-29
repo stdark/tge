@@ -14,8 +14,6 @@ function path_finding (mode,ignore_mobs)
 		mob_range = math.max(0,limit-walked_before); --count walked before!
 		if chars_mobs_npcs[current_mob].immobilize > 0 then
 			mob_range = 0;
-		elseif chars_mobs_npcs[current_mob].wingsoflight > 0 then
-			mob_range = chars_mobs_npcs[current_mob].wingsoflight;
 		elseif helpers.Overloaded (current_mob) then
 			mob_range = 0;
 		end;

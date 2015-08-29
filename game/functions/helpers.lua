@@ -59,7 +59,7 @@ function helpers.passLev (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value <= 1 then
+	if helpers.insideMap(x,y) and height_value <= 0 then
 		return true
 	else
 		return false
@@ -96,7 +96,7 @@ function helpers.passFly (x,y)
 	else
 		height_value = 2;
 	end;
-	if helpers.insideMap(x,y) and height_value <= 2
+	if helpers.insideMap(x,y) and height_value <= 1
 	and not helpers.cursorAtClosedDoor(x,y) and not not helpers.cursorAtMaterialBag(x,y)
 	and dlandscape_obj[y][x] ~= "stone"
 	then
@@ -1319,7 +1319,7 @@ end;
 function helpers.chestTrapCylinder(bagid,traptrigger)
 	if bags_list[bagid].traped then
 		if traptrigger == 1 then
-			helpers.addToActionLog( lognames.actions.trapactivated);
+			helpers.addToActionLog(lognames.actions.trapactivated);
 			bags_list[bagid].traped = false;
 			missle_drive = "trap";
 			missle_type = bags_list[bagid].trapmodel;
@@ -1336,7 +1336,7 @@ function helpers.chestTrapCylinder(bagid,traptrigger)
 end;
 
 function helpers.chestTrapDisk(bagid)
-	helpers.addToActionLog( lognames.actions.trapactivated);
+	helpers.addToActionLog(lognames.actions.trapactivated);
 	bags_list[bagid].traped = false;
 	missle_drive = "trap";
 	missle_type = bags_list[bagid].trapmodel;
@@ -1351,7 +1351,7 @@ function helpers.chestTrapDisk(bagid)
 end;
 
 function helpers.chestTrapDisarmFailed (bagid)
-	helpers.addToActionLog( lognames.actions.trapactivated);
+	helpers.addToActionLog(lognames.actions.trapactivated);
 	bags_list[bagid].traped = false;
 	missle_drive = "trap";
 	missle_type = bags_list[bagid].trapmodel;
@@ -1366,7 +1366,7 @@ function helpers.chestTrapDisarmFailed (bagid)
 end;
 
 function helpers.groundTrapActivated (bagid)
-	helpers.addToActionLog( lognames.actions.trapactivated);
+	helpers.addToActionLog(lognames.actions.trapactivated);
 	bags_list[bagid].traped = false;
 	missle_drive = "trap";
 	missle_type = bags_list[bagid].trapmodel;
@@ -1396,7 +1396,7 @@ end;
 
 function helpers.afterTrapDisarmed(index)
 	bags_list[index].traped = false;
-	helpers.addToActionLog( lognames.actions.trapdisarmed);
+	helpers.addToActionLog(lognames.actions.trapdisarmed);
 	table.insert(bags_list[index],helpers.trapDamagingPart(index));
 	if bags_list[index].typ == "trap" then
 		bags_list[index].locked = false;
@@ -1443,7 +1443,7 @@ function helpers.breakTrapTool (bagid)
 		picklock[current_mob].traptool = 0;
 		--helpers.renumber(picklock[current_mob].traptool,current_mob);
 		utils.playSfx(media.sounds.crack,1);
-		helpers.addToActionLog( lognames.actions.picklockbroken);
+		helpers.addToActionLog(lognames.actions.picklockbroken);
 		--psPicklockBroken[1].ps:start();
 		picklockJustBroken = 100;
 	end;
@@ -1456,7 +1456,7 @@ function helpers.breakPicklock (bagid)
 		picklock[current_mob].picklock = 0;
 		--helpers.renumber(tmp,current_mob);
 		utils.playSfx(media.sounds.crack,1);
-		helpers.addToActionLog( lognames.actions.picklockbroken);
+		helpers.addToActionLog(lognames.actions.picklockbroken);
 		--psPicklockBroken[1].ps:start();
 		picklockJustBroken = 100;
 	end;
@@ -1469,7 +1469,7 @@ function helpers.breakKey (bagid)
 		picklock[current_mob].key = 0;
 		--helpers.renumber(picklock[current_mob].key,current_mob);
 		utils.playSfx(media.sounds.crack,1);
-		helpers.addToActionLog( lognames.actions.picklockbroken);
+		helpers.addToActionLog(lognames.actions.picklockbroken);
 		--psPicklockBroken[1].ps:start();
 		keyJustBroken = 100;
 	end;
@@ -1609,16 +1609,16 @@ function helpers.harvestOne (x,y)
 	local free_cells = helpers.countFreeCells (inventory_bag[chars_mobs_npcs[current_mob].id]);
 	if hlandscape[y][x] > 0 and hlandscape[y][x] < 26 then
 		if #free_cells > 0 then
-			helpers.addToActionLog( lognames.actions.found .. harvest_ttx[hlandscape[y][x]].title);
+			helpers.addToActionLog(lognames.actions.found .. harvest_ttx[hlandscape[y][x]].title);
 			table.insert(chars_mobs_npcs[current_mob]["inventory_list"],{ttxid=harvest_ttx[hlandscape[y][x]].loot, q=harvest_ttx[hlandscape[y][x]].power,w=0,e=0,r=0,h=0});
 			inventory_bag[current_mob][free_cells[1][1]][free_cells[1][2]] = #chars_mobs_npcs[current_mob]["inventory_list"];
 			hlandscape[y][x] = 0;
 		else
-			helpers.addToActionLog( lognames.actions.nospace);
+			helpers.addToActionLog(lognames.actions.nospace);
 		end;
 	else
 		hlandscape[y][x] = 0;
-		helpers.addToActionLog( lognames.actions.nothingtotake);
+		helpers.addToActionLog(lognames.actions.nothingtotake);
 	end;
 end;
 
@@ -1804,8 +1804,7 @@ function helpers.cam_to_hex (x, y)
    elseif map_y > map_h then
       map_y = map_h - map_display_h;
    end;
-
-   helpers.castShadows();
+   global.recalc_lights_vs_shadows = true;
 end;
 
 function helpers.neutralWatch ()
@@ -3378,7 +3377,7 @@ function helpers.idAndRepair(dragfrom)
 		helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.fixed[chars_mobs_npcs[current_mob].gender] .. lognames.actions.someequipment);
 		utils.playSfx(media.sounds.repair, 1);
 	elseif love.keyboard.isDown("lctrl","rctrl") and  work_this > 0 and inventory_ttx[list[work_this].ttxid].class ~= "ammo" then
-		helpers.addToActionLog( lognames.actions.nothingtofix)
+		helpers.addToActionLog(lognames.actions.nothingtofix)
 	end;
 	--/repair
 	--print(inventory_ttx[list[work_this].ttxid].class);
@@ -3406,9 +3405,9 @@ function helpers.idAndRepair(dragfrom)
 		--print("ID:",idvalue,idskill);
 		if work_this > 0 and list[work_this].r == 0 and (idskill > idvalue or chars_mobs_npcs[current_mob].lvl_stuffid == 5) then
 			list[work_this].r = 1;
-			helpers.addToActionLog( lognames.actions.identified);
+			helpers.addToActionLog(lognames.actions.identified);
 		elseif work_this > 0  and list[work_this].r == 0 then
-			helpers.addToActionLog( lognames.actions.cantid);
+			helpers.addToActionLog(lognames.actions.cantid);
 		end;
 	end;
 end;
@@ -4190,7 +4189,7 @@ function helpers.bagIsVisible(index)
 		if game_status == "sensing" and chars_mobs_npcs[current_mob].control == "player" and chars_mobs_npcs[current_mob].num_spothidden*chars_mobs_npcs[current_mob].lvl_spothidden >= bags_list[index].mask then
 			if not bags_list[index].detected then
 				--sound
-				helpers.addToActionLog( lognames.actions.trapdetected);
+				helpers.addToActionLog(lognames.actions.trapdetected);
 				bags_list[index].detected = true;
 			end;
 			return true;
@@ -4226,12 +4225,12 @@ function helpers.ifMobHasMana () --FIXME strange NOT USABLE ATM, ll be deleted
 		game_status = "sensing";
 	elseif chars_mobs_npcs[current_mob]["equipment"].ranged > 0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].ttxid].class == "wand" and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].q > 0 then
 		utils.playSfx(media.sounds.outofmana, 1);
-		helpers.addToActionLog( lognames.actions.outofmana);
+		helpers.addToActionLog(lognames.actions.outofmana);
 		missle_drive = "wand";
 		missle_type = chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ranged].w;
 	else
 		utils.playSfx(media.sounds.outofmana, 1);
-		helpers.addToActionLog( lognames.actions.outofmana);
+		helpers.addToActionLog(lognames.actions.outofmana);
 		missle_drive = "muscles";
 		if chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
 			missle_type = inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].class;
@@ -5274,6 +5273,7 @@ function helpers.switchToSense ()
 	trace.trace_hexes(current_mob,false,trace.sightArray (current_mob));
 	trace.one_around(current_mob);
 	trace.clear_rounded();
+	chars_mobs_npcs[current_mob].wingsoflight = 0;
 	if chars_mobs_npcs[current_mob]["equipment"].ammo > 0 then
 		missle_drive="muscles";
 		missle_type=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"].ammo].ttxid].subclass;
@@ -5299,6 +5299,7 @@ function helpers.switchToPathfinding ()
 			trace.first_watch(i);
 		end;
 	end;
+	chars_mobs_npcs[current_mob].wingsoflight = 0;
    trace.chars_around();
    trace.clear_rounded();
 end;
@@ -5549,4 +5550,21 @@ function helpers.ifPartyKnowsSecret(index)
 		end;
 	end;
 	return false;
+end;
+
+function helpers.countStealthsCover(index)
+	local cover = 0;
+	local ring = boomareas.smallRingArea(chars_mobs_npcs[index].x.chars_mobs_npcs[index].y);
+	for i=1,#ring do
+		if not helpers.passLev (ring[i].x,ring[i].y) then
+			cover = cover+10;
+		end;
+		if hlandscape[ring[i].y][ring[i].x] > 0 then
+			cover = cover+10;
+		end;
+	end;
+	if hlandscape[chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] > 0 then
+		cover = cover+10;
+	end;
+	return cover;
 end;
