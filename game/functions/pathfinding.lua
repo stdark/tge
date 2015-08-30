@@ -9,12 +9,13 @@ function path_finding (mode,ignore_mobs)
 	local mob_range = 0;
 	helpers.recalcBattleStats (current_mob);
 	if mode == 0 then --battle
-		local st_rt_limit = math.min(math.ceil(chars_mobs_npcs[current_mob].rt/5),math.ceil(chars_mobs_npcs[current_mob].st/5));
+		local st_rt_limit = math.ceil(math.min(chars_mobs_npcs[current_mob].rt/5,chars_mobs_npcs[current_mob].st/5));
 		local limit = math.min(chars_mobs_npcs[current_mob].rng,st_rt_limit);
-		mob_range = math.max(0,limit-walked_before); --count walked before!
+		mob_range = math.max(0,limit-walked_before);
 		if chars_mobs_npcs[current_mob].immobilize > 0 then
 			mob_range = 0;
 		elseif helpers.Overloaded (current_mob) then
+			print("Overloaded!",current_mob);
 			mob_range = 0;
 		end;
 		
@@ -463,7 +464,7 @@ function path_finding (mode,ignore_mobs)
 		else --path not found
 			if chars_mobs_npcs[current_mob].control == "ai" then
 				--chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt - 100;
-				--print("path not found");
+				---print("path not found");
 				damage.RTminus(current_mob,100,false);
 				game_status="restoring";
 			end;

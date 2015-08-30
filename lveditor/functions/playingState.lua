@@ -126,8 +126,8 @@ function playingState.load()
 	map_size=map_w*map_h;
 	map_x = 0;
 	map_y = 0;
-	map_display_w = 40;
-	map_display_h = 48;
+	global.map_display_w = 40;
+	global.map_display_h = 48;
 	tile_hw = 32;
 	tile_qh=tile_h/2;
 	tile_34=tile_hw+tile_hw/2;
@@ -1788,8 +1788,8 @@ end;
 
 function draw_map()
 	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "decals" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and hexes_status==1 then
-		for my=1, math.min(map_display_h, map_h-map_y) do
-			for mx=1, math.min(map_display_w, map_w-map_x) do	
+		for my=1, math.min(global.map_display_h, map_h-map_y) do
+			for mx=1, math.min(global.map_display_w, map_w-map_x) do	
 				mxx = math.max(1,mx+map_x);
 				myy = math.max(1,my+map_y);
 				if show_invisible  and map[myy][mxx] <= 1200 then
@@ -1804,8 +1804,8 @@ function draw_map()
  
 function draw_submap()
 	if (editor_status == "hexes" or editor_status == "buildings" or editor_status == "harvest" or editor_status == "decals" or editor_status == "homelands" or editor_status == "subhexes" or editor_status == "objects") and global.subhex == 1 then
-		for my=1, math.min(map_display_h, map_h-map_y) do
-			for mx=1, math.min(map_display_w, map_w-map_x) do	
+		for my=1, math.min(global.map_display_h, map_h-map_y) do
+			for mx=1, math.min(global.map_display_w, map_w-map_x) do	
 				mxx = math.max(1,mx+map_x);
 				myy = math.max(1,my+map_y);
 				if show_invisible and submap[myy][mxx] <= 1200 then
@@ -1922,8 +1922,8 @@ function draw_objects ()
 		else
 			myy = -2
 		end;
-		for my=myy, math.min(map_display_h, map_h-map_y) do
-		  for mx=mxx, math.min(map_display_w, map_w-map_x) do
+		for my=myy, math.min(global.map_display_h, map_h-map_y) do
+		  for mx=mxx, math.min(global.map_display_w, map_w-map_x) do
 			mx_ = math.max(1,mx+map_x);
 			my_ = math.max(1,my+map_y);
 			if (my_)/2 == math.ceil((my_)/2) then
@@ -4152,8 +4152,8 @@ function drawHex (x,y,hex,img)
 end;
 
 function draw_numbers()
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			drawNumberHex (mx+map_x,my+map_y,16,mx);
 			drawNumberHex (mx+map_x,my+map_y,32,"x");
 			drawNumberHex (mx+map_x,my+map_y,48,my);
@@ -4163,8 +4163,8 @@ function draw_numbers()
  end;
  
  function draw_types()
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			drawNumberHex (mx+map_x,my+map_y,32,map[my+map_y][mx+map_x]);
 		end;
 	end;
@@ -4172,8 +4172,8 @@ function draw_numbers()
  end;
  
  function draw_homelandNumbers()
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			if homelands_table[my+map_y][mx+map_x] > 0 then
 				local index = math.min(255,homelands_table[my+map_y][mx+map_x]);
 				local _color1 = global.homelands_colors[index][1];

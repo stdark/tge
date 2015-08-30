@@ -1478,7 +1478,7 @@ end;
 function helpers.detectAgro (index)
 	local mob_detects_enemies = {};
 	local mob_detects_aggro = {};
-	ai.agro_array_full ();
+	ai.agroArrayFull ();
 	trace.first_watch (index);
 	for l=1, #chars_mobs_npcs do
 		if darkness[chars_mobs_npcs[index].party][chars_mobs_npcs[l].x][chars_mobs_npcs[l].y] == 0 and not ai.friendOrFoe (index,l)
@@ -1772,13 +1772,17 @@ end;
 
 function helpers.interrupt ()
 	utils.printDebug("INTERRUPT")
-	walked_before = 100;
+	walked_before = 0;
 	path_counter = 0;
 	game_status = "neutral";
 	helpers.neutralWatch ();
 	path_status = 0;
 	global.hang = false;
-	mob_is_goung_to_hit = 0;
+	mob_is_going_to_hit = 0;
+	mob_is_going_to_picklock = 0;
+	mob_is_going_to_knock = 0;
+	mob_is_going_to_useobject = 0;
+	global.timers.n_timer=0;
 end;
 
 function helpers.cam_to_mob ()
@@ -1787,8 +1791,8 @@ end;
 
 function helpers.cam_to_hex (x, y)
    --  map_x, map_y - coordinates of upper left corner tile !
-   local w, _ = math.modf(map_display_w / 2); -- get x margin for current screen size
-   local h, _ = math.modf(map_display_h / 2); -- get y margin for current screen size
+   local w, _ = math.modf(global.map_display_w / 2); -- get x margin for current screen size
+   local h, _ = math.modf(global.map_display_h / 2); -- get y margin for current screen size
 
    map_x = x - w;
    map_y = y - h;
@@ -1796,13 +1800,13 @@ function helpers.cam_to_hex (x, y)
    if map_x < 0 then
       map_x = 0;
    elseif map_x > map_w then
-      map_x = map_w - map_display_w;
+      map_x = map_w - global.map_display_w;
    end;
 
    if map_y < 0 then
       map_y = 0;
    elseif map_y > map_h then
-      map_y = map_h - map_display_h;
+      map_y = map_h - global.map_display_h;
    end;
    global.recalc_lights_vs_shadows = true;
 end;
@@ -1836,8 +1840,8 @@ function helpers.castShadows ()
 		end;
 	end;
 	shadows = {};
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			if map[my+map_y][mx+map_x] == 10 or ((map[my+map_y][mx+map_x] <= 1200 and visibility_table[map[my+map_y][mx+map_x]] == 1) or (map[my+map_y][mx+map_x] >= 1500)) then --check in future
 				local xx,yy =  helpers.hexToPixels(mx,my);
 				table.insert(shadows,{x=mx,y=my,shadow = lightWorld.newCircle(xx, yy, 20),typ="obj"});
@@ -2007,8 +2011,8 @@ function helpers.findShadows()
 	else
 		myy = -10
 	end;
-	for z=map_y+myy, math.min(map_display_h, map_h-map_y) do
-		for i=map_x+mxx, math.min(map_display_w, map_w-map_x) do
+	for z=map_y+myy, math.min(global.map_display_h, map_h-map_y) do
+		for i=map_x+mxx, math.min(global.map_display_w, map_w-map_x) do
 			if dlandscape_obj[i][z] == "fire" or dlandscape_obj[i][z] == "light" then --nil
 				slandscape[i][z] = math.max(4,environment_light,slandscape[i][z]);
 				local rings = boomareas.ringArea(z,i);
@@ -5554,7 +5558,7 @@ end;
 
 function helpers.countStealthsCover(index)
 	local cover = 0;
-	local ring = boomareas.smallRingArea(chars_mobs_npcs[index].x.chars_mobs_npcs[index].y);
+	local ring = boomareas.smallRingArea(chars_mobs_npcs[index].x,chars_mobs_npcs[index].y);
 	for i=1,#ring do
 		if not helpers.passLev (ring[i].x,ring[i].y) then
 			cover = cover+10;
@@ -5567,4 +5571,29 @@ function helpers.countStealthsCover(index)
 		cover = cover+10;
 	end;
 	return cover;
+end;
+
+function helpers.countStealth(index)
+	if chars_mobs_npcs[index].stealth > 0 then
+		local unstealth = ai.mobWatchesTheMobNum (index,false);
+		local cover = helpers.countStealthsCover(index);
+		if cover > 0 then
+			if chars_mobs_npcs[index].stealth < chars_mobs_npcs[index].lvl_stealth*chars_mobs_npcs[index].num_stealth + cover then
+				chars_mobs_npcs[index].stealth = chars_mobs_npcs[index].stealth + cover +1;
+			end;
+		else
+			chars_mobs_npcs[index].stealth = math.min(chars_mobs_npcs[index].stealth,chars_mobs_npcs[index].lvl_stealth*chars_mobs_npcs[index].num_stealth);
+			if chars_mobs_npcs[index].stealth < chars_mobs_npcs[index].lvl_stealth*chars_mobs_npcs[index].num_stealth then
+				chars_mobs_npcs[index].stealth = chars_mobs_npcs[index].stealth +1;
+			end;
+		end;
+		if unstealth > chars_mobs_npcs[index].stealth then
+			chars_mobs_npcs[index].stealth = chars_mobs_npcs[index].stealth -10;
+		elseif unstealth > 0 then
+			chars_mobs_npcs[index].stealth = chars_mobs_npcs[index].stealth - 5;
+		end;
+		if chars_mobs_npcs[index].stealth < 0 then
+			chars_mobs_npcs[index].stealth = 0;
+		end;
+	end;
 end;

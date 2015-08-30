@@ -26,8 +26,8 @@ function draw.fogOfWar(x,y)
 end;
 
 function draw.map()
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			--draw.irradiation(mx,my);
 			draw.fogOfWar(mx+map_x,my+map_y)
 			if map[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] < 1200 then
@@ -62,8 +62,8 @@ function draw.map()
  end;
 
 function draw.submap()
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			draw.fogOfWar(mx+map_x,my+map_y);
 			if submap[my+map_y][mx+map_x] > 20 and submap[my+map_y][mx+map_x] <= 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex);
@@ -74,8 +74,8 @@ function draw.submap()
  end; 
  
 function draw.numbers()--DEBUG
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			draw.drawNumberHex (mx+map_x,my+map_y,16,mx);
 			draw.drawNumberHex (mx+map_x,my+map_y,32,"x");
 			draw.drawNumberHex (mx+map_x,my+map_y,48,my);
@@ -85,8 +85,8 @@ function draw.numbers()--DEBUG
  end;
 
 function draw.enemyFov(index) --DEBUG
-	for my=1, math.min(map_display_h, map_h-map_y) do
-		for mx=1, math.min(map_display_w, map_w-map_x) do
+	for my=1, math.min(global.map_display_h, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			draw.drawNumberHex (mx+map_x,my+map_y,16,darkness[index][my+map_y][mx+map_x]);
 		end;
 	end;
@@ -660,8 +660,8 @@ function draw.cursor ()
 				end;]]
 				
 				if missle_type == "armageddon" then
-					for mx = map_x,math.min(map_w + map_display_w) do
-						for my = map_y,math.min(map_h + map_display_h) do
+					for mx = map_x,math.min(map_w + global.map_display_w) do
+						for my = map_y,math.min(map_h + global.map_display_h) do
 							draw.drawHex(mx,my,cursor_danger,media.images.hex_ui);	
 						end;
 					end;
@@ -677,7 +677,6 @@ end;
 function draw.boom ()
 	utils.printDebug("BOOM!");
 	draw.shaderIrradiation ();
-	--print(missle_type,missle_subtype);
 	helpers.clearMissleLight ();
 	local lvl,num = helpers.countBoomNumbers ();
 	game_status="boom";
@@ -686,7 +685,6 @@ function draw.boom ()
 	local lvl,num = helpers.countBoomNumbers (missle_drive);
 	bm_timer = 0;
 	sfx.boomSound ();
-	--print(missle_type ,missle_subtype);
 	if (missle_type == "bottle" and missle_subtype == "firebomb") or missle_type == "firebomb" then
 		boomareas.fireExploGround (boomx,boomy);
 		local rings = boomareas.ringArea(boomx,boomy);
@@ -2839,20 +2837,17 @@ end;
 function draw.objects ()
 	love.graphics.setColor(255, 255, 255);
 	if map_x < 12 then
-		mxx = 1
+		mxx = 1;
 	else
-		mxx = -10
+		mxx = -10;
 	end;
 	if map_y < 4 then
-		myy = 1
+		myy = 1;
 	else
-		myy = -2
+		myy = -2;
 	end;
-	for my=myy, math.min(map_display_h, map_h-map_y) do
-      for mx=mxx, math.min(map_display_w, map_w-map_x) do
-	--for my=1, math.min(map_display_h, map_h-map_y) do
-		--for mx=1, math.min(map_display_w, map_w-map_x) do		
-			--draw.irradiation (mx,my);
+	for my=myy, math.min(global.map_display_h, map_h-map_y) do
+      for mx=mxx, math.min(global.map_display_w, map_w-map_x) do
 			if wlandscape[my+map_y][mx+map_x] > 0 then 
 				if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 					love.graphics.draw(media.images.tmpobjs, eye,((mx-1)*tile_w+left_space+tile_hw)-tile_w-32, (my-1)*tile_h*0.75+top_space - 128);
@@ -2876,13 +2871,7 @@ function draw.objects ()
 					local img = buildings_stats[index].img;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					
-					--[[
-					draw.drawHex(corner_hexes_array[1][1],corner_hexes_array[1][2],cursor_danger,media.images.hex_ui);
-					draw.drawHex(corner_hexes_array[2][1],corner_hexes_array[2][2],cursor_danger,media.images.hex_ui);
-					draw.drawHex(corner_hexes_array[3][1],corner_hexes_array[3][2],cursor_danger,media.images.hex_ui);
-					draw.drawHex(corner_hexes_array[4][1],corner_hexes_array[4][2],cursor_danger,media.images.hex_ui);
-					]]
+
 					if darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 0
 					or darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 0
 					or darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 0
@@ -2926,12 +2915,7 @@ function draw.objects ()
 					local img = buildings_stats[index].img;
 					local addx = buildings_stats[index].addx;
 					local addy = buildings_stats[index].addy;
-					--[[
-					draw.drawHex(corner_hexes_array[1][1],corner_hexes_array[1][2],cursor_danger,media.images.hex_ui);
-					draw.drawHex(corner_hexes_array[2][1],corner_hexes_array[2][2],cursor_danger,media.images.hex_ui);
-					draw.drawHex(corner_hexes_array[3][1],corner_hexes_array[3][2],cursor_danger,media.images.hex_ui);
-					draw.drawHex(corner_hexes_array[4][1],corner_hexes_array[4][2],cursor_danger,media.images.hex_ui);
-					]]
+
 					if darkness[1][corner_hexes_array[1][2]][corner_hexes_array[1][1]] == 0
 					or darkness[1][corner_hexes_array[2][2]][corner_hexes_array[2][1]] == 0
 					or darkness[1][corner_hexes_array[3][2]][corner_hexes_array[3][1]] == 0
@@ -3117,7 +3101,6 @@ function draw.objects ()
 					end;
 				end;
 				if elandscape[my+map_y][mx+map_x] == "stone" then
-					print("stone",game_status,my+map_y,mx+map_x);
 					if (my+map_y)/2 == math.ceil((my+map_y)/2) then
 						animation_stonewall:draw(media.images.boom,((mx-1)*tile_w+left_space+tile_hw)-70-tile_w, (my-1)*tile_h*0.75+top_space-95);
 					else
@@ -3509,6 +3492,12 @@ function draw.mobs (mx,my,highlight,index)
 			end;
 		end;
 		--draw.irradiation (mx,my);
+		
+		if  chars_mobs_npcs[i].control == "player" and chars_mobs_npcs[i].stealth > 0 then
+			--love.graphics.draw(media.images.dark,mobto_hex_x-tile_w*1.5+40,mobto_hex_y-85,0,0.5,chars_mobs_npcs[i].stealth/100);
+			love.graphics.print(chars_mobs_npcs[i].stealth,mobto_hex_x-tile_w*1.5+40,mobto_hex_y);
+		end;
+		
 		if (highlight and i == index) or (not highlight and my == chars_mobs_npcs[i].y-map_y and mx== chars_mobs_npcs[i].x-map_x) then
 			
 			if chars_mobs_npcs[i].stone > 0  then
@@ -3708,6 +3697,7 @@ function draw.mobs (mx,my,highlight,index)
 					love.graphics.draw(media.images.ui, parry_icon,mobto_hex_x-tile_w*1.5+32,mobto_hex_y-50);
 				end;
 			end;
+			
 			if game_status == "boom" then
 				misto_hex_y = (boomy-map_y)*tile_h*0.75+top_space;
 				if boomy/2 == math.ceil(boomy/2) then
@@ -5643,7 +5633,6 @@ function draw.inventory_bag ()
 				draw.bag();
 			elseif bags_list[j].typ == "bag" or (bags_list[j].typ == "chest" and bags_list[j].locked and chars_mobs_npcs[current_mob].rot == bags_list[j].dir) or (bags_list[j].typ == "door" and bags_list[j].locked) then
 				if not start_picklock then
-					print("{}!");
 					start_picklock = true;
 					lock_elements = {};
 					diskcode = {};

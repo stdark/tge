@@ -4106,21 +4106,23 @@ end;
 	DT = DT + add_dt + chars_mobs_npcs[victim].dt;
 	DR = DR + add_dr + chars_mobs_npcs[victim].dr;
 	
-	if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].ttxid].class == "axe" then
-		if chars_mobs_npcs[current_mob].lvl_axe >= 4 then
-			DR = math.ceil(DR/2);
+	if chars_mobs_npcs[current_mob]["equipment"][attacking_hand] > 0 and chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].q > 0 then
+		if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].ttxid].class == "axe" then
+			if chars_mobs_npcs[current_mob].lvl_axe >= 4 then
+				DR = math.ceil(DR/2);
+			end;
+			if chars_mobs_npcs[current_mob].lvl_axe == 5 then
+				DT = 0;
+			end;
 		end;
-		if chars_mobs_npcs[current_mob].lvl_axe == 5 then
-			DT = 0;
-		end;
-	end;
-	
-	if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].ttxid].class == "crushing" then
-		if chars_mobs_npcs[current_mob].lvl_crushing >= 3 then
-			DR = math.ceil(DR/2);
-		end;
-		if chars_mobs_npcs[current_mob].lvl_crushing >= 4 then
-			AC = math.ceil(AC/2);
+		
+		if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][chars_mobs_npcs[current_mob]["equipment"][attacking_hand]].ttxid].class == "crushing" then
+			if chars_mobs_npcs[current_mob].lvl_crushing >= 3 then
+				DR = math.ceil(DR/2);
+			end;
+			if chars_mobs_npcs[current_mob].lvl_crushing >= 4 then
+				AC = math.ceil(AC/2);
+			end;
 		end;
 	end;
 	

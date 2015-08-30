@@ -293,18 +293,17 @@ function trace.first_watch (index)
 	darkness[chars_mobs_npcs[index].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] = 0;
 	if chars_mobs_npcs[index].status == 1 then
 		if chars_mobs_npcs[index].control == "player" then
-			local temp_array = trace.trace_hexes(index,false,trace.sightArray (index),false);
+			trace.trace_hexes(index,false,trace.sightArray (index),false);
 		end;
 		if chars_mobs_npcs[index].control == "ai" and  chars_mobs_npcs[index].ai ~= "building" then
-			--trace.trace_hexes(index,false,trace.sightArray (index));
 			trace.trace_hexes(index,false,trace.sightArray (index),false);
 		end;
 	end;
 end;
 
 function trace.wizardEye ()
-	for my=1, math.min(map_display_h+4, map_h-map_y) do
-		for mx=1, math.min(map_display_w+4, map_w-map_x) do		
+	for my=1, math.min(global.map_display_h+4, map_h-map_y) do
+		for mx=1, math.min(global.map_display_w+4, map_w-map_x) do		
 			if wlandscape[mx][my] > 0 then
 				darkness[1][mx][my] = 0;
 				local rings = boomareas.ringArea(mx,my);
@@ -519,6 +518,17 @@ function trace.all_to_darkness()
 						darkness[h][i][z] = 1;
 					end;
 				end;
+			end;
+		end;
+	end;
+end;
+
+function trace.partyToDarkness(index)
+	local party = chars_mobs_npcs[index].party;
+	for i=1, map_w do
+		for z=1, map_h do
+			if darkness[party][i][z] == 0 then
+				darkness[party][i][z] = 1;
 			end;
 		end;
 	end;

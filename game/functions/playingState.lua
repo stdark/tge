@@ -99,8 +99,8 @@ function playingState.load()
 	tile_34=tile_hw+tile_hw/2;
 	global.screenWidth = love.graphics.getWidth();
 	global.screenHeight = love.graphics.getHeight();
-	map_display_w = math.ceil(global.screenWidth/tile_w)+1;
-	map_display_h = math.ceil(global.screenHeight/tile_h*1.5)+1;
+	global.map_display_w = math.ceil(global.screenWidth/tile_w)+1;
+	global.map_display_h = math.ceil(global.screenHeight/tile_h*1.5)+1;
 	tile_row_check=0;
 	left_space=20;
 	top_space=20;
@@ -374,7 +374,6 @@ function playingState.load()
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=34,y=60,rot=4,class="rogue",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=32,y=63,rot=1,class="naga",fraction="bandidos",party=4});
 		table.insert(chars_mobs_npcs,{uid=0,person="mob",control="ai",defaultai="agr",ai="agr",dangerai="agr", x=30,y=70,rot=4,class="mage",fraction="bandidos",party=4});
-		
 
 		for i=(chars+1),#chars_mobs_npcs do
 			mobsoperatons.addMob(i,"mob");
@@ -464,7 +463,7 @@ function playingState.load()
 		});
 
 		for i=(totalmobs+1),#chars_mobs_npcs do
-			print("chars_mobs_npcs UID",i,chars_mobs_npcs[i].uid)
+			--print("chars_mobs_npcs UID",i,chars_mobs_npcs[i].uid)
 			mobsoperatons.addMob(i,"npc");
 		end;
 
@@ -783,7 +782,6 @@ function playingState.load()
 	global.level_moral_add = 0; --good or bad area
 --/NEW LEVEL
 
-	trace.chars_around();
 	--helpers.battleorder();
 	for h = 1,#bags_list do
 		bags[h] = {};
@@ -1428,7 +1426,7 @@ function playingState.update(dt)
 			global.mindtimer = global.mindtimer - dt;
 		end;
 		if global.timers.m_timer >= 1 then
-			if  cursor_world_x > map_limit_w and cursor_world_x < map_display_w - map_limit_w and cursor_world_y > map_limit_h and cursor_world_y < map_display_h - map_limit_h and heights_table[map[cursor_world_y][cursor_world_x]] == 0 then
+			if  cursor_world_x > map_limit_w and cursor_world_x < global.map_display_w - map_limit_w and cursor_world_y > map_limit_h and cursor_world_y < global.map_display_h - map_limit_h and heights_table[map[cursor_world_y][cursor_world_x]] == 0 then
 				cursor_world_x = cursor_world_x;
 				cursor_world_y = cursor_world_y;
 			end;
@@ -8049,7 +8047,6 @@ function mobMoving()
 			end;
 		end;
 		walked_before = walked_before + 1;
-		--trace.all_to_darkness(); --need or not?
 		if global.status == "peace" then
 			calendar.add_time_interval(calendar.delta_walk_in_peace);
 		end;
@@ -8059,7 +8056,6 @@ function mobMoving()
 			else
 				chars_mobs_npcs[current_mob].st = 0;
 				utils.printDebug("out of stamina!");
-				--game_status = "restoring";
 				local name = helpers.mobName(current_mob);
 				chars_mobs_npcs[current_mob].weakness_power = 5;
 				chars_mobs_npcs[current_mob].weakness_dur = 5;
@@ -8078,12 +8074,7 @@ function mobMoving()
 		if path_counter > 0 then
 			chars_mobs_npcs[current_mob].x = way_of_the_mob[path_counter][1];
 			chars_mobs_npcs[current_mob].y = way_of_the_mob[path_counter][2];
-			if chars_mobs_npcs[current_mob].stealth > 0 then
-				chars_mobs_npcs[current_mob].stealth =  chars_mobs_npcs[current_mob].stealth - math.max(0,ai.mobWatchesTheMobNum (current_mob,false) - helpers.countStealthsCover(current_mob));
-				if chars_mobs_npcs[current_mob].stealth < 0 then
-					chars_mobs_npcs[current_mob].stealth = 0;
-				end;
-			end;
+			helpers.countStealth(current_mob);
 			if chars_mobs_npcs[current_mob].ai == "cruiser" then
 				for i=1, #chars_mobs_npcs[current_mob].waypoint do
 					if chars_mobs_npcs[current_mob].x == chars_mobs_npcs[current_mob].waypoint[i][1] and chars_mobs_npcs[current_mob].y == chars_mobs_npcs[current_mob].waypoint[i][2] then
@@ -8095,7 +8086,6 @@ function mobMoving()
 					end;
 				end;
 			end;
-			--helpers.findShadows();
 			if chars_mobs_npcs[current_mob].torchlight > 0 then
 				for i=1,#lights do
 					if lights[i].typ == "mob" and lights[i].index == current_mob then
@@ -8104,15 +8094,13 @@ function mobMoving()
 					end;
 				end;
 			end;
-			--shadows[current_mob].y = way_of_the_mob[path_counter][1];
-			--shadows[current_mob].x = way_of_the_mob[path_counter][2];
 			if chars_mobs_npcs[current_mob].bleeding > 0 then
 				boomareas.bloodGround (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
 			end;
-			--if global.status == "peace" and ai.enemyWatchesYou () then --FIXME SLOWWWW
-			if ai.mobWatchesTheMob (current_mob,true) then
+			if global.status == "peace" and ai.mobWatchesTheMob (current_mob,true) then
 				helpers.interrupt();
 				letaBattleBegin ();
+				return;
 			end;
 		end;
 		local a = chars_mobs_npcs[current_mob].x;
@@ -8629,21 +8617,7 @@ function restoreRT ()
 						end;
 					end;
 				end;
-				if chars_mobs_npcs[i].stealth > 0 then
-					local unstealths = ai.mobWatchesTheMobNum (i,false);
-					local cover = helpers.countStealthsCover(i);
-					if (unstealths - cover) > 0 then
-						chars_mobs_npcs[i].stealth =  chars_mobs_npcs[i].stealth - (unstealths - cover);
-					else
-						if cover > 0 then
-							chars_mobs_npcs[i].stealth = math.min(chars_mobs_npcs[i].lvl_stealth*chars_mobs_npcs[i].num_stealth,chars_mobs_npcs[i].stealth+cover);
-						end;
-					end;
-					if chars_mobs_npcs[i].stealth < 0 then
-						chars_mobs_npcs[i].stealth = 0;
-					end;
-				end;
-				
+				helpers.countStealth(i);
 				if chars_mobs_npcs[i].dayofgods_dur > 0 then
 					chars_mobs_npcs[i].dayofgods_dur = chars_mobs_npcs[i].dayofgods_dur -1;
 					if chars_mobs_npcs[i].dayofgods_dur == 0 then
@@ -9196,7 +9170,7 @@ function restoreRT ()
 						chars_mobs_npcs[i].fear = 0;
 						chars_mobs_npcs[i].panic = 0;
 						chars_mobs_npcs[i].charm = 0;
-						chars_mobs_npcs[i].st = math.max(chars_mobs_npcs[i].st,chars_mobs_npcs[index].st_base);--second breath
+						chars_mobs_npcs[i].st = math.max(chars_mobs_npcs[i].st,chars_mobs_npcs[i].st_base);--second breath
 						helpers.addToActionLog(helpers.mobName(i) .. " " .. lognames.actions.cheeresup[chars_mobs_npcs[i].gender]);
 					end;
 				end;
@@ -9211,7 +9185,7 @@ function restoreRT ()
 					chars_mobs_npcs[i].ai = chars_mobs_npcs[i].defaultai;
 				end;
 			end;
-			if chars_mobs_npcs[i].control == "ai" and chars_mobs_npcs[i].fraction ~= "party"
+			--[[if chars_mobs_npcs[i].control == "ai" and chars_mobs_npcs[i].fraction ~= "party"
 			and chars_mobs_npcs[i].ai ~= "building" and helpers.mobCanSee(i)
 			then
 				for k=1,#chars_mobs_npcs do
@@ -9219,7 +9193,17 @@ function restoreRT ()
 						trace.first_watch (k);
 					end;
 				end;
+			end;]]
+			if chars_mobs_npcs[i].control == "player" then --for stealth
+				for k=1,#chars_mobs_npcs do
+					if chars_mobs_npcs[k].status == 1 and chars_mobs_npcs[k].ai ~= "building" then
+						trace.first_watch (k);
+					end;
+				end;
+				trace.chars_around();
+				trace.clear_rounded();
 			end;
+			
 			helpers.battleorder();
 			global.lookaround = true;
 			global.rem_cursor_world_x = chars_mobs_npcs[i].x;
@@ -9468,43 +9452,23 @@ function find_nonfree_space_at_inv ()
 end;
 
 function playingState.draw()
-	--currentState.draw();
 	lightWorld.update();
-	
-	   -- set your canvas
-	--love.graphics.setCanvas(myCanvas) --REF
-	
 	love.graphics.setFont(mainFont);
 	draw.background();
 	draw.submap();
 	draw.map();
 	--draw.numbers();
+	--draw.enemyFov(4)
 	if chars_mobs_npcs[current_mob].control=="player" then --FIXME
 		if (cursor_world_x == chars_mobs_npcs[current_mob].x and cursor_world_y == chars_mobs_npcs[current_mob].y) == false and game_status == "pathfinding" and path_status==1 then
 			draw.way();
 		end;
 	end;
-	--draw.fogOfWar();
 	draw.cursor();
 	draw.line();
-	--if shadows_back then
-		--shadows = shadows_back;
-	--end;
-	--lightWorld.drawShadow();
 	draw.objects();
-
-	--shadows_back = shadows;
-	--shadows = {};
 	lightWorld.drawShadow();
 	lightWorld.drawGlow();
-	 --REF
-	  -- draw the reflection
-   --lightWorld.drawReflection()
-
-   -- draw the refraction
- --  lightWorld.drawRefraction()
-
-	
 	
 	if global.weather == "rain" then
 		draw.rain (100,10,10,255,255,255,150);
@@ -9529,47 +9493,10 @@ function playingState.draw()
 		--love.graphics.draw(psPicklockBroken[1].ps, 550, 400);
     end;
 
-	sometable = {
-
-	global.screenWidth/2 - 100 ,350,
-	global.screenWidth/2 + 100,350,
-	global.screenWidth/2 + 100,400,
-	global.screenWidth/2 -100 ,400,
-	global.screenWidth/2 - 100,350,
-	}
-
-	--love.graphics.line(sometable)
-
-
-	 sometable = {
-
-	global.screenWidth/2 - 100 ,450,
-	global.screenWidth/2 + 100,450,
-	global.screenWidth/2 + 100,500,
-	global.screenWidth/2 -100 ,500,
-	global.screenWidth/2 - 100,450,
-	}
-
-	--love.graphics.line(sometable)
-
-
-	sometable = {
-
-	global.screenWidth/2 - 285 ,250,
-	global.screenWidth/2 + 295,250,
-	global.screenWidth/2 + 295,475,
-	global.screenWidth/2 -285 ,475,
-	global.screenWidth/2 - 285,250,
-	}
-
-	--love.graphics.line(sometable)
 	loveframes.draw();
 
 	local x,y = helpers.centerObject(media.images.inv1);
 
-	   -- draw Canvas --REF
-  -- love.graphics.setCanvas()
-  -- love.graphics.draw(myCanvas)
 	if (game_status == "neutral" or game_status == "sensing" or game_status == "pathfinding") and chars_mobs_npcs[current_mob].control == "player" then
 		if global.highlight_party ~= 0  then
 			draw.cursor();
@@ -9588,7 +9515,6 @@ function playingState.draw()
 			end;
 		end;
 	end;
-	--draw.enemyFov(4)
  end;
 
 return playingState
