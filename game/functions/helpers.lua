@@ -5350,7 +5350,7 @@ function helpers.loadComic(comic)
 end;
 
 function helpers.mobCanSee (index)
-	if chars_mobs_npcs[index].sleep == 0 and chars_mobs_npcs[index].stone == 0 and chars_mobs_npcs[index].freeze == 0
+	if chars_mobs_npcs[index].status == 1 and chars_mobs_npcs[index].sleep == 0 and chars_mobs_npcs[index].stone == 0 and chars_mobs_npcs[index].freeze == 0
 	and ((chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 1) or (chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 1) or (chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 1)) then
 		return true;
 	end;

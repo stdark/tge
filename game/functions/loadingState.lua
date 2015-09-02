@@ -73,7 +73,7 @@ function loadingState.start(media, finishCallback)
 		loader.newImage(media.images, "back", images_table[1]);
 		loader.newImage(media.images, "hex", images_table[2]);
 		loader.newImage(media.images, "obj", images_table[3]);
-		
+		loader.newImage(media.images, "hex_color", images_table[4]);
 		if not media.images.buildings then
 			media.images.buildings = {};
 		end;

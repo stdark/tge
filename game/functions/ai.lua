@@ -126,7 +126,9 @@ end;
 function ai.mobWatchesTheMobNum (index,enemyonly) --for stealth
 	local counter = 0;
 	for i = 1, #chars_mobs_npcs do
-		if chars_mobs_npcs[i].ai ~= "building" and chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].dangerai == "agr" and helpers.mobCanSee (i)
+		if chars_mobs_npcs[i].ai ~= "building" 
+		and math.abs(chars_mobs_npcs[i].x - chars_mobs_npcs[index].x) <= chars_mobs_npcs[i].sns and math.abs(chars_mobs_npcs[i].y - chars_mobs_npcs[index].y) <= chars_mobs_npcs[i].sns
+		and helpers.mobCanSee (i)
 		and (chars_mobs_npcs[i].party ~= chars_mobs_npcs[index].party or chars_mobs_npcs[i].control ~= chars_mobs_npcs[index].control)
 		and math.ceil(math.sqrt((chars_mobs_npcs[i].x-chars_mobs_npcs[index].x)^2 + (chars_mobs_npcs[i].y-chars_mobs_npcs[index].y)^2)) <= chars_mobs_npcs[i].sense
 		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0
@@ -146,9 +148,11 @@ end;
 
 function ai.mobWatchesTheMob (index,enemyonly)
 	for i = 1, #chars_mobs_npcs do
-		if chars_mobs_npcs[i].ai ~= "building" and (chars_mobs_npcs[i].party ~= chars_mobs_npcs[index].party or chars_mobs_npcs[i].control ~= chars_mobs_npcs[index].control)
-		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 and chars_mobs_npcs[i].status == 1
+		if chars_mobs_npcs[i].ai ~= "building" 
+		and math.abs(chars_mobs_npcs[i].x - chars_mobs_npcs[index].x) <= chars_mobs_npcs[i].sns and math.abs(chars_mobs_npcs[i].y - chars_mobs_npcs[index].y) <= chars_mobs_npcs[i].sns
 		and helpers.mobCanSee (i)
+		and (chars_mobs_npcs[i].party ~= chars_mobs_npcs[index].party or chars_mobs_npcs[i].control ~= chars_mobs_npcs[index].control)
+		and darkness[chars_mobs_npcs[i].party][chars_mobs_npcs[index].y][chars_mobs_npcs[index].x] == 0 and chars_mobs_npcs[i].status == 1
 		and chars_mobs_npcs[index].invisibility == 0 and chars_mobs_npcs[index].stealth == 0
 		then
 			if not enemyonly or (enemyonly and ai.fractionRelations (i,index) < 0) then

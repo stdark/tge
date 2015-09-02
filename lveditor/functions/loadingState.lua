@@ -49,6 +49,7 @@ function loadingState.start(media, finishCallback)
 	if nextStateName == "playingState" then
 		loader.newImage(media.images, "back", images_table[1]);
 		loader.newImage(media.images, "hex", images_table[2]);
+		loader.newImage(media.images, "hexcolor", images_table[4]);
 		loader.newImage(media.images, "obj", images_table[3]);
 		if global.first_load  then
 			if not media.images.buildings then
@@ -70,6 +71,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "hud_right_wall_tile", "img/hud/hud_right_wall_tile.png");
 			loader.newImage(media.images, "harvest", "img/harvest.dds");
 			loader.newImage(media.images, "img", "img/hex_landscape.dds");
+			loader.newImage(media.images, "img2", "img/hex_landscape_color.dds");
 			loader.newImage(media.images, "imgsub", "img/hex_landscape.dds");
 			loader.newImage(media.images, "img_obj", "img/hex_foreground.dds");
 			loader.newImage(media.images, "img_back", "img/background.dds");

@@ -30,7 +30,7 @@ function draw.map()
 		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			--draw.irradiation(mx,my);
 			draw.fogOfWar(mx+map_x,my+map_y)
-			if map[my+map_y][mx+map_x] > 20 and map[my+map_y][mx+map_x] < 1200 then
+			if map[my+map_y][mx+map_x] > 120 and map[my+map_y][mx+map_x] < 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
 			for i=3,1,-1 do
@@ -65,8 +65,8 @@ function draw.submap()
 	for my=1, math.min(global.map_display_h, map_h-map_y) do
 		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			draw.fogOfWar(mx+map_x,my+map_y);
-			if submap[my+map_y][mx+map_x] > 20 and submap[my+map_y][mx+map_x] <= 1200 then
-				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex);
+			if submap[my+map_y][mx+map_x] > 1 and submap[my+map_y][mx+map_x] <= 1200 then
+				draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex_color);
 			end;	        	
 		end;
 	end;
@@ -3555,7 +3555,7 @@ function draw.mobs (mx,my,highlight,index)
 						love.graphics.draw(media.images.hex_ui, cursor_yellow,mobto_hex_x-tile_w,mobto_hex_y+86); --current char marked
 					end;
 					if chars_mobs_npcs[i].invisibility > 0 then
-						love.graphics.setColor(255, 255, 255, 150);
+						love.graphics.setColor(255, 255, 255, 125);
 					elseif chars_mobs_npcs[i].stealth > 0 then
 						love.graphics.setColor(125, 125, 125, 150);
 					end;
