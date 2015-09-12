@@ -265,15 +265,15 @@ function mindgame.passCheck(x,y)
 	if x > 0 and x <= 9 and y > 0 and y <= 9 then
 		if mindgame.map[x][y] and mindgame.map[x][y] >= 1 and  mindgame.map[x][y] <= 7 then --gold
 			local _index = mindgame.map[x][y];
-			if _index <= 7 and mindgame.flags_gold[chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["gold"]][_index][2] then
+			if _index <= 7 and mindgame.flags_gold[chars_mobs_npcs[victim]["personality"]["current"]["material"]["gold"]][_index][2] then
 				return false;
 			end;
 		end;
-		local drinkmode =  chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["drinks"];
+		local drinkmode =  chars_mobs_npcs[victim]["personality"]["current"]["material"]["drinks"];
 		if mindgame.map[x][y] and mindgame.map[x][y] > 1000 and (drinkmode == "drinker" or drinkmode == "boozer" or drinkmode == "drunkard" or drinkmode == "taster") then
 			return false;
 		end;
-		local foodmode =  chars_mobs_npcs[victim]["personality"]["current"]["mindflags"]["food"];
+		local foodmode =  chars_mobs_npcs[victim]["personality"]["current"]["material"]["food"];
 		if mindgame.map[x][y] and mindgame.map[x][y] > 2000 and (foodmode == "hungry" or foodmode == "starving" or foodmode == "glutton" or foodmode == "taster3") then
 			return false;
 		end;
@@ -287,14 +287,14 @@ function mindgame.passCheck(x,y)
 end;
 
 function mindgame.passTurn()
-	local mindcounter = mindgame["flags_default"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"].default][1];
+	local mindcounter = mindgame["flags_default"][chars_mobs_npcs[victim]["personality"]["current"]["material"].default][1];
 	if mindcounter >= 0 then
-		local mindadd = mindgame["flags_default"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"].default][2];
+		local mindadd = mindgame["flags_default"][chars_mobs_npcs[victim]["personality"]["current"]["material"].default][2];
 		chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][mindcounter] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][mindcounter] + mindadd;
 		if chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][mindcounter] < 0 then
 			chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][mindcounter] = 0;
 		end;
-		local snd = "mindgame_" .. mindgame["flags_default"][chars_mobs_npcs[victim]["personality"]["current"]["mindflags"].default][3];
+		local snd = "mindgame_" .. mindgame["flags_default"][chars_mobs_npcs[victim]["personality"]["current"]["material"].default][3];
 		utils.playSfx(media["sounds"][snd],1);
 	end;
 	mindgame.path ();

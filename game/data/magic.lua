@@ -3321,9 +3321,9 @@ story="Позволяет телепортироваться в ранее по�
 dmg1="нет",
 dmg2="нет",
 dmg3="нет",
-dmg4="1-60 жизни, стойкости и бодрости",
-dmg5="1-100 жизни, стойкости и бодрости",
-eff="dmg",
+dmg4="телепортирует к фонтану",
+dmg5="телепортирует к ранее созданному маяку",
+eff="",
 eff2="",
 eff3="",
 recovery=50,
@@ -3337,7 +3337,7 @@ night=true,
 dungeon=true,
 openair=true,
 mindgame=false,
-form="direct",
+form="selector",
 },
 
 rechargeitem = {
@@ -4756,7 +4756,7 @@ form="party",
 
 };
 
-	magic.allspells = {
+magic.allspells = {
 {"flamearrow","torchlight","protfromfire","fireball","firewall","firebelt","firering","firelance","fireblast","inferno","meteorshower","incineration"},
 {"staticharge","shockring","protfromstatic","windfist","bell","shield","lightning","jump","invisibility","twister","chainlightning","starburst"},
 {"coldbeam","poisonedspit","douse","protfromcold","acidburst","freeze","coldring","waterwalking","iceball","icefield","dehydratation","tsunami"},

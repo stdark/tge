@@ -4829,6 +4829,17 @@ function damage.instantCast () --FIXME use lvl, num
 		wlandscape[boomy][boomx] = 10;
 	end;
 	
+	if missle_type  == "townportal" then
+			print("PORTAL CAST");
+		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname) 
+		if global.status == "peace" then
+			utils.playSfx(media.sounds.paper,1);
+			game_status = "townportal";
+		else
+			utils.playSfx(media.sounds.error,1);
+		end;
+	end;
+	
 	if missle_type == "guardian" then
 		buff = lvl[1]*num[2];
 		if chars_mobs_npcs[victim].nature ~= "undead" then

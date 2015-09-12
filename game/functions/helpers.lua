@@ -5605,3 +5605,32 @@ function helpers.countStealth(index)
 		end;
 	end;
 end;
+
+function helpers.portLocation (id)
+	game_status = "neutral";
+	for i=1,chars do
+		if chars_mobs_npcs[i].status ~= 1 then
+			return;
+		end;
+	end;
+	global.level_to_load = id;
+	loveframes.util.RemoveAll();
+	nextState = playingState;
+	nextStateName = "playingState";
+	currentState = loadingState;
+	currentState.start(media, loadingFinished);
+	local roll = math.random(1,3);
+	local tmp = "media.images.preloader" .. roll;
+	img_preloader = loadstring("return " .. tmp)();
+	package.loaded[ 'levels.level1' ] = nil;
+	package.loaded[ 'levels.level2' ] = nil;
+	local randomOut = globalmap.town_portals[id].out_area;
+	for i=1,chars do
+		if chars_mobs_npcs[i].status == 1 then
+			local rnd = 1,#randomOut;
+			chars_mobs_npcs[i].x = randomOut[rnd].x;
+			chars_mobs_npcs[i].y = randomOut[rnd].y;
+			table.remove(randomOut,rnd);
+		end;
+	end;
+end;

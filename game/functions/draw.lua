@@ -2546,6 +2546,30 @@ function draw.book()
 	end;
 end;
 
+function draw.townPortal()
+	local x,y = helpers.centerObject(media.images.map);
+	--265x105
+	loveframes.util.RemoveAll();
+	love.graphics.draw(media.images.map, x,y-50)
+	local path_to_pic = "map1";
+	local pic = media.images.map1;
+	love.graphics.draw(pic, x,y-50);
+	for i=1,#party.known_beacons do
+		local addx = globalmap.townportals[party.known_beacons[i]].addx;
+		local addy = globalmap.townportals[party.known_beacons[i]].addy;
+		local location = nil;
+		location = party.known_beacons[i];
+		global.buttons.button = loveframes.Create("imagebutton");
+		global.buttons.button:SetImage(media.images.button9);
+		global.buttons.button:SetPos(x+addx,y+addy);
+		global.buttons.button:SizeToImage()
+		global.buttons.button:SetText(globalmap.townportals[party.known_beacons[i]].name);
+		global.buttons.button.OnClick = function(object)
+			helpers.portLocation (location);
+		end;	
+	end;
+end;
+
 function draw.spellbook ()
 	local x,y = helpers.centerObject(media.images.sbook);
 	local spelliconcoods={{x+40,y+8-70},{x+200,y+8-70},{x+200,y+138-70},{x+40,y+138-70},{x+40,y+268-70},{x+200,y+268-70},{x+410,y+8-70},{x+570,y+8-70},{x+410,y+138-70},{x+570,y+138-70},{x+410,y+268-70},{x+570,y+268-70}};
@@ -3543,6 +3567,7 @@ function draw.mobs (mx,my,highlight,index)
 			or game_status == "obelisk"
 			or game_status == "well"
 			or game_status == "log"
+			or game_status == "townportal"
 			or (game_status == "shot" and i ~= current_mob)
 			or (game_status == "damage" and i ~= victim)
 			or (game_status == "multidamage" and damaged==0)
@@ -5210,6 +5235,9 @@ function draw.ui ()
 	end;
 	if game_status == "well" then
 		draw.well ();
+	end;
+	if game_status == "townportal" then
+		draw.townPortal();
 	end;
 	if game_status == "options" then
 		draw.options();

@@ -362,5 +362,6 @@ party.quests = {
 }
 
 party.known_fountains = {};
-
+party.known_locations = {}; --?
+party.known_beacons = {1,2};
 party.ebook = {1,2,3,4,5,6};

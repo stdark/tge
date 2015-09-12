@@ -236,7 +236,7 @@ function loadingState.start(media, finishCallback)
 			loader.newImage(media.images, "well_dry","img/wells/well_dry.dds");
 			loader.newImage(media.images, "well_dungeon","img/wells/well_dungeon.dds");
 			
-			--loader.newImage(media.images, "map1","img/papermaps/map1.dds");
+			loader.newImage(media.images, "map1","img/papermaps/map1.dds");
 			
 			--loader.newImage(media.images, "gobelen1","img/gobelen1.dds");
 			
