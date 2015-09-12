@@ -1989,7 +1989,7 @@ function draw.skills(index)
 		local tmpname1 = "lognames.skills." .. skills[i];
 		local tmpname2 = loadstring("return " .. tmpname1)();
 		if tmpnum2 > 0 then
-			if i <= 11 then
+			if i <= 12 then
 				love.graphics.print(tmpname2, x+20,y-30+kk*30);
 				love.graphics.print(tmpnum2, x+200,y-30+kk*30);
 				love.graphics.print(tmplvl2, x+250,y-30+kk*30);
@@ -1998,7 +1998,7 @@ function draw.skills(index)
 				love.graphics.draw(media.images.ui, btn_plus, x+220,y-30+kk*30);
 				love.graphics.setColor(0, 0, 0);
 				kk = kk+1;
-			elseif i > 11 and i <= 16 then
+			elseif i > 12 and i <= 17 then
 			
 				love.graphics.print(tmpname2, x+20,y+300+ll*30);
 				love.graphics.print(tmpnum2, x+200,y+300+ll*30);
@@ -2008,7 +2008,7 @@ function draw.skills(index)
 				love.graphics.draw(media.images.ui, btn_plus, x+220,y+300+ll*30);
 				love.graphics.setColor(0, 0, 0);
 				ll = ll+1;
-			elseif i>16 and i <= 25 then
+			elseif i > 17 and i <= 26 then
 				love.graphics.print(tmpname2, x+410,y-30+mm*30);
 				love.graphics.print(tmpnum2, x+590,y-30+mm*30);
 				love.graphics.print(tmplvl2, x+640,y-30+mm*30);
@@ -2017,7 +2017,7 @@ function draw.skills(index)
 				love.graphics.draw(media.images.ui, btn_plus, x+610,y-30+mm*30);
 				love.graphics.setColor(0, 0, 0);
 				mm = mm+1;
-			elseif i > 25 and i <= #skills then
+			elseif i > 26 and i <= #skills then
 				love.graphics.print(tmpname2, x+810,y-30+nn*30);
 				love.graphics.print(tmpnum2, x+990,y-30+nn*30);
 				love.graphics.print(tmplvl2, x+1040,y-30+nn*30);
@@ -4992,10 +4992,13 @@ function draw.ui ()
 				delta_rt2spend = math.max(#way_of_the_mob*5/200,0);
 				delta_st2spend = math.max(#way_of_the_mob*5/chars_mobs_npcs[i].st_max,0);
 				if helpers.cursorAtMob (cursor_world_x,cursor_world_y) and (not helpers.missleAtWarBook() or tricks.tricks_tips[missle_type].form ~= "pose" or tricks.tricks_tips[missle_type].form ~= "selfbuff") then
-					local recovery = 0;
-					recovery = helpers.countMeleeRecoveryChar (current_mob) + helpers.countPathPrice(current_mob) + add_effect_st;
-					delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max;
-					delta_rt2spend = delta_rt2spend + recovery/200;
+					local recovery_rt,recovery_st = helpers.countMeleeRecoveryChar (current_mob);
+					local recovery_path_rt,recovery_path_st = helpers.countPathPrice(current_mob);
+					recovery_st = recovery_st + add_effect_st;
+					local full_recovery_rt = recovery_rt + recovery_path_rt;
+					local full_recovery_st = recovery_st + recovery_path_st;
+					delta_st2spend = delta_st2spend + full_recovery_st/chars_mobs_npcs[i].st_max;
+					delta_rt2spend = delta_rt2spend + full_recovery_rt/200;
 				end;
 				dst2s = screen_mod_y-100*(delta_st2spend-1);
 				drt2s = screen_mod_y-100*(delta_rt2spend-1);
@@ -5006,18 +5009,19 @@ function draw.ui ()
 					--or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
 					--or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing")
 					then
-						recovery = helpers.countRangeRecoveryChar (current_mob);
-						delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max + add_effect_st;
-						delta_rt2spend = delta_rt2spend + add_effect_rt;
+						recovery_rt,recovery_st = helpers.countRangeRecoveryChar (current_mob);
+						delta_st2spend = delta_st2spend + recovery_st/chars_mobs_npcs[i].st_max + add_effect_st;
+						delta_rt2spend = delta_rt2spend + recovery_rt/200 + add_effect_rt;
 					end;
 					if missle_type == "bottle" then
-						recovery = helpers.countBottleRecovery (current_mob);
-						delta_st2spend = delta_st2spend + recovery/chars_mobs_npcs[i].st_max;
+						recovery_rt,recovery_st = helpers.countBottleRecovery (current_mob);
+						delta_st2spend = delta_st2spend + recovery_st/chars_mobs_npcs[i].st_max;
+						delta_rt2spend = delta_rt2spend + recovery_rt/200;
 					end;
 					if missle_drive == "spellbook" or missle_drive == "wand" or missle_drive == "scroll" then
 						recovery = helpers.countMagicRecovery (current_mob,missle_type,missle_drive);
+						delta_rt2spend = delta_rt2spend + recovery/200;
 					end;
-					delta_rt2spend = delta_rt2spend + recovery/200;
 					dst2s = screen_mod_y-100*(delta_st2spend-1);
 					drt2s = screen_mod_y-100*(delta_rt2spend-1);
 				end;

@@ -30,6 +30,8 @@ demon={index=26,active=false,skills={"trading","diplomacy","leadership"},stats={
 halfgeany={index=26,active=false,skills={"air","mysticism","trading"},stats={mgt=6,enu=6,spd=6,dex=6,acu=6,sns=5,int=9,spr=9,chr=3,luk=4},resistances={rezfire = 0, rezcold = 0, rezstatic = 20, rezpoison = 0, rezacid = 0, rezdisease = 0, rezmind = 0, rezspirit = 0, rezlight = 0, rezdarkness = 0}},
 };
 
+--FIXME: enroth music and astrology?
+
 defaults.classstats = {
 fighter={mgt=4,enu=3,spd=2,dex=2,acu=2,sns=2,int=0,spr=0,chr=0,luk=0},
 tricker={mgt=2,enu=1,spd=3,dex=3,acu=3,sns=3,int=0,spr=0,chr=0,luk=0},
@@ -248,12 +250,13 @@ acolyte={"fire","air","water","earth"},
 novice={"body","mind","spirit"},
 };
 
-skills={"unarmed","sword","axe","flagpole","crushing","staff","dagger","bow","crossbow","throwing","firearms",
+skills={
+"unarmed","sword","axe","flagpole","crushing","staff","dagger","bow","crossbow","throwing","firearms","blaster",
 "dodging","leather","chainmail","plate","shield",
 "fire","water","air","earth","body","mind","spirit","light","darkness",
 "alchemy","repair","stuffid","stealth","picklocking","traps","spothidden","monsterid","thievery",
 "bodybuilding","armmastery","meditation","mysticism",
-"trading","thievery","diplomacy","leadership","regeneration","music",
+"trading","thievery","diplomacy","leadership","regeneration","music","astrology",
 };
 
 stats={"mgt","enu","spd","dex","acu","sns","int","spr","luk","chr"};

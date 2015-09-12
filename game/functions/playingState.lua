@@ -50,6 +50,7 @@ function playingState.load()
 	require "functions.ai"
 	require "functions.mindresults"
 	require "functions.calendar"
+	require "functions.chat_functions"
 	require "data.jokes"
 	require "data.secrets"
 	require "data.nlp"
@@ -8023,10 +8024,10 @@ end;
 
 function mobMoving()
 	local trapped = 0;
-	local price = 0;
+	local price_rt,price_st = 0,0;
 	if path_counter > 0 and #way_of_the_mob > 0 then
 		chars_mobs_npcs[current_mob].rot = way_of_the_mob[path_counter][6];
-		price = helpers.countCurrentHexPrice(path_counter,current_mob);
+		price_rt,price_st = helpers.countCurrentHexPrice(path_counter,current_mob);
 	end;
 	if (walked_before == 0 and global.timers.n_timer >= 0.2*global.walk_animation_speed) or global.timers.n_timer >= 0.4*global.walk_animation_speed then
 		local sound_of_step = stepsound_table[map[chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x]]
@@ -8051,8 +8052,8 @@ function mobMoving()
 			calendar.add_time_interval(calendar.delta_walk_in_peace);
 		end;
 		if helpers.aliveNature(current_mob) and global.status == "battle" then
-			if chars_mobs_npcs[current_mob].st >= price then
-				chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st-price;
+			if chars_mobs_npcs[current_mob].st >= price_st then
+				chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st-price_st;
 			else
 				chars_mobs_npcs[current_mob].st = 0;
 				utils.printDebug("out of stamina!");
@@ -8062,8 +8063,8 @@ function mobMoving()
 				helpers.addToActionLog( name .. " " .. lognames.actions.tired[chars_mobs_npcs[current_mob].gender]);
 			end;
 		end;
-		if chars_mobs_npcs[current_mob].rt >= price and global.status == "battle" then --do not need if count before  FIXME WTF?
-			chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-price;
+		if chars_mobs_npcs[current_mob].rt >= price_rt and global.status == "battle" then --do not need if count before  FIXME WTF?
+			chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-price_rt;
 		elseif global.status == "battle" then
 			chars_mobs_npcs[current_mob].rt = 0;
 			utils.printDebug("out of recovery!");
@@ -8209,9 +8210,8 @@ function mobMoving()
 			and chars_mobs_npcs[previctim].status == 1 then
 				if global.status == "battle" and (chars_mobs_npcs[previctim].person ~= "char" or chars_mobs_npcs[previctim].berserk > 0 or chars_mobs_npcs[previctim].control > 0) then
 					helpers.turnMob (current_mob);
-					local recovery = 0;
-					recovery = helpers.countMeleeRecoveryChar (current_mob);
-					if chars_mobs_npcs[current_mob].rt >= recovery then
+					local recovery_rt,recovery_st = helpers.countMeleeRecoveryChar (current_mob);
+					if chars_mobs_npcs[current_mob].rt >= recovery_rt and chars_mobs_npcs[current_mob].st >= recovery_st then
 						global.multiattack = damage.countMultiattack(current_mob);
 						game_status = "attack";
 						utils.printDebug("attack called from moving");

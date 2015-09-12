@@ -13,14 +13,14 @@ chars_stats[1]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},
-            num_unarmed=1,num_dagger=10,num_sword=20,num_axe=1,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=1,num_crossbow=20,num_throwing=1,num_firearms=1,--skills weapon num
-            lvl_unarmed=1,lvl_dagger=3,lvl_sword=5,lvl_axe=1,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=1,lvl_crossbow=5,lvl_throwing=1,lvl_firearms=1,--skills weapon lv
+            num_unarmed=1,num_dagger=10,num_sword=20,num_axe=1,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=1,num_crossbow=20,num_throwing=1,num_firearms=1,num_blaster=1,--skills weapon num
+            lvl_unarmed=1,lvl_dagger=3,lvl_sword=5,lvl_axe=1,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=1,lvl_crossbow=5,lvl_throwing=1,lvl_firearms=1,lvl_blaster=1,--skills weapon lv
             num_dodging=5, num_leather=3,num_chainmail=1, num_plate=1,num_shield=20,--skills armor num
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=4,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=20, num_picklocking=15, num_traps=1, num_spothidden=10, num_monsterid=20,num_stuffid=1, num_thievery = 20, num_leadership = 20,num_regeneration = 0,num_music = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=5, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 5, lvl_leadership = 5,lvl_regeneration = 0,lvl_music=0,--skills other lvl
+            num_alchemy=20,num_repair=4,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=20, num_picklocking=15, num_traps=1, num_spothidden=10, num_monsterid=20,num_stuffid=1, num_thievery = 20, num_leadership = 20,num_regeneration = 0,num_music = 0,num_astrology = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=5, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 5, lvl_leadership = 5,lvl_regeneration = 0,lvl_music = 0,lvl_astrology = 0,--skills other lvl
                    }
 chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name="Johnny Bravo", face=2,  age=25, lv=1, xp=0, nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="criminal", shader={200, 255, 200, 125},
@@ -32,14 +32,14 @@ chars_stats[2]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},
-            num_unarmed=1,num_dagger=10,num_sword=5,num_axe=0,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=1,num_crossbow=3,num_throwing=1,num_firearms=1,--skills weapon num
-            lvl_unarmed=1,lvl_dagger=3,lvl_sword=2,lvl_axe=0,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=1,lvl_crossbow=1,lvl_throwing=1,lvl_firearms=1,--skills weapon lv
+            num_unarmed=1,num_dagger=10,num_sword=5,num_axe=0,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=1,num_crossbow=3,num_throwing=1,num_firearms=1,num_blaster=1,--skills weapon num
+            lvl_unarmed=1,lvl_dagger=3,lvl_sword=2,lvl_axe=0,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=1,lvl_crossbow=1,lvl_throwing=1,lvl_firearms=1,lvl_blaster=1,--skills weapon lv
             num_dodging=5, num_leather=3,num_chainmail=1, num_plate=1,num_shield=20,--skills armor num
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=1, num_picklocking=15, num_traps=10, num_spothidden=15, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=3, lvl_spothidden=3, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music=0,--skills other lvl
+            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=20, num_stealth=1, num_picklocking=15, num_traps=10, num_spothidden=15, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 0,num_astrology = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=5, lvl_stealth=1, lvl_picklocking=3, lvl_traps=3, lvl_spothidden=3, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music = 0,lvl_astrology = 0,--skills other lvl
                    }
 chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name="John Rambo", face=3,  age=25, lv=1, xp=0,  nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="warrior", shader={200, 200, 255, 125},
@@ -51,14 +51,14 @@ chars_stats[3]={class="rogue", subclass=1, race="human", sprite = "rogue", name=
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},
-            num_unarmed=1,num_dagger=10,num_sword=5,num_axe=0,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=0,num_crossbow=3,num_throwing=1,num_firearms=1,--skills weapon num
-            lvl_unarmed=1,lvl_dagger=3,lvl_sword=2,lvl_axe=0,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=0,lvl_crossbow=1,lvl_throwing=1,lvl_firearms=1,--skills weapon lv
+            num_unarmed=1,num_dagger=10,num_sword=5,num_axe=0,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=0,num_crossbow=3,num_throwing=1,num_firearms=1,num_blaster=1,--skills weapon num
+            lvl_unarmed=1,lvl_dagger=3,lvl_sword=2,lvl_axe=0,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=0,lvl_crossbow=1,lvl_throwing=1,lvl_firearms=1,lvl_blaster=1,--skills weapon lv
             num_dodging=5, num_leather=3,num_chainmail=1, num_plate=1,num_shield=20,--skills armor num
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 0,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music=0,--skills other lvl
+            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=1, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 0,num_astrology = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=1, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music = 0,lvl_astrology = 0,--skills other lvl
                    }
 chars_stats[4]={class="rogue", subclass=1, race="woodelf", sprite = "rogue", name="John Galt", face=7,  age=25,  lv=1, xp=0,  nature="humanoid", size="normal", gender=1, horns=0, feet=2, hoofs=0, arms={"rh","lh"}, fov = 180, motion="walking", hexes = 1, hitzones={{"head","rh","lh","rf","lf","body","body","body","body","body"}},
             hp_base_mod = 12, sp_base_mod = 12, st_base_mod = 12,hp_coff = 1, sp_coff = 1, st_coff = 1, etiquette="noble", shader={255, 125, 255, 125},
@@ -70,14 +70,14 @@ chars_stats[4]={class="rogue", subclass=1, race="woodelf", sprite = "rogue", nam
             spellbook=1, spells={}, warbook = 1, --flags
             multiattack=1, track=1,
             perks={},
-            num_unarmed=1,num_dagger=10,num_sword=5,num_axe=0,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=0,num_crossbow=3,num_throwing=1,num_firearms=1,--skills weapon num
-            lvl_unarmed=1,lvl_dagger=3,lvl_sword=2,lvl_axe=0,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=0,lvl_crossbow=1,lvl_throwing=1,lvl_firearms=1,--skills weapon lv
+            num_unarmed=1,num_dagger=10,num_sword=5,num_axe=0,num_crushing=1,num_flagpole=1,num_staff=1,num_bow=0,num_crossbow=3,num_throwing=1,num_firearms=1,num_blaster=1,--skills weapon num
+            lvl_unarmed=1,lvl_dagger=3,lvl_sword=2,lvl_axe=0,lvl_crushing=1,lvl_flagpole=1,lvl_staff=1,lvl_bow=0,lvl_crossbow=1,lvl_throwing=1,lvl_firearms=1,lvl_blaster=1,--skills weapon lv
             num_dodging=5, num_leather=3,num_chainmail=1, num_plate=1,num_shield=20,--skills armor num
             lvl_dodging=2, lvl_leather=1,lvl_chainmail=1, lvl_plate=1,lvl_shield=5,--skills armor lv
             num_fire=25,num_water=20,num_air=20,num_earth=15,num_body=15,num_spirit=1,num_mind=20,num_light=15,num_darkness=20,--skills magic num
             lvl_fire=5,lvl_water=4,lvl_air=5,lvl_earth=4,lvl_body=3,lvl_spirit=1,lvl_mind=5,lvl_light=4,lvl_darkness=4,---skills magic lv
-            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=0, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 20,--skills other num
-            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=0, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music = 5,--skills other lvl
+            num_alchemy=20,num_repair=1,num_bodybuilding=1,num_armmastery=1,num_meditation=20,num_mysticism=20,num_trading=1,num_diplomacy=1, num_stealth=1, num_picklocking=15, num_traps=1, num_spothidden=1, num_monsterid=20,num_stuffid=0, num_thievery = 1, num_leadership = 0,num_regeneration = 0,num_music = 20, num_astrology = 0,--skills other num
+            lvl_alchemy=5,lvl_repair=1,lvl_bodybuilding=1,lvl_armmastery=1,lvl_meditation=5,lvl_mysticism=5,lvl_trading=1,lvl_diplomacy=1, lvl_stealth=1, lvl_picklocking=3, lvl_traps=1, lvl_spothidden=1, lvl_monsterid=5,lvl_stuffid=0, lvl_thievery = 1, lvl_leadership = 0,lvl_regeneration = 0,lvl_music = 5,lvl_astrology = 0, --skills other lvl
                    }               
 
 chars_stats[1].spells={

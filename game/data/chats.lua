@@ -2,21 +2,21 @@ chats = {};
 function chats.load ()
 	chats.rules={
 	ivansusanin={{question=1,answer=2,nextquestion={4,7},remquestion={0},default=true},{question=2,answer=3,nextquestion={5},remquestion={0},default=true},{question=3,answer=4,nextquestion={6},remquestion={0},default=true},{question=4,answer=5,nextquestion={0},default=false},{question=5,answer=6,nextquestion={0},default=false},{question=6,answer=7,nextquestion={0},default=false},{question=7,answer=math.random(1,2)+7,nextquestion={0},default=false}},
-	nilslarsen={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={0},remquestion={0},default=true},{question=3,answer=4,nextquestion={chats.ifCondition("skill","diplomacy",3,10,2,4,0)},remquestion={0},default=true},{question=4,answer=5001,nextquestion={0},remquestion={0},default=false}},
+	nilslarsen={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={0},remquestion={0},default=true},{question=3,answer=4,nextquestion={chat_functions.ifSkill(current_mob, "diplomacy","total","MoreEqual",10,2,0)},remquestion={0},default=true},{question=4,answer=5001,nextquestion={0},remquestion={0},default=false}},
 	schors={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={3,4,5},remquestion={6},default=true},{question=3,answer=2001,nextquestion={0},default=false},{question=4,answer=2002,nextquestion={0},default=false},{question=5,answer=2011,nextquestion={0},default=false},{question=6,answer=2101,nextquestion={0},remquestion={0},default=true}},
 	meroving={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=1001,nextquestion={0},remquestion={0},default=true}},
 	paparable={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={3},remquestion={0},default=true},{question=3,answer=2004,nextquestion={0},default=false}},
 	loopitosh={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={3},remquestion={0},default=true},{question=3,answer=2006,nextquestion={0},default=false}},
 	pilulkin={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=1003,nextquestion={0},remquestion={0},default=true}},
 	 --thiefcatched; save by: chr spr int luk also: spd dex str none: sns enu acu
-	catchedthief={{question=1,answer=2,nextquestion={3,4,chats.ifCondition("skill","diplomacy",3,10,2,2,0)},remquestion={0},default=true},{question=2,answer=5001,nextquestion={0},remquestion={0},default=false},{question=3,answer=chats.ifCondition("stat","luk",0,0,4,7777,3),nextquestion={0},remquestion={0},default=false},{question=4,answer=chats.ifCondition("stat","chr",0,0,4,7777,4),nextquestion={0},remquestion={0},default=false},{question=4,answer=chats.ifCondition("stat","int",0,0,4,7777,5),nextquestion={0},remquestion={0},default=false},{question=4,answer=chats.ifCondition("stat","spr",0,0,4,7777,6),nextquestion={0},remquestion={0},default=false},{question=5,answer=7001,nextquestion={0},remquestion={0},default=true}},
+	catchedthief={{question=1,answer=2,nextquestion={3,4,chat_functions.ifSkill(current_mob, "diplomacy","total","MoreEqual",10,2,0)},remquestion={0},default=true},{question=2,answer=5001,nextquestion={0},remquestion={0},default=false},{question=3,answer=chat_functions.ifStat(current_mob, "luk","Random100",0,7777,3),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(current_mob, "chr","Random100",0,7777,4),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(current_mob, "int","Random100",0,7777,5),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(current_mob, "spr","Random100",0,7777,6),nextquestion={0},remquestion={0},default=false},{question=5,answer=7001,nextquestion={0},remquestion={0},default=true}},
 	cheguevara={{question=1,answer=2,nextquestion={2},remquestion={0},default=true},{question=2,answer=3,nextquestion={3,4},remquestion={1},default=false},{question=3,answer=8003,nextquestion={5},remquestion={2,4},default=false},{question=4,answer=7778,nextquestion={0},remquestion={2,3},default=false},{question=5,answer=7778,nextquestion={0},remquestion={0},default=false}},
 	cheguevara_quest_in_progress={{question=1,answer=7778,nextquestion={0},remquestion={0},default=true},{question=2,answer=7778,nextquestion={0},remquestion={0},default=true}},
 	
 	rattusparchedtail={
-	{question=1,answer=chats.ifCondition("questgot",nil,{4,5},0,0,11,2),nextquestion={8},remquestion={1},default=true},
-	{question=2,answer=chats.ifCondition("questgot",nil,{4,5},0,0,11,3),nextquestion={8},remquestion={2},default=true},
-	{question=3,answer=chats.ifCondition("questgot",nil,{4,5},0,0,11,chats.ifCondition("partycharisma",nil,0,25,2,5,4)),nextquestion={chats.ifCondition("questgot",nil,{5},0,0,0,chats.ifCondition("partycharisma",nil,0,25,2,4,0)),chats.ifCondition("questgot",nil,{4},0,0,0,chats.ifCondition("partycharisma",nil,0,25,2,5,0))},remquestion={1,2},default=true},
+	{question=1,answer=chat_functions.ifQuestsGot({4,5},11,12),nextquestion={8},remquestion={1},default=true},
+	{question=2,answer=chat_functions.ifQuestsGot({4,5},11,3),nextquestion={8},remquestion={2},default=true},
+	{question=3,answer=chat_functions.ifQuestsGot({4,5},11,chat_functions.ifPartyCharisma("MoreEqual",25,5,4)),nextquestion={chat_functions.ifQuestsGot({5},0,chat_functions.ifPartyCharisma("MoreEqual",25,4,0))},remquestion={1,2},default=true},
 	{question=4,answer=7,nextquestion={6,9},remquestion={3},default=false},
 	{question=5,answer=8,nextquestion={7,9},remquestion={3},default=false},
 	{question=6,answer=8004,nextquestion={10},remquestion={0},default=false},
@@ -25,19 +25,19 @@ function chats.load ()
 	{question=9,answer=7778,nextquestion={0},remquestion={0},default=true}, --FIXME separate button?
 	--{question=10,answer=9,nextquestion={12},remquestion={0},default=false},
 	--{question=11,answer=9,nextquestion={12},remquestion={0},default=false},
-	{question=chats.ifCondition("questinprogress",nil,{4},0,0,10,0),answer=9,nextquestion={12},remquestion={0},default=true},
-	{question=chats.ifCondition("questinprogress",nil,{5},0,0,11,0),answer=9,nextquestion={12},remquestion={0},default=true},
+	{question=chat_functions.ifQuestInProgress({4},10,0),answer=9,nextquestion={12},remquestion={0},default=true},
+	{question=chat_functions.ifQuestInProgress({5},11,0),answer=9,nextquestion={12},remquestion={0},default=true},
 	{question=12,answer=10,nextquestion={10,11},remquestion={0},default=false},
-	{question=chats.ifCondition("questpart",nil,4,2,0,13,0),answer=12,nextquestion={9},remquestion={0},default=true},
-	{question=chats.ifCondition("questpart",nil,4,3,0,14,0),answer=13,nextquestion={9},remquestion={0},default=true},
-	{question=chats.ifCondition("questpart",nil,5,2,0,15,0),answer=14,nextquestion={9},remquestion={0},default=true},
+	{question=chat_functions.ifQuestPart(4,2,false,13,0),answer=12,nextquestion={9},remquestion={0},default=true},
+	{question=chat_functions.ifQuestPart(4,3,false,14,0),answer=13,nextquestion={9},remquestion={0},default=true},
+	{question=chat_functions.ifQuestPart(5,2,false,15,0),answer=14,nextquestion={9},remquestion={0},default=true},
 	},
 	
 	dortussmarttooth = {
-	{question=1,answer=2,nextquestion={chats.ifCondition("questgot",nil,{4},0,0,4,0),chats.ifCondition("infogot",nil,{4},0,0,2,0)},remquestion={chats.ifCondition("race",nil,{"goblin"},0,0,4,3)},default=true}, --not 4 but condition check party/fraction
+	{question=1,answer=2,nextquestion={chat_functions.ifQuestsGot({4},4,0),chat_functions.ifInformationGot({4},2,0)},remquestion={chat_functions.ifRace(current_mob,"goblin",4,3)},default=true}, --not 4 but condition check party/fraction
 	{question=2,answer=4,nextquestion={4},remquestion={1},default=true},
-	{question=3,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=false},
-	{question=4,answer=chats.ifCondition("questgot",nil,{4},0,0,4,0),nextquestion={4},remquestion={1},default=false},
+	{question=3,answer=chat_functions.ifQuestsGot({4},4,0),nextquestion={4},remquestion={1},default=false},
+	{question=4,answer=chat_functions.ifQuestsGot({4},4,0),nextquestion={4},remquestion={1},default=false},
 	},
 	
 	};
@@ -66,9 +66,9 @@ function chats.load ()
 	"По поводу твоего брата...",
 	"Что касается груза...",
 	"Да так, ничего.",
-	chats.changeFractionRelations("У меня плохие новости: твой брат погиб...",{{"party","contrabandists",20}}),
-	chats.changeFractionRelations("Я вызволил твоего брата!",{{"party","contrabandists",25},{"party","greens",-25}}),
-	chats.changeFractionRelations("Вот твой груз.",{{"party","contrabandists",25},{"party","swampers",-25}}),
+	chat_functions.changeFractionRelations("У меня плохие новости: твой брат погиб...",{{"party","contrabandists",20}}),
+	chat_functions.changeFractionRelations("Я вызволил твоего брата!",{{"party","contrabandists",25},{"party","greens",-25}}),
+	chat_functions.changeFractionRelations("Вот твой груз.",{{"party","contrabandists",25},{"party","swampers",-25}}),
 	},
 	
 	dortussmarttooth = {
@@ -109,9 +109,9 @@ function chats.load ()
 	"Новости?",
 	"Поторапливайтесь!",
 	"Я вас нанял не для того, чтоб вы глупыми вопросами меня изводили!", 
-	chats.questCompleted("Это печальная весть. Что ж, надесюсь, он не болтал лишнего. Вот золото.",{{id,stage}}),
-	chats.questCompleted("Вот за это спасибо, мой братец — ценный помощник! Ваше золото!",{{id,stage}}),
-	chats.questCompleted("Мои замечтальные коробочки! Держите награду!",{{id,stage}}),
+	chat_functions.questCompleted("Это печальная весть. Что ж, надесюсь, он не болтал лишнего. Вот золото.",{{id,stage}}),
+	chat_functions.questCompleted("Вот за это спасибо, мой братец — ценный помощник! Ваше золото!",{{id,stage}}),
+	chat_functions.questCompleted("Мои замечтальные коробочки! Держите награду!",{{id,stage}}),
 	},
 	
 	dortussmarttooth = {
@@ -261,122 +261,6 @@ function chats.valuablePhrase(phrase,value)
 	return phrases[phrase];
 end;
 
-function chats.rndanswer(chatq)
-	local rnd = math.random(1,#chatq);
-	return chatq[rnd];
-end;
-
-function chats.ifCondition(typ,subtyp,var,limit,comp,ifsuccess,ifnot)
-	local roll = math.random(1,100);
-	if typ == "skill" then
-		local num = chars_mobs_npcs[current_mob]["num_" .. subtyp];
-		local lvl = chars_mobs_npcs[current_mob]["lvl_" .. subtyp];
-		local tot = num*lvl;
-		local array = {num,lvl,tot};
-		local tmp = array[var];
-		if comp == 1 and tmp == limit then
-			return ifsuccess;
-		elseif  comp == 2 and tmp >= limit then
-			return ifsuccess;
-		elseif comp == 3 and tmp <= limit then
-			return ifsuccess;
-		elseif comp == 4 and tot >= roll then
-			return ifsuccess;
-		end;
-	elseif typ == "stat" then
-		local stat = chars_mobs_npcs[current_mob][subtyp];
-		if comp == 1 and stat == limit then
-			return ifsuccess;
-		elseif comp == 2 and stat >= limit then
-			return ifsuccess;
-		elseif comp == 3 and stat <= limit then
-			return ifsuccess;
-		elseif comp == 4 and stat >= roll then
-			return ifsuccess;
-		end;
-	elseif typ == "partycharisma" then
-		local partycharisma = 0;
-		for i=1,chars do
-			if chars_mobs_npcs[i].control == "player" and chars_mobs_npcs[i].status ==1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].sleep and chars_mobs_npcs[i].freeze == 0
-			and chars_mobs_npcs[i].stealth == 0 and chars_mobs_npcs[i].invisibility == 0 
-			and helpers.ifMobIsNotFar(victim,current_mob) then
-				partycharisma = partycharisma + chars_mobs_npcs[i].chr;
-			end;
-			local tmp = partycharisma;
-			if comp == 1 and tmp == limit then
-				return ifsuccess;
-			elseif  comp == 2 and tmp >= limit then
-				return ifsuccess;
-			elseif comp == 3 and tmp <= limit then
-				return ifsuccess;
-			end;
-		end;
-	elseif typ == "medcharisma" then
-		local partycharisma = 0;
-		local chars = 0;
-		for i=1,chars do
-			if chars_mobs_npcs[i].control == "player" and chars_mobs_npcs[i].status ==1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].sleep and chars_mobs_npcs[i].freeze == 0
-			and chars_mobs_npcs[i].stealth == 0 and chars_mobs_npcs[i].invisibility == 0 
-			and helpers.ifMobIsNotFar(victim,current_mob) then
-				partycharisma = partycharisma + chars_mobs_npcs[i].chr;
-				chars = chars + 1;
-			end;
-			local tmp = math.ceil(partycharisma/math.max(1,chars));
-			if comp == 1 and tmp == limit then
-				return ifsuccess;
-			elseif  comp == 2 and tmp >= limit then
-				return ifsuccess;
-			elseif comp == 3 and tmp <= limit then
-				return ifsuccess;
-			end;
-		end;
-	elseif typ == "reputation" then
-
-	elseif typ == "questgot" then
-		for i=1, #party.quests do
-			for h=1,#var do
-				if party.quests[i].id == var[h] then
-					return ifsuccess;
-				end;
-			end;
-		end;
-	elseif typ == "questpart" then
-		for i=1, #party.quests do
-			if party.quests[i].id == var and party.quests[i][stages][limit] and (not comp and not party.quests[i].done) or (comp and party.quests[i].done) then
-				return ifsuccess;
-			end;
-		end
-	elseif typ == "questdone" then
-		for i=1, #party.quests do
-			for h=1,#var do
-				if party.quests[i].id == var[h] and party.quests[i].done then
-					return ifsuccess;
-				end;
-			end;
-		end;
-	elseif typ == "questinprogress" then
-		for i=1, #party.quests do
-			for h=1,#var do
-				if party.quests[i].id == var[h] and not party.quests[i].done then
-					return ifsuccess;
-				end;
-			end;
-		end;
-	elseif typ == "infogot" then
-		for i=1, #party.secrets do
-			for h=1,#var do
-				if party.secrets[i] == var[h] then
-					return ifsuccess;
-				end;
-			end;
-		end;
-	elseif typ == "partygold" then
-	elseif typ == "etiquette" then
-	elseif typ == "item" then
-	end;
-	return ifnot;
-end;
-
 function chats.rudeRatmanGoAway(index)
 	local phrase = "Проваливай!";
 	if chars_mobs_npcs[index].race == "ratman" then
@@ -407,91 +291,6 @@ function chats.rudeRatmanGoAway(index)
 	elseif chars_mobs_npcs[index].race == "halfling" then	
 		phrase = "Вали отсюда, недомерок!"
 		helpers.addAffront(7);
-	end;
-	return phrase;
-end;
-
-function chats.changeFractionRelations(phrase,fracs) --fracs = {{fraction1,fraction2,value},{fraction1,fraction2,value},{fraction1,fraction2,value}}
-	for i=1,#fracs do
-		fractions[fracs[i][1]][fracs[i][2]] = fractions[fracs[i][1]][fracs[i][2]] + fracs[i][3];
-		fractions[fracs[i][2]][fracs[i][1]] = fractions[fracs[i][2]][fracs[i][1]] + fracs[i][3];
-		helpers.addToActionLog(lognames.actions.fractions_relations_changed);
-	end;
-	return phrase;
-end;
-
-function chats.questCompleted(phrase,qas) --qas = {{quest_id,stage_id,{...}}
-	for i=1,#party.quests do
-		for h=1,#qas do
-			if party.quests[i].id == qas[h][1] then
-				party.quests[i].stage = qas[h][2];
-				party.quests[i].done = true;
-				local divisor = 0;
-				if quests[qas[h][1]][qas[h][2]].done then
-					helpers.addToActionLog(lognames.actions.quest_done);
-					--utils.playSfx(media.sounds.questdone,1);	
-				end;
-				if quests[qas[h][1]][qas[h][2]].xp then
-					for i=1,chars do
-						if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 then
-							divisor = divisor + 1;
-						end;
-					end;
-					for i=1,chars do
-						if chars_mobs_npcs[i].status == 1 and chars_mobs_npcs[i].stone == 0 and chars_mobs_npcs[i].freeze == 0 then
-							local xp =  math.ceil(quests[qas[h][1]][qas[h][2]]/divisor);
-							chars_mobs_npcs[i].xp = chars_mobs_npcs[i].xp + xp;
-							helpers.addToActionLog( chars_stats[i].name .. lognames.actions.got[chars_mobs_npcs[current_mob].gender] .. xp .. lognames.actions.ofexp);
-						end;
-					end;	
-					--utils.playSfx(media.sounds.exp,1);	
-				end;
-				if quests[qas[h][1]][qas[h][2]].promotion then
-					for i=1,chars do
-						if chars_mobs_npcs[i].class == chars_mobs_npcs[i]["oldclass"] then
-							chars_mobs_npcs[i].class = chars_mobs_npcs[i]["newclass"];
-							helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.gotpromotion[i][gender]);
-							--utils.playSfx(media.sounds.promotion,1);
-						end;
-					end;
-				end;
-				if quests[qas[h][1]][qas[h][2]].fractions then
-					chats.changeFractionRelations(nil,quests[qas[h][1]][qas[h][2]].fractions);
-				end;
-				if quests[qas[h][1]][qas[h][2]].gold then
-					party.gold = party.gold + quests[qas[h][1]][qas[h][2]].gold;
-					utils.playSfx(media.sounds.gold_dzen,1);
-					helpers.addToActionLog(lognames.actions.partygot .. quests[qas[h][1]][qas[h][2]].gold .. lognames.actions.withgold);
-				end;
-				if quests[qas[h][1]][qas[h][2]].items_plus then
-					table.insert(bags_list,{x=chars_mobs_npcs[current_mob].x,y=chars_mobs_npcs[index].y,xi= chars_mobs_npcs[current_mob].x,yi= chars_mobs_npcs[index].y,typ="bag",opened=false,locked=false,dir=0,img=bag_img});
-					for i=1,#quests[qas[h][1]][qas[h][2]].items_plus do
-						table.insert(bags_list[#bags_list],{ttxid=quests[qas[h][1]][qas[h][2]]["items_plus"].ttxid,q=quests[qas[h][1]][qas[h][2]]["items_plus"].q,w=quests[qas[h][1]][qas[h][2]]["items_plus"].w,e=quests[qas[h][1]][qas[h][2]]["items_plus"].e,r=quests[qas[h][1]][qas[h][2]]["items_plus"].r,h=quests[qas[h][1]][qas[h][2]]["items_plus"].h});
-						helpers.zeroLastBag ();
-						sorttarget = "bag";
-						dragfrom="bag"
-						current_bag = #bags_list;
-						th = #bags_list;
-						bagid = #bags_list;
-						helpers.resort_inv(bagid);
-					end;
-				end;
-				if quests[qas[h][1]][qas[h][2]].items_minus then
-					for i=1,chars do
-						for k=1,#quests[qas[h][1]][qas[h][2]].items_minus do
-							for j=1,#chars_mobs_npcs[i]["inventory_list"] do
-								if quests[qas[h][1]][qas[h][2]]["items_minus"][k] == chars_mobs_npcs[i]["inventory_list"][j].ttxid then
-									local given_item = quests[qas[h][1]][qas[h][2]]["items_minus"][k]
-									helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.gave[chars_mobs_npcs[current_mob].gender] .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][given_item].ttxid].title .. lognames.actions.frominv);
-									table.remove(chars_mobs_npcs[i]["inventory_list"],given_item);
-									helpers.renumber(given_item,i);
-								end;
-							end;
-						end;
-					end;
-				end;
-			end;
-		end;
 	end;
 	return phrase;
 end;

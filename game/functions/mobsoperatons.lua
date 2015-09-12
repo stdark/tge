@@ -392,6 +392,15 @@ function mobsoperatons.addMob(index,person)
 	chars_mobs_npcs[index].farsight_power = 0;
 	chars_mobs_npcs[index].farsight_dur = 0;
 
+	--skills
+	for k=1,#skills do
+		local skill_num = "num_" .. skills[k];
+		local skill_lvl = "lvl_" .. skills[k];
+		chars_mobs_npcs[index][skill_num] = tmpclass2[skill_num];
+		chars_mobs_npcs[index][skill_lvl] = tmpclass2[skill_lvl];
+	end;
+	--/skills
+	--[[
 	chars_mobs_npcs[index].num_unarmed=tmpclass2.num_unarmed;
 	chars_mobs_npcs[index].lvl_unarmed=tmpclass2.lvl_unarmed;
 	chars_mobs_npcs[index].num_sword=tmpclass2.num_sword;
@@ -414,6 +423,8 @@ function mobsoperatons.addMob(index,person)
 	chars_mobs_npcs[index].lvl_throwing=tmpclass2.lvl_throwing;
 	chars_mobs_npcs[index].num_firearms=tmpclass2.num_firearms;
 	chars_mobs_npcs[index].lvl_firearms=tmpclass2.lvl_firearms;
+	chars_mobs_npcs[index].num_blaster=tmpclass2.num_blaster;
+	chars_mobs_npcs[index].lvl_blaster=tmpclass2.lvl_blaster;
 
 	chars_mobs_npcs[index].num_dodging=tmpclass2.dodging_sword;
 	chars_mobs_npcs[index].lvl_dodging=tmpclass2.dodging_sword;
@@ -483,7 +494,7 @@ function mobsoperatons.addMob(index,person)
 	chars_mobs_npcs[index].lvl_regeneration= tmpclass2.lvl_regeneraton;
 	chars_mobs_npcs[index].num_music= tmpclass2.num_music;
 	chars_mobs_npcs[index].lvl_music= tmpclass2.lvl_music;
-
+]]
 	chars_mobs_npcs[index].rezfire=tmpclass2.rezfire;
 	chars_mobs_npcs[index].rezcold=tmpclass2.rezcold;
 	chars_mobs_npcs[index].rezstatic=tmpclass2.rezstatic;

@@ -28,7 +28,7 @@ function damage.mobIsActive(mob)
 	return false;
 end;
 
-function damage.physicalRes (index,damage,hitzone) --FIXME weapon passives and hitzones
+function damage.physicalRes (index,damage,hitzone,luck) --FIXME weapon passives and hitzones
 	if not hitzone then
 		hitzone = chars_mobs_npcs[index]["hitzones"][global.hex][math.random(1,#chars_mobs_npcs[index]["hitzones"][global.hex])];	
 	end;
@@ -58,6 +58,12 @@ function damage.physicalRes (index,damage,hitzone) --FIXME weapon passives and h
 	else
 		newDamage = damage;
 	end;
+	if luck then
+		local rnd = math.random(1,100);
+		if chars_mobs_npcs[index].luk > rnd then
+			newDamage = math.ceil(newDamage/2);
+		end;
+	end;
 	return newDamage;
 end;
 
@@ -79,13 +85,18 @@ function damage.statRes (index,damage,stat,inverse)
 	return newDamage;
 end;
 
-
-function damage.magicalRes (index,damage,element)
+function damage.magicalRes (index,damage,element,luck)
 	local newDamage = 0;
 	if chars_mobs_npcs[index]["rez" .. element] > 0 then
 		newDamage = math.ceil(damage*chars_mobs_npcs[index]["rez" .. element]/100);
 	elseif chars_mobs_npcs[index]["rez" .. element] == 0 then
 		newDamage = damage;
+	end;
+	if luck then
+		local rnd = math.random(1,100);
+		if chars_mobs_npcs[index].luk > rnd then
+			newDamage = math.ceil(newDamage/2);
+		end;
 	end;
 	if chars_mobs_npcs[index].shieldoflight > 0 then
 		return 0;
@@ -4522,11 +4533,11 @@ end;
 		end;
 	end;
 	chars_mobs_npcs[current_mob].rot = atk_anim;
-	recovery = helpers.countMeleeRecoveryChar (current_mob);
+	recovery_rt,recovery_st = helpers.countMeleeRecoveryChar (current_mob);
 	local thirstofblood =  math.min(10,chars_mobs_npcs[current_mob].thirstofblood);
-	chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st-recovery - add_effect_st;
-	chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-recovery + thirstofblood;
-	global.timer200 = global.timer200 + recovery;
+	chars_mobs_npcs[current_mob].st = chars_mobs_npcs[current_mob].st-recovery_st - add_effect_st;
+	chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-recovery_rt + thirstofblood;
+	global.timer200 = global.timer200 + recovery_rt;
 	
 	damage.HPplus(current_mob,selfadd_hp,false);
 	damage.SPplus(current_mob,selfadd_sp,false);
@@ -4631,27 +4642,27 @@ function damage.shoot()
 	tmpi = "media.images." .. chars_mobs_npcs[current_mob].sprite .. "_base";
 	img_base = loadstring("return " .. tmpi)();
 	if missle_drive == "muscles" or missle_drive == "alchemy" then
-		local recovery = 0;
+		local recovery_rt,recovery_st = 0;
 		if missle_type == "bolt" or missle_type == "arrow" then
 			local tmp = chars_mobs_npcs[current_mob].sprite .. "_sht1";
 			local mob_sht1 = loadstring("return " .. tmp	)();
 			animation_sht1 = anim8.newAnimation(mob_sht1[atk_direction]("1-9",1), 0.075,"pauseAtEnd");
-			recovery = helpers.countRangeRecoveryChar (current_mob);
+			recovery_rt,recovery_st = helpers.countRangeRecoveryChar (current_mob);
 			utils.playSfx(media.sounds.crossbow_shot, 1);
 		elseif missle_type == "throwing" then
-			recovery = helpers.countRangeRecoveryChar (current_mob);
+			recovery_rt,recovery_st = helpers.countRangeRecoveryChar (current_mob);
 		elseif missle_type == "bottle" then
 			local tmp = chars_mobs_npcs[current_mob].sprite .. "_launch";
 			local mob_sht1 = loadstring("return " .. tmp)();
 			animation_sht1 = anim8.newAnimation(mob_sht1[atk_direction]("1-9",1), 0.075,"pauseAtEnd");
-			recovery = helpers.countBottleRecovery (current_mob);
+			recovery_rt,recovery_st = helpers.countBottleRecovery (current_mob);
 		end;	
 		if helpers.RangedMissle(missle_type) then --FIXME
 			add_effect_st = tricks.tricks_tips[missle_type].stamina;
 			add_effect_rt = tricks.tricks_tips[missle_type].recovery;			
 		end;
-		damage.STminus(current_mob,recovery+add_effect_st,false);
-		damage.RTminus(current_mob,recovery+add_effect_rt,false);
+		damage.STminus(current_mob,recovery_rt+add_effect_st,false);
+		damage.RTminus(current_mob,recovery_st+add_effect_rt,false);
 		img_shoot = img_mob_war;
 	elseif missle_drive=="spellbook" or missle_drive=="scroll" or missle_drive=="wand" then
 		--utils.playSfx(sfx.Sounds["spellbook"], 1)

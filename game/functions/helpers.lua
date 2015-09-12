@@ -1762,7 +1762,7 @@ function helpers.countSkills (index)
 end;
 
 function helpers.applySkills (index)
-	for i=1,40 do
+	for i=1,#skills do
 		chars_mobs_npcs[index]["num_" .. skills[i]] = temporal_skills[i];
 	end;
 	chars_stats[index].skillpoints = temp_skillpoints;
@@ -2138,6 +2138,8 @@ end;
 
 function helpers.countMeleeRecoveryChar (index)
 	local recovery = 0;
+	local recovery_rt = 0;
+	local recovery_st = 0;
 	local skillweaponrecovery = 0;
 	local armmasteryrecovery = 0;
 	local secondarmrecovery = 0;
@@ -2214,13 +2216,13 @@ function helpers.countMeleeRecoveryChar (index)
 	if helpers.Overburdened (current_mob) then
 		over_penalty = 50;	
 	end;
-	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5)) + over_penalty;
-
-	return recovery;
+	recovery_rt = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5)) + over_penalty;
+	recovery_st = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].dex/5)) + over_penalty;
+	return recovery_rt,recovery_st;
 end;
 
 function helpers.countRangeRecoveryChar (index)
-	local recovery = 0;
+	local recovery,recovery_rt,recovery_st = 0,0;
 	local skillweaponrecovery = 0;
 	local armorrecovery = 0;
 	local shieldrecovery = 0;
@@ -2272,7 +2274,11 @@ function helpers.countRangeRecoveryChar (index)
 		recovery = recovery+inventory_ttx[chars_mobs_npcs[index]["inventory_list"][chars_mobs_npcs[index]["equipment"].armor].ttxid].rt;
 	end;
 	recovery = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
-	return recovery;
+	
+	recovery_rt = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].spd/5));
+	recovery_st = math.max(10,recovery - math.ceil(chars_mobs_npcs[index].dex/5));
+	
+	return recovery_rt,recovery_st;
 end;
 
 function helpers.countBottleRecovery (index)
@@ -2280,8 +2286,9 @@ function helpers.countBottleRecovery (index)
 	if chars_mobs_npcs[index].lvl_throwing >= 4 then
 		skillweaponrecovery = chars_mobs_npcs[index].num_throwing;
 	end;
-	local recovery = math.max(20,50 - math.ceil(chars_mobs_npcs[index].spd/10) - skillweaponrecovery);
-	return recovery;
+	local recovery_rt = math.max(20,50 - math.ceil(chars_mobs_npcs[index].spd/10) - skillweaponrecovery);
+	local recovery_st = math.max(20,50 - math.ceil(chars_mobs_npcs[index].dex/10) - skillweaponrecovery);
+	return recovery_rt,recovery-st;
 end;
 
 function helpers.countMagicRecovery (index,missle_type,missle_drive)
@@ -4298,16 +4305,14 @@ function helpers.ifTrickIsCastable ()
 	
 	if (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and (tricks.tricks_tips[missle_type].skill == "bow" or tricks.tricks_tips[missle_type].skill == "crossbow"))
 	or (missle_drive == "muscles" and  helpers.missleAtWarBook() and tricks.tricks_tips[missle_type].form == "range" and tricks.tricks_tips[missle_type].skill == "throwing") then
-		needrt = helpers.countRangeRecoveryChar (current_mob);
-		needst = helpers.countRangeRecoveryChar (current_mob);
+		needrt,needst = helpers.countRangeRecoveryChar (current_mob);
 	end;
 	
 	if missle_drive == "muscles" and helpers.missleAtWarBook() 
 	and (tricks.tricks_tips[missle_type].skill == "sword" or tricks.tricks_tips[missle_type].skill == "axe" or tricks.tricks_tips[missle_type].skill == "flagpole"
 	or tricks.tricks_tips[missle_type].skill == "crushing" or tricks.tricks_tips[missle_type].skill == "staff" or tricks.tricks_tips[missle_type].skill == "dagger"
 	or tricks.tricks_tips[missle_type].skill == "unarmed") then
-		needrt = helpers.countMeleeRecoveryChar (current_mob);
-		needst = helpers.countMeleeRecoveryChar (current_mob);
+		needrt,needst = helpers.countMeleeRecoveryChar (current_mob);
 	end;
 	
 	needst = needst + tricks.tricks_tips[missle_type].stamina;
@@ -4374,11 +4379,11 @@ end;
 function helpers.ifHoldIsUsable ()
 	local stamina_check = false;
 	local recovery_check = false;
-	local recovery = helpers.countMeleeRecoveryChar (current_mob);
-	if chars_mobs_npcs[current_mob].st >= recovery + hold_tips[missle_effect].stamina then
+	local recovery_rt,recovery_st = helpers.countMeleeRecoveryChar (current_mob);
+	if chars_mobs_npcs[current_mob].st >= recovery_st + hold_tips[missle_effect].stamina then
 		stamina_check = true;
 	end;
-	if chars_mobs_npcs[current_mob].rt >= recovery + hold_tips[missle_effect].recovery then
+	if chars_mobs_npcs[current_mob].rt >= recovery_rt + hold_tips[missle_effect].recovery then
 		recovery_check = true;
 	end;
 	if mana_check and recovery_check then
@@ -4565,13 +4570,15 @@ function helpers.addToActionLog(string)
 end;
 
 function helpers.countPathPrice (index)
-	local price = 0;
+	local price_rt,price_st = 0,0;
 	if way_of_the_mob and #way_of_the_mob > 0 then
 		for i=1,#way_of_the_mob do
-			price = price + helpers.countCurrentHexPrice (i,index);
+			local newprice_rt,newprice_st = helpers.countCurrentHexPrice (i,index);
+			price_rt = price_rt + newprice_rt;
+			price_st = price_st + newprice_st;
 		end;
 	end;
-	return price
+	return price_rt,price_st;
 end;
 
 function helpers.countCurrentHexPrice (index_hex,index_mob)
@@ -4579,9 +4586,9 @@ function helpers.countCurrentHexPrice (index_hex,index_mob)
 		local hex_price = costs_table[map[way_of_the_mob[index_hex][2]][way_of_the_mob[index_hex][1]]];
 		local mobility_bonus = chars_mobs_npcs[index_mob].mobility_power;
 		local dex_bonus = math.ceil(chars_mobs_npcs[index_mob].dex/20);
-		local spd_bonus = math.ceil(chars_mobs_npcs[index_mob].spd/20); --FIXME: spd bonus: rt only?
+		local spd_bonus = math.ceil(chars_mobs_npcs[index_mob].spd/20);
 		local spell_penalty = 0;
-		local stealth_penalty = 5 - chars_mobs_npcs[index_mob].lvl_stealth;
+		local stealth_penalty = 10 - math.ceil(chars_mobs_npcs[index_mob].dex/10);
 		if dlandscape_duration[chars_mobs_npcs[index_mob].x][chars_mobs_npcs[index_mob].y] == "ice" or dlandscape_duration[chars_mobs_npcs[index_mob].x][chars_mobs_npcs[index_mob].y] == "mud"
 		and chars_mobs_npcs[index_mob].mobility_dur == 0
 		then
@@ -4592,10 +4599,11 @@ function helpers.countCurrentHexPrice (index_hex,index_mob)
 			mobility_bonus = 0;
 			dex_bonus = 0;
 		end;
-		local price = math.max(5,20 + hex_price-mobility_bonus-dex_bonus-spd_bonus + spell_penalty + stealth_penalty);
-		return price
+		local price_rt = math.max(5,20 + hex_price-mobility_bonus - spd_bonus + spell_penalty + stealth_penalty);
+		local price_st = math.max(5,20 + hex_price-mobility_bonus - dex_bonus + spell_penalty + stealth_penalty);
+		return price_rt,price_st;
 	else
-		return 0
+		return 0,0
 	end;
 end;
 
