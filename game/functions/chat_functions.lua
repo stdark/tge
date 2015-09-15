@@ -35,46 +35,39 @@ function chat_functions.ifStat(index, stat,operator,value,ifsuccess,ifnot)
 end;
 
 function chat_functions.ifSkill(index, skill,mode,operator,value,ifsuccess,ifnot)
-	local limit1 = nil;
-	local limit2 = nil;
-	local num1 = chars_mobs_npcs[limit1]["num_" .. subtyp];
-	local lvl1 = chars_mobs_npcs[limit1]["lvl_" .. subtyp];
+	local limit = nil;
+	local num1 = chars_mobs_npcs[index]["num_" .. skill];
+	local lvl1 = chars_mobs_npcs[index]["lvl_" .. skill];
 	local tot1 = num1*lvl1;
-	local num2 = chars_mobs_npcs[limit2]["num_" .. subtyp];
-	local lvl2 = chars_mobs_npcs[limit2]["lvl_" .. subtyp];
-	local tot2 = num2*lvl2;
 	if mode == "num" then
-		limit1 = num1;
-		limit2 = num2;
+		limit = num1;
 	elseif mode == "lvl" then
-		limit1 = lvl1;
-		limit2 = lvl2;
+		limit = lvl1;
 	elseif mode == "total" then
-		limit1 = tot1;
-		limit2 = tot2;
+		limit = tot1;
 	end;
 	if     operator == "Equal" then
-		if limit1 == value then
+		if limit == value then
 			return ifsuccess;
 		end;
 	elseif operator == "NotEqual" then
-		if limit1 ~= value then
+		if limit ~= value then
 			return ifsuccess;
 		end;
 	elseif operator == "Less" then
-		if limit1 < value then
+		if limit < value then
 			return ifsuccess;
 		end;
 	elseif operator == "More" then
-		if limit1 > value then
+		if limit > value then
 			return ifsuccess;
 		end;
 	elseif operator == "LessEqual" then
-		if limit1 <= value then
+		if limit <= value then
 			return ifsuccess;
 		end;
 	elseif operator == "MoreEqual" then
-		if limit1 >= value then
+		if limit >= value then
 			return ifsuccess;
 		end;
 	end;
@@ -152,18 +145,17 @@ end;
 	
 function chat_functions.ifQuestPart(quest_id,quest_part,done,ifsuccess,ifnot)
 	for i=1, #party.quests do
-		for h=1,#quest_array do
-			if party.quests[i].id == quest_id and party.quests[i][stages][quest_part] and (not done and not party.quests[i].done) or (done and party.quests[i].done) then
-				return ifsuccess;
-			end;
-		end;
+		if party.quests[i].id == quest_id and party.quests[i][stages][quest_part] and (not done and not party.quests[i].done) or (done and party.quests[i].done) then
+			return ifsuccess;
+		end;	
 	end;
 	return ifnot;
 end;
 
 function chat_functions.ifQuestInProgress(quests_array,quest_part,done,ifsuccess,ifnot)
 	for i=1, #party.quests do
-		for h=1,#quest_array do
+		for h=1,#quests_array do
+			local quest_id = quests_array[h];
 			if party.quests[i].id == quest_id and party.quests[i][stages][quest_part] and (not done and not party.quests[i].done) or (done and party.quests[i].done) then
 				return ifsuccess;
 			end;
