@@ -245,6 +245,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	block=0;
 	hands = 0;
 	parry=0;
+	helpers.camToMob (victim);
 	local agressor_name = helpers.mobName(current_mob);
 	local victim_name = helpers.mobName(victim);
 	local iflucky = 0; -- success or miss

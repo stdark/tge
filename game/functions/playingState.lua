@@ -848,7 +848,7 @@ function playingState.load()
     	--local xx,yy =  helpers.hexToPixels(chars_mobs_npcs[i].y,chars_mobs_npcs[i].x);
     	--table.insert(shadows,{x=chars_mobs_npcs[i].x,y=chars_mobs_npcs[i].y,shadow = lightWorld.newCircle(xx, yy, 20),typ="mob"});
     --end
-    helpers.cam_to_mob ();
+    helpers.camToMob (current_mob);
 
 	sort_switcher = 1
 	sorttarget="char"
@@ -2259,7 +2259,7 @@ function playingState.keyreleased(key, unicode)
 						end;
 						trace.chars_around();
 						trace.clear_rounded();
-						helpers.cam_to_mob ();
+						helpers.camToMob (current_mob);
 					end;
 					if game_status == "chat" then
 						current_mob = i;
@@ -4297,10 +4297,10 @@ function  playingState.mousepressed(x,y,button)
 	if button == "l" and game_status == "neutral" and mY <= global.screenHeight - 160 then
 		if global.status == "peace" and helpers.cursorAtPartyMember(cursor_world_x,cursor_world_y) then
 			current_mob = helpers.cursorAtMobID (cursor_world_x,cursor_world_y);
-			helpers.cam_to_mob ();
+			helpers.camToMob (current_mob);
 		else
 		   ---- kstn
-		   helpers.cam_to_hex (cursor_world_x,cursor_world_y);
+		   helpers.camToHex (cursor_world_x,cursor_world_y);
 		end;
 	end;
 	--mindgame
@@ -6748,7 +6748,7 @@ function  playingState.mousepressed(x,y,button)
 				chars_mobs_npcs[current_mob].wingsoflight = 0;
 				chars_mobs_npcs[current_mob].x = cursor_world_x;
 				chars_mobs_npcs[current_mob].y = cursor_world_y;
-				helpers.cam_to_mob (current_mob);
+				helpers.camToMob (current_mob);
 				helpers.addToActionLog( chars_stats[current_mob].name .. " " .. lognames.actions.teleported[chars_mobs_npcs[current_mob].gender]);
 			end;
 		end;
@@ -6801,7 +6801,6 @@ function  playingState.mousepressed(x,y,button)
 		end;
 --/tricks
 --spells
-	print("::::::",missle_type,missle_drive,global.status)
 		if missle_drive ~= "muscles" then
 			if global.status ~= "mindgame" then
 				
@@ -8206,10 +8205,10 @@ function mobMoving()
 			end;
 			if chars_mobs_npcs[current_mob].control == "player" then
 				helpers.neutralWatch ();
-				helpers.cam_to_mob (current_mob);
+				helpers.camToMob (current_mob);
 			end;
 			if chars_mobs_npcs[current_mob].control == "ai" and darkness[1][chars_mobs_npcs[current_mob].y][chars_mobs_npcs[current_mob].x] then
-				helpers.cam_to_mob (current_mob);
+				helpers.camToMob (current_mob);
 			end;
 			helpers.findShadows();
 			if chars_mobs_npcs[current_mob].control == "player" and going_to_hit == 0 and mob_is_going_to_picklock == 0 and mob_is_going_to_knock == 0 and mob_is_going_to_useobject == 0 then

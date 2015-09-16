@@ -323,14 +323,14 @@ function trace.lookaround (index)
 		trace.wizardEye ();
 	end;
 	if chars_mobs_npcs[index].control == "player" then
-		helpers.cam_to_mob ();
+		helpers.camToMob (current_mob);
 		trace.first_watch (index);
 		trace.chars_around();
 		trace.clear_rounded ();
 	end;
 	if chars_mobs_npcs[index].control == "ai" then
 		if darkness[chars_mobs_npcs[index].party][chars_mobs_npcs[index].x][chars_mobs_npcs[index].y] == 0 then
-			helpers.cam_to_mob ();
+			helpers.camToMob (current_mob);
 		end;
 		trace.first_watch (index);
 		trace.chars_around ();

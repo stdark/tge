@@ -30,7 +30,7 @@ function draw.map()
 		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			--draw.irradiation(mx,my);
 			draw.fogOfWar(mx+map_x,my+map_y)
-			if map[my+map_y][mx+map_x] > 120 and map[my+map_y][mx+map_x] < 1200 then
+			if map[my+map_y][mx+map_x] > 500 and map[my+map_y][mx+map_x] < 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile[map[my+map_y][mx+map_x]],media.images.hex);
 			end;	        	
 			for i=3,1,-1 do
@@ -65,17 +65,25 @@ function draw.submap()
 	for my=1, math.min(global.map_display_h, map_h-map_y) do
 		for mx=1, math.min(global.map_display_w, map_w-map_x) do
 			draw.fogOfWar(mx+map_x,my+map_y);
-			local tile,image = draw.fogOfImage(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex_color);
-			if (submap[my+map_y][mx+map_x] > 1 or darkness[1][my+map_y][mx+map_x] > 0) and submap[my+map_y][mx+map_x] <= 1200 then
-				--draw.drawHex(mx+map_x,my+map_y,tile[submap[my+map_y][mx+map_x]],media.images.hex_color);
+			local tile = tile[submap[my+map_y][mx+map_x]];
+			local image = media.images.hex_color;
+			if submap[my+map_y][mx+map_x] > 50 and submap[my+map_y][mx+map_x] <= 1200 then
 				draw.drawHex(mx+map_x,my+map_y,tile,image);
+			elseif (submap[my+map_y][mx+map_x] <= 50 and darkness[1][my+map_y][mx+map_x] > 0) and submap[my+map_y][mx+map_x] <= 1200 then
+				love.graphics.setColor(255, 255, 255);
+				local tile,image = draw.fogOfImage(mx+map_x,my+map_y);
+				if tile then
+					draw.drawHex(mx+map_x,my+map_y,tile,image);
+				end;
 			end;	        	
 		end;
 	end;
 	love.graphics.setColor(255, 255, 255);
  end; 
 
-function draw.fogOfImage(x,y,tile,image)
+function draw.fogOfImage(x,y)
+	local tile = nil;
+	local image = nil;
 	if darkness[1][y][x] == 1 and game_status =="sensing" then
 		tile = tile_grey;
 		image = media.images.hex_ui;

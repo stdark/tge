@@ -1785,11 +1785,11 @@ function helpers.interrupt ()
 	global.timers.n_timer=0;
 end;
 
-function helpers.cam_to_mob ()
-	helpers.cam_to_hex (chars_mobs_npcs[current_mob].x, chars_mobs_npcs[current_mob].y);
+function helpers.camToMob (index)
+	helpers.camToHex (chars_mobs_npcs[index].x, chars_mobs_npcs[index].y);
 end;
 
-function helpers.cam_to_hex (x, y)
+function helpers.camToHex (x, y)
    --  map_x, map_y - coordinates of upper left corner tile !
    local w, _ = math.modf(global.map_display_w / 2); -- get x margin for current screen size
    local h, _ = math.modf(global.map_display_h / 2); -- get y margin for current screen size
@@ -2564,7 +2564,7 @@ function helpers.useObject() --FIXME: pedestals for mobs too?
 			chars_mobs_npcs[current_mob].x = objects_list[global.object].outx;
 			chars_mobs_npcs[current_mob].y = objects_list[global.object].outy;
 			trace.first_watch(current_mob);
-			helpers.cam_to_mob(current_mob);
+			helpers.camToMob(current_mob);
 			utils.playSfx(media.sounds.teleport,1);
 			if chars_mobs_npcs[current_mob].torchlight > 0 then
 				for i=1,#lights do
@@ -4557,7 +4557,7 @@ function helpers.battleorder ()
 	if global.status == "battle" then
 		draw.lineOfOrder();
 	end;
-	helpers.cam_to_mob ();
+	helpers.camToMob (current_mob);
 	trace.lookaround(current_mob);
 	helpers.findShadows();
 end;
@@ -5275,7 +5275,7 @@ function helpers.switchToNeutral ()
 end;
 
 function helpers.switchToSense ()
-	helpers.cam_to_mob ();
+	helpers.camToMob (current_mob);
 	find_the_path = 0;
 	global.arrow_status_checked = false;
 	global.arrow_status = false;
