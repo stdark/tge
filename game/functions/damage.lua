@@ -301,7 +301,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	helpers.recalcBattleStats (current_mob);
 	if helpers.missleIsAweapon () and missle_type ~= "bottle" then
 		utils.playSfx(media.sounds.arrow_impact,1); -- FIXME: different sounds for different missles
-		local wpEffect,wpChance = damage.weaponPassives(current_mob,victim,missle_type);
+		local wpEffect,wpChance = damage.weaponPassives(missle_type);
 		local attacked_from = helpers.attackDirection(current_mob,victim);
 		if helpers.mobCanDefendHimself (victim) and chars_mobs_npcs[victim].immobilize == 0 then
 			delta_spd = chars_mobs_npcs[current_mob].spd + chars_mobs_npcs[victim].spd;
@@ -310,7 +310,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		end;
 		if #shot_line > 10 then
 			range_penalty = math.min(0.01,(#shot_line - 10)*0.05);
-			if missle_type == "bolt" and chars_mobs_mpcs.lvl_crossbow >= 4 then
+			if missle_type == "bolt" and chars_mobs_npcs[current_mob].lvl_crossbow >= 4 then
 				range_penalty = math.ceil(range_penalty/2);
 			end;
 		end;
@@ -320,7 +320,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 		then
 			local paramod = 2;
 			helpers.addToActionLog( lognames.actions.targetpartlyhided);
-			if missle_type == "arrow" and chars_mobs_mpcs.lvl_bow == 5 then
+			if missle_type == "arrow" and chars_mobs_npcs[current_mob].lvl_bow == 5 then
 				paramod = 1.5;
 			end;
 			chance_to_hit = math.ceil(chance_to_hit/paramod);
@@ -3660,7 +3660,7 @@ function damage.meleeAttack (attacking_hand) -- FIXME attack with what? RH,LH,(R
 	hands = 0;
 	parry=0;
 	local crit = 0;
-	local wpEffect,wpChance = damage.weaponPassives(current_mob,victim,"melee");
+	local wpEffect,wpChance = damage.weaponPassives("melee");
 	local array_of_chances = {};
 	local chance_to_hit = 0;
 	local chance_to_miss = 0;
@@ -6488,7 +6488,7 @@ function damage.mindGameCast()
 end;
 
 
-function damage.weaponPassives(current_mob,victim,attack)
+function damage.weaponPassives(attack)
  local weaponClass = "";
  local weaponSubClass = "";
  local effects = damage.weaponPassivesArray[weaponSubClass]; 
