@@ -120,7 +120,7 @@ function damage.applyDoT (index,lvl,num,c1,c2,c3,c4,element,luck)
 	end;
 end;
 
-function damage.applyCondition (index,lvl,num,condition,element,stat,skill,coff,luck)
+function damage.applyCondition (index,lvl,num,condition,element,stat,skill,coff,luck,useprobability)
 	local roll = math.random(1,100);
 	local luckfactorCaster = 1;
 	local luckfactorTarget = 1;
@@ -129,11 +129,11 @@ function damage.applyCondition (index,lvl,num,condition,element,stat,skill,coff,
 		luckfactorCaster = chars_mobs_npcs[current_mob].luk;
 		luckfactorTarget = chars_mobs_npcs[index].luk;
 	end;
-	if element and num*lvl*luckfactorCaster > chars_mobs_npcs[index]["rez" .. element]*luckfactorTarget then
+	if element and ((not useprobability and num*lvl*luckfactorCaster > chars_mobs_npcs[index]["rez" .. element]*luckfactorTarget) or (useprobability and num*lvl*luckfactorCaster > math.random(1,chars_mobs_npcs[index]["rez" .. element]*luckfactorTarget))) then
 		condition_value =  math.ceil(coff*num);
-	elseif stat and lvl*num > chars_mobs_npcs[current_mob][stat] then
+	elseif stat and ((not useprobability and lvl*num > chars_mobs_npcs[current_mob][stat]) or (useprobability and lvl*num > math.random(1,chars_mobs_npcs[current_mob][stat]))) then
 		condition_value = math.ceil(num*coff);
-	elseif skill and lvl*num > chars_mobs_npcs[current_mob].skill then
+	elseif skill and ((not useprobability and lvl*num > chars_mobs_npcs[current_mob][skill]) or (useprobability and lvl*num > math.random(1,chars_mobs_npcs[current_mob][skill]))) then
 		condition_value = math.ceil(num*coff);
 	else
 		condition_value = math.ceil(num*coff);
@@ -152,7 +152,7 @@ function damage.applyCondition (index,lvl,num,condition,element,stat,skill,coff,
 	return condition_value;
 end;
 
-function damage.applyConditionTwoFactors (index,lvl,num,condition,element,stat,skill,coff,luck)
+function damage.applyConditionTwoFactors (index,lvl,num,condition,element,stat,skill,coff,luck,probability)
 	local roll = math.random(1,100);
 	local luckfactorCaster = 1;
 	local luckfactorTarget = 1;
@@ -162,13 +162,13 @@ function damage.applyConditionTwoFactors (index,lvl,num,condition,element,stat,s
 		luckfactorCaster = chars_mobs_npcs[current_mob].luk;
 		luckfactorTarget = chars_mobs_npcs[index].luk;
 	end;
-	if element and num*lvl*luckfactorCaster > chars_mobs_npcs[index]["rez" .. element]*luckfactorTarget then
+	if element and ((not useprobability and num*lvl*luckfactorCaster > chars_mobs_npcs[index]["rez" .. element]*luckfactorTarget) or (useprobability and num*lvl*luckfactorCaster > math.random(1,chars_mobs_npcs[index]["rez" .. element]*luckfactorTarget))) then
 		condition_power = math.ceil(num*coff);
 		condition_dur = math.ceil(lvl*coff);
-	elseif stat and lvl*num > chars_mobs_npcs[current_mob].stat then
+	elseif stat and ((not useprobability and lvl*num > chars_mobs_npcs[current_mob][stat]) or (useprobability and lvl*num > math.random(1,chars_mobs_npcs[current_mob][stat]))) then
 		condition_power = math.ceil(num*coff);
 		condition_dur = math.ceil(lvl*coff);
-	elseif skill and lvl*num > chars_mobs_npcs[current_mob].skill then
+	elseif skill and ((not useprobability and lvl*num > chars_mobs_npcs[current_mob][skill]) or (useprobability and lvl*num > math.random(1,chars_mobs_npcs[current_mob][skill]))) then
 		condition_power = math.ceil(num*coff);
 		condition_dur = math.ceil(lvl*coff);
 	else
@@ -199,6 +199,7 @@ function damage.mobDamaged(index,damager,damage) -- FIXME: add var of damageHP r
 	end;
 	global.damageflag = false;
 	chars_mobs_npcs[index].invisibility = 0;
+	chars_mobs_npcs[index].stealth = 0;
 	if chars_mobs_npcs[index].control == "ai" and chars_mobs_npcs[index].ai == "away" and chars_mobs_npcs[index].hp <= chars_mobs_npcs[index].hp_max*0.1 then
 		chars_mobs_npcs[index].ai = "agr";
 	end;
@@ -2972,9 +2973,8 @@ function damage.multidamage () --FIXME two hexes
 								chars_mobs_npcs[j].executor_dur = 0;
 								chars_mobs_npcs[j].executor_power = 0;
 								counter = counter - 1;
-							elseif chars_mobs_npcs[j].torch_dur > 0 then
-								chars_mobs_npcs[j].torch_dur = 0;
-								chars_mobs_npcs[j].torch_power = 0;
+							elseif chars_mobs_npcs[j].torchlight > 0 then
+								chars_mobs_npcs[j].torchlight = 0;
 								counter = counter - 1;
 							elseif chars_mobs_npcs[j].stoneskin_dur > 0 then
 								chars_mobs_npcs[j].stoneskin_dur = 0;
@@ -4933,6 +4933,8 @@ function damage.instantCast () --FIXME use lvl, num
 	
 	if missle_type == "torchlight" then
 		chars_mobs_npcs[victim].torchlight = 10 + num[1];
+		chars_mobs_npcs[victim].invisibility = 0;
+		chars_mobs_npcs[victim].stealth = 0;
 		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
 		table.insert(lights,{x=chars_mobs_npcs[victim].x,y=chars_mobs_npcs[victim].y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 128),typ="mob",index = victim});
 		--lights[#lights]["light"]:setDirection(0.1);
@@ -5126,6 +5128,9 @@ function damage.instantCast () --FIXME use lvl, num
 		if not  ai.mobWatchesTheMob (victim,false) then
 			buff = num[1]
 			chars_mobs_npcs[victim].invisibility = buff;
+			--
+			chars_mobs_npcs[victim].torchlight = 0;
+			--
 			helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 			helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.invisible[chars_mobs_npcs[current_mob].gender]);
 		else
@@ -5138,7 +5143,7 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[victim].flame_dur=math.max(chars_mobs_npcs[victim].flame_dur-buff,0);
 		chars_mobs_npcs[victim].firebelt_dur=math.max(chars_mobs_npcs[victim].firebelt_dur-buff,0);
 		chars_mobs_npcs[victim].fireprint_dur=math.max(chars_mobs_npcs[victim].firebelt_dur-buff,0);
-		chars_mobs_npcs[victim].torch_dur=math.max(chars_mobs_npcs[victim].torch_dur-buff,0);
+		chars_mobs_npcs[victim].torchlight=math.max(chars_mobs_npcs[victim].torchlight-buff,0);
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. spellname);
 		helpers.addToActionLog( helpers.mobName(victim) .. " " .. lognames.actions.gotdoused[chars_mobs_npcs[current_mob].gender]);
 	end;

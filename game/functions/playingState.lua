@@ -5881,7 +5881,6 @@ function  playingState.mousepressed(x,y,button)
 			comparray[1]=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].c
 			comparray[2]=inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle3].ttxid].c
 			local powerlimit=(chars_stats[current_mob].lvl_alchemy*chars_stats[current_mob].num_alchemy+(chars_mobs_npcs[current_mob].num_alchemy-chars_stats[current_mob].num_alchemy)) --amulets and rings +alch
-			print("powerlimit",powerlimit)
 			if inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].subclass~="bubuz"
 			and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].subclass~="catalizator"
 			and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle2].ttxid].class~="bottle"
