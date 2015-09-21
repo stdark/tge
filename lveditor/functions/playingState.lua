@@ -3267,7 +3267,7 @@ function boxes ()
 --submap bindings
 	if editor_status == "subhexes" then             
 		local textinput = loveframes.Create("textinput");
-		textinput:SetPos(global.screenWidth-200, global.screenHeight-50);
+		textinput:SetPos(global.screenWidth-100, global.screenHeight-450);
 		textinput:SetWidth(76);
 		textinput:SetText(submap_to_map_table[row_status*10+current_hex_type]);
 		textinput:SetLimit(4);
@@ -4527,7 +4527,12 @@ function playingState.draw()
 		
 		love.graphics.setColor(255, 255, 255,255);
 	end;
-	
+	if editor_status == "subhexes" then             
+		local _txt = "hex binding id:"
+		love.graphics.setColor(0, 0, 0,255);
+		love.graphics.print(_txt,global.screenWidth-220, global.screenHeight-440);
+		love.graphics.setColor(255, 255, 255,255);
+	end;
 	if editor_status == "minimap" then
 		draw_papermap ();
 	end;
