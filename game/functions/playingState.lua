@@ -3492,6 +3492,7 @@ function playingState.mousereleased (x,y,button)
 		if helpers.inSlot("comp7") --anyone can use mills
 		and alchlab[current_mob].comp7 == 0 and alchlab[current_mob].comp8 == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "component"
+		and inventory_ttx[list[holding_smth].ttxid].subclass ~= "special"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			if dragfrom == "char" then
 				alchlab[current_mob].comp7 = holding_smth;
@@ -3507,6 +3508,7 @@ function playingState.mousereleased (x,y,button)
 		if helpers.inSlot("comp8")
 		and alchlab[current_mob].comp8 == 0 and alchlab[current_mob].comp7 == 0 and alchlab[current_mob].comp9 == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "component"
+		and inventory_ttx[list[holding_smth].ttxid].subclass ~= "special"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			if dragfrom == "char" then
 				alchlab[current_mob].comp8 = holding_smth;
@@ -3522,6 +3524,7 @@ function playingState.mousereleased (x,y,button)
 		if helpers.inSlot("comp9")
 		and alchlab[current_mob].comp9 == 0 and alchlab[current_mob].comp8 == 0
 		and inventory_ttx[list[holding_smth].ttxid].class == "component"
+		and inventory_ttx[list[holding_smth].ttxid].subclass ~= "special"
 		and list[holding_smth].q > 0 and list[holding_smth].r == 1 then
 			if dragfrom == "char" then
 				alchlab[current_mob].comp9 = holding_smth;
@@ -5703,7 +5706,7 @@ function  playingState.mousepressed(x,y,button)
 			if love.mouse.isDown("l") and mY >= y and mY <= y+190 and mX >= x+55+100*(i-1) and mX <= x+55+100*(i-1)+80 then
 				local index = localtriggers[global.level_to_load][current_house].npcs[i];
 				victim = helpers.findNPCindex(index);
-				chat (victim);
+				helpers.chat (victim);
 			end;
 		end;
 	end;
@@ -6561,14 +6564,14 @@ function  playingState.mousepressed(x,y,button)
 				game_status="attack";
 				damage.meleeAttack (damage.meleeAttackTool (current_mob));
 			elseif global.status == "peace" and chars_mobs_npcs[previctim].person ~= "char" then
-				chat (previctim);
+				helpers.chat (previctim);
 			end;
 		end;
 
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear () and helpers.cursorAtMob (cursor_world_x,cursor_world_y)
 		and chars_mobs_npcs[previctim].status==1 and current_mob ~= previctim and (game_status == "sensing" or (game_status == "pathfinding" and #way_of_the_mob == 0 ))
 		and love.keyboard.isDown("lctrl") and chars_mobs_npcs[current_mob].num_thievery > 0 and global.status == "peace" then
-			steal(previctim);
+			helpers.steal (previctim);
 		end;
 
 		if love.mouse.isDown("l") and chars_mobs_npcs[current_mob].control=="player" and helpers.ifCursorIsNear() and helpers.cursorAtMob (cursor_world_x,cursor_world_y) --FIXME neutral is not neutral
@@ -7964,74 +7967,6 @@ function find_free_space_at_inv ()
 	holding_smth=0;
 end;
 
-function potion_in_inventory_ttx ()
-	--print("potion_in_inventory_ttx called");
-	for i = 1,#inventory_ttx do
-		if inventory_ttx[i].class == "potion" then
-			if inventory_ttx[i].c == potioncode then
-				--print("potion found");
-				if alchstatus == "boiledfromcomponents" then
-					local tmpbottleid = alchlab[current_mob].bottle1;
-					local temppower=0;
-					local temppower2 = 0;
-					local tmp1 = 0;
-					local tmp2 = 0;
-					local tempcomp = 0;
-					local homogenization = 1;
-					for k=1,6 do
-					local tempslot3="comp" .. k
-					if alchlab[current_mob][tempslot3] > 0 then
-						tempcomp=chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob][tempslot3]].q
-					else
-						tempcomp=0
-					end;
-					--print("tempcomp",tempcomp);
-					if (tempcomp>0 and temppower==0) or (tempcomp>0 and chars_mobs_npcs[current_mob]["inventory_list"][tempcomp].q<temppower) then
-						temppower=tempcomp;
-					end;
-					print("temppower",temppower);
-					if tempcomp>0 and inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][tempcomp].ttxid].subclass == "raw" then
-						homogenization=0;
-					end;
-				end;
-				if alchlab[current_mob].tool2==0 then
-					temppower2=math.random(temppower);
-				elseif alchlab[current_mob].tool2>0 and homogenization==0 then
-					tmp1=math.ceil(temppower*inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].tool2].ttxid].a/100);
-					tmp2=temppower-tmp1;
-					temppower2=tmp1+math.random(tmp2);
-				elseif alchlab[current_mob].tool2>0 and homogenization==1 then
-					temppower2=temppower;
-				end;
-				--print("temppower2",temppower2);
-				local powerlimit = (chars_stats[current_mob].lvl_alchemy*chars_stats[current_mob].num_alchemy+(chars_mobs_npcs[current_mob].num_alchemy-chars_stats[current_mob].num_alchemy));
-				local tmppotionpower=math.ceil((temppower2+powerlimit)*inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].tool1].ttxid].a/100);
-				table.remove(chars_mobs_npcs[current_mob]["inventory_list"],alchlab[current_mob].bottle1);
-				local tempslot2 = 0;
-				local tempslot3 = 0;
-				helpers.renumber(tmpbottleid,current_mob);
-				local tempcomp = 0;
-				for h = 1,6 do
-					tempslot3 = "comp" .. h;
-					tempcomp=alchlab[current_mob][tempslot3];
-					if tempcomp>0 then
-						table.remove(chars_mobs_npcs[current_mob]["inventory_list"],alchlab[current_mob][tempslot3]);
-						alchlab[current_mob][tempslot3] = 0;
-						helpers.renumber(tempcomp,current_mob);
-					end;
-				end;
-				table.insert(chars_mobs_npcs[current_mob]["inventory_list"],{ttxid=i,q=tmppotionpower,w=0,e=0,r=1});
-				alchlab[current_mob].bottle1=#chars_mobs_npcs[current_mob]["inventory_list"];
-				helpers.addToActionLog( chars_stats[current_mob].name .. lognames.actions.boiled[chars_stats[current_mob].gender] .. inventory_ttx[chars_mobs_npcs[current_mob]["inventory_list"][alchlab[current_mob].bottle1].ttxid].title .. lognames.actions.ofpower .. tmppotionpower);
-				elseif alchstatus == "mixedpotions" then
-				--print("potion found2");
-				mixedpotion = i;
-				end;
-			end;
-		end;
-	end;
-end;
-
 function mobMoving()
 	local trapped = 0;
 	local price_rt,price_st = 0,0;
@@ -8235,12 +8170,12 @@ function mobMoving()
 				elseif global.status == "peace" and chars_mobs_npcs[previctim].person ~= "char" and not global.steal then
 					helpers.turnMob (current_mob);
 					chars_mobs_npcs[previctim].rot = helpers.antiDirection(chars_mobs_npcs[current_mob].rot);
-					chat (previctim);
+					helpers.chat (previctim);
 					path_status = 0;
 					global.hang = false;
 					global.steal = false;
 				elseif global.status == "peace" and chars_mobs_npcs[previctim].person ~= "char" and global.steal then
-					steal(previctim);
+					helpers.steal (previctim);
 					path_status = 0;
 					global.hang = false;
 					global.steal = false;
@@ -8300,155 +8235,6 @@ function mobMoving()
 		end;
 		
 		global.timers.n_timer=0;
-	end;
-end;
-
-function chat (index)
-	utils.printDebug("CHAT!");
-	victim = index;
-	chats.load ();
-	chat_log = {};
-	global.switch_personalty = false;
-	global_answer = chats.answers[chars_mobs_npcs[victim]["personality"]["current"].chat][1];
-	local a2log = chars_mobs_npcs[victim].name .. ": " .. global_answer; --FIXME for buildings
-	table.insert(chat_log,a2log);
-	helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.startedchatting[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
-	calendar.add_time_interval(calendar.delta_chat);
-	game_status="chat";
-	global.hang = false;
-end;
-
-function steal (index)
-	utils.printDebug("STEAL!");
-	game_status="neutral";
-	victim = previctim;
-	local chance_to_steal = chars_mobs_npcs[current_mob].num_thievery*chars_mobs_npcs[current_mob].lvl_thievery;
-	if chars_mobs_npcs[index].sleep > 0 or chars_mobs_npcs[index].paralyze > 0 or chars_mobs_npcs[index].stun > 0 then
-		chance_to_steal = chance_to_steal*2;
-	end;
-	local penalty = 1/helpers.visualConditions(index,chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
-	local delta_spd = chars_mobs_npcs[current_mob].spd-chars_mobs_npcs[index].spd;
-	local attacked_from = helpers.attackDirection(current_mob,index);
-	local steal_dir_coff=0
-	if attacked_from=="front" then
-		steal_dir_coff=0.5;
-	elseif attacked_from=="lh" then
-		steal_dir_coff=0.75;
-	elseif attacked_from=="rh" then
-		steal_dir_coff=0.75;
-	elseif attacked_from=="lback" then
-		steal_dir_coff=1.25;
-	elseif attacked_from=="rback" then
-		steal_dir_coff=1.25;
-	elseif attacked_from=="back" then
-		steal_dir_coff=2;
-	end;
-	local chance_not_to_be_noticed = math.ceil(steal_dir_coff*chars_mobs_npcs[current_mob].dex) - delta_spd + math.ceil(chars_mobs_npcs[index].sns*penalty);
-
-	if chars_mobs_npcs[index].blind > 0 or chars_mobs_npcs[index].sleep > 0 or chars_mobs_npcs[index].dark_gasp > 0 or (chars_mobs_npcs[index].reye and chars_mobs_npcs[index].reye == 0 and chars_mobs_npcs[index].leye and chars_mobs_npcs[index].leye == 0) or (chars_mobs_npcs[index].ceye and chars_mobs_npcs[index].ceye == 0) then
-		chance_not_to_be_noticed = chance_not_to_be_noticed*2;
-	end;
-	if chars_mobs_npcs[index].fov == 90 then
-		chance_not_to_be_noticed = chance_not_to_be_noticed*2;
-	elseif chars_mobs_npcs[index].fov == 360 then
-		chance_not_to_be_noticed = math.ceil(chance_not_to_be_noticed/2);
-	end;
-	if chars_mobs_npcs[current_mob].lvl_thievery == 5 then
-		chance_to_steal = 100;
-		chance_not_to_be_noticed = 100;
-	end;
-	local roll = math.random(1,100);
-	if roll <= chance_to_steal then
-		local items_to_remove = {};
-		if chars_mobs_npcs[current_mob].num_thievery >= 1 then
-		--gold
-			local gold = chars_mobs_npcs[victim].gold;
-			if gold > 0 then
-				party.gold = party.gold + gold;
-				chars_mobs_npcs[index].gold = chars_mobs_npcs[index].gold - 1;
-				helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.stolen[chars_mobs_npcs[current_mob].gender] .. " " .. gold .. " " .. lognames.actions.withgold);
-				helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.robbed[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
-				utils.playSfx(media.sounds.gold_dzen,1);
-			end;
-		end;
-		if chars_mobs_npcs[current_mob].lvl_thievery >= 2 then
-		--food,potions,components
-			for i=1,#chars_mobs_npcs[index].inventory_list do
-				if helpers.isPotion(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				or helpers.isFood(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				or helpers.isAlchemicalComponent(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				then
-					table.insert(items_to_remove,chars_mobs_npcs[index].inventory_list[i]);
-				end;
-			end;
-		end;
-		if chars_mobs_npcs[current_mob].lvl_thievery >= 3 then
-		--letters,keys,picklocks,traptools,maps,messages
-			for i=1,#chars_mobs_npcs[index].inventory_list do
-				if helpers.isPaper(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				or helpers.isKey(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				then
-					table.insert(items_to_remove,chars_mobs_npcs[index].inventory_list[i]);
-				end;
-			end;
-		end;
-		if chars_mobs_npcs[current_mob].lvl_thievery >= 4 then
-		--equiped rings and amulets
-			for i=1,#chars_mobs_npcs[index].inventory_list do
-				if helpers.isjewelry(chars_mobs_npcs[index].inventory_list[i].ttxid) then
-					table.insert(items_to_remove,chars_mobs_npcs[index].inventory_list[i]);
-				end;
-			end;
-		end;
-		if chars_mobs_npcs[current_mob].lvl_thievery >= 5 then
-			--gems,books,gobelens
-			for i=1,#chars_mobs_npcs[index].inventory_list do
-				if helpers.isBook(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				or helpers.isArt(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				or helpers.isGem(chars_mobs_npcs[index].inventory_list[i].ttxid)
-				then
-					table.insert(items_to_remove,chars_mobs_npcs[index].inventory_list[i]);
-				end;
-			end;
-		end;
-		if #items_to_remove > 0 then
-			table.insert(bags_list,{x=chars_mobs_npcs[index].x,y=chars_mobs_npcs[current_mob].y,xi= chars_mobs_npcs[index].x,yi= chars_mobs_npcs[current_mob].y,typ="bag",opened=false,locked=false,dir=0,img=bag_img});
-			for i=#items_to_remove,1,-1 do
-				table.insert(bags_list[#bags_list],{ttxid=chars_mobs_npcs[index].inventory_list[i].ttxid,q=chars_mobs_npcs[index].inventory_list[i].q,w=chars_mobs_npcs[index].inventory_list[i].w,e=chars_mobs_npcs[index].inventory_list[i].e,r=chars_mobs_npcs[index].inventory_list[i].r,h=chars_mobs_npcs[index].inventory_list[i].h});
-			end;
-			for i=#items_to_remove,1,-1 do
-				table.remove(chars_mobs_npcs[victim]["inventory_list"][#bags_list],i);
-				helpers.renumber (i,victim);
-			end;
-		end;
-	end;
-	local roll = math.random(1,100);
-	if roll <= chance_not_to_be_noticed then
-		--not noticed!
-	else
-		if chars_mobs_npcs[victim].person ~= "mob" then
-			helpers.addToActionLog(helpers.mobName(current_mob) .. lognames.actions.catchedasthief[chars_mobs_npcs[current_mob].gender]);
-			chars_mobs_npcs[victim]["personality"]["current"] = chars_mobs_npcs[victim]["personality"]["thiefcatcher"];
-			chat(victim);
-		else
-			fractions[chars_mobs_npcs[victim].fraction].party = fractions[chars_mobs_npcs[victim].fraction].party - math.ceil(5 + (100-chars_mobs_npcs[current_mob].chr)/10);
-			chars_mobs_npcs[current_mob].rt = 0;
-			--restoreRT();
-			game_status = "restoring";
-		end;
-	end;
-	helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.didntrob[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(victim));
-	calendar.add_time_interval(calendar.delta_thievery);
-	global.hang = false;
-end;
-
-function exp_for_what(value,index) --FIXME
-	if global.status == "battle" then
-		if chars_mobs_npcs[index].person=="char" then
-			chars_mobs_npcs[index].tmpexpdmg = chars_mobs_npcs[index].tmpexpdmg + value;
-		elseif chars_mobs_npcs[index].person == "mob" and chars_mobs_npcs[current_mob].person == "char" then
-			chars_mobs_npcs[victim].tmpexplost = chars_mobs_npcs[victim].tmpexplost + value;
-		end;
 	end;
 end;
 

@@ -2,14 +2,14 @@ chats = {};
 function chats.load ()
 	chats.rules={
 	ivansusanin={{question=1,answer=2,nextquestion={4,7},remquestion={0},default=true},{question=2,answer=3,nextquestion={5},remquestion={0},default=true},{question=3,answer=4,nextquestion={6},remquestion={0},default=true},{question=4,answer=5,nextquestion={0},default=false},{question=5,answer=6,nextquestion={0},default=false},{question=6,answer=7,nextquestion={0},default=false},{question=7,answer=math.random(1,2)+7,nextquestion={0},default=false}},
-	nilslarsen={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={0},remquestion={0},default=true},{question=3,answer=4,nextquestion={chat_functions.ifSkill(global.current_mob, "diplomacy","total","MoreEqual",10,2,0)},remquestion={0},default=true},{question=4,answer=5001,nextquestion={0},remquestion={0},default=false}},
+	nilslarsen={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={0},remquestion={0},default=true},{question=3,answer=4,nextquestion={chat_functions.ifSkill(current_mob, "diplomacy","total","MoreEqual",10,2,0)},remquestion={0},default=true},{question=4,answer=5001,nextquestion={0},remquestion={0},default=false}},
 	schors={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={3,4,5},remquestion={6},default=true},{question=3,answer=2001,nextquestion={0},default=false},{question=4,answer=2002,nextquestion={0},default=false},{question=5,answer=2011,nextquestion={0},default=false},{question=6,answer=2101,nextquestion={0},remquestion={0},default=true}},
 	meroving={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=1001,nextquestion={0},remquestion={0},default=true}},
 	paparable={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={3},remquestion={0},default=true},{question=3,answer=2004,nextquestion={0},default=false}},
 	loopitosh={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=3,nextquestion={3},remquestion={0},default=true},{question=3,answer=2006,nextquestion={0},default=false}},
 	pilulkin={{question=1,answer=2,nextquestion={0},remquestion={0},default=true},{question=2,answer=1003,nextquestion={0},remquestion={0},default=true}},
 	 --thiefcatched; save by: chr spr int luk also: spd dex str none: sns enu acu
-	catchedthief={{question=1,answer=2,nextquestion={3,4,chat_functions.ifSkill(global.current_mob, "diplomacy","total","MoreEqual",10,2,0)},remquestion={0},default=true},{question=2,answer=5001,nextquestion={0},remquestion={0},default=false},{question=3,answer=chat_functions.ifStat(global.current_mob, "luk","Random100",0,7777,3),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(global.current_mob, "chr","Random100",0,7777,4),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(global.current_mob, "int","Random100",0,7777,5),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(global.current_mob, "spr","Random100",0,7777,6),nextquestion={0},remquestion={0},default=false},{question=5,answer=7001,nextquestion={0},remquestion={0},default=true}},
+	catchedthief={{question=1,answer=2,nextquestion={3,4,chat_functions.ifSkill(current_mob, "diplomacy","total","MoreEqual",10,2,0)},remquestion={0},default=true},{question=2,answer=5001,nextquestion={0},remquestion={0},default=false},{question=3,answer=chat_functions.ifStat(current_mob, "luk","Random100",0,7777,3),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(current_mob, "chr","Random100",0,7777,4),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(current_mob, "int","Random100",0,7777,5),nextquestion={0},remquestion={0},default=false},{question=4,answer=chat_functions.ifStat(current_mob, "spr","Random100",0,7777,6),nextquestion={0},remquestion={0},default=false},{question=5,answer=7001,nextquestion={0},remquestion={0},default=true}},
 	cheguevara={{question=1,answer=2,nextquestion={2},remquestion={0},default=true},{question=2,answer=3,nextquestion={3,4},remquestion={1},default=false},{question=3,answer=8003,nextquestion={5},remquestion={2,4},default=false},{question=4,answer=7778,nextquestion={0},remquestion={2,3},default=false},{question=5,answer=7778,nextquestion={0},remquestion={0},default=false}},
 	cheguevara_quest_in_progress={{question=1,answer=7778,nextquestion={0},remquestion={0},default=true},{question=2,answer=7778,nextquestion={0},remquestion={0},default=true}},
 	
@@ -34,7 +34,7 @@ function chats.load ()
 	},
 	
 	dortussmarttooth = {
-	{question=1,answer=2,nextquestion={chat_functions.ifQuestsGot({4},4,0),chat_functions.ifInformationGot({4},2,0)},remquestion={chat_functions.ifRace(global.current_mob,"goblin",4,3)},default=true}, --not 4 but condition check party/fraction
+	{question=1,answer=2,nextquestion={chat_functions.ifQuestsGot({4},4,0),chat_functions.ifInformationGot({4},2,0)},remquestion={chat_functions.ifRace(current_mob,"goblin",4,3)},default=true}, --not 4 but condition check party/fraction
 	{question=2,answer=4,nextquestion={4},remquestion={1},default=true},
 	{question=3,answer=chat_functions.ifQuestsGot({4},4,0),nextquestion={4},remquestion={1},default=false},
 	{question=4,answer=chat_functions.ifQuestsGot({4},4,0),nextquestion={4},remquestion={1},default=false},
@@ -42,27 +42,27 @@ function chats.load ()
 	
 	};
 	chats.questions = {
-	ivansusanin={chats.questionPerEtiquette("whoru",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette), "Кто мы?", "А звать-то как?", "Как мы сюда попали?","Знать бы...","И на кого же ты тут охотишься?"},
-	nilslarsen={chats.questionPerEtiquette("whoru",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("whatrudoinghere",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),"Покажи дорогу к ближайшему городу!","Попробую тебя убедить..."},
-	schors={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),"Могу я что-нибудь купить?","На данный момент хотелось бы прикупить доспехов.","Оружие — вот что меня интерсует!","Нет ли зачарованного оружия?","Взгляните на то, что есть..."},
-	meroving={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),"Ладно."},
-	paparable={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),"Могу я что-нибудь купить?","Мне б похимичить..."},
-	loopitosh={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),"Мне требуются магические вещи."},
-	pilulkin={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),"Мне требуется лечение."},
-	cheguevara={chats.questionPerEtiquette("whoru",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),"А мы можем поискать?","Берёмся!","Нафиг!","Как найдём — занесём!"},
+	ivansusanin={chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), "Кто мы?", "А звать-то как?", "Как мы сюда попали?","Знать бы...","И на кого же ты тут охотишься?"},
+	nilslarsen={chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("whatrudoinghere",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"Покажи дорогу к ближайшему городу!","Попробую тебя убедить..."},
+	schors={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"Могу я что-нибудь купить?","На данный момент хотелось бы прикупить доспехов.","Оружие — вот что меня интерсует!","Нет ли зачарованного оружия?","Взгляните на то, что есть..."},
+	meroving={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"Ладно."},
+	paparable={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"Могу я что-нибудь купить?","Мне б похимичить..."},
+	loopitosh={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"Мне требуются магические вещи."},
+	pilulkin={chats.questionPerEtiquette("whattheplace",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"Мне требуется лечение."},
+	cheguevara={chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),"А мы можем поискать?","Берёмся!","Нафиг!","Как найдём — занесём!"},
 	cheguevara_quest_in_progress={"Нет.","Да, вот он!"},
-	catchedthief={chats.questionPerEtiquette("whathappened",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("icanprooveit",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("thiefranaway",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette), chats.questionPerEtiquette("iamnotathief",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette), chats.questionPerEtiquette("leavemealone",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("notthiefbutsmart",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("notthiefbutspritual",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette)}, --thiefcatched
+	catchedthief={chats.questionPerEtiquette("whathappened",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("icanprooveit",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("thiefranaway",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), chats.questionPerEtiquette("iamnotathief",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), chats.questionPerEtiquette("leavemealone",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("notthiefbutsmart",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),chats.questionPerEtiquette("notthiefbutspritual",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette)}, --thiefcatched
 	
 	rattusparchedtail={
-	chats.questionPerEtiquette("whoru",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),
-	chats.questionPerEtiquette("whatrudoinghere",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),
-	chats.questionPerEtiquette("whoweare",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),
+	chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
+	chats.questionPerEtiquette("whatrudoinghere",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
+	chats.questionPerEtiquette("whoweare",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
 	"Рассказывай, что с зелёными не поделил.",
 	"Давай про блохастых трави.",
 	"Вернём мы тебе братца, готовь золотишко!",
 	"Нашинкуем пёсиков, хабар притащим!",
 	"Может тебя, грубияна, на твоём хвосте удавить?",
-	chats.questionPerEtiquette("goodbye",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette), --FIXME separate button?
+	chats.questionPerEtiquette("goodbye",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette), --FIXME separate button?
 	"По поводу твоего брата...",
 	"Что касается груза...",
 	"Да так, ничего.",
@@ -72,7 +72,7 @@ function chats.load ()
 	},
 	
 	dortussmarttooth = {
-	chats.questionPerEtiquette("whoru",chars_mobs_npcs[global.current_mob]["personality"]["current"].etiquette),
+	chats.questionPerEtiquette("whoru",chars_mobs_npcs[current_mob]["personality"]["current"].etiquette),
 	"Так ты и есть тот самый пленник гоблинов, у котором рассказывают деревенские?",
 	"Не ты ли родственник Раттуса Палохвоста?",
 	"Подожди, надо разобраться с твоими пленителями.",
@@ -99,7 +99,7 @@ function chats.load ()
 	
 	rattusparchedtail={
 	"Носит тут всяких...",
-	chats.rudeRatmanGoAway(global.current_mob),
+	chats.rudeRatmanGoAway(current_mob),
 	"Тя колышит? Канай отсюда!",
 	"Четыре подозрительных типа. Перепили или со скалами удачно пободались?",
 	"Те, кто может сделать для меня кой какую работку! Кого резать умеете лучше: зелёных иль блохастых?",
@@ -131,7 +131,7 @@ function chats.load ()
 	"Спасите! Помогите! Гоблинов верните!", -- diplo --diplomacy fear = secret passage
 	};
 	
-	catchedthief={chats.questionPerEtiquette("gotyouthief",chars_mobs_npcs[global.victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("youarethief",chars_mobs_npcs[global.victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("iliketales",chars_mobs_npcs[global.victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("lookinglikeathief",chars_mobs_npcs[global.victim]["personality"]["current"].etiquette)}, --thiefcatched
+	catchedthief={chats.questionPerEtiquette("gotyouthief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("youarethief",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("iliketales",chars_mobs_npcs[victim]["personality"]["current"].etiquette),chats.questionPerEtiquette("lookinglikeathief",chars_mobs_npcs[victim]["personality"]["current"].etiquette)}, --thiefcatched
 		
 	};
 	chats.tags={

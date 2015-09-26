@@ -4288,9 +4288,7 @@ function playingState.draw()
 	draw_background();
 	draw_submap();
 	draw_map();
-	if find_the_path==1 then
-		path_finding(chars_mobs_npcs[global.current_mob][4],chars_mobs_npcs[global.current_mob][5]);
-	end;
+
 	draw_cursor();
 	if drawnumbers and (editor_status == "hexes" or editor_status == "subhexes" or editor_status == "buildings") then
 		draw_numbers();

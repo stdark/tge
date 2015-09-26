@@ -1145,7 +1145,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 			damage.HPminus(victim,damageHP,true);
 			table.insert(damaged_mobs,victim);
 			damage.mobDamaged(victim,current_mob,damageHP);
-			exp_for_what(damageHP,current_mob);
+			damage.EXPplus(damageHP,current_mob);
 			helpers.addToActionLog(agressor_name .. lognames.actions.usedtrick[chars_mobs_npcs[current_mob].gender] .. typo[1] .. spellname .. typo[2]);
 		end;
 	else -- MAGIC
@@ -1442,7 +1442,7 @@ function damage.singledamage () -- missle_type, missle_drive,current_mob,victim 
 	local damaged_mobs = {};
 	table.insert(damaged_mobs,victim);
 	if chars_mobs_npcs[current_mob].person == "char" then
-		exp_for_what(alldmg,current_mob);--recalc (all types of dmg/debuffs/etc)
+		damage.EXPplus(alldmg,current_mob);--recalc (all types of dmg/debuffs/etc)
 	end;
 	d_timer = 0;
 	chars_mobs_npcs[current_mob].rage = 0;
@@ -1504,7 +1504,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 			end;
 			local rings = boomareas.ringArea(boomx,boomy);
 			for i=1,#rings[1] do
@@ -1539,7 +1539,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -1558,10 +1558,10 @@ function damage.multidamage () --FIXME two hexes
 				table.insert(damaged_mobs,j);
 				if missle_drive ~= "trap" then
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob);
+					damage.EXPplus(damageHP,current_mob);
 				else
 					damage.mobDamaged(j,global.trapindex,damageHP);
-					exp_for_what(damageHP,global.trapindex);
+					damage.EXPplus(damageHP,global.trapindex);
 				end;
 				if lvl[1] >= 3 then
 					local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
@@ -1587,10 +1587,10 @@ function damage.multidamage () --FIXME two hexes
 						table.insert(damaged_mobs,j);
 						if missle_drive ~= "trap" then
 							damage.mobDamaged(j,current_mob,damageHP);
-							exp_for_what(damageHP,current_mob);
+							damage.EXPplus(damageHP,current_mob);
 						else
 							damage.mobDamaged(j,global.trapindex,damageHP);
-							exp_for_what(damageHP,global.trapindex);
+							damage.EXPplus(damageHP,global.trapindex);
 						end;
 						if lvl[1] >= 3 then
 							local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
@@ -1620,10 +1620,10 @@ function damage.multidamage () --FIXME two hexes
 				table.insert(damaged_mobs,j);
 				if missle_drive ~= "trap" then
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob);
+					damage.EXPplus(damageHP,current_mob);
 				else
 					damage.mobDamaged(j,global.trapindex,damageHP);
-					exp_for_what(damageHP,global.trapindex);
+					damage.EXPplus(damageHP,global.trapindex);
 				end;
 				if lvl[1] >= 3 then
 					local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
@@ -1651,10 +1651,10 @@ function damage.multidamage () --FIXME two hexes
 						table.insert(damaged_mobs,j);
 						if missle_drive ~= "trap" then
 							damage.mobDamaged(j,current_mob,damageHP);
-							exp_for_what(damageHP,current_mob);
+							damage.EXPplus(damageHP,current_mob);
 						else
 							damage.mobDamaged(j,global.trapindex,damageHP);
-							exp_for_what(damageHP,global.trapindex);
+							damage.EXPplus(damageHP,global.trapindex);
 						end;
 						if lvl[1] >= 3 then
 							local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
@@ -1683,7 +1683,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 				local dot_power,dot_dur = damage.applyDoT (j,lvl[2],num[2],1,0,1,0,"poison",false);
 				if dot_power > 0 and dot_dur > 0 then
 					chars_mobs_npcs[j].flame_power = dot_power;
@@ -1701,7 +1701,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[2],num[2],1,0,1,0,"poison",false);
 							if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].flame_power = dot_power;
@@ -1733,7 +1733,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					if lvl[1] >= 3 then
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
@@ -1755,12 +1755,12 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 				if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
 					local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"cold");
 					chars_mobs_npcs[j].st = chars_mobs_npcs[j].st - damageST;
 					helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(j) .. " " .. damageST .. lognames.actions.metr .. " " .. lognames.actions.ofst);
-					exp_for_what(math.ceil(damageST/2),current_mob)
+					damage.EXPplus(math.ceil(damageST/2),current_mob)
 				end;
 				if lvl[1] >= 4 then
 					local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"cold",false);
@@ -1781,11 +1781,11 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
 							local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,2)*num[1],"cold");
 							damage.STminus(j,damageST,true);
-							exp_for_what(math.ceil(damageST/2),current_mob)
+							damage.EXPplus(math.ceil(damageST/2),current_mob)
 						end;
 						if lvl[1] >= 4 then
 							local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"cold",false);
@@ -1811,7 +1811,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 				local dot_power,dot_dur = damage.applyDoT (j,lvl[2],num[2],1,0,1,0,"poison",false);
 				if dot_power > 0 and dot_dur > 0 then
 					chars_mobs_npcs[j].flame_power = dot_power;
@@ -1829,7 +1829,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[2],num[2],1,0,1,0,"poison",false);
 							if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].flame_power = dot_power;
@@ -1852,7 +1852,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 				if lvl[1] >= 4 then
 					local condition = damage.applyCondition (j,lvl[1],num[1],"stun",false,"enu",false,0.2,false);
 					if condition > 0 then
@@ -1869,7 +1869,7 @@ function damage.multidamage () --FIXME two hexes
 						local damageHP = damage.physicalRes (j,damage.damageRandomizator(current_mob,1,8)*num[1]);
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						if lvl[1] >= 4 then
 							local condition = damage.applyCondition (j,lvl[1],num[1],"stun",false,"enu",false,0.2,false);
 							if condition > 0 then
@@ -1892,7 +1892,7 @@ function damage.multidamage () --FIXME two hexes
 							local damageHP = damage.physicalRes (j,20 + lvl[1]*num[1]);
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
-							exp_for_what(damageHP,current_mob);
+							damage.EXPplus(damageHP,current_mob);
 							local condition = damage.applyCondition (j,lvl[1],num[1],"stun",false,"enu",false,0.2,false);
 							if condition > 0 then
 								helpers.addToActionLog( lognames.actions.stunned[chars_mobs_npcs[j].gender]);
@@ -1914,7 +1914,7 @@ function damage.multidamage () --FIXME two hexes
 					local damageHP = damage.physicalRes (j,25 + damage.damageRandomizator(current_mob,5,lvl[1]*num[1]));
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
-					exp_for_what(damageHP,current_mob);
+					damage.EXPplus(damageHP,current_mob);
 					local ring = boomareas.ringArea(chars_mobs_npcs[j].x,chars_mobs_npcs[j].y);
 					local penalty = 0;
 					if chars_mobs_npcs[j].size == "giant" then
@@ -1950,7 +1950,7 @@ function damage.multidamage () --FIXME two hexes
 						local damageRT = chars_mobs_npcs[j].rt;
 						damage.RTminus(j,damageRT,true);
 						table.insert(damaged_mobs,j);
-						exp_for_what(math.ceil(damageRT/4),current_mob)
+						damage.EXPplus(math.ceil(damageRT/4),current_mob)
 					end;
 				end;
 			end;
@@ -1969,7 +1969,7 @@ function damage.multidamage () --FIXME two hexes
 						local damageHP = damageHPD + damageHPP;
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 					end;
 				end;
 			end;
@@ -2001,7 +2001,7 @@ function damage.multidamage () --FIXME two hexes
 							damageHP = damageHP + damage.physicalRes (j,10+lvl[2]);
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
-							exp_for_what(damageHP,current_mob)
+							damage.EXPplus(damageHP,current_mob)
 						end;
 					end;
 				end;
@@ -2060,7 +2060,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					if lvl[1] >= 3 then
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
@@ -2083,7 +2083,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					if lvl[1] >= 3 then
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
@@ -2106,7 +2106,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					local debuff,debuff2 = damage.applyConditionTwoFactors (j,lvl[1],num[1],"blind","light",false,false,0.5,true);
 					if debuff > 0 and debuff2 > 0 then
 						chars_mobs_npcs[j].flame_power = debuff;
@@ -2130,7 +2130,7 @@ function damage.multidamage () --FIXME two hexes
 						chars_mobs_npcs[j].sleep = 0;
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.dmg[chars_mobs_npcs[j].gender] .. helpers.mobName(j) .. " " .. lognames.actions.stun[chars_mobs_npcs[j].gender]);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(math.ceil(debuff/2),current_mob)	
+						damage.EXPplus(math.ceil(debuff/2),current_mob)	
 					elseif chars_mobs_npcs[j].stun > 0 then
 						chars_mobs_npcs[j].stun = 0;
 					end;
@@ -2150,7 +2150,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -2165,7 +2165,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					boomareas.bloodGround (boomarea[i].x,boomarea[i].y);
 					local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"darkness",false);
 					if dot_power > 0 and dot_dur > 0 and chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
@@ -2187,7 +2187,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.RTminus(j,damageRT,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,math.ceil(damageRT/4));
-					exp_for_what(math.ceil(damageRT/2),current_mob)
+					damage.EXPplus(math.ceil(damageRT/2),current_mob)
 				end;
 			end;
 		end;
@@ -2202,7 +2202,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					if lvl[1] >= 4 then
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
@@ -2222,7 +2222,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].flame_power = dot_power;
@@ -2248,7 +2248,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob);
+						damage.EXPplus(damageHP,current_mob);
 					end;
 				end;
 			end;
@@ -2264,12 +2264,12 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
 						local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"cold");
 						chars_mobs_npcs[j].st = chars_mobs_npcs[j].st - damageST;
 						helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(j) .. " " .. damageST .. lognames.actions.metr .. " " .. lognames.actions.ofst);
-						exp_for_what(math.ceil(damageST/2),current_mob)
+						damage.EXPplus(math.ceil(damageST/2),current_mob)
 						if lvl[1] == 5 then
 							local freeze = damage.applyCondition (j,lvl[1],num[2],"freeze","cold",false,false,1,false);
 							helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.freezed[chars_mobs_npcs[j].gender]);
@@ -2294,11 +2294,11 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						if chars_mobs_npcs[j].nature ~= "undead" and chars_mobs_npcs[j].nature ~= "golem" and chars_mobs_npcs[j].nature ~= "droid" and chars_mobs_npcs[j].nature ~= "elemental" then
 							local damageST = damage.magicalRes (j,12 + damage.damageRandomizator(current_mob,1,3)*num[1] + lvl[1],"cold");
 							damage.STminus(j,damageST,true);
-							exp_for_what(math.ceil(damageST/2),current_mob)
+							damage.EXPplus(math.ceil(damageST/2),current_mob)
 							if lvl[1] == 5 then
 								local freeze = damage.applyCondition (j,lvl[1],num[2],"freeze","cold",false,false,1,false);
 								helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.freezed[chars_mobs_npcs[j].gender]);
@@ -2341,14 +2341,14 @@ function damage.multidamage () --FIXME two hexes
 					end;
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob);
+					damage.EXPplus(damageHP,current_mob);
 					if damageHPcold > 0 then
 						damage.STminus(j,damageHPcold,true);
-						exp_for_what(math.ceil(damageHPcold/3),current_mob);
+						damage.EXPplus(math.ceil(damageHPcold/3),current_mob);
 					end;
 					if damageHPstatic > 0 then
 						damage.RTminus(j,damageHPstatic,true);
-						exp_for_what(math.ceil(damageHPstatic/4),current_mob);
+						damage.EXPplus(math.ceil(damageHPstatic/4),current_mob);
 					end;
 					if chars_mobs_npcs[j].hexes == 1 then
 						chars_mobs_npcs[j].rot = math.random(1,6);
@@ -2379,14 +2379,14 @@ function damage.multidamage () --FIXME two hexes
 					end;
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob);
+					damage.EXPplus(damageHP,current_mob);
 					if damageHPcold > 0 then
 						damage.STminus(j,damageHPcold,true);
-						exp_for_what(math.ceil(damageHPcold/3),current_mob);
+						damage.EXPplus(math.ceil(damageHPcold/3),current_mob);
 					end;
 					if damageHPstatic > 0 then
 						damage.RTminus(j,damageHPstatic,true);
-						exp_for_what(math.ceil(damageHPstatic/4),current_mob);
+						damage.EXPplus(math.ceil(damageHPstatic/4),current_mob);
 					end;
 					if chars_mobs_npcs[j].hexes == 1 then
 						chars_mobs_npcs[j].rot = math.random(1,6);
@@ -2417,14 +2417,14 @@ function damage.multidamage () --FIXME two hexes
 					end;
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob);
+					damage.EXPplus(damageHP,current_mob);
 					if damageHPcold > 0 then
 						damage.STminus(j,damageHPcold,true);
-						exp_for_what(math.ceil(damageHPcold/3),current_mob);
+						damage.EXPplus(math.ceil(damageHPcold/3),current_mob);
 					end;
 					if damageHPstatic > 0 then
 						damage.RTminus(j,damageHPstatic,true);
-						exp_for_what(math.ceil(damageHPstatic/4),current_mob);
+						damage.EXPplus(math.ceil(damageHPstatic/4),current_mob);
 					end;
 					if chars_mobs_npcs[j].hexes == 1 then
 						chars_mobs_npcs[j].rot = math.random(1,6);
@@ -2474,8 +2474,8 @@ function damage.multidamage () --FIXME two hexes
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.immobilized[chars_mobs_npcs[j].gender]);
-						exp_for_what(damageHP,current_mob);
-						exp_for_what(math.ceil(damageST/2),current_mob);
+						damage.EXPplus(damageHP,current_mob);
+						damage.EXPplus(math.ceil(damageST/2),current_mob);
 						helpers.clearHlandscape(boomarea[i].x,boomarea[i].y);
 					end;
 				end;
@@ -2492,7 +2492,7 @@ function damage.multidamage () --FIXME two hexes
 						if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) and chars_mobs_npcs[j].person == "char" then
 							local healHP = 10 + 5*num[1];
 							damage.HPplus(j,healHP);
-							exp_for_what(healHP,current_mob)
+							damage.EXPplus(healHP,current_mob)
 						end;
 					end;
 				end;
@@ -2547,7 +2547,7 @@ function damage.multidamage () --FIXME two hexes
 		end;
 		local ageprice = math.ceil(price)/365;
 		chars_mobs_npcs[i].age = chars_mobs_npcs[i].age + ageprice;
-		exp_for_what(ageprice,current_mob);
+		damage.EXPplus(ageprice,current_mob);
 	end;
 	
 	if missle_type == "pandemia" then
@@ -2559,7 +2559,7 @@ function damage.multidamage () --FIXME two hexes
 						if helpers.cursorAtCurrentMob (j,rings[h][i].x,rings[h][i].y) and helpers.aliveNature(j) and helpers.mobIsAlive(j) then
 							debuff = damage.applyCondition (j,lvl[1],num[2],"disease","disease",false,false,1,false);
 							chars_mobs_npcs[j].disease = math.max(chars_mobs_npcs[j].disease,debuff);
-							exp_for_what(math.ceil(debuff/2),current_mob)
+							damage.EXPplus(math.ceil(debuff/2),current_mob)
 						end;
 					end;
 				end;
@@ -2577,7 +2577,7 @@ function damage.multidamage () --FIXME two hexes
 							debuff = damage.applyCondition (j,lvl[1],num[2],"darkcontamination","darkness",false,false,1,false);
 							chars_mobs_npcs[j].darkcontamination = math.max(chars_mobs_npcs[j].darkcontamination,debuff);
 							helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.contaminated[chars_mobs_npcs[j].gender]);
-							exp_for_what(math.ceil(debuff/2),current_mob)
+							damage.EXPplus(math.ceil(debuff/2),current_mob)
 						end;
 					end;
 				end;
@@ -2635,7 +2635,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].flame_power = dot_power;
@@ -2656,7 +2656,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 			end;
 		end;
 	end;
@@ -2682,7 +2682,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 			end;
 		end;
 	end;
@@ -2699,7 +2699,7 @@ function damage.multidamage () --FIXME two hexes
 					gainedHP = gainedHP + damageHP;
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -2709,7 +2709,7 @@ function damage.multidamage () --FIXME two hexes
 				local healHP = math.min(partHP,chars_mobs_npcs[i].hp_max -chars_mobs_npcs[i].hp);
 				chars_mobs_npcs[i].hp = chars_mobs_npcs[i].hp  + healHP;
 				damage.HPplus(i,healHP);
-				exp_for_what(healHP,current_mob)
+				damage.EXPplus(healHP,current_mob)
 			end;
 		end;
 	end;
@@ -2724,7 +2724,7 @@ function damage.multidamage () --FIXME two hexes
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,math.ceil(debuff/4));
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.cursed[chars_mobs_npcs[j].gender]);
-						exp_for_what(math.ceil(debuff/3),current_mob);
+						damage.EXPplus(math.ceil(debuff/3),current_mob);
 					end;
 				end;
 			end;
@@ -2772,7 +2772,7 @@ function damage.multidamage () --FIXME two hexes
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,math.ceil(debuff/4));
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.cursed[chars_mobs_npcs[j].gender]);
-						exp_for_what(math.ceil(debuff*debuff2/300),current_mob)
+						damage.EXPplus(math.ceil(debuff*debuff2/300),current_mob)
 					end;
 				end;
 			end;
@@ -2789,7 +2789,7 @@ function damage.multidamage () --FIXME two hexes
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,math.ceil(debuff_power/4));
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.desponded[chars_mobs_npcs[j].gender]);
-						exp_for_what(math.ceil(debuff_power/3),current_mob)
+						damage.EXPplus(math.ceil(debuff_power/3),current_mob)
 					end;
 				end;
 			end;
@@ -2806,7 +2806,7 @@ function damage.multidamage () --FIXME two hexes
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,math.ceil(debuff_power/4));
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.weaked[chars_mobs_npcs[j].gender]);
-						exp_for_what(math.ceil(debuff_power/3),current_mob)
+						damage.EXPplus(math.ceil(debuff_power/3),current_mob)
 					end;
 				end;
 			end;
@@ -2821,13 +2821,13 @@ function damage.multidamage () --FIXME two hexes
 					if chars_mobs_npcs[j].person == "char" or chars_mobs_npcs[j].nature == "undead" then
 						local healHP = damage.damageRandomizator(current_mob,1,4)*num[2];
 						damage.HPminus(j,healHP,true);
-						exp_for_what(healHP,current_mob)
+						damage.EXPplus(healHP,current_mob)
 					else
 						local damageHP =  damage.magicalRes (j,damage.damageRandomizator(current_mob,1,4)*num[1],"darkness");
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 					end;
 				end;
 			end;
@@ -2843,7 +2843,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -2861,7 +2861,7 @@ function damage.multidamage () --FIXME two hexes
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
 							damage.mobDamaged(j,mobs_revengers[i],damageHP);
-							exp_for_what(damageHP,current_mob)
+							damage.EXPplus(damageHP,current_mob)
 							local dot_power,dot_dur = damage.applyDoT (j,chars_mobs_npcs[mobs_revengers[i]].revenge_power,chars_mobs_npcs[mobs_revengers[i]].revenge_power,1,0,1,0,"acid",false);
 							if dot_power > 0 and dot_dur > 0 then
 								chars_mobs_npcs[j].acid_power = dot_power;
@@ -2873,7 +2873,7 @@ function damage.multidamage () --FIXME two hexes
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
 							damage.mobDamaged(j,mobs_revengers[i],damageHP);
-							exp_for_what(damageHP,current_mob)
+							damage.EXPplus(damageHP,current_mob)
 							local dot_power,dot_dur = damage.applyDoT (j,chars_mobs_npcs[mobs_revengers[i]].revenge_power,chars_mobs_npcs[mobs_revengers[i]].revenge_power,1,0,1,0,"poison",false);
 							if dot_power > 0 and dot_dur > 0 then
 								chars_mobs_npcs[j].poison_power = dot_power;
@@ -2885,7 +2885,7 @@ function damage.multidamage () --FIXME two hexes
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
 							damage.mobDamaged(j,mobs_revengers[i],damageHP);
-							exp_for_what(damageHP,current_mob)
+							damage.EXPplus(damageHP,current_mob)
 							local dot_power,dot_dur = damage.applyDoT (j,chars_mobs_npcs[mobs_revengers[i]].revenge_power,chars_mobs_npcs[mobs_revengers[i]].revenge_power,1,0,1,0,"fire",false);
 							if dot_power > 0 and dot_dur > 0 then
 								chars_mobs_npcs[j].flame_power = dot_power;
@@ -2897,7 +2897,7 @@ function damage.multidamage () --FIXME two hexes
 							damage.HPminus(j,damageHP,true);
 							table.insert(damaged_mobs,j);
 							damage.mobDamaged(j,mobs_revengers[i],damageHP);
-							exp_for_what(damageHP,current_mob)
+							damage.EXPplus(damageHP,current_mob)
 						elseif chars_mobs_npcs[j].revenge_type == "static" then
 							local damageHP = damage.magicalRes (j,15+math.random(1,10)*chars_mobs_npcs[mobs_revengers[i]].revenge_power,"static");
 							local damageRT = damage.magicalRes (j,15+math.random(1,10)*chars_mobs_npcs[mobs_revengers[i]].revenge_power,"static");
@@ -2905,8 +2905,8 @@ function damage.multidamage () --FIXME two hexes
 							damage.RTminus(j,damageRT,true);
 							table.insert(damaged_mobs,j);
 							damage.mobDamaged(j,mobs_revengers[i],damageHP);
-							exp_for_what(damageHP,current_mob)
-							exp_for_what(math.ceil(damageRT/4),current_mob)
+							damage.EXPplus(damageHP,current_mob)
+							damage.EXPplus(math.ceil(damageRT/4),current_mob)
 						elseif chars_mobs_npcs[j].revenge_type == "cold" then
 							local damageHP = damage.magicalRes (j,15+math.random(1,10)*chars_mobs_npcs[mobs_revengers[i]].revenge_power,"cold");
 							local damageST = damage.magicalRes (j,15+math.random(1,10)*chars_mobs_npcs[mobs_revengers[i]].revenge_power,"cold");
@@ -2914,8 +2914,8 @@ function damage.multidamage () --FIXME two hexes
 							damage.STminus(j,damageST,true);
 							table.insert(damaged_mobs,j);
 							damage.mobDamaged(j,mobs_revengers[i],damageHP);
-							exp_for_what(damageHP,current_mob)
-							exp_for_what(math.ceil(damageST/2),current_mob)
+							damage.EXPplus(damageHP,current_mob)
+							damage.EXPplus(math.ceil(damageST/2),current_mob)
 							local dot_power,dot_dur = damage.applyDoT (j,chars_mobs_npcs[mobs_revengers[i]].revenge_power,chars_mobs_npcs[mobs_revengers[i]].revenge_power,1,0,1,0,"cold",false);
 							if dot_power > 0 and dot_dur > 0 then
 								chars_mobs_npcs[j].cold_power = dot_power;
@@ -3081,7 +3081,7 @@ function damage.multidamage () --FIXME two hexes
 						end;
 					if counterforexp > 0 and counterforexp ~= counter then
 						local debuff = math.ceil(counterforexp-counter/3);
-						exp_for_what(debuff,current_mob)
+						damage.EXPplus(debuff,current_mob)
 						damage.mobDamaged(j,current_mobdebuff);
 					end;
 				end;
@@ -3118,12 +3118,12 @@ function damage.multidamage () --FIXME two hexes
 					end;
 					local debuff = damage.applyCondition (j,lvl[1],num[2],"freeze","cold",false,false,1,false);
 					if debuff > 0 then
-						exp_for_what(math.ceil(debuff/3),current_mob);
+						damage.EXPplus(math.ceil(debuff/3),current_mob);
 					end;
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -3140,7 +3140,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -3151,7 +3151,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 			if helpers.passWalk(sharea[i].y,sharea[i].x) then
@@ -3170,7 +3170,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 					local damageRT = damage.magicalRes (j,25+num[1],"static");
 					damage.RTminus(j,damageRT,true);
 				end;
@@ -3184,7 +3184,7 @@ function damage.multidamage () --FIXME two hexes
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
 					helpers.addToActionLog( lognames.actions.dmg[chars_mobs_npcs[current_mob].gender] .. helpers.mobName(j) .. " " .. damageHP .. lognames.actions.metr .. " " .. lognames.actions.ofhp);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -3198,7 +3198,7 @@ function damage.multidamage () --FIXME two hexes
 			damage.HPminus(j,damageHP,true);
 			table.insert(damaged_mobs,j);
 			damage.mobDamaged(j,current_mob,damageHP);
-			exp_for_what(damageHP,current_mob)
+			damage.EXPplus(damageHP,current_mob)
 		end;
 	end;
 	
@@ -3218,7 +3218,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -3235,7 +3235,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -3250,7 +3250,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.mobDamaged(j,current_mob,damageHP);
 					damage.HPminus(j,damageHP,true);
 					table.insert(damaged_mobs,j);
-					exp_for_what(damageHP,current_mob)
+					damage.EXPplus(damageHP,current_mob)
 				end;
 			end;
 		end;
@@ -3263,7 +3263,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 				if lvl[1] >= 3 then
 					local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 					if dot_power > 0 and dot_dur > 0 then
@@ -3284,7 +3284,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						if lvl[1] >= 3 then
 							local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 							if dot_power > 0 and dot_dur > 0 then
@@ -3310,7 +3310,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 				local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"poison",false);
 				if dot_power > 0 and dot_dur > 0 then
 					chars_mobs_npcs[j].flame_power = dot_power;
@@ -3328,7 +3328,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"poison",false);
 							if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].flame_power = dot_power;
@@ -3354,7 +3354,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.HPminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP);
-				exp_for_what(damageHP,current_mob)
+				damage.EXPplus(damageHP,current_mob)
 				local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"acid",false);
 				if dot_power > 0 and dot_dur > 0 then
 					chars_mobs_npcs[j].acid_power = dot_power;
@@ -3372,7 +3372,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.HPminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP);
-						exp_for_what(damageHP,current_mob)
+						damage.EXPplus(damageHP,current_mob)
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"acid",false);
 							if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].acid_power = dot_power;
@@ -3397,7 +3397,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.STminus(j,damageHP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP+math.ceil(damageST/2));
-				exp_for_what(damageHP+math.ceil(damageST/2),current_mob)
+				damage.EXPplus(damageHP+math.ceil(damageST/2),current_mob)
 				local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"cold",false);
 				if dot_power > 0 and dot_dur > 0 then
 					chars_mobs_npcs[j].cold_power = dot_power;
@@ -3407,7 +3407,7 @@ function damage.multidamage () --FIXME two hexes
 				local debuff = damage.applyCondition (j,lvl[1],num[2],"freeze","cold",false,false,1,false);
 				if debuff > 0 then
 					helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.freezed[chars_mobs_npcs[j].gender]);
-					exp_for_what(math.ceil(debuff/3),current_mob);
+					damage.EXPplus(math.ceil(debuff/3),current_mob);
 				end;
 				helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.freezed[chars_mobs_npcs[j].gender]);
 			end;
@@ -3423,7 +3423,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.STminus(j,damageHP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP+math.ceil(damageST/2));
-						exp_for_what(damageHP+math.ceil(damageST/2),current_mob);
+						damage.EXPplus(damageHP+math.ceil(damageST/2),current_mob);
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"cold",false);
 							if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].acid_power = dot_power;
@@ -3432,7 +3432,7 @@ function damage.multidamage () --FIXME two hexes
 						end;
 						local debuff = damage.applyCondition (j,lvl[1],num[2],"freeze","cold",false,false,1,false);
 						if debuff > 0 then
-							exp_for_what(math.ceil(debuff/3),current_mob);
+							damage.EXPplus(math.ceil(debuff/3),current_mob);
 						end;
 						helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.freezed[chars_mobs_npcs[j].gender]);
 					end;
@@ -3453,7 +3453,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.RTminus(j,damageRT,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP+math.ceil(damageRT/4));
-				exp_for_what(damageHP+math.ceil(damageRT/4),current_mob);
+				damage.EXPplus(damageHP+math.ceil(damageRT/4),current_mob);
 			end;
 		end;
 		local rings = boomareas.ringArea(boomx,boomy);
@@ -3467,7 +3467,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.RTminus(j,damageRT,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP+math.ceil(damageRT/4));
-						exp_for_what(damageHP+math.ceil(damageRT/4),current_mob);
+						damage.EXPplus(damageHP+math.ceil(damageRT/4),current_mob);
 					end;
 				end;
 			end;
@@ -3488,7 +3488,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.SPminus(j,damageSP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,damageHP+math.ceil(damageSP/2)+math.ceil(damageST/2)+math.ceil(damageRT/4));
-				exp_for_what(damageHP+math.ceil(damageSP/2)+math.ceil(damageST/2)+math.ceil(damageRT/4),current_mob);
+				damage.EXPplus(damageHP+math.ceil(damageSP/2)+math.ceil(damageST/2)+math.ceil(damageRT/4),current_mob);
 			end;
 		end;
 		local rings = boomareas.ringArea(boomx,boomy);
@@ -3504,7 +3504,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.SPminus(j,damageSP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,damageHP+math.ceil(damageSP/2)+math.ceil(damageST/2)+math.ceil(damageRT/4));
-						exp_for_what(damageHP+math.ceil(damageSP/2)+math.ceil(damageST/2)+math.ceil(damageRT/4),current_mob);
+						damage.EXPplus(damageHP+math.ceil(damageSP/2)+math.ceil(damageST/2)+math.ceil(damageRT/4),current_mob);
 					end;
 				end;
 			end;
@@ -3521,7 +3521,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.RTminus(j,damageSP,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,math.ceil(damageSP/2));
-				exp_for_what(math.ceil(damageSP/2),current_mob);
+				damage.EXPplus(math.ceil(damageSP/2),current_mob);
 			end;
 		end;
 		local rings = boomareas.ringArea(boomx,boomy);
@@ -3533,7 +3533,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.SPminus(j,damageSP,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,current_mob,math.ceil(damageSP/2));
-						exp_for_what(math.ceil(damageSP/2),current_mob);
+						damage.EXPplus(math.ceil(damageSP/2),current_mob);
 					end;
 				end;
 			end;
@@ -3550,7 +3550,7 @@ function damage.multidamage () --FIXME two hexes
 				damage.RTminus(j,damageRT,true);
 				table.insert(damaged_mobs,j);
 				damage.mobDamaged(j,current_mob,math.ceil(damageRT/4));
-				exp_for_what(math.ceil(damageRT/4),current_mob);
+				damage.EXPplus(math.ceil(damageRT/4),current_mob);
 			end;
 		end;
 		local rings = boomareas.ringArea(boomx,boomy);
@@ -3562,7 +3562,7 @@ function damage.multidamage () --FIXME two hexes
 						damage.RTminus(j,damageRT,true);
 						table.insert(damaged_mobs,j);
 						damage.mobDamaged(j,math.ceil(damageRT/4));
-						exp_for_what(math.ceil(damageRT/4),current_mob);
+						damage.EXPplus(math.ceil(damageRT/4),current_mob);
 					end;
 				end;
 			end;
@@ -4498,7 +4498,7 @@ end;
 			helpers.addToActionLog( lognames.actions.lost[chars_mobs_npcs[victim].gender] .. dmgrt .. lognames.actions.metr .. lognames.actions.ofrt);	
 		end;
 		local alldmg =  math.ceil(dmghp + dmgsp/2 + dmgst/4 + dmgrt/8);
-		exp_for_what(alldmg,current_mob);
+		damage.EXPplus(alldmg,current_mob);
 	end;
 --/HIT
 	local mode,lvl,num,effect,element,stat,skill,coff,luck = damage.classPassives(current_mob);
@@ -6606,6 +6606,16 @@ function damage.classPassives(index)
 		end;
 	end;
 	return false
+end;
+
+function damage.EXPplus(value,index)
+	if global.status == "battle" then
+		if chars_mobs_npcs[index].person=="char" then
+			chars_mobs_npcs[index].tmpexpdmg = chars_mobs_npcs[index].tmpexpdmg + value;
+		elseif chars_mobs_npcs[index].person == "mob" and chars_mobs_npcs[current_mob].person == "char" then
+			chars_mobs_npcs[victim].tmpexplost = chars_mobs_npcs[victim].tmpexplost + value;
+		end;
+	end;
 end;
 
 function damage.HPcheck(index)
