@@ -2062,7 +2062,7 @@ function damage.multidamage () --FIXME two hexes
 					damage.mobDamaged(j,current_mob,damageHP);
 					damage.EXPplus(damageHP,current_mob)
 					if lvl[1] >= 3 then
-						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
+						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],2,3,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].flame_power = dot_power;
 							chars_mobs_npcs[j].flame_dur = dot_dur;
@@ -2076,6 +2076,7 @@ function damage.multidamage () --FIXME two hexes
 	
 	if missle_type == "firelance" then
 		local boomarea = boomareas.vrayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,1);
+		local superboomarea = boomareas.rayArea(chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].rot,1);
 		for i=1,#boomarea do
 			for j=1,#chars_mobs_npcs do
 				if helpers.cursorAtCurrentMob (j,boomarea[i].x,boomarea[i].y) then
@@ -2084,15 +2085,24 @@ function damage.multidamage () --FIXME two hexes
 					table.insert(damaged_mobs,j);
 					damage.mobDamaged(j,current_mob,damageHP);
 					damage.EXPplus(damageHP,current_mob)
-					if lvl[1] >= 3 then
+					--if lvl[1] >= 3 then
 						local dot_power,dot_dur = damage.applyDoT (j,lvl[1],num[1],1,0,1,0,"fire",false);
 						if dot_power > 0 and dot_dur > 0 then
 							chars_mobs_npcs[j].flame_power = dot_power;
 							chars_mobs_npcs[j].flame_dur = dot_dur;
 							helpers.addToActionLog( helpers.mobName(j) .. lognames.actions.flamed[chars_mobs_npcs[j].gender]);
 						end;
-					end;
+					--end;
 				end;
+			end;
+		end;
+		for i=1,#superboomarea do
+			--DAMAGE ARMOR
+			for j=1,#chars_mobs_npcs do
+				local hitzone = chars_mobs_npcs[j]["hitzones"][1][math.random(1,#chars_mobs_npcs[j]["hitzones"][1])];	
+				local attacked_from = helpers.attackDirection(current_mob,j);
+				local ARMORminus = damage.damageRandomizator(current_mob,1,3)*num[1]*lvl[1];
+				damage.armorDestroying (hitzone,attacked_from,ARMORminus);
 			end;
 		end;
 	end;
@@ -4609,8 +4619,7 @@ function damage.shoot()
 	and chars_mobs_npcs[current_mob].shader then
 		local r,g,b,n = chars_mobs_npcs[current_mob].shader[1],chars_mobs_npcs[current_mob].shader[2],chars_mobs_npcs[current_mob].shader[3],chars_mobs_npcs[current_mob].shader[4];
 		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
-		table.insert(lights,{x=chars_mobs_npcs[current_mob].y,y=chars_mobs_npcs[current_mob].x,light=lightWorld.newLight(xx, yy, r, g, b, n),typ="cast"});
-		lights[#lights]["light"].setGlowStrength(0.3);
+		draw.createNewLight(chars_mobs_npcs[victim].y,chars_mobs_npcs[victim].x,"cast",xx,yy,r,g,b,n,0.3);
 	end;
 	
 	
@@ -4672,8 +4681,7 @@ function damage.shoot()
 		or missle_type == "toxiccloud" then
 			local r,g,b,n = magic.spell_tips[missle_type].shader[1],magic.spell_tips[missle_type].shader[2],magic.spell_tips[missle_type].shader[3],magic.spell_tips[missle_type].shader[4];
 			local xx,yy = helpers.hexToPixels (chars_mobs_npcs[current_mob].x,chars_mobs_npcs[current_mob].y);
-			table.insert(lights,{x=chars_mobs_npcs[current_mob].y,y=chars_mobs_npcs[current_mob].x,light=lightWorld.newLight(xx, yy, r, g, b, n),typ="missle"});
-			lights[#lights]["light"].setGlowStrength(0.3);
+			draw.createNewLight(chars_mobs_npcs[current_mob].y,chars_mobs_npcs[current_mob].x,"missle",xx,yy,r,g,b,n,0.3);
 		end;
 		local recovery = helpers.countMagicRecovery (current_mob,missle_type,missle_drive);
 		chars_mobs_npcs[current_mob].rt = chars_mobs_npcs[current_mob].rt-recovery;
@@ -4936,9 +4944,7 @@ function damage.instantCast () --FIXME use lvl, num
 		chars_mobs_npcs[victim].invisibility = 0;
 		chars_mobs_npcs[victim].stealth = 0;
 		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
-		table.insert(lights,{x=chars_mobs_npcs[victim].x,y=chars_mobs_npcs[victim].y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 128),typ="mob",index = victim});
-		--lights[#lights]["light"]:setDirection(0.1);
-		lights[#lights]["light"].setRange(512);
+		draw.createNewLight(chars_mobs_npcs[victim].y,chars_mobs_npcs[victim].x,"mob",xx,yy,255,127,63,138,0.3,512);
 		helpers.addToActionLog( helpers.mobName(current_mob) .. lognames.actions.cast[chars_mobs_npcs[current_mob].gender] .. " «" .. spellname .. "» ");
 	end;
 

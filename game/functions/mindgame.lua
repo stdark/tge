@@ -18,6 +18,7 @@ function mindgame.updateFlags()
 	local rnd_chr_5 = math.ceil(math.random(3,15));
 	local rnd_chr_6 = math.ceil(math.random(5,20));
 	local rnd_achr_1 =   math.ceil(math.random(1,math.max(1,10-chars_mobs_npcs[current_mob].chr/10)));
+	
 	mindgame.flags_gold = {
 	beggar         = {{{1,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{2,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{0,1,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,2,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,3,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,4,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,5,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,5,-1,0,0,0,100,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)}},
 	poor           = {{{0,-1,1,0,0,0,0,0,0,0,0,0},true,"boring",chats.questionPerEtiquette("boring",etiquette)},{{1,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{2,-1,-1,0,0,0,0,0,0,0,0,0},true,"loyality",chats.questionPerEtiquette("goldok",etiquette)},{{0,1,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,2,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,3,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,4,-1,0,0,0,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)},{{0,5,-1,0,0,0,1000,0,0,0,0,0,0},true,"fear",chats.questionPerEtiquette("goldtoomuch",etiquette)}},
@@ -32,7 +33,7 @@ function mindgame.updateFlags()
 	disinterested  = {{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,1,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,-1,0,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("boring",etiquette)},{{0,1,0,0,0,0,1000000,0,0,0,0,0,0},true,"boring",chats.questionPerEtiquette("boring",etiquette)}},
 	goldhater      = {{{0,-1,-1,0,0,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-2,-2,0,2,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-3,3,0,3,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-4,-4,0,4,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-5,-5,0,5,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-6,-6,0,10,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-7,-7,0,7,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)},{{0,-10,-10,0,10,0,1000000,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("goldagro",etiquette)}},
 	};
-	--FIXME
+	
 	mindgame.flags_threat = {
 	fatalist       = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("busido",etiquette)},
 	masohist       = {{1,0,-1,0,0,0,0,0,1,0,0},false,"lol",chats.questionPerEtiquette("masohist",etiquette)},
@@ -44,6 +45,7 @@ function mindgame.updateFlags()
 	honored        = {{0,0,0,3,0,0,0,0,0,0,0,0},true,"disdain",chats.questionPerEtiquette("brave",etiquette)},
 	agressive      = {{0,0,0,0,1,0,0,0,0,0,0,0},true,"agression",chats.questionPerEtiquette("berserk",etiquette)},
 	};
+	
 	local rnd = math.random(1,13);
 	local snd_index = rnd;
 	local snd = mindgame.snd_array[snd_index];
@@ -89,7 +91,7 @@ function mindgame.updateFlags()
 	anonymous	= {{0,0,0,0,0,0,0,0,0,0,0,1},false,"shame",chats.questionPerEtiquette("andimalcholoic",etiquette)},
 	taster		= {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("winenotbad",etiquette)},
 	taster2		= {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("disgustingwine",etiquette)},
-	winepoisoned	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("winepoisoned",etiquette)},
+	paranoic	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("winepoisoned",etiquette)},
 	};
 	
 	mindgame.flags_food = { --FIXME need phrases for food
@@ -100,11 +102,11 @@ function mindgame.updateFlags()
 	full        = {{0,0,1,0,0,0,0,0,0,0,0,0},false,"boring",chats.questionPerEtiquette("fulloffood",etiquette)},
 	overfed     = {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("overfed",etiquette)},
 	agressive   = {{0,0,0,0,0,0,0,0,1,0,0,0},false,"agression",chats.questionPerEtiquette("donotneedeat",etiquette)},
-	diabetic    = {{0,0,0,0,0,1,0,0,0,0,0,0},false,"cry",chats.questionPerEtiquette("diet",etiquette)},
+	ulcer    = {{0,0,0,0,0,1,0,0,0,0,0,0},false,"cry",chats.questionPerEtiquette("diet",etiquette)},
 	fat	        = {{0,0,0,0,0,0,0,0,0,0,0,1},false,"shame",chats.questionPerEtiquette("iamfat",etiquette)},
 	taster3		= {{1,0,0,0,0,0,0,0,0,0,0,0},false,"loyality",chats.questionPerEtiquette("delicios",etiquette)},
 	taster4		= {{0,1,0,0,0,0,0,0,0,0,0,0},false,"disdain",chats.questionPerEtiquette("disgustingfood",etiquette)},
-	foodpoisoned	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("foodpoisoned",etiquette)},
+	paranoic	= {{0,0,0,0,1,0,0,0,0,0,0,0},false,"distrust",chats.questionPerEtiquette("foodpoisoned",etiquette)},
 	};
 	
 	mindgame.flags_informed = {
@@ -139,13 +141,18 @@ function mindgame.destination ()
 	return x,y,n;
 end;
 
+function mindgame.gameFailed()
+	--?
+end;
+
 function mindgame.path ()
 	local checked_path = {};
 	local checked_path2 = {};
 	local point_to_go_x,point_to_go_y,destination = mindgame.destination ();
 	if not point_to_go_x or not point_to_go_y or not destination then
 		game_status = "neutral"; --FAIL BERSERK MADNESS FLAG BRAINFUCKER for a party member
-		print("MINDGAME FAILED_");
+		--print("MINDGAME FAILED_");
+		mindgame.gameFailed();
 		party.gold = party.gold - global.mindgold; --?
 		global.mindgold = 0;
 		loveframes.util.RemoveAll();

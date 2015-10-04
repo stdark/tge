@@ -156,8 +156,10 @@ function chat_functions.ifQuestInProgress(quests_array,quest_part,done,ifsuccess
 	for i=1, #party.quests do
 		for h=1,#quests_array do
 			local quest_id = quests_array[h];
-			if party.quests[i].id == quest_id and party.quests[i][stages][quest_part] and (not done and not party.quests[i].done) or (done and party.quests[i].done) then
-				return ifsuccess;
+			for j=1,#quest_part do
+				if party.quests[i].id == quest_id and party.quests[i][stages][quest_part[j]] and (not done and not party.quests[i].done) or (done and party.quests[i].done) then
+					return ifsuccess;
+				end;
 			end;
 		end;
 	end;

@@ -818,7 +818,7 @@ function draw.boom ()
 	
 	if missle_type == "friendlyfire" then
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=boomx,y=boomy,light=lightWorld.newLight(xx, yy, 255, 255, 255, 128),typ="boom"});
+		draw.createNewLight(boomx,boomy,"boom",xx,yy,255,255,255,128,0.3); 
 		elandscape[boomy][boomx] = "flame";
 		boomareas.poisonAir(boomx,boomy);
 		local rings = boomareas.ringArea(boomx,boomy);
@@ -958,7 +958,7 @@ function draw.boom ()
 	end;
 	
 	if missle_type == "eyeofthestorm" then
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 200, 200, 255, 128),typ="boom"});
+		draw.createNewLight(boomx,boomy,"boom",xx,yy,200,200,255,128,0.3);
 		local rings = boomareas.ringArea(cursor_world_x,cursor_world_y);
 		for i=1,#rings[3] do
 			local rnd = math.random(1,3);
@@ -1401,8 +1401,7 @@ function draw.boom ()
 	and magic.spell_tips[missle_type].shader then
 		local r,g,b,n = magic.spell_tips[missle_type].shader[1],magic.spell_tips[missle_type].shader[2],magic.spell_tips[missle_type].shader[3],magic.spell_tips[missle_type].shader[4];
 		local xx,yy = helpers.hexToPixels (chars_mobs_npcs[victim].x,chars_mobs_npcs[victim].y);
-		table.insert(lights,{x=chars_mobs_npcs[victim].y,y=chars_mobs_npcs[victim].x,light=lightWorld.newLight(xx, yy, r, g, b, n),typ="boom"});
-		lights[#lights]["light"].setGlowStrength(0.3);
+		draw.createNewLight(chars_mobs_npcs[victim].y,chars_mobs_npcs[victim].x,"boom",xx,yy,r,g,b,n,0.3);
 	end;
 	
 	helpers.findShadows();
@@ -6010,29 +6009,54 @@ end;
 function draw.shaderIrradiation ()
 	if (game_status ~= "missle" or missle_type ~= "armageddon") and (game_status ~= "shot" or missle_type ~= "inferno" or missle_type ~= "souldrinker" or missle_type ~= "moonlight") then
 		if irradiation == "day" then
-			lightWorld.setAmbientColor(255, 255, 255);
+			draw.setGlobalLightning(255, 255, 255);
 		elseif irradiation == "twilight" then
-			lightWorld.setAmbientColor(200, 200, 220);
+			draw.setGlobalLightning(200, 200, 220);
 		elseif irradiation == "night" then
-			lightWorld.setAmbientColor(25, 25, 50);
+			draw.setGlobalLightning(25, 25, 50);
 		elseif irradiation == "dawn" or irradiation == "afterglow" then
-			lightWorld.setAmbientColor(255, 200, 200);
+			draw.setGlobalLightning(255, 200, 200);
 		elseif irradiation == "firelight" then
-			lightWorld.setAmbientColor(255, 150, 100);
+			draw.setGlobalLightning(255, 150, 100);
 		elseif irradiation == "dungeon" then
-			lightWorld.setAmbientColor(0, 0, 0);
+			draw.setGlobalLightning(0, 0, 0);
 		end;
 	elseif game_status == "missle" and missle_type == "armageddon" then
-		lightWorld.setAmbientColor(255, 50, 50);
+		draw.setGlobalLightning(255, 50, 50);
 	elseif game_status == "shot" and missle_type == "inferno" then
-		lightWorld.setAmbientColor(255, 150, 0);
+		draw.setGlobalLightning(255, 150, 0);
 	elseif game_status == "shot" and missle_type == "moonlight" then
-		lightWorld.setAmbientColor(150, 150, 255);
+		draw.setGlobalLightning(150, 150, 255);
 	elseif game_status == "shot" and missle_type == "souldrinker" then
-		lightWorld.setAmbientColor(200, 255, 255);
+		draw.setGlobalLightning(200, 255, 255);
 	end;
 end;
 
+function draw.setGlobalLightning(r,g,b)
+	lightWorld.setAmbientColor(r, g, b);
+	if global.cast_shadows then
+		shadowWorld.setAmbientColor(r, g, b);
+	end;
+end;
+
+function draw.createNewLight(_x,_y,_typ,_xx,_yy,_r,_g,_b,_a,_glow,_range)
+	table.insert(lights,{x=_x,y=_y,light=lightWorld.newLight(_xx, _yy, _r, _g, _b, _a),typ=_typ});
+	if _glow then
+		lights[#lights]["light"].setGlowStrength(_glow);
+	end;
+	if _range then
+		lights[#lights]["light"].setRange(512);
+	end;
+	if global.cast_shadows then
+		table.insert(slights,{x=_x,y=_y,light=shadowWorld.newLight(_xx, _yy, _r, _g, _b, _a),typ=_typ});
+		if _glow then
+			slights[#slights]["light"].setGlowStrength(_glow);
+		end;
+		if _range then
+			slights[#slights]["light"].setRange(512);
+		end;
+	end;
+end;
 
 function draw.way ()
 	for i=1,#way_of_the_mob do

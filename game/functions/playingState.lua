@@ -64,7 +64,11 @@ function playingState.load()
 	--love.audio.stop(media.sounds.mainmenu, 0);
 
 	lightWorld = love.light.newWorld();
-	lightWorld.setBlur(32)
+	lightWorld.setBlur(32);
+	
+	shadowWorld = love.light.newWorld();
+	shadowWorld.setBlur(32);
+	
 	mainFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 10);
 	ebookFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
 	statFont = love.graphics.newFont("fonts/DroidSans-Bold.ttf", 14);
@@ -88,6 +92,7 @@ function playingState.load()
 	global.walk_animation_speed = 0.1;
 	global.recalc_lights_vs_shadows = true;
 	global.highlight_party = 0;
+	global.cast_shadows = false;
 
 	map_w = #map;
 	map_h = #map[1];
@@ -832,28 +837,19 @@ function playingState.load()
     harvest_load ();
 	buildings_data ();
     draw.shaderIrradiation ();
-    --lightWorld.setAmbientColor(15, 15, 31) -- optional
-    --lightMouse = lightWorld.newLight(0, 0, 0, 0, 0,0)
-    --lightMouse.setGlowStrength(0.3) -- optional
     lights = {};
-    table.insert(lights,{x=0,y=0,light=lightWorld.newLight(0, 0, 0, 0, 0,0),typ="default"});
+    slights = {};
+    draw.createNewLight(0,0,"default",0,0,0,0,0,0,0); 
     boomareas.fireGround (12,7,1,1,1); --FIXME! For test only
     boomareas.fireGround (15,15,1,1,2); --FIXME! For test only
     boomareas.poisonAir (8,12,1,10,10);
-    --for i=1,#chars_mobs_npcs do
-    	--local xx,yy =  helpers.hexToPixels(chars_mobs_npcs[i].y,chars_mobs_npcs[i].x);
-    	--table.insert(shadows,{x=chars_mobs_npcs[i].x,y=chars_mobs_npcs[i].y,shadow = lightWorld.newCircle(xx, yy, 20),typ="mob"});
-    --end;
-        --for i=1,#chars_mobs_npcs do
-    	--local xx,yy =  helpers.hexToPixels(chars_mobs_npcs[i].y,chars_mobs_npcs[i].x);
-    	--table.insert(shadows,{x=chars_mobs_npcs[i].x,y=chars_mobs_npcs[i].y,shadow = lightWorld.newCircle(xx, yy, 20),typ="mob"});
-    --end
+
     helpers.camToMob (current_mob);
 
 	sort_switcher = 1
 	sorttarget="char"
 	oldsorttarget="char"
-	--h = current_mob
+
 	for h=1,chars do
 		th=h;
 		current_mob = h;
@@ -878,16 +874,13 @@ function playingState.load()
 		elseif objects_list[j].typ == "obelisk" then
 
 		elseif objects_list[j].typ == "pedestal" then
-			table.insert(lights,{x=objects_list[j].xi,y=objects_list[j].yi,light=lightWorld.newLight(xx, yy, 255, 135, 220, 128),typ="ground"});
-			lights[#lights]["light"].setGlowStrength(0.3);
+			draw.createNewLight(objects_list[j].xi,objects_list[j].yi,"ground",xx,yy,255,135,220,128,0.3);
 		elseif objects_list[j].typ == "altar" then
 
 		elseif objects_list[j].typ == "competition" then
-			table.insert(lights,{x=objects_list[j].xi,y=objects_list[j].yi,light=lightWorld.newLight(xx, yy, 0, 236, 255, 128),typ="ground"});
-			lights[#lights]["light"].setGlowStrength(0.3);
+			draw.createNewLight(objects_list[j].xi,objects_list[j].yi,"ground",xx,yy,0,236,255,128,0.3);
 		elseif objects_list[j].typ == "portal" then
-			table.insert(lights,{x=objects_list[j].xi,y=objects_list[j].yi,light=lightWorld.newLight(xx, yy, 15, 255, 0, 128),typ="ground"});
-			lights[#lights]["light"].setGlowStrength(0.3);
+			draw.createNewLight(objects_list[j].xi,objects_list[j].yi,"ground",xx,yy,15,255,0,128,0.3);
 		elseif objects_list[j].typ == "well" then
 
 		end;
@@ -911,30 +904,9 @@ function playingState.load()
 	end;
 	global.first_load = false;
 	
-	
-	
-	lightMouse = lightWorld.newLight(100, 100, 1, 1, 1,10)
-    lightMouse.setGlowStrength(0.3) -- optional
-	
-	
 	local x = 200
 	local y = 200
 	local strength = 1
-	
-	imgNormal = love.graphics.newImage("img/lightsvsshadows/refraction_normal.png")
-	imgHeightMap = love.graphics.newImage("img/lightsvsshadows/refraction_height.png")
-	
-	--lightWorld.setRefractionStrength(16.0)
-   -- set the global reflection strength to 32 (default: 16)
-  -- lightWorld.setReflectionStrength(32)
-   -- set the global reflection visibility to 0.5 (default: 1.0)
-  -- lightWorld.setReflectionVisibility(0.5)
-   -- create a refraction from a normal map
-	--refraction = lightWorld.newRefraction(imgNormal, x, y)
-   -- create a refraction from a height map and choose the strength (default: 1.0)
-	--refraction = lightWorld.newRefractionHeightMap(imgHeightMap, x, y)
-   -- move the normal map texture within the boundary
-  -- refraction.setNormalTileOffset(x, y)
 	
 end;
 
@@ -942,8 +914,6 @@ end;
 
 function playingState.update(dt)
 	global.timer = global.timer + dt;
-	--global.screenWidth = love.graphics.getWidth();
-	--global.screenHeight = love.graphics.getHeight();
 	if dt <= 1/60 then
       love.timer.sleep(0.001)
 	end
@@ -970,12 +940,14 @@ function playingState.update(dt)
 			end;
 		end;
 		helpers.castShadows();
+		if global.cast_shadows then
 		for i=1,#shadows do
-			local xx,yy =  helpers.hexToPixels(shadows[i].x+map_x,shadows[i].y+map_y);
-			shadows[i]["shadow"].setPosition(xx+tile_w/2,yy+tile_h/2);
+				local xx,yy =  helpers.hexToPixels(shadows[i].x+map_x,shadows[i].y+map_y);
+				shadows[i]["shadow"].setPosition(xx+tile_w/2,yy+tile_h/2);
+			end;
+			end;
+			global.recalc_lights_vs_shadows = false;
 		end;
-		global.recalc_lights_vs_shadows = false;
-	end;
 	if game_status ~= "pause" then
 		dt = math.min(dt, 0.0166);
 		global.timers.x_timer = global.timers.x_timer + dt
@@ -3921,6 +3893,10 @@ function playingState.mousereleased (x,y,button)
 					chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]+list[holding_smth].q;
 				elseif inventory_ttx[list[holding_smth].ttxid].b=="minus" then
 					chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]-list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="triplus" then
+					chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]+3*list[holding_smth].q;
+				elseif inventory_ttx[list[holding_smth].ttxid].b=="triminus" then
+					chars_mobs_npcs[current_mob][tmp]= chars_mobs_npcs[current_mob][tmp]-3*list[holding_smth].q;
 				elseif inventory_ttx[list[holding_smth].ttxid].b=="zero" then
 					chars_mobs_npcs[current_mob][tmp]=0;
 				elseif inventory_ttx[list[holding_smth].ttxid].b=="equal" then
@@ -4454,15 +4430,14 @@ function  playingState.mousepressed(x,y,button)
 							if global.threats_level < _level and chars_mobs_npcs[current_mob].nature ~= "undead" and chars_mobs_npcs[current_mob].nature ~= "elemental" and chars_mobs_npcs[current_mob].nature ~= "golem" then
 								global.threats_level = _level;
 								mindgame.map[global.mindcursor_x][global.mindcursor_y] = mindmissle;
-								--local index = mindmissle - 9;
 								for i=1,10 do
 									chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] + mindgame["flags_threat"][chars_mobs_npcs[victim]["personality"]["current"]["material"]["threat"]][1][i]*threats_ttx[global.threats_pull[global.current_threat] ].level;
 									local snd = "mindgame_" .. mindgame["flags_threat"][chars_mobs_npcs[victim]["personality"]["current"]["material"]["threat"]][3];
-									utils.playSfx(media["sounds"][snd],1); --FIXME 10 times?!
 									if chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] < 0 then
 										chars_mobs_npcs[victim]["personality"]["current"]["mindstatus"][i] = 0;
 									end;
 								end;
+								utils.playSfx(media["sounds"][snd],1);
 								phrase2 = helpers.mobName(victim) .. ": " .. mindgame["flags_threat"][chars_mobs_npcs[victim]["personality"]["current"]["material"]["threat"]][4];
 							else
 								local _rnd_emo = {3,3,3,4,3,3,3,3,3,10};
@@ -9249,6 +9224,8 @@ end;
 
 function playingState.draw()
 	lightWorld.update();
+	shadowWorld.update();
+	
 	love.graphics.setFont(mainFont);
 	draw.background();
 	draw.submap();
@@ -9262,6 +9239,10 @@ function playingState.draw()
 	end;
 	draw.cursor();
 	draw.line();
+	if global.cast_shadows then
+		shadowWorld.drawShadow();
+		shadowWorld.drawGlow();
+	end;
 	draw.objects();
 	lightWorld.drawShadow();
 	lightWorld.drawGlow();

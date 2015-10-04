@@ -1834,17 +1834,19 @@ function helpers.lightIsNear(x,y)
 end;
 
 function helpers.castShadows ()
-	if shadows then
-		for i=1,#shadows do
-			shadows[i]["shadow"].clear();
+	if global.cast_shadows then
+		if shadows then
+			for i=1,#shadows do
+				shadows[i]["shadow"].clear();
+			end;
 		end;
-	end;
-	shadows = {};
-	for my=1, math.min(global.map_display_h, map_h-map_y) do
-		for mx=1, math.min(global.map_display_w, map_w-map_x) do
-			if map[my+map_y][mx+map_x] == 10 or ((map[my+map_y][mx+map_x] <= 1200 and visibility_table[map[my+map_y][mx+map_x]] == 1) or (map[my+map_y][mx+map_x] >= 1500)) then --check in future
-				local xx,yy =  helpers.hexToPixels(mx,my);
-				table.insert(shadows,{x=mx,y=my,shadow = lightWorld.newCircle(xx, yy, 20),typ="obj"});
+		shadows = {};
+		for my=1, math.min(global.map_display_h, map_h-map_y) do
+			for mx=1, math.min(global.map_display_w, map_w-map_x) do
+				if map[my+map_y][mx+map_x] == 10 or ((map[my+map_y][mx+map_x] <= 1200 and visibility_table[map[my+map_y][mx+map_x] ] == 1) or (map[my+map_y][mx+map_x] >= 1500)) then --check in future
+					local xx,yy =  helpers.hexToPixels(mx,my);
+					table.insert(shadows,{x=mx,y=my,shadow = shadowWorld.newCircle(xx, yy, 20),typ="obj"});
+				end;
 			end;
 		end;
 	end;
@@ -5383,6 +5385,61 @@ function helpers.addAffront(id)
 	end;
 	helpers.addToActionLog(lognames.actions.party_got_an_affront);
 	table.insert(party.affronts,id);
+	utils.playSfx(media.sounds.pen,1);
+end;
+
+function helpers.addJoke(id)
+	for i=1,#party.jokes do
+		if party.jokes[i] == id then
+			return;
+		end;
+	end;
+	helpers.addToActionLog(lognames.actions.party_got_a_joke);
+	table.insert(party.jokes,id);
+	utils.playSfx(media.sounds.pen,1);
+end;
+
+function helpers.addThreat(id)
+	for i=1,#party.threats do
+		if party.threats[i] == id then
+			return;
+		end;
+	end;
+	helpers.addToActionLog(lognames.actions.party_got_a_threat);
+	table.insert(party.threat,id);
+	utils.playSfx(media.sounds.pen,1);
+end;
+
+function helpers.addPhrase(id)
+	for i=1,#party.nlps do
+		if party.nlps[i] == id then
+			return;
+		end;
+	end;
+	helpers.addToActionLog(lognames.actions.party_got_a_nlp);
+	table.insert(party.nlps,id);
+	utils.playSfx(media.sounds.pen,1);
+end;
+
+function helpers.addSecret(id)
+	for i=1,#party.secrets do
+		if party.secrets[i] == id then
+			return;
+		end;
+	end;
+	helpers.addToActionLog(lognames.actions.party_got_a_secret);
+	table.insert(party.secrets,id);
+	utils.playSfx(media.sounds.pen,1);
+end;
+
+function helpers.addJoke(id)
+	for i=1,#party.jokes do
+		if party.jokes[i] == id then
+			return;
+		end;
+	end;
+	helpers.addToActionLog(lognames.actions.party_got_a_joke);
+	table.insert(party.jokes,id);
 	utils.playSfx(media.sounds.pen,1);
 end;
 

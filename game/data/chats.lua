@@ -25,8 +25,8 @@ function chats.load ()
 	{question=9,answer=7778,nextquestion={0},remquestion={0},default=true}, --FIXME separate button?
 	--{question=10,answer=9,nextquestion={12},remquestion={0},default=false},
 	--{question=11,answer=9,nextquestion={12},remquestion={0},default=false},
-	{question=chat_functions.ifQuestInProgress({4},1,false,10,0),answer=9,nextquestion={12},remquestion={0},default=true},
-	{question=chat_functions.ifQuestInProgress({5},1,false,11,0),answer=9,nextquestion={12},remquestion={0},default=true},
+	{question=chat_functions.ifQuestInProgress({4},{1},false,10,0),answer=9,nextquestion={12},remquestion={0},default=true},
+	{question=chat_functions.ifQuestInProgress({5},{1},false,11,0),answer=9,nextquestion={12},remquestion={0},default=true},
 	{question=12,answer=10,nextquestion={10,11},remquestion={0},default=false},
 	{question=chat_functions.ifQuestPart(4,2,false,13,0),answer=12,nextquestion={9},remquestion={0},default=true},
 	{question=chat_functions.ifQuestPart(4,3,false,14,0),answer=13,nextquestion={9},remquestion={0},default=true},

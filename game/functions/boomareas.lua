@@ -1207,8 +1207,7 @@ function boomareas.fireGround (x,y,i,lvl,num)
 		if dlandscape_obj[y][x] == 0 then
 			dlandscape_obj[y][x] = "fire";
 			local xx,yy = helpers.hexToPixels (x,y);
-			table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 128),typ="ground"});
-			lights[#lights]["light"].setGlowStrength(0.3);
+			draw.createNewLight(x,y,"ground",xx,yy,255,127,63,128,0.3);
 			dlandscape_power[y][x] = math.ceil(lvl*1/i);
 			dlandscape_duration[y][x] = math.ceil(num*1/i);
 		elseif dlandscape_obj[y][x] == "fire" then
@@ -1219,8 +1218,7 @@ function boomareas.fireGround (x,y,i,lvl,num)
 			if dlandscape_power[y][x] < math.ceil(lvl*1/i) then
 				dlandscape_obj[y][x] = "fire";
 				local xx,yy = helpers.hexToPixels (x,y);
-				table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 128),typ="ground"});
-				lights[#lights]["light"].setGlowStrength(0.3);
+				draw.createNewLight(x,y,"ground",xx,yy,255,127,63,128,0.3);
 				local shorterDuration = math.ceil(dlandscape_power[y][x]/lvl*1/i*num*1/i);
 				dlandscape_power[y][x] = math.ceil(lvl*1/i);
 				dlandscape_duration[y][x] = math.ceil(num*1/i) - shorterDuration;
@@ -1246,8 +1244,7 @@ function boomareas.holyGround (x,y,i,lvl,num)
 		if dlandscape_obj[y][x] == 0 then
 			dlandscape_obj[y][x] = "light";
 			local xx,yy = helpers.hexToPixels (x,y);
-			table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 255, 255, 128),typ="ground"});
-			lights[#lights]["light"].setGlowStrength(0.3);
+			draw.createNewLight(x,y,"ground",xx,yy,255,255,255,128,0.3);
 			dlandscape_power[y][x] = math.ceil(lvl*1/i);
 			dlandscape_duration[y][x] = math.ceil(num*1/i);
 		elseif dlandscape_obj[y][x] == "light" then
@@ -1395,16 +1392,14 @@ function boomareas.poisonAir (x,y,i,lvl,num)
 		if dlandscape_obj[y][x] ~= "fire" and alandscape_obj[y][x] == 0 then
 			alandscape_obj[y][x] = "poison";
 			local xx,yy = helpers.hexToPixels (x,y);
-			table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 185, 255, 49, 128),typ="ground"});
-			lights[#lights]["light"].setGlowStrength(0.3);
+			draw.createNewLight(x,y,"ground",xx,yy,185,255,49,128,0.3);
 			alandscape_power[y][x] = math.ceil(lvl*1/i);
 			alandscape_duration[y][x] = math.ceil(num*1/i);
 		elseif dlandscape_obj[y][x] ~= "fire" and alandscape_obj[y][x] == "poison" then
 			if alandscape_power[y][x] < math.ceil(lvl*1/i) then
 				alandscape_obj[y][x] = "poison";
 				local xx,yy = helpers.hexToPixels (x,y);
-				table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 185, 255, 49, 64),typ="ground"});
-				lights[#lights]["light"].setGlowStrength(0.1);
+				draw.createNewLight(x,y,"ground",xx,yy,185,255,49,128,0.3);
 				local shorterDuration = math.ceil(alandscape_power[y][x]/lvl*1/i*num*1/i);
 				alandscape_power[y][x] = math.ceil(lvl*1/i);
 				alandscape_duration[y][x] = math.ceil(num*1/i) - shorterDuration;
@@ -1457,7 +1452,7 @@ function boomareas.fireExploGround (x,y)
 	if helpers.passWalk(x,y) and not cursor_at_chest then
 		elandscape[y][x] = "explo";
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 128),typ="boom"});
+		draw.createNewLight(x,y,"boom",xx,yy,255,127,63,128,0.3);
 		boomareas.ashGround (x,y);
 	end;	
 end;
@@ -1465,11 +1460,7 @@ end;
 function boomareas.flameAir (x,y)
 	if helpers.passLev(x,y) then
 		elandscape[y][x] = "flame";
-		--helpers.clearHlandscape(x,y);
 		boomareas.ashGround (x,y); --Need or not?
-		--local xx,yy = helpers.hexToPixels (x,y);
-		--table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 127, 63, 64),typ="boom"});
-		--lights[#lights]["light"].setGlowStrength(0.3);
 	end;	
 end;
 
@@ -1477,7 +1468,7 @@ function boomareas.coldAir (x,y)
 	if helpers.passLev(x,y) then
 		elandscape[y][x] = "cold";
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 172, 228, 255, 64),typ="boom"});
+		draw.createNewLight(x,y,"boom",xx,yy,172,228,255,64,0.3);
 	end;	
 end;
 
@@ -1485,7 +1476,7 @@ function boomareas.frostAir (x,y)
 	if helpers.passLev(x,y) then
 		elandscape[y][x] = "frost";
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 172, 228, 255, 64),typ="boom"});
+		draw.createNewLight(x,y,"boom",xx,yy,172,228,255,64,0.3);
 	end;	
 end;
 
@@ -1493,15 +1484,13 @@ function boomareas.lightAir (x,y)
 	if helpers.passLev(x,y) then
 		elandscape[y][x] = "light";
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 255, 255, 255, 64),typ="boom"});
+		draw.createNewLight(x,y,"boom",xx,yy,255,255,255,64,0.3); --? FIXME
 	end;	
 end;
 
 function boomareas.moonlightAir (x,y)
 	if helpers.passLev(x,y) then
 		elandscape[y][x] = "moonlight";
-		--local xx,yy = helpers.hexToPixels (x,y);
-		--table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 162, 236, 255, 64),typ="boom"});
 	end;	
 end;
 
@@ -1509,7 +1498,7 @@ function boomareas.windAir (x,y)
 	if helpers.passLev(x,y) then
 		elandscape[y][x] = "wind";
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 200, 200, 200, 64),typ="boom"});
+		draw.createNewLight(x,y,"boom",xx,yy,172,228,255,64,0.3);
 	end;	
 end;
 
@@ -1518,7 +1507,7 @@ function boomareas.acidExploGround (x,y)
 	if helpers.passWalk(x,y) and not cursor_at_chest then
 		elandscape[y][x] = "acidbomb";
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 182,255,0,64),typ="boom"});
+		draw.createNewLight(x,y,"boom",xx,yy,182,255,0,64,0.3);
 		boomareas.ashGround (x,y);
 	end;	
 end;
@@ -1528,6 +1517,6 @@ function boomareas.staticGround (x,y)
 	if helpers.passWalk(x,y) and not cursor_at_chest then
 		elandscape[y][x] = "static";
 		local xx,yy = helpers.hexToPixels (x,y);
-		table.insert(lights,{x=x,y=y,light=lightWorld.newLight(xx, yy, 191, 237, 255,64),typ="boom"});
+		draw.createNewLight(x,y,"boom",xx,yy,191,237,255,64,0.3);
 	end;	
 end;
