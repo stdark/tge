@@ -939,6 +939,26 @@ function playingState.update(dt)
 				lights[i]["light"].setPosition(xx,yy);
 			end;
 		end;
+		if global.cast_shadows then
+			for i=1,#slights do
+				local xx,yy = 0,0;
+				if slights[i].typ == "ground" then
+					xx,yy = helpers.hexToPixels s(lights[i].x+1,slights[i].y+1);
+					if slights[i].y/2 == math.ceil(slights[i].y/2) then
+						xx,ww = helpers.hexToPixels (slights[i].x,slights[i].y+1); --ww is correct!
+					end;
+					xx = xx + math.random(1,8)-4;
+					yy = yy -64 + math.random(1,8)-4;
+				elseif slights[i].typ == "mob" then
+					xx,yy = helpers.hexToPixels (slights[i].x,slights[i].y);
+					xx = xx - 16 + math.random(1,8)-4;
+					yy = yy - 32 + math.random(1,8)-4;
+				end;
+				if slights[i].typ ~= "default" and slights[i].typ ~= "missle" and slights[i].typ ~= "boom" and  slights[i].typ ~= "cast" then
+					slights[i]["light"].setPosition(xx,yy);
+				end;
+			end;
+		end;
 		helpers.castShadows();
 		if global.cast_shadows then
 		for i=1,#shadows do
